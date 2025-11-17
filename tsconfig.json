@@ -1,0 +1,122 @@
+{
+  "compilerOptions": {
+    // 🎯 Configuración de target y librerías
+    "target": "ES2022",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "webworker"
+    ],
+
+    // 🔒 Configuración estricta empresarial
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "useUnknownInCatchVariables": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // 🚫 Verificaciones adicionales
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": false,
+
+    // 📦 Configuración de módulos
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowJs": false,
+    "checkJs": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+
+    // ⚡ Performance y compilación
+    "noEmit": true,
+    "incremental": true,
+    "tsBuildInfoFile": ".next/cache/tsconfig.tsbuildinfo",
+    "skipLibCheck": false,
+
+    // 🔄 Resolución y paths
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+
+    // ⚛️ JSX Configuration
+    "jsx": "preserve",
+    "jsxImportSource": "react",
+
+    // 🎨 Next.js Plugin
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+
+    // 📂 Base URL y Paths
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/contexts/*": ["./src/contexts/*"],
+      "@/services/*": ["./src/services/*"],
+      "@/modules/*": ["./src/modules/*"],
+      "@/app/*": ["./src/app/*"]
+    },
+
+    // 🎯 Configuraciones adicionales para mejor DX
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "sourceMap": false,
+    "experimentalDecorators": false,
+    "emitDecoratorMetadata": false
+  },
+
+  // 📁 Files to include
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+
+  // 🚫 Files to exclude
+  "exclude": [
+    "node_modules",
+    ".next",
+    "out",
+    "dist",
+    "build",
+    "ejemplo proyecto funcional",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "coverage"
+  ],
+
+  // 🎛️ Watch options for development
+  "watchOptions": {
+    "watchFile": "useFsEvents",
+    "watchDirectory": "useFsEvents",
+    "fallbackPolling": "dynamicPriority",
+    "synchronousWatchDirectory": true,
+    "excludeDirectories": [
+      "**/node_modules",
+      "**/.git",
+      "**/.next"
+    ]
+  }
+}

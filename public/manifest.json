@@ -1,0 +1,20 @@
+{
+  "name": "ContaPyme - Contabilidad Inteligente",
+  "short_name": "ContaPyme",
+  "description": "Sistema contable completo para PyMEs chilenas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3B82F6",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "es-CL",
+  "categories": ["business", "productivity", "finance"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}

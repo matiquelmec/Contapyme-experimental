@@ -1,0 +1,160 @@
+# 📦 Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# 🏗️ Build outputs
+.next/
+out/
+dist/
+build/
+
+# 🗄️ Cache directories
+.cache/
+.parcel-cache/
+
+# 📊 Coverage reports
+coverage/
+
+# 📋 Logs
+*.log
+logs/
+
+# 🔧 Config files that shouldn't be formatted
+*.min.js
+*.min.css
+
+# 📁 Generated files
+.next/types/**/*
+*.tsbuildinfo
+
+# 🎨 Static assets
+public/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.webp
+
+# 📱 Mobile
+.expo/
+.expo-shared/
+
+# 🧪 Testing
+coverage/
+.nyc_output/
+junit.xml
+
+# 🌍 Environment files
+.env*
+!.env.example
+
+# 📄 Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# 🗃️ Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# 📚 Documentation builds
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+
+# 🎯 Specific to this project
+ejemplo*
+Backend/
+Frontend/
+*.backup
+.backup/
+
+# 📊 Generated reports and exports
+*.xlsx
+*.csv
+*.pdf
+
+# 🔍 IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 🚀 Deployment
+.vercel
+.netlify
+
+# 🎪 Temporary files
+tmp/
+temp/
+.tmp/
+.temp/
+
+# 📝 Changelog files (usually auto-generated)
+CHANGELOG.md
+
+# 📋 Markdown files that don't need formatting
+*.md
+!README.md
+
+# 🗃️ SQL and database files
+*.sql
+
+# ⚙️ Configuration files
+*.yml
+*.yaml
+*.gitignore
+.env*
+.husky/**
+lighthouserc.json
+.claude.json
+.claude.json.backup
+.eslintrc.js
+.prettierrc.js
+.lintstagedrc.js
+jest.*.js
+next.config.js
+tailwind.config.js
+
+# 🛠️ System files
+*.dat
+*.LOG*
+*.ini
+ntuser.*
+NTUSER.*
+.gitconfig
+.my.cnf
+.pgpass
+.lesshst
+.node_repl_history
+
+# 🐳 Docker and deployment files
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# 🔧 Build scripts and batch files
+*.bat
+*.sh
+*.ps1
+
+# 📊 Data files - solo permitir archivos específicos
+*.json
+!package.json
+!tsconfig.json
+
+# 🎯 User-specific files
+**/AppData/**
+**/Contacts/**
+**/Desktop/**
+**/Documents/**
+**/Downloads/**
+**/Music/**
+**/Pictures/**
+**/Videos/**
+**/"Application Data"/**
+**/"Saved Games"/**
+**/OneDrive/**

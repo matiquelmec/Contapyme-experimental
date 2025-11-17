@@ -1,0 +1,285 @@
+# 🚀 ContaPyme CI/CD Pipeline - Enterprise Grade
+name: 🏭 Continuous Integration
+
+on:
+  push:
+    branches: [main, develop, feature/*, bugfix/*, hotfix/*]
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# Cancel in-progress runs on new pushes to same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '18'
+  PNPM_VERSION: '8'
+
+jobs:
+  # 🔍 Code Quality & Linting
+  quality:
+    name: 🔍 Code Quality
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for better analysis
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: |
+          npm ci --prefer-offline --no-audit --progress=false
+          npm ls --depth=0
+
+      - name: 📋 Cache for faster runs
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
+      - name: 🎨 Run Prettier check
+        run: npm run format:check
+
+      - name: 📝 Run ESLint
+        run: npm run lint:strict
+
+      - name: 🔍 TypeScript type check
+        run: npm run type-check
+
+      - name: 📊 Upload ESLint report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: eslint-report
+          path: eslint-report.html
+          retention-days: 30
+
+  # 🧪 Testing Suite
+  test:
+    name: 🧪 Test Suite
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    strategy:
+      matrix:
+        test-type: [unit, integration]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: 🧪 Run tests with coverage
+        run: |
+          if [ "${{ matrix.test-type }}" = "unit" ]; then
+            npm run test:ci
+          else
+            npm run test:integration
+          fi
+
+      - name: 📊 Upload coverage to Codecov
+        if: matrix.test-type == 'unit'
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-${{ matrix.test-type }}
+
+      - name: 📈 Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-${{ matrix.test-type }}
+          path: |
+            coverage/
+            junit.xml
+          retention-days: 30
+
+  # 🏗️ Build Verification
+  build:
+    name: 🏗️ Build Verification
+    runs-on: ubuntu-latest
+    needs: [quality, test]
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: 🏗️ Build application
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+          CI: true
+
+      - name: 📦 Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-files
+          path: |
+            .next/
+            out/
+          retention-days: 7
+
+      - name: 📏 Bundle size analysis
+        run: |
+          npm run build:analyze
+          echo "Build completed successfully! 🎉"
+
+  # 🔒 Security Scanning
+  security:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔍 Run security audit
+        run: |
+          npm audit --audit-level moderate
+          npm outdated --depth=0 || true
+
+      - name: 🛡️ Run Snyk security scan
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=medium
+
+  # 🌍 Multi-Environment Testing
+  compatibility:
+    name: 🌍 Compatibility Test
+    runs-on: ${{ matrix.os }}
+    if: github.event.pull_request.draft == false
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node-version: ['18', '20']
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: 🧪 Run basic tests
+        run: npm run test:ci
+
+      - name: 🏗️ Test build
+        run: npm run build
+
+  # 📊 Performance Testing
+  performance:
+    name: 📊 Performance Test
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-files
+
+      - name: 🚀 Start application
+        run: |
+          npm run start &
+          sleep 30
+
+      - name: 🔍 Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          configPath: './lighthouserc.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  # ✅ Status Check
+  ci-success:
+    name: ✅ CI Success
+    runs-on: ubuntu-latest
+    needs: [quality, test, build, security, compatibility, performance]
+    if: always()
+
+    steps:
+      - name: 📊 Check all job results
+        run: |
+          if [[ "${{ needs.quality.result }}" != "success" ]]; then
+            echo "❌ Quality checks failed"
+            exit 1
+          fi
+          if [[ "${{ needs.test.result }}" != "success" ]]; then
+            echo "❌ Tests failed"
+            exit 1
+          fi
+          if [[ "${{ needs.build.result }}" != "success" ]]; then
+            echo "❌ Build failed"
+            exit 1
+          fi
+          if [[ "${{ needs.security.result }}" != "success" ]]; then
+            echo "⚠️ Security checks had issues (continuing)"
+          fi
+          if [[ "${{ needs.compatibility.result }}" != "success" ]]; then
+            echo "❌ Compatibility tests failed"
+            exit 1
+          fi
+          if [[ "${{ needs.performance.result }}" != "success" ]]; then
+            echo "⚠️ Performance tests had issues (continuing)"
+          fi
+          echo "✅ All critical CI checks passed!"
+
+      - name: 🎉 Success notification
+        run: echo "🚀 ContaPyme CI pipeline completed successfully!"
