@@ -87,6 +87,9 @@ export async function POST(request: NextRequest) {
         success: true,
         data: {
           missing_entities: [],
+          total_missing: 0,
+          total_analyzed: 0,
+          coverage_percentage: '0.0',
           message: 'No se encontraron RUTs válidos en el análisis RCV'
         }
       });
@@ -178,6 +181,9 @@ export async function POST(request: NextRequest) {
         success: true,
         data: {
           missing_entities: [],
+          total_missing: 0,
+          total_analyzed: rcvRuts.length,
+          coverage_percentage: '100.0',
           message: 'Todas las entidades del RCV ya están configuradas'
         }
       });
@@ -230,13 +236,19 @@ export async function POST(request: NextRequest) {
 
     console.log('📋 Entidades faltantes generadas:', missingEntities.length);
 
+    // Cálculo seguro de cobertura
+    const totalAnalyzed = rcvRuts.length;
+    const totalMissing = missingEntities.length;
+    const covered = totalAnalyzed - totalMissing;
+    const coveragePercentage = totalAnalyzed > 0 ? (covered / totalAnalyzed * 100) : 0;
+
     return NextResponse.json({
       success: true,
       data: {
         missing_entities: missingEntities,
-        total_missing: missingEntities.length,
-        total_analyzed: rcvRuts.length,
-        coverage_percentage: ((rcvRuts.length - missingEntities.length) / rcvRuts.length * 100).toFixed(1)
+        total_missing: totalMissing,
+        total_analyzed: totalAnalyzed,
+        coverage_percentage: coveragePercentage.toFixed(1)
       }
     });
 

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Exportación CSV Corregida</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { background: #007cba; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 10px 0; }
+        .result { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test Exportación CSV F29 - Codificación Corregida</h1>
+    
+    <div class="result">
+        <h3>🎯 Problema Identificado:</h3>
+        <p>✅ <strong>Caracteres especiales</strong> en campos como "Período", "Débito", "Créditos"</p>
+        <p>✅ <strong>Falta BOM (Byte Order Mark)</strong> para compatibilidad con Excel</p>
+        <p>✅ <strong>Codificación UTF-8</strong> incorrecta en blob</p>
+    </div>
+
+    <div class="result success">
+        <h3>🛠️ Soluciones Aplicadas:</h3>
+        <p>✅ Removidas tildes: "Período" → "Periodo", "Débito" → "Debito"</p>
+        <p>✅ Agregado BOM UTF-8 (0xEF, 0xBB, 0xBF) para Excel</p>
+        <p>✅ Mejorado encapsulado de campos con comillas dobles</p>
+        <p>✅ Codificación correcta con TextEncoder</p>
+    </div>
+
+    <button onclick="testOriginalExport()">❌ Probar Método Original (Con problemas)</button>
+    <button onclick="testCorrectedExport()">✅ Probar Método Corregido</button>
+
+    <div id="results"></div>
+
+    <script>
+        // Datos de prueba F29
+        const testResult = {
+            rut: '76.926.806-5',
+            periodo: '202411',
+            codigo563: 22658507,
+            codigo538: 4305260,
+            codigo537: 1911129,
+            codigo062: 56646,
+            codigo077: 0,
+            codigo048: 0,
+            codigo049: 30639,
+            codigo562: 1485730,
+            codigo151: 0,
+            comprasNetas: 22659263,
+            ivaDeterminado: 2394131,
+            margenBruto: 0,
+            totalAPagar: 2481416,
+            confidence: 100,
+            method: 'Precision Parser - Caracteres Normalizados'
+        };
+
+        function showResult(message, isSuccess = true) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `result ${isSuccess ? 'success' : 'error'}`;
+            div.innerHTML = message;
+            results.appendChild(div);
+        }
+
+        // Método original con problemas
+        function testOriginalExport() {
+            const csvData = [
+                ['Campo', 'Valor', 'Código'], // ❌ Con tilde
+                ['RUT', testResult.rut, ''],
+                ['Período', testResult.periodo, ''], // ❌ Con tilde
+                ['Ventas Netas', testResult.codigo563.toString(), '563'],
+                ['Débito Fiscal', testResult.codigo538.toString(), '538'], // ❌ Con tilde
+                ['Total Créditos', testResult.codigo537.toString(), '537'], // ❌ Con tilde
+                ['Método', testResult.method, ''] // ❌ Con tilde
+            ];
+
+            const csvContent = csvData.map(row => row.join(',')).join('\\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            
+            downloadFile(blob, 'F29_ORIGINAL_CON_PROBLEMAS.csv');
+            showResult('❌ <strong>Exportado con método original</strong><br>- Contiene tildes problemáticas<br>- Sin BOM para Excel<br>- Campos sin encapsular', false);
+        }
+
+        // Método corregido
+        function testCorrectedExport() {
+            const csvData = [
+                ['Campo', 'Valor', 'Codigo'], // ✅ Sin tilde
+                ['RUT', testResult.rut, ''],
+                ['Periodo', testResult.periodo, ''], // ✅ Sin tilde
+                ['Ventas Netas', testResult.codigo563.toString(), '563'],
+                ['Debito Fiscal', testResult.codigo538.toString(), '538'], // ✅ Sin tilde
+                ['Total Creditos', testResult.codigo537.toString(), '537'], // ✅ Sin tilde
+                ['PPM', testResult.codigo062.toString(), '062'],
+                ['Remanente', testResult.codigo077.toString(), '077'],
+                ['Prestamo Solidario', testResult.codigo049.toString(), '049'], // ✅ Sin tilde
+                ['Compras Netas Adicionales', testResult.codigo562.toString(), '562'],
+                ['Compras Netas (Calculado)', testResult.comprasNetas.toString(), 'Calc'],
+                ['IVA Determinado', testResult.ivaDeterminado.toString(), 'Calc'],
+                ['Margen Bruto', testResult.margenBruto.toString(), 'Calc'],
+                ['Total a Pagar', testResult.totalAPagar.toString(), 'Calc'],
+                ['Confianza (%)', testResult.confidence.toString(), ''],
+                ['Metodo', testResult.method, ''] // ✅ Sin tilde
+            ];
+
+            // ✅ Crear contenido CSV con BOM para compatibilidad con Excel
+            const csvContent = csvData.map(row => row.map(cell => `"${cell}"`).join(',')).join('\\n');
+            const bomUtf8 = new Uint8Array([0xEF, 0xBB, 0xBF]); // BOM UTF-8
+            const csvContentWithBom = new TextEncoder().encode(csvContent);
+            const finalContent = new Uint8Array(bomUtf8.length + csvContentWithBom.length);
+            finalContent.set(bomUtf8);
+            finalContent.set(csvContentWithBom, bomUtf8.length);
+            
+            const blob = new Blob([finalContent], { type: 'text/csv;charset=utf-8;' });
+            
+            downloadFile(blob, 'F29_CORREGIDO_UTF8_BOM.csv');
+            showResult('✅ <strong>Exportado con método corregido</strong><br>- Sin caracteres especiales<br>- Con BOM UTF-8 para Excel<br>- Campos correctamente encapsulados<br>- Compatible con todos los sistemas', true);
+        }
+
+        function downloadFile(blob, filename) {
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

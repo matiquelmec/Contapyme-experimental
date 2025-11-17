@@ -1,9 +1,26 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import { Header } from '@/components/layout';
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { FileText, Upload, AlertCircle, CheckCircle, X, BarChart3, Download, TrendingUp, Building2, Trash2, Play, Calculator, FileDown } from 'lucide-react';
+import Link from 'next/link';
+import {
+  FileText,
+  Upload,
+  AlertCircle,
+  CheckCircle,
+  X,
+  BarChart3,
+  Download,
+  TrendingUp,
+  Building2,
+  Trash2,
+  Play,
+  Calculator,
+  FileDown,
+  Activity,
+  DollarSign,
+  Users,
+  AlertTriangle
+} from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import MissingEntitiesManager from '@/components/accounting/MissingEntitiesManager';
 
@@ -60,7 +77,7 @@ interface PreliminaryJournalEntry {
   is_balanced: boolean;
 }
 
-export default function RCVAnalysisMultiplePage() {
+export default function RCVAnalysisPage() {
   const [files, setFiles] = useState<FileResult[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const [rcvType, setRcvType] = useState<'purchase' | 'sales'>('purchase');
@@ -75,7 +92,7 @@ export default function RCVAnalysisMultiplePage() {
   const [exportingPDF, setExportingPDF] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const companyId = '8033ee69-b420-4d91-ba0e-482f46cd6fce'; // TODO: Get from auth
+  const companyId = '8033ee69-b420-4d91-ba0e-482f46cd6fce';
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -94,7 +111,7 @@ export default function RCVAnalysisMultiplePage() {
 
     const droppedFiles = Array.from(e.dataTransfer.files);
     const csvFiles = droppedFiles.filter(file => file.name.toLowerCase().endsWith('.csv'));
-    
+
     if (csvFiles.length === 0) {
       alert('Por favor, selecciona archivos CSV válidos');
       return;
@@ -114,7 +131,7 @@ export default function RCVAnalysisMultiplePage() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
     const csvFiles = selectedFiles.filter(file => file.name.toLowerCase().endsWith('.csv'));
-    
+
     if (csvFiles.length === 0) {
       alert('Por favor, selecciona archivos CSV válidos');
       return;
@@ -129,7 +146,7 @@ export default function RCVAnalysisMultiplePage() {
     }));
 
     setFiles(prev => [...prev, ...newFileResults]);
-    
+
     if (e.target) {
       e.target.value = '';
     }
@@ -152,8 +169,7 @@ export default function RCVAnalysisMultiplePage() {
     const fileData = files[fileIndex];
     if (!fileData || fileData.uploading) return;
 
-    // Marcar archivo como en proceso
-    setFiles(prev => prev.map((f, i) => 
+    setFiles(prev => prev.map((f, i) =>
       i === fileIndex ? { ...f, uploading: true, error: null } : f
     ));
 
@@ -164,13 +180,6 @@ export default function RCVAnalysisMultiplePage() {
       formData.append('rcv_type', rcvType);
       formData.append('store_in_db', storeInDB.toString());
 
-      console.log('🚀 Procesando archivo RCV:', {
-        fileName: fileData.file.name,
-        rcvType,
-        storeInDB,
-        companyId
-      });
-
       const response = await fetch('/api/parse-rcv', {
         method: 'POST',
         body: formData,
@@ -179,7 +188,7 @@ export default function RCVAnalysisMultiplePage() {
       const data = await response.json();
 
       if (data.success && data.data) {
-        setFiles(prev => prev.map((f, i) => 
+        setFiles(prev => prev.map((f, i) =>
           i === fileIndex ? {
             ...f,
             uploading: false,
@@ -188,9 +197,8 @@ export default function RCVAnalysisMultiplePage() {
             error: null
           } : f
         ));
-        console.log(`✅ RCV ${fileData.file.name} procesado exitosamente`);
       } else {
-        setFiles(prev => prev.map((f, i) => 
+        setFiles(prev => prev.map((f, i) =>
           i === fileIndex ? {
             ...f,
             uploading: false,
@@ -199,8 +207,7 @@ export default function RCVAnalysisMultiplePage() {
         ));
       }
     } catch (err) {
-      console.error('Error procesando RCV:', err);
-      setFiles(prev => prev.map((f, i) => 
+      setFiles(prev => prev.map((f, i) =>
         i === fileIndex ? {
           ...f,
           uploading: false,
@@ -215,7 +222,6 @@ export default function RCVAnalysisMultiplePage() {
 
     setGlobalUploading(true);
 
-    // Procesar archivos en lotes de 3 para no sobrecargar el servidor
     const batchSize = 3;
     for (let i = 0; i < files.length; i += batchSize) {
       const batch = [];
@@ -223,8 +229,7 @@ export default function RCVAnalysisMultiplePage() {
         batch.push(processFile(i + j));
       }
       await Promise.all(batch);
-      
-      // Pequeña pausa entre lotes
+
       if (i + batchSize < files.length) {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
@@ -244,8 +249,18 @@ export default function RCVAnalysisMultiplePage() {
   const formatDate = (dateStr: string) => {
     if (!dateStr) return 'N/A';
     try {
-      const [day, month, year] = dateStr.split('/');
-      return `${day}/${month}/${year}`;
+      // Manejar formato ISO (YYYY-MM-DD)
+      if (dateStr.includes('-')) {
+        const [year, month, day] = dateStr.split('-');
+        return `${day}/${month}/${year}`;
+      }
+      // Manejar formato DD/MM/YYYY
+      else if (dateStr.includes('/')) {
+        const [day, month, year] = dateStr.split('/');
+        return `${day}/${month}/${year}`;
+      }
+      // Si no reconoce el formato, retornar tal como viene
+      return dateStr;
     } catch {
       return dateStr;
     }
@@ -254,9 +269,18 @@ export default function RCVAnalysisMultiplePage() {
   const formatPeriod = (dateStr: string) => {
     if (!dateStr) return 'N/A';
     try {
-      const [day, month, year] = dateStr.split('/');
-      // Formato YYYYMM (6 caracteres) en lugar de YYYY-MM (7 caracteres)
-      return `${year}${month.padStart(2, '0')}`;
+      // Manejar formato ISO (YYYY-MM-DD)
+      if (dateStr.includes('-')) {
+        const [year, month, day] = dateStr.split('-');
+        return `${year}${month.padStart(2, '0')}`;
+      }
+      // Manejar formato DD/MM/YYYY
+      else if (dateStr.includes('/')) {
+        const [day, month, year] = dateStr.split('/');
+        return `${year}${month.padStart(2, '0')}`;
+      }
+      // Si no reconoce el formato, retornar tal como viene
+      return dateStr;
     } catch {
       return dateStr;
     }
@@ -264,12 +288,12 @@ export default function RCVAnalysisMultiplePage() {
 
   const generateJournalEntry = async () => {
     if (!result) return;
-    
+
     setGeneratingJournalEntry(true);
-    
+
     try {
       const period = formatPeriod(result.periodoInicio);
-      
+
       const response = await fetch('/api/accounting/rcv-analysis/journal-entry', {
         method: 'POST',
         headers: {
@@ -287,13 +311,10 @@ export default function RCVAnalysisMultiplePage() {
 
       if (data.success) {
         setJournalEntry(data.data);
-        console.log('✅ Asiento contable preliminar generado:', data.data);
       } else {
-        console.error('❌ Error generando asiento contable:', data.error);
         alert('Error al generar el asiento contable: ' + data.error);
       }
     } catch (error) {
-      console.error('❌ Error en request de asiento contable:', error);
       alert('Error de conexión al generar asiento contable');
     } finally {
       setGeneratingJournalEntry(false);
@@ -308,11 +329,11 @@ export default function RCVAnalysisMultiplePage() {
 
     setPostingToJournal(true);
     setShowConfirmDialog(false);
-    
+
     try {
       const period = formatPeriod(result.periodoInicio);
       const ledger_id = currentFile?.storageResult?.ledger_id || null;
-      
+
       const response = await fetch('/api/accounting/rcv-analysis/post-to-journal', {
         method: 'POST',
         headers: {
@@ -336,24 +357,18 @@ export default function RCVAnalysisMultiplePage() {
               `Total Debe: ${formatCurrency(data.data.total_debit)}\n` +
               `Total Haber: ${formatCurrency(data.data.total_credit)}\n\n` +
               `El asiento ha sido creado en el libro diario.`);
-        
-        // Opcional: Limpiar el asiento preliminar después de contabilizar
+
         setJournalEntry(null);
-        
-        console.log('✅ Asiento contabilizado en libro diario:', data.data);
       } else {
-        console.error('❌ Error contabilizando asiento:', data.error);
         alert('Error al contabilizar el asiento: ' + data.error);
       }
     } catch (error) {
-      console.error('❌ Error en request de contabilización:', error);
       alert('Error de conexión al contabilizar asiento');
     } finally {
       setPostingToJournal(false);
     }
   };
 
-  // Obtener estadísticas globales
   const getGlobalStats = () => {
     const processed = files.filter(f => f.result && !f.error);
     const totalFiles = files.length;
@@ -376,7 +391,6 @@ export default function RCVAnalysisMultiplePage() {
   const currentFile = files[activeTab];
   const result = currentFile?.result;
 
-  // Preparar datos para gráficos del archivo activo
   const chartData = result ? result.proveedoresPrincipales.slice(0, 10).map(p => ({
     name: p.razonSocial.length > 25 ? p.razonSocial.substring(0, 25) + '...' : p.razonSocial,
     fullName: p.razonSocial,
@@ -391,17 +405,13 @@ export default function RCVAnalysisMultiplePage() {
 
   const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4', '#84CC16', '#F97316', '#EC4899', '#6B7280'];
 
-  // Función para extraer RUT y período del nombre del archivo
   const extractFileInfo = (fileName: string) => {
-    // Ejemplo: RCV_COMPRA_REGISTRO_77199932-8_202507.csv
-    // Patrón: RCV_[TIPO]_REGISTRO_[RUT]_[YYYYMM].csv
     const match = fileName.match(/RCV_(?:COMPRA|VENTA)_REGISTRO_(\d{7,8}-[\dkK])_(\d{6})/i);
-    
+
     if (match) {
-      const rut = match[1]; // 77199932-8
-      const yearMonth = match[2]; // 202507
-      
-      // Convertir YYYYMM a formato legible
+      const rut = match[1];
+      const yearMonth = match[2];
+
       const year = yearMonth.substring(0, 4);
       const month = yearMonth.substring(4, 6);
       const monthNames = [
@@ -410,13 +420,12 @@ export default function RCVAnalysisMultiplePage() {
       ];
       const monthName = monthNames[parseInt(month) - 1];
       const period = `${monthName} ${year}`;
-      
+
       return { rut, period, yearMonth };
     }
-    
-    // Fallback si no coincide el patrón
-    return { 
-      rut: '12.345.678-9', 
+
+    return {
+      rut: '12.345.678-9',
       period: `${formatDate(result?.periodoInicio || '')} - ${formatDate(result?.periodoFin || '')}`,
       yearMonth: result?.periodoInicio?.replace(/\//g, '') || '010125'
     };
@@ -426,19 +435,16 @@ export default function RCVAnalysisMultiplePage() {
     if (!result || !currentFile) return;
 
     setExportingPDF(true);
-    
+
     try {
-      // Importar dinámicamente las librerías
       const html2canvas = (await import('html2canvas')).default;
       const jsPDF = (await import('jspdf')).default;
 
-      // Crear PDF con múltiples páginas
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
       let currentY = 0;
 
-      // FUNCIÓN AUXILIAR: Agregar nueva página si es necesario
       const addPageIfNeeded = (neededHeight: number) => {
         if (currentY + neededHeight > pdfHeight - 20) {
           pdf.addPage();
@@ -446,7 +452,6 @@ export default function RCVAnalysisMultiplePage() {
         }
       };
 
-      // FUNCIÓN AUXILIAR: Capturar elemento como imagen
       const captureElement = async (element: HTMLElement) => {
         const canvas = await html2canvas(element, {
           scale: 2,
@@ -457,16 +462,14 @@ export default function RCVAnalysisMultiplePage() {
         return canvas.toDataURL('image/png');
       };
 
-      // ===== PÁGINA 1: HEADER Y MÉTRICAS =====
       const headerContainer = document.createElement('div');
       headerContainer.style.cssText = `
-        position: absolute; left: -9999px; width: 800px; background: white; 
+        position: absolute; left: -9999px; width: 800px; background: white;
         padding: 40px; font-family: Arial, sans-serif;
       `;
-      
-      // Extraer información del archivo
+
       const fileInfo = extractFileInfo(currentFile.file.name);
-      
+
       headerContainer.innerHTML = `
         <div style="margin-bottom: 30px; text-align: center; border-bottom: 2px solid #3B82F6; padding-bottom: 20px;">
           <h1 style="color: #1E40AF; margin-bottom: 10px; font-size: 28px; font-weight: bold;">ContaPyme - Análisis RCV</h1>
@@ -474,7 +477,7 @@ export default function RCVAnalysisMultiplePage() {
           <p style="color: #6B7280; margin: 5px 0; font-size: 16px; font-weight: 500;">Período: ${fileInfo.period}</p>
           <p style="color: #6B7280; margin: 0; font-size: 14px;">Generado el ${new Date().toLocaleDateString('es-CL')} a las ${new Date().toLocaleTimeString('es-CL')}</p>
         </div>
-        
+
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 30px;">
           <div style="background: linear-gradient(135deg, #F3F4F6, #E5E7EB); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid #D1D5DB;">
             <h3 style="color: #374151; margin-bottom: 15px; font-size: 16px; font-weight: 600;">Total Transacciones</h3>
@@ -490,131 +493,138 @@ export default function RCVAnalysisMultiplePage() {
           </div>
         </div>
       `;
-      
+
       document.body.appendChild(headerContainer);
       const headerImg = await captureElement(headerContainer);
       document.body.removeChild(headerContainer);
 
-      // Agregar header al PDF
       const headerHeight = 80;
       pdf.addImage(headerImg, 'PNG', 0, currentY, pdfWidth, headerHeight);
       currentY += headerHeight + 10;
 
-      // ===== CAPTURAR GRÁFICOS =====
-      console.log('📊 Capturando gráficos...');
-      
-      // Buscar los contenedores de gráficos existentes
+      // Capturar gráfico de barras Top 10 Proveedores
       const barChartContainer = document.querySelector('[data-chart="bar"]') as HTMLElement;
-      const pieChartContainer = document.querySelector('[data-chart="pie"]') as HTMLElement;
-
       if (barChartContainer) {
-        addPageIfNeeded(110);
+        console.log('📊 Capturando gráfico Top 10 Proveedores...');
+        addPageIfNeeded(120);
         const barChartImg = await captureElement(barChartContainer);
-        pdf.addImage(barChartImg, 'PNG', 2, currentY, pdfWidth - 4, 105);
-        currentY += 115;
+        pdf.addImage(barChartImg, 'PNG', 5, currentY, pdfWidth - 10, 110);
+        currentY += 120;
       }
 
+      // Capturar gráfico de concentración (pie chart)
+      const pieChartContainer = document.querySelector('[data-chart="pie"]') as HTMLElement;
       if (pieChartContainer) {
-        addPageIfNeeded(110);
+        console.log('📊 Capturando análisis de concentración...');
+        addPageIfNeeded(120);
         const pieChartImg = await captureElement(pieChartContainer);
-        pdf.addImage(pieChartImg, 'PNG', 2, currentY, pdfWidth - 4, 105);
-        currentY += 115;
+        pdf.addImage(pieChartImg, 'PNG', 5, currentY, pdfWidth - 10, 110);
+        currentY += 120;
       }
 
-      // ===== TABLA COMPLETA DE TODOS LOS PROVEEDORES =====
-      addPageIfNeeded(30);
-      
-      // Título de la tabla
+      // Agregar sección de tabla detallada con mejor control de páginas
+      addPageIfNeeded(40);
+
+      // Título de la sección de tabla
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(55, 65, 81);
+      pdf.setTextColor(30, 64, 175); // Blue-700
       pdf.text(`Detalle Completo - Todos los ${rcvType === 'purchase' ? 'Proveedores' : 'Clientes'} (${result.proveedoresPrincipales.length})`, 20, currentY);
-      currentY += 15;
+      currentY += 20;
 
-      // Configuración de la tabla
       const startY = currentY;
-      const rowHeight = 8;
-      const colWidths = [25, 80, 20, 35, 20]; // RUT, Razón Social, Trans, Monto, %
+      const rowHeight = 7;
+      const colWidths = [30, 75, 20, 35, 20];
       let currentX = 20;
 
-      // Headers de la tabla
+      // Headers de tabla
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'bold');
-      pdf.setFillColor(249, 250, 251);
-      pdf.rect(20, currentY, pdfWidth - 40, rowHeight, 'F');
-      
+      pdf.setFillColor(59, 130, 246); // Blue-500
+      pdf.setTextColor(255, 255, 255); // White text
+      pdf.rect(20, currentY, pdfWidth - 40, rowHeight + 2, 'F');
+
       const headers = ['RUT', 'Razón Social', 'Trans.', 'Monto Calculado', '% Total'];
       headers.forEach((header, i) => {
-        pdf.text(header, currentX + 2, currentY + 5);
+        pdf.text(header, currentX + 2, currentY + 6);
         currentX += colWidths[i];
       });
-      
-      currentY += rowHeight;
 
-      // Datos de todos los proveedores
+      currentY += rowHeight + 4;
+
+      // Datos de tabla con mejor formatting
       pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(0, 0, 0);
+
       result.proveedoresPrincipales.forEach((proveedor, index) => {
-        addPageIfNeeded(rowHeight + 5);
-        
+        // Verificar si necesita nueva página
+        addPageIfNeeded(rowHeight + 3);
+
         currentX = 20;
-        
-        // Alternar color de fondo
+
+        // Fondo alternado para filas
         if (index % 2 === 0) {
-          pdf.setFillColor(249, 250, 251);
-          pdf.rect(20, currentY, pdfWidth - 40, rowHeight, 'F');
+          pdf.setFillColor(248, 250, 252); // Gray-50
+          pdf.rect(20, currentY - 1, pdfWidth - 40, rowHeight, 'F');
         }
-        
+
         // RUT
         pdf.setFontSize(8);
-        pdf.text(proveedor.rutProveedor, currentX + 2, currentY + 5);
+        pdf.text(proveedor.rutProveedor, currentX + 2, currentY + 4);
         currentX += colWidths[0];
-        
-        // Razón Social (truncar si es muy larga)
+
+        // Razón Social (truncar si es muy largo)
         pdf.setFontSize(9);
-        const razonSocial = proveedor.razonSocial.length > 35 
-          ? proveedor.razonSocial.substring(0, 35) + '...' 
+        const razonSocial = proveedor.razonSocial.length > 32
+          ? proveedor.razonSocial.substring(0, 32) + '...'
           : proveedor.razonSocial;
-        pdf.text(razonSocial, currentX + 2, currentY + 5);
+        pdf.text(razonSocial, currentX + 2, currentY + 4);
         currentX += colWidths[1];
-        
+
         // Transacciones
         pdf.setFontSize(9);
-        pdf.text(proveedor.totalTransacciones.toString(), currentX + 2, currentY + 5);
+        pdf.text(proveedor.totalTransacciones.toString(), currentX + 8, currentY + 4);
         currentX += colWidths[2];
-        
-        // Monto (color rojo si es negativo)
+
+        // Monto (con color para negativos)
         pdf.setFontSize(9);
         if (proveedor.montoCalculado < 0) {
-          pdf.setTextColor(220, 38, 38); // Rojo
+          pdf.setTextColor(220, 38, 38); // Red for negative amounts
         } else {
-          pdf.setTextColor(0, 0, 0); // Negro
+          pdf.setTextColor(0, 0, 0);
         }
-        const montoText = formatCurrency(proveedor.montoCalculado).replace(/\s/g, '');
-        pdf.text(montoText, currentX + 2, currentY + 5);
-        pdf.setTextColor(0, 0, 0); // Resetear color
+        const montoText = formatCurrency(proveedor.montoCalculado).replace(/\s+/g, '');
+        pdf.text(montoText, currentX + 2, currentY + 4);
+        pdf.setTextColor(0, 0, 0);
         currentX += colWidths[3];
-        
+
         // Porcentaje
         pdf.setFontSize(9);
-        pdf.text(`${proveedor.porcentajeDelTotal.toFixed(2)}%`, currentX + 2, currentY + 5);
-        
+        pdf.text(`${proveedor.porcentajeDelTotal.toFixed(2)}%`, currentX + 8, currentY + 4);
+
         currentY += rowHeight;
       });
 
-      // ===== FOOTER =====
-      addPageIfNeeded(20);
-      currentY += 10;
-      pdf.setFontSize(8);
-      pdf.setTextColor(107, 114, 128);
-      pdf.text('Análisis generado por ContaPyme - Sistema Contable para PyMEs', 20, currentY);
-      pdf.text(`© 2025 ContaPyme. Reporte generado automáticamente.`, 20, currentY + 5);
+      // Footer con mejor espaciado y diseño
+      addPageIfNeeded(25);
+      currentY += 15;
 
-      // Descargar el PDF
+      // Línea separadora
+      pdf.setDrawColor(209, 213, 219); // Gray-300
+      pdf.line(20, currentY, pdfWidth - 20, currentY);
+      currentY += 10;
+
+      pdf.setFontSize(9);
+      pdf.setTextColor(107, 114, 128); // Gray-500
+      pdf.text('Análisis generado por ContaPyme - Sistema Contable para PyMEs', 20, currentY);
+      currentY += 6;
+      pdf.setFontSize(8);
+      pdf.text(`© 2025 ContaPyme. Reporte generado automáticamente el ${new Date().toLocaleDateString('es-CL')} a las ${new Date().toLocaleTimeString('es-CL')}`, 20, currentY);
+
       const fileName = `Analisis_RCV_Completo_${fileInfo.rut.replace('-', '')}_${fileInfo.yearMonth}.pdf`;
       pdf.save(fileName);
-      
+
     } catch (error) {
-      console.error('Error generando PDF:', error);
       alert('Error al generar el PDF. Inténtalo nuevamente.');
     } finally {
       setExportingPDF(false);
@@ -643,7 +653,7 @@ export default function RCVAnalysisMultiplePage() {
     const csvContent = csvData.map(row => row.join(',')).join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
-    
+
     if (link.download !== undefined) {
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);
@@ -659,125 +669,77 @@ export default function RCVAnalysisMultiplePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header 
-        title="Análisis RCV Múltiple"
-        subtitle="Procesa múltiples registros de compras y ventas simultáneamente con análisis comparativo"
-        showBackButton={true}
-        backHref="/accounting"
-        actions={
-          <div className="flex space-x-2">
-            <Button variant="outline" size="sm" onClick={() => window.open('/accounting/rcv-history', '_blank')}>
-              📋 Ver Historial RCV
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => window.open('/accounting/f29-analysis', '_blank')}>
-              📊 Análisis F29
-            </Button>
+      {/* Hero Section - Redesigned */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8 overflow-hidden mx-4 mt-6 max-w-7xl lg:mx-auto">
+        <div className="bg-gradient-to-r from-slate-900 to-slate-700 px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-white mb-2">Análisis RCV Inteligente</h1>
+              <p className="text-slate-300 text-sm">
+                Procesa múltiples registros de compras y ventas con análisis automático de proveedores y clientes
+              </p>
+            </div>
+            <Link href="/accounting">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors">
+                <Activity className="w-4 h-4" />
+                <span>Centro Contable</span>
+              </button>
+            </Link>
           </div>
-        }
-      />
+        </div>
 
-      <div className="max-w-7xl mx-auto py-8 px-4 space-y-8">
-        
-        {/* Stats Overview */}
+        {/* Quick Stats */}
         {files.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Archivos</p>
-                    <p className="text-2xl font-bold text-blue-600">{stats.totalFiles}</p>
-                  </div>
-                  <FileText className="w-8 h-8 text-blue-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Procesados</p>
-                    <p className="text-2xl font-bold text-green-600">
-                      {stats.totalProcessed}/{stats.totalFiles}
-                    </p>
-                  </div>
-                  <CheckCircle className="w-8 h-8 text-green-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Transacciones</p>
-                    <p className="text-2xl font-bold text-purple-600">
-                      {stats.totalTransactions.toLocaleString()}
-                    </p>
-                  </div>
-                  <BarChart3 className="w-8 h-8 text-purple-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{rcvType === 'purchase' ? 'Proveedores' : 'Clientes'}</p>
-                    <p className="text-2xl font-bold text-orange-600">
-                      {stats.totalSuppliers.toLocaleString()}
-                    </p>
-                  </div>
-                  <Building2 className="w-8 h-8 text-orange-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Valor Total</p>
-                    <p className={`text-2xl font-bold ${stats.totalAmount >= 0 ? 'text-gray-900' : 'text-red-600'}`}>
-                      {formatCurrency(stats.totalAmount)}
-                    </p>
-                  </div>
-                  <TrendingUp className="w-8 h-8 text-gray-600" />
-                </div>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-3 divide-x divide-gray-200 bg-gray-50">
+            <div className="px-6 py-4 text-center">
+              <div className="text-lg font-semibold text-gray-900">{stats.totalProcessed}/{stats.totalFiles}</div>
+              <div className="text-sm text-gray-600">Archivos Procesados</div>
+            </div>
+            <div className="px-6 py-4 text-center">
+              <div className="text-lg font-semibold text-gray-900">{stats.totalTransactions.toLocaleString()}</div>
+              <div className="text-sm text-gray-600">Transacciones</div>
+            </div>
+            <div className="px-6 py-4 text-center">
+              <div className="text-lg font-semibold text-gray-900">{formatCurrency(stats.totalAmount)}</div>
+              <div className="text-sm text-gray-600">Monto Total</div>
+            </div>
           </div>
         )}
+      </div>
 
-        {/* Upload Section */}
-        <Card>
-          <CardHeader>
+      <div className="max-w-7xl mx-auto px-4 space-y-8">
+
+        {/* Upload Section - Simplified */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="border-b border-gray-200 px-6 py-4">
             <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center space-x-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-blue-100">
                   <FileText className="w-5 h-5 text-blue-600" />
-                  <span>Cargar Archivos RCV Múltiples</span>
-                </CardTitle>
-                <CardDescription>
-                  Arrastra y suelta múltiples archivos CSV del SII para procesarlos simultáneamente. Todos deben ser del mismo tipo (compras o ventas).
-                </CardDescription>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Cargar Archivos RCV</h3>
+                  <p className="text-sm text-gray-600">Arrastra múltiples archivos CSV del SII aquí</p>
+                </div>
               </div>
               {files.length > 0 && (
-                <Button variant="outline" size="sm" onClick={clearAllFiles}>
-                  <Trash2 className="w-4 h-4 mr-1" />
+                <button
+                  onClick={clearAllFiles}
+                  className="text-red-600 hover:text-red-700 flex items-center gap-1 text-sm"
+                >
+                  <Trash2 className="w-4 h-4" />
                   Limpiar Todo
-                </Button>
+                </button>
               )}
             </div>
-          </CardHeader>
-          <CardContent>
+          </div>
+
+          <div className="p-6">
             {/* Upload Area */}
             <div
               className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors mb-6 ${
-                dragActive 
-                  ? 'border-blue-400 bg-blue-50' 
+                dragActive
+                  ? 'border-blue-400 bg-blue-50'
                   : 'border-gray-300 hover:border-blue-400'
               }`}
               onDragEnter={handleDrag}
@@ -789,17 +751,17 @@ export default function RCVAnalysisMultiplePage() {
                 <Upload className="w-8 h-8 text-blue-600" />
               </div>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                Arrastra múltiples archivos RCV aquí
+                Arrastra archivos RCV aquí
               </h4>
               <p className="text-gray-600 mb-4">
-                o haz clic para seleccionar varios archivos CSV simultáneamente
+                o haz clic para seleccionar archivos CSV
               </p>
-              <Button 
-                variant="primary"
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
                 onClick={() => fileInputRef.current?.click()}
               >
-                Seleccionar Archivos CSV
-              </Button>
+                Seleccionar Archivos
+              </button>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -808,9 +770,6 @@ export default function RCVAnalysisMultiplePage() {
                 onChange={handleFileSelect}
                 className="hidden"
               />
-              <p className="text-xs text-gray-500 mt-2">
-                Solo archivos CSV • Máximo 10MB por archivo • Sin límite de cantidad
-              </p>
             </div>
 
             {/* Files List */}
@@ -820,12 +779,12 @@ export default function RCVAnalysisMultiplePage() {
                   {/* Tipo de RCV */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Tipo de RCV (aplicable a todos los archivos)
+                      Tipo de RCV
                     </label>
                     <select
                       value={rcvType}
                       onChange={(e) => setRcvType(e.target.value as 'purchase' | 'sales')}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       disabled={globalUploading || files.some(f => f.uploading)}
                     >
                       <option value="purchase">📈 Registro de Compras</option>
@@ -838,20 +797,18 @@ export default function RCVAnalysisMultiplePage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Almacenamiento
                     </label>
-                    <div className="flex items-center space-x-3 mt-2">
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={storeInDB}
-                          onChange={(e) => setStoreInDB(e.target.checked)}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                          disabled={globalUploading || files.some(f => f.uploading)}
-                        />
-                        <span className="ml-2 text-sm text-gray-700">
-                          💾 Guardar todos en base de datos
-                        </span>
-                      </label>
-                    </div>
+                    <label className="flex items-center mt-2">
+                      <input
+                        type="checkbox"
+                        checked={storeInDB}
+                        onChange={(e) => setStoreInDB(e.target.checked)}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        disabled={globalUploading || files.some(f => f.uploading)}
+                      />
+                      <span className="ml-2 text-sm text-gray-700">
+                        💾 Guardar en base de datos
+                      </span>
+                    </label>
                   </div>
                 </div>
 
@@ -870,16 +827,15 @@ export default function RCVAnalysisMultiplePage() {
                             {fileData.file.name}
                           </span>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
+                        <button
                           onClick={() => removeFile(index)}
                           disabled={fileData.uploading}
+                          className="text-gray-400 hover:text-red-500"
                         >
                           <X className="w-4 h-4" />
-                        </Button>
+                        </button>
                       </div>
-                      
+
                       <div className="text-xs text-gray-500 mb-2">
                         {(fileData.file.size / 1024 / 1024).toFixed(2)} MB
                       </div>
@@ -899,19 +855,17 @@ export default function RCVAnalysisMultiplePage() {
                       {fileData.result && !fileData.error && (
                         <div className="text-xs text-green-600 mb-2">
                           ✅ {fileData.result.totalTransacciones} transacciones
-                          {fileData.storageResult && ' • Almacenado en BD'}
+                          {fileData.storageResult && ' • Almacenado'}
                         </div>
                       )}
 
                       {fileData.result && (
-                        <Button
-                          variant="outline"
-                          size="sm"
+                        <button
                           onClick={() => setActiveTab(index)}
-                          fullWidth
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-sm font-medium"
                         >
                           Ver Análisis
-                        </Button>
+                        </button>
                       )}
                     </div>
                   ))}
@@ -919,42 +873,41 @@ export default function RCVAnalysisMultiplePage() {
 
                 {/* Process Button */}
                 <div className="flex justify-center">
-                  <Button
-                    variant="primary"
+                  <button
                     onClick={handleBatchAnalysis}
                     disabled={globalUploading || files.some(f => f.uploading)}
-                    loading={globalUploading}
-                    size="lg"
+                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-8 py-3 rounded-lg font-medium flex items-center gap-2 transition-colors"
                   >
-                    <Play className="w-5 h-5 mr-2" />
-                    {globalUploading ? 'Procesando Archivos...' : `Procesar ${files.length} Archivo${files.length !== 1 ? 's' : ''} como ${rcvType === 'purchase' ? 'Compras' : 'Ventas'}`}
-                  </Button>
+                    <Play className="w-5 h-5" />
+                    {globalUploading ? 'Procesando...' : `Procesar ${files.length} Archivo${files.length !== 1 ? 's' : ''}`}
+                  </button>
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Results Section */}
         {files.some(f => f.result) && (
           <>
             {/* File Tabs */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Resultados del Análisis</CardTitle>
-                <CardDescription>Selecciona un archivo para ver su análisis detallado</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2 mb-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="bg-gradient-to-r from-slate-900 to-slate-700 px-6 py-4">
+                <h3 className="text-xl font-bold text-white">Resultados del Análisis</h3>
+                <p className="text-slate-300 text-sm">Análisis inteligente de {rcvType === 'purchase' ? 'compras' : 'ventas'} y gestión automatizada</p>
+              </div>
+
+              <div className="border-b border-gray-200 bg-gray-50">
+                <div className="flex flex-wrap gap-2 p-4">
                   {files.map((fileData, index) => (
                     fileData.result && (
                       <button
                         key={index}
                         onClick={() => setActiveTab(index)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                           activeTab === index
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            ? 'bg-blue-600 text-white shadow-md'
+                            : 'bg-white text-gray-700 hover:bg-blue-50 border border-gray-200'
                         }`}
                       >
                         {fileData.file.name.replace('.csv', '')}
@@ -962,63 +915,68 @@ export default function RCVAnalysisMultiplePage() {
                     )
                   ))}
                 </div>
+              </div>
+
+              <div className="p-6">
 
                 {/* Current File Results */}
                 {currentFile?.result && (
                   <div className="space-y-6">
-                    {/* Summary Cards for Active File */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                      <Card>
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-medium text-gray-600">Total Transacciones</p>
-                              <p className="text-2xl font-bold text-gray-900">{result!.totalTransacciones.toLocaleString()}</p>
-                            </div>
-                            <FileText className="w-6 h-6 text-blue-600" />
+                    {/* Summary Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-5 rounded-xl border border-blue-200 hover:shadow-md transition-shadow">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-blue-600 rounded-lg shadow-sm">
+                            <FileText className="w-5 h-5 text-white" />
                           </div>
-                        </CardContent>
-                      </Card>
+                          <div>
+                            <p className="text-xs font-medium text-blue-700 uppercase tracking-wide">Transacciones</p>
+                            <p className="text-2xl font-bold text-blue-900">{result!.totalTransacciones.toLocaleString()}</p>
+                          </div>
+                        </div>
+                      </div>
 
-                      <Card>
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-medium text-gray-600">Total {rcvType === 'purchase' ? 'Proveedores' : 'Clientes'}</p>
-                              <p className="text-2xl font-bold text-gray-900">{result!.proveedoresPrincipales.length}</p>
-                            </div>
-                            <Building2 className="w-6 h-6 text-green-600" />
+                      <div className="bg-gradient-to-br from-green-50 to-green-100 p-5 rounded-xl border border-green-200 hover:shadow-md transition-shadow">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-green-600 rounded-lg shadow-sm">
+                            <Building2 className="w-5 h-5 text-white" />
                           </div>
-                        </CardContent>
-                      </Card>
+                          <div>
+                            <p className="text-xs font-medium text-green-700 uppercase tracking-wide">
+                              {rcvType === 'purchase' ? 'Proveedores' : 'Clientes'}
+                            </p>
+                            <p className="text-2xl font-bold text-green-900">{result!.proveedoresPrincipales.length}</p>
+                          </div>
+                        </div>
+                      </div>
 
-                      <Card>
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-medium text-gray-600">Monto Neto Calculado</p>
-                              <p className={`text-2xl font-bold ${result!.montoCalculadoGlobal >= 0 ? 'text-gray-900' : 'text-red-600'}`}>
-                                {formatCurrency(result!.montoCalculadoGlobal)}
-                              </p>
-                            </div>
-                            <TrendingUp className="w-6 h-6 text-purple-600" />
+                      <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-xl border border-purple-200 hover:shadow-md transition-shadow">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-purple-600 rounded-lg shadow-sm">
+                            <DollarSign className="w-5 h-5 text-white" />
                           </div>
-                        </CardContent>
-                      </Card>
+                          <div>
+                            <p className="text-xs font-medium text-purple-700 uppercase tracking-wide">Monto Total</p>
+                            <p className={`text-2xl font-bold ${result!.montoCalculadoGlobal >= 0 ? 'text-purple-900' : 'text-red-600'}`}>
+                              {formatCurrency(Math.abs(result!.montoCalculadoGlobal / 1000000))}M
+                            </p>
+                          </div>
+                        </div>
+                      </div>
 
-                      <Card>
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-medium text-gray-600">Período</p>
-                              <p className="text-lg font-bold text-gray-900">
-                                {formatDate(result!.periodoInicio)} - {formatDate(result!.periodoFin)}
-                              </p>
-                            </div>
-                            <BarChart3 className="w-6 h-6 text-orange-600" />
+                      <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-5 rounded-xl border border-orange-200 hover:shadow-md transition-shadow">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-orange-600 rounded-lg shadow-sm">
+                            <BarChart3 className="w-5 h-5 text-white" />
                           </div>
-                        </CardContent>
-                      </Card>
+                          <div>
+                            <p className="text-xs font-medium text-orange-700 uppercase tracking-wide">Período</p>
+                            <p className="text-sm font-bold text-orange-900">
+                              {formatDate(result!.periodoInicio)} - {formatDate(result!.periodoFin)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Missing Entities Manager */}
@@ -1027,205 +985,359 @@ export default function RCVAnalysisMultiplePage() {
                       rcvType={rcvType}
                       companyId={companyId}
                       onEntitiesAdded={() => {
-                        console.log('🔄 Entidades agregadas - podrías recargar configuración aquí si es necesario');
+                        console.log('🔄 Entidades agregadas');
                       }}
                     />
 
-                    {/* Charts Section */}
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                      {/* Bar Chart */}
-                      <Card data-chart="bar">
-                        <CardHeader>
-                          <CardTitle>Top 10 {rcvType === 'purchase' ? 'Proveedores' : 'Clientes'} por Monto</CardTitle>
-                          <CardDescription>Ranking principal por volumen de {rcvType === 'purchase' ? 'compras' : 'ventas'}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="h-96">
+                    {/* Charts Section - Redesigned */}
+                    <div className="space-y-8">
+                      {/* Top 10 Ranking - Enhanced */}
+                      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-chart="bar">
+                        <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 bg-white rounded-lg">
+                                <BarChart3 className="w-6 h-6 text-blue-600" />
+                              </div>
+                              <div>
+                                <h4 className="text-xl font-bold text-white">Top 10 {rcvType === 'purchase' ? 'Proveedores' : 'Clientes'}</h4>
+                                <p className="text-blue-100 text-sm">Ranking por volumen de {rcvType === 'purchase' ? 'compras' : 'ventas'} - Análisis de concentración</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-white text-sm opacity-90">Total Analizado</div>
+                              <div className="text-white text-lg font-bold">{formatCurrency(result!.montoCalculadoGlobal)}</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="p-6">
+                          {/* Chart Stats */}
+                          <div className="grid grid-cols-3 gap-4 mb-6">
+                            <div className="text-center p-3 bg-blue-50 rounded-lg">
+                              <div className="text-xs font-medium text-blue-700 uppercase tracking-wide">Top 3 Concentración</div>
+                              <div className="text-lg font-bold text-blue-900">
+                                {chartData.slice(0, 3).reduce((sum, item) => sum + item.porcentaje, 0).toFixed(1)}%
+                              </div>
+                            </div>
+                            <div className="text-center p-3 bg-green-50 rounded-lg">
+                              <div className="text-xs font-medium text-green-700 uppercase tracking-wide">Mayor {rcvType === 'purchase' ? 'Proveedor' : 'Cliente'}</div>
+                              <div className="text-lg font-bold text-green-900">
+                                {chartData[0]?.porcentaje?.toFixed(1) || '0'}%
+                              </div>
+                            </div>
+                            <div className="text-center p-3 bg-purple-50 rounded-lg">
+                              <div className="text-xs font-medium text-purple-700 uppercase tracking-wide">Promedio Top 10</div>
+                              <div className="text-lg font-bold text-purple-900">
+                                {(chartData.reduce((sum, item) => sum + item.porcentaje, 0) / Math.max(chartData.length, 1)).toFixed(1)}%
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Chart */}
+                          <div className="h-80">
                             <ResponsiveContainer width="100%" height="100%">
-                              <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 60 }}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis 
-                                  dataKey="name" 
+                              <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                                <XAxis
+                                  dataKey="name"
                                   angle={-45}
                                   textAnchor="end"
                                   height={80}
-                                  fontSize={12}
+                                  fontSize={11}
+                                  tick={{ fill: '#64748b' }}
                                 />
-                                <YAxis tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`} />
-                                <Tooltip 
-                                  formatter={(value: number, name: string) => [formatCurrency(value), 'Monto Calculado']}
+                                <YAxis
+                                  tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
+                                  tick={{ fill: '#64748b', fontSize: 11 }}
+                                />
+                                <Tooltip
+                                  contentStyle={{
+                                    backgroundColor: '#1e293b',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    color: 'white',
+                                    fontSize: '12px'
+                                  }}
+                                  formatter={(value: number, name: string) => [formatCurrency(value), 'Monto Total']}
                                   labelFormatter={(label) => {
                                     const item = chartData.find(d => d.name === label);
-                                    return item ? `${item.fullName} (${item.tipo})` : label;
+                                    return item ? `${item.fullName}` : label;
                                   }}
                                 />
-                                <Bar dataKey="monto" fill="#3B82F6" />
+                                <Bar
+                                  dataKey="monto"
+                                  fill="url(#blueGradient)"
+                                  radius={[4, 4, 0, 0]}
+                                />
+                                <defs>
+                                  <linearGradient id="blueGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#3b82f6" />
+                                    <stop offset="100%" stopColor="#1d4ed8" />
+                                  </linearGradient>
+                                </defs>
                               </BarChart>
                             </ResponsiveContainer>
                           </div>
-                        </CardContent>
-                      </Card>
+                        </div>
+                      </div>
 
-                      {/* Pie Chart */}
-                      <Card data-chart="pie">
-                        <CardHeader>
-                          <CardTitle>Concentración Top 10</CardTitle>
-                          <CardDescription>Distribución porcentual de los principales {rcvType === 'purchase' ? 'proveedores' : 'clientes'}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="h-96">
-                            <ResponsiveContainer width="100%" height="100%">
-                              <PieChart>
-                                <Pie
-                                  data={chartData}
-                                  cx="50%"
-                                  cy="50%"
-                                  outerRadius={100}
-                                  fill="#8884d8"
-                                  dataKey="porcentaje"
-                                  label={({ name, porcentaje }) => `${porcentaje.toFixed(1)}%`}
-                                >
-                                  {chartData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                  ))}
-                                </Pie>
-                                <Tooltip 
-                                  formatter={(value: number) => [`${value.toFixed(2)}%`, 'Porcentaje']}
-                                  labelFormatter={(label) => {
-                                    const item = chartData.find(d => d.name === label);
-                                    return item?.fullName || label;
-                                  }}
-                                />
-                                <Legend />
-                              </PieChart>
-                            </ResponsiveContainer>
+                      {/* Distribution Analysis */}
+                      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" data-chart="pie">
+                        <div className="bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 bg-white rounded-lg">
+                                <TrendingUp className="w-6 h-6 text-purple-600" />
+                              </div>
+                              <div>
+                                <h4 className="text-xl font-bold text-white">Análisis de Concentración</h4>
+                                <p className="text-purple-100 text-sm">Distribución de riesgo y dependencia por {rcvType === 'purchase' ? 'proveedor' : 'cliente'}</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-white text-sm opacity-90">Total Entidades</div>
+                              <div className="text-white text-lg font-bold">{result!.proveedoresPrincipales.length}</div>
+                            </div>
                           </div>
-                        </CardContent>
-                      </Card>
+                        </div>
+
+                        <div className="p-6">
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            {/* Pie Chart */}
+                            <div>
+                              <div className="h-80">
+                                <ResponsiveContainer width="100%" height="100%">
+                                  <PieChart>
+                                    <Pie
+                                      data={chartData.slice(0, 8).map((item, index) => ({
+                                        ...item,
+                                        fill: COLORS[index % COLORS.length]
+                                      }))}
+                                      cx="50%"
+                                      cy="50%"
+                                      innerRadius={60}
+                                      outerRadius={120}
+                                      paddingAngle={2}
+                                      dataKey="porcentaje"
+                                      nameKey="name"
+                                      label={false}
+                                    >
+                                      {chartData.slice(0, 8).map((entry, index) => (
+                                        <Cell
+                                          key={`cell-${index}`}
+                                          fill={COLORS[index % COLORS.length]}
+                                        />
+                                      ))}
+                                    </Pie>
+                                    <Tooltip
+                                      contentStyle={{
+                                        backgroundColor: '#0f172a',
+                                        border: '1px solid #334155',
+                                        borderRadius: '8px',
+                                        color: 'white',
+                                        fontSize: '12px',
+                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.1)'
+                                      }}
+                                      content={({ active, payload }) => {
+                                        if (active && payload && payload.length) {
+                                          const data = payload[0].payload;
+                                          return (
+                                            <div style={{
+                                              backgroundColor: '#0f172a',
+                                              border: '1px solid #334155',
+                                              borderRadius: '8px',
+                                              color: 'white',
+                                              fontSize: '12px',
+                                              padding: '8px 12px',
+                                              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.1)'
+                                            }}>
+                                              <p style={{ margin: 0, fontWeight: 'bold', marginBottom: '4px' }}>
+                                                {data.fullName}
+                                              </p>
+                                              <p style={{ margin: 0, color: '#94a3b8' }}>
+                                                Participación: {Number(data.porcentaje).toFixed(1)}%
+                                              </p>
+                                            </div>
+                                          );
+                                        }
+                                        return null;
+                                      }}
+                                    />
+                                  </PieChart>
+                                </ResponsiveContainer>
+                              </div>
+                            </div>
+
+                            {/* Legend & Analysis */}
+                            <div className="space-y-4">
+                              <div>
+                                <h5 className="text-sm font-semibold text-gray-900 mb-3">Distribución por Entidad</h5>
+                                <div className="space-y-2 max-h-64 overflow-y-auto">
+                                  {chartData.slice(0, 8).map((item, index) => (
+                                    <div key={index} className="flex items-center justify-between p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                                      <div className="flex items-center gap-2">
+                                        <div
+                                          className="w-3 h-3 rounded-full"
+                                          style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                                        ></div>
+                                        <span className="text-sm font-medium text-gray-700 truncate max-w-32">
+                                          {item.fullName}
+                                        </span>
+                                      </div>
+                                      <div className="text-right">
+                                        <div className="text-sm font-bold text-gray-900">{item.porcentaje.toFixed(1)}%</div>
+                                        <div className="text-xs text-gray-500">{formatCurrency(item.monto / 1000000)}M</div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Risk Analysis */}
+                              <div className="mt-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <AlertTriangle className="w-4 h-4 text-amber-600" />
+                                  <span className="text-sm font-medium text-amber-800">Análisis de Concentración</span>
+                                </div>
+                                <div className="text-xs text-amber-700 space-y-1">
+                                  <div>• Top 3: {chartData.slice(0, 3).reduce((sum, item) => sum + item.porcentaje, 0).toFixed(1)}% del volumen total</div>
+                                  <div>• Mayor dependencia: {chartData[0]?.fullName} ({chartData[0]?.porcentaje?.toFixed(1)}%)</div>
+                                  <div>• Nivel de riesgo: {chartData[0]?.porcentaje > 30 ? 'Alto' : chartData[0]?.porcentaje > 15 ? 'Medio' : 'Bajo'}</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex flex-wrap gap-3">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={handleExportResults}
-                      >
-                        <Download className="w-4 h-4 mr-1" />
-                        Exportar CSV
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={exportToPDF}
-                        disabled={exportingPDF}
-                        loading={exportingPDF}
-                      >
-                        <FileDown className="w-4 h-4 mr-1" />
-                        {exportingPDF ? 'Generando PDF...' : 'Exportar PDF'}
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setShowDetailed(showDetailed === activeTab ? null : activeTab)}
-                      >
-                        <BarChart3 className="w-4 h-4 mr-1" />
-                        {showDetailed === activeTab ? 'Ocultar Detalle' : 'Ver Detalle Completo'}
-                      </Button>
-                      <Button 
-                        variant="primary" 
-                        size="sm"
-                        onClick={generateJournalEntry}
-                        disabled={generatingJournalEntry}
-                        loading={generatingJournalEntry}
-                      >
-                        <Calculator className="w-4 h-4 mr-1" />
-                        {generatingJournalEntry ? 'Generando...' : 'Generar Asiento Preliminar'}
-                      </Button>
+                    <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="p-1 bg-blue-600 rounded">
+                          <Play className="w-4 h-4 text-white" />
+                        </div>
+                        <h4 className="text-lg font-semibold text-gray-900">Acciones Disponibles</h4>
+                      </div>
+                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                        <button
+                          onClick={handleExportResults}
+                          className="bg-white hover:bg-green-50 text-green-700 border border-green-200 px-4 py-3 rounded-lg font-medium flex items-center gap-2 transition-all hover:shadow-sm"
+                        >
+                          <Download className="w-4 h-4" />
+                          Exportar CSV
+                        </button>
+                        <button
+                          onClick={exportToPDF}
+                          disabled={exportingPDF}
+                          className="bg-white hover:bg-red-50 text-red-700 border border-red-200 px-4 py-3 rounded-lg font-medium flex items-center gap-2 transition-all hover:shadow-sm disabled:opacity-50"
+                        >
+                          <FileDown className="w-4 h-4" />
+                          {exportingPDF ? 'Generando PDF...' : 'Exportar PDF'}
+                        </button>
+                        <button
+                          onClick={() => setShowDetailed(showDetailed === activeTab ? null : activeTab)}
+                          className="bg-white hover:bg-purple-50 text-purple-700 border border-purple-200 px-4 py-3 rounded-lg font-medium flex items-center gap-2 transition-all hover:shadow-sm"
+                        >
+                          <BarChart3 className="w-4 h-4" />
+                          {showDetailed === activeTab ? 'Ocultar Detalle' : 'Ver Detalle'}
+                        </button>
+                        <button
+                          onClick={generateJournalEntry}
+                          disabled={generatingJournalEntry}
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium flex items-center gap-2 transition-all shadow-sm disabled:opacity-50"
+                        >
+                          <Calculator className="w-4 h-4" />
+                          {generatingJournalEntry ? 'Generando...' : 'Generar Asiento'}
+                        </button>
+                      </div>
                     </div>
 
                     {/* Detailed Table */}
                     {showDetailed === activeTab && result && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>Detalle Completo - {currentFile.file.name}</CardTitle>
-                          <CardDescription>Lista completa de todos los {rcvType === 'purchase' ? 'proveedores' : 'clientes'} analizados</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                              <thead>
-                                <tr className="border-b">
-                                  <th className="text-left p-2">RUT</th>
-                                  <th className="text-left p-2">Razón Social</th>
-                                  <th className="text-center p-2">Total Trans.</th>
-                                  <th className="text-center p-2">{rcvType === 'purchase' ? 'Compras/Devoluc.' : 'Ventas/Devoluc.'}</th>
-                                  <th className="text-right p-2">Monto Exento</th>
-                                  <th className="text-right p-2">Monto Neto</th>
-                                  <th className="text-right p-2">Monto IVA</th>
-                                  <th className="text-right p-2">Monto Calculado</th>
-                                  <th className="text-center p-2">% del Total</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {result.proveedoresPrincipales.map((proveedor, index) => (
-                                  <tr key={proveedor.rutProveedor} className="border-b hover:bg-gray-50">
-                                    <td className="p-2 font-mono text-sm">{proveedor.rutProveedor}</td>
-                                    <td className="p-2">{proveedor.razonSocial}</td>
-                                    <td className="p-2 text-center">{proveedor.totalTransacciones}</td>
-                                    <td className="p-2 text-center">
-                                      <span className="text-green-600 font-medium">{proveedor.transaccionesSuma}</span>
-                                      {proveedor.transaccionesResta > 0 && (
-                                        <span className="text-red-600 font-medium"> (-{proveedor.transaccionesResta})</span>
-                                      )}
-                                    </td>
-                                    <td className="p-2 text-right">{formatCurrency(proveedor.montoExentoTotal)}</td>
-                                    <td className="p-2 text-right">{formatCurrency(proveedor.montoNetoTotal)}</td>
-                                    <td className="p-2 text-right">{formatCurrency(proveedor.montoIVATotal)}</td>
-                                    <td className={`p-2 text-right font-semibold ${proveedor.montoCalculado >= 0 ? '' : 'text-red-600'}`}>
-                                      {formatCurrency(proveedor.montoCalculado)}
-                                    </td>
-                                    <td className="p-2 text-center">
-                                      <span className={`px-2 py-1 rounded text-xs ${
-                                        proveedor.porcentajeDelTotal >= 10 ? 'bg-red-100 text-red-800' :
-                                        proveedor.porcentajeDelTotal >= 5 ? 'bg-yellow-100 text-yellow-800' :
-                                        'bg-green-100 text-green-800'
-                                      }`}>
-                                        {proveedor.porcentajeDelTotal.toFixed(2)}%
-                                      </span>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
+                      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                        <div className="bg-gradient-to-r from-slate-900 to-slate-700 px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-white rounded-lg">
+                              <Users className="w-5 h-5 text-slate-900" />
+                            </div>
+                            <div>
+                              <h4 className="text-lg font-bold text-white">Detalle Completo - {currentFile.file.name}</h4>
+                              <p className="text-slate-300 text-sm">Lista completa de {rcvType === 'purchase' ? 'proveedores' : 'clientes'}</p>
+                            </div>
                           </div>
-                        </CardContent>
-                      </Card>
+                        </div>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead className="bg-gray-50">
+                              <tr>
+                                <th className="text-left p-3 font-semibold text-gray-900">RUT</th>
+                                <th className="text-left p-3 font-semibold text-gray-900">Razón Social</th>
+                                <th className="text-center p-3 font-semibold text-gray-900">Trans.</th>
+                                <th className="text-center p-3 font-semibold text-gray-900">Compras/Dev.</th>
+                                <th className="text-right p-3 font-semibold text-gray-900">Monto Exento</th>
+                                <th className="text-right p-3 font-semibold text-gray-900">Monto Neto</th>
+                                <th className="text-right p-3 font-semibold text-gray-900">Monto IVA</th>
+                                <th className="text-right p-3 font-semibold text-gray-900">Total</th>
+                                <th className="text-center p-3 font-semibold text-gray-900">%</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                              {result.proveedoresPrincipales.map((proveedor, index) => (
+                                <tr key={proveedor.rutProveedor} className="hover:bg-gray-50">
+                                  <td className="p-3 font-mono text-sm">{proveedor.rutProveedor}</td>
+                                  <td className="p-3">{proveedor.razonSocial}</td>
+                                  <td className="p-3 text-center">{proveedor.totalTransacciones}</td>
+                                  <td className="p-3 text-center">
+                                    <span className="text-green-600 font-medium">{proveedor.transaccionesSuma}</span>
+                                    {proveedor.transaccionesResta > 0 && (
+                                      <span className="text-red-600 font-medium"> (-{proveedor.transaccionesResta})</span>
+                                    )}
+                                  </td>
+                                  <td className="p-3 text-right">{formatCurrency(proveedor.montoExentoTotal)}</td>
+                                  <td className="p-3 text-right">{formatCurrency(proveedor.montoNetoTotal)}</td>
+                                  <td className="p-3 text-right">{formatCurrency(proveedor.montoIVATotal)}</td>
+                                  <td className={`p-3 text-right font-semibold ${proveedor.montoCalculado >= 0 ? '' : 'text-red-600'}`}>
+                                    {formatCurrency(proveedor.montoCalculado)}
+                                  </td>
+                                  <td className="p-3 text-center">
+                                    <span className={`px-2 py-1 rounded text-xs ${
+                                      proveedor.porcentajeDelTotal >= 10 ? 'bg-red-100 text-red-800' :
+                                      proveedor.porcentajeDelTotal >= 5 ? 'bg-yellow-100 text-yellow-800' :
+                                      'bg-green-100 text-green-800'
+                                    }`}>
+                                      {proveedor.porcentajeDelTotal.toFixed(2)}%
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
                     )}
 
                     {/* Journal Entry Section */}
                     {journalEntry && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="flex items-center space-x-2">
+                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-200">
+                          <div className="flex items-center gap-3">
                             <Calculator className="w-5 h-5 text-green-600" />
-                            <span>Asiento Contable Preliminar</span>
-                            {journalEntry.is_balanced ? (
-                              <CheckCircle className="w-5 h-5 text-green-600" />
-                            ) : (
-                              <AlertCircle className="w-5 h-5 text-red-600" />
-                            )}
-                          </CardTitle>
-                          <CardDescription>
-                            {journalEntry.description} - Período: {journalEntry.period}
-                            {journalEntry.is_balanced ? (
-                              <span className="text-green-600 ml-2">✅ Asiento balanceado</span>
-                            ) : (
-                              <span className="text-red-600 ml-2">⚠️ Asiento desbalanceado</span>
-                            )}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
+                            <div>
+                              <h4 className="text-lg font-semibold text-gray-900">Asiento Contable Preliminar</h4>
+                              <p className="text-sm text-gray-600">
+                                {journalEntry.description} - Período: {journalEntry.period}
+                                {journalEntry.is_balanced ? (
+                                  <span className="text-green-600 ml-2">✅ Balanceado</span>
+                                ) : (
+                                  <span className="text-red-600 ml-2">⚠️ Desbalanceado</span>
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-6">
                           {/* Summary */}
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                             <div className="bg-blue-50 p-4 rounded-lg">
@@ -1255,20 +1367,20 @@ export default function RCVAnalysisMultiplePage() {
                           </div>
 
                           {/* Journal Entry Lines */}
-                          <div className="overflow-x-auto">
+                          <div className="overflow-x-auto mb-6">
                             <table className="w-full text-sm">
-                              <thead>
-                                <tr className="border-b-2 border-gray-200">
-                                  <th className="text-left p-3 font-semibold">Código Cuenta</th>
-                                  <th className="text-left p-3 font-semibold">Nombre Cuenta</th>
+                              <thead className="bg-gray-50">
+                                <tr>
+                                  <th className="text-left p-3 font-semibold">Código</th>
+                                  <th className="text-left p-3 font-semibold">Cuenta</th>
                                   <th className="text-left p-3 font-semibold">Descripción</th>
                                   <th className="text-right p-3 font-semibold">Debe</th>
                                   <th className="text-right p-3 font-semibold">Haber</th>
                                 </tr>
                               </thead>
-                              <tbody>
+                              <tbody className="divide-y divide-gray-200">
                                 {journalEntry.lines.map((line, index) => (
-                                  <tr key={index} className="border-b hover:bg-gray-50">
+                                  <tr key={index} className="hover:bg-gray-50">
                                     <td className="p-3 font-mono text-sm">{line.account_code}</td>
                                     <td className="p-3 font-medium">{line.account_name}</td>
                                     <td className="p-3 text-gray-700">{line.description}</td>
@@ -1282,7 +1394,7 @@ export default function RCVAnalysisMultiplePage() {
                                 ))}
                               </tbody>
                               <tfoot>
-                                <tr className="border-t-2 border-gray-200 bg-gray-50 font-semibold">
+                                <tr className="border-t-2 bg-gray-50 font-semibold">
                                   <td colSpan={3} className="p-3 text-right">TOTALES:</td>
                                   <td className="p-3 text-right font-mono">
                                     {formatCurrency(journalEntry.total_debit)}
@@ -1296,12 +1408,9 @@ export default function RCVAnalysisMultiplePage() {
                           </div>
 
                           {/* Action Buttons for Journal Entry */}
-                          <div className="flex flex-wrap gap-3 mt-6 pt-4 border-t">
-                            <Button 
-                              variant="primary" 
-                              size="sm"
+                          <div className="flex flex-wrap gap-3 pt-4 border-t">
+                            <button
                               disabled={!journalEntry.is_balanced || postingToJournal}
-                              loading={postingToJournal}
                               onClick={() => {
                                 if (journalEntry.is_balanced) {
                                   setShowConfirmDialog(true);
@@ -1309,14 +1418,13 @@ export default function RCVAnalysisMultiplePage() {
                                   alert('El asiento debe estar balanceado antes de poder crearlo.');
                                 }
                               }}
+                              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
                             >
-                              <CheckCircle className="w-4 h-4 mr-1" />
-                              {postingToJournal ? 'Contabilizando...' : 
-                               journalEntry.is_balanced ? 'Contabilizar en Libro Diario' : 'Asiento Desbalanceado'}
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
+                              <CheckCircle className="w-4 h-4" />
+                              {postingToJournal ? 'Contabilizando...' :
+                               journalEntry.is_balanced ? 'Contabilizar' : 'Desbalanceado'}
+                            </button>
+                            <button
                               onClick={() => {
                                 const csvData = [
                                   ['Código Cuenta', 'Nombre Cuenta', 'Descripción', 'Debe', 'Haber'],
@@ -1329,11 +1437,11 @@ export default function RCVAnalysisMultiplePage() {
                                   ]),
                                   ['', '', 'TOTALES:', journalEntry.total_debit.toString(), journalEntry.total_credit.toString()]
                                 ];
-                                
+
                                 const csvContent = csvData.map(row => row.join(',')).join('\n');
                                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                                 const link = document.createElement('a');
-                                
+
                                 if (link.download !== undefined) {
                                   const url = URL.createObjectURL(blob);
                                   link.setAttribute('href', url);
@@ -1344,21 +1452,21 @@ export default function RCVAnalysisMultiplePage() {
                                   document.body.removeChild(link);
                                 }
                               }}
+                              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2"
                             >
-                              <Download className="w-4 h-4 mr-1" />
-                              Exportar Asiento CSV
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
+                              <Download className="w-4 h-4" />
+                              Exportar CSV
+                            </button>
+                            <button
                               onClick={() => setJournalEntry(null)}
+                              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2"
                             >
-                              <X className="w-4 h-4 mr-1" />
-                              Cerrar Asiento
-                            </Button>
+                              <X className="w-4 h-4" />
+                              Cerrar
+                            </button>
                           </div>
-                        </CardContent>
-                      </Card>
+                        </div>
+                      </div>
                     )}
 
                     {/* Confirmation Dialog */}
@@ -1369,12 +1477,12 @@ export default function RCVAnalysisMultiplePage() {
                             <AlertCircle className="w-6 h-6 text-yellow-600" />
                             <h3 className="text-lg font-semibold">Confirmar Contabilización</h3>
                           </div>
-                          
+
                           <div className="mb-6">
                             <p className="text-gray-700 mb-4">
-                              ¿Estás seguro de que deseas contabilizar este asiento en el libro diario?
+                              ¿Estás seguro de que deseas contabilizar este asiento?
                             </p>
-                            
+
                             <div className="bg-gray-50 p-3 rounded text-sm space-y-1">
                               <p><strong>Descripción:</strong> {journalEntry.description}</p>
                               <p><strong>Período:</strong> {journalEntry.period}</p>
@@ -1382,37 +1490,31 @@ export default function RCVAnalysisMultiplePage() {
                               <p><strong>Total Debe:</strong> {formatCurrency(journalEntry.total_debit)}</p>
                               <p><strong>Total Haber:</strong> {formatCurrency(journalEntry.total_credit)}</p>
                             </div>
-                            
-                            <p className="text-sm text-gray-600 mt-3">
-                              <strong>Nota:</strong> Una vez contabilizado, el asiento será definitivo en el libro diario.
-                            </p>
                           </div>
-                          
+
                           <div className="flex justify-end space-x-3">
-                            <Button 
-                              variant="outline" 
-                              size="sm"
+                            <button
                               onClick={() => setShowConfirmDialog(false)}
+                              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium"
                             >
                               Cancelar
-                            </Button>
-                            <Button 
-                              variant="primary" 
-                              size="sm"
+                            </button>
+                            <button
                               onClick={postToJournalBook}
                               disabled={postingToJournal}
+                              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
                             >
-                              <CheckCircle className="w-4 h-4 mr-1" />
-                              Confirmar Contabilización
-                            </Button>
+                              <CheckCircle className="w-4 h-4" />
+                              Confirmar
+                            </button>
                           </div>
                         </div>
                       </div>
                     )}
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </>
         )}
       </div>

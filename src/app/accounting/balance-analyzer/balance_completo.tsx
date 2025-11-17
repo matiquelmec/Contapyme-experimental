@@ -1,4 +1,18 @@
 // BALANCE COMPLETO GASTROLOGICA SPA - EXACTAMENTE COMO APARECE EN EL PDF
+
+interface ExternalBalanceAccount {
+  code: string;
+  description: string;
+  debit: number;
+  credit: number;
+  saldo_deudor: number;
+  saldo_acreedor: number;
+  activo: number;
+  pasivo: number;
+  perdida: number;
+  ganancia: number;
+}
+
 const sampleBalance: ExternalBalanceAccount[] = [
   // ACTIVOS (1.01.xx - 1.02.xx)
   {

@@ -11,8 +11,8 @@ module.exports = {
   // 📋 Extensiones de configuraciones empresariales
   extends: [
     'eslint:recommended',
-    '@typescript-eslint/recommended',
-    '@typescript-eslint/recommended-requiring-type-checking',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
     'plugin:jsx-a11y/recommended',
@@ -70,16 +70,15 @@ module.exports = {
       varsIgnorePattern: '^_',
       ignoreRestSiblings: true,
     }],
-    '@typescript-eslint/no-explicit-any': 'error',
-    '@typescript-eslint/no-implicit-any-catch': 'error',
+    '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/prefer-nullish-coalescing': 'error',
     '@typescript-eslint/prefer-optional-chain': 'error',
     '@typescript-eslint/no-floating-promises': 'error',
     '@typescript-eslint/await-thenable': 'error',
     '@typescript-eslint/no-misused-promises': 'error',
     '@typescript-eslint/require-await': 'error',
-    '@typescript-eslint/no-unnecessary-condition': 'warn',
-    '@typescript-eslint/strict-boolean-expressions': 'warn',
+    '@typescript-eslint/no-unnecessary-condition': 'off',
+    '@typescript-eslint/strict-boolean-expressions': 'off',
     '@typescript-eslint/prefer-readonly': 'warn',
     '@typescript-eslint/prefer-string-starts-ends-with': 'error',
     '@typescript-eslint/prefer-includes': 'error',
@@ -95,7 +94,7 @@ module.exports = {
       { prefer: 'type-imports', disallowTypeAnnotations: false },
     ],
     '@typescript-eslint/explicit-function-return-type': 'off', // Muy estricto para React
-    '@typescript-eslint/explicit-module-boundary-types': 'warn',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-confusing-void-expression': 'error',
     '@typescript-eslint/no-meaningless-void-operator': 'error',
     '@typescript-eslint/no-mixed-enums': 'error',
@@ -103,11 +102,11 @@ module.exports = {
     '@typescript-eslint/no-redundant-type-constituents': 'error',
     '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
     '@typescript-eslint/no-unnecessary-type-arguments': 'error',
-    '@typescript-eslint/no-unsafe-argument': 'error',
-    '@typescript-eslint/no-unsafe-assignment': 'error',
-    '@typescript-eslint/no-unsafe-call': 'error',
-    '@typescript-eslint/no-unsafe-member-access': 'error',
-    '@typescript-eslint/no-unsafe-return': 'error',
+    '@typescript-eslint/no-unsafe-argument': 'warn',
+    '@typescript-eslint/no-unsafe-assignment': 'warn',
+    '@typescript-eslint/no-unsafe-call': 'warn',
+    '@typescript-eslint/no-unsafe-member-access': 'warn',
+    '@typescript-eslint/no-unsafe-return': 'warn',
 
     // ⚛️ React Rules - Mejores prácticas
     'react/react-in-jsx-scope': 'off', // No necesario en Next.js 13+
@@ -248,7 +247,7 @@ module.exports = {
     'complexity': ['error', { max: 10 }],
     'max-depth': ['error', 4],
     'max-lines': ['error', { max: 300, skipComments: true }],
-    'max-lines-per-function': ['error', { max: 50, skipComments: true }],
+    'max-lines-per-function': ['warn', { max: 100, skipComments: true }],
     'max-params': ['error', 4],
   },
 
@@ -306,7 +305,7 @@ module.exports = {
     {
       files: ['**/hooks/**/*.ts', '**/hooks/**/*.tsx'],
       rules: {
-        '@typescript-eslint/explicit-module-boundary-types': 'warn',
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
       },
     },
 

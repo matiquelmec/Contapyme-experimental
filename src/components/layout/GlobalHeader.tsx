@@ -92,8 +92,8 @@ export function GlobalHeader() {
     return name.charAt(0).toUpperCase()
   }
 
-  // Hide header on login/register/landing pages
-  const shouldShowHeader = !pathname.startsWith('/login') && !pathname.startsWith('/register') && pathname !== '/'
+  // Hide header only on login/register pages
+  const shouldShowHeader = !pathname.startsWith('/login') && !pathname.startsWith('/register')
 
   if (!shouldShowHeader) {
     return null

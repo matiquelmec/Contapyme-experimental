@@ -14,6 +14,7 @@ export const CHILEAN_OFFICIAL_VALUES = {
   
   // Salarios y límites
   MINIMUM_WAGE: 529000, // Sueldo mínimo 2025 (oficial Previred)
+  SUELDO_MINIMO_2025: 529000, // Alias para compatibilidad
   FAMILY_ALLOWANCE_BASE: 15000, // Asignación familiar base
   
   // 📊 DESCUENTOS PREVISIONALES OBLIGATORIOS

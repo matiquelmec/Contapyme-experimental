@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button, Card } from '@/components/ui'
-import { MinimalHeader } from '@/components/layout/MinimalHeader'
 import { useCompany } from '@/contexts/CompanyContext'
 import {
   Calculator,
@@ -54,17 +53,26 @@ export default function PortalDashboard() {
     }
   ]
 
-  // Get current active company based on CompanyContext
+  // Get current active company based on CompanyContext (SSR Safe)
   const getCurrentPortalCompany = () => {
+    if (typeof window === 'undefined') return companies[0]; // SSR fallback
     const savedCompanyId = localStorage.getItem('activeCompanyId') || 'demo-1';
     return companies.find(c => c.id === savedCompanyId) || companies[0];
   };
 
-  const [activeCompany, setActiveCompany] = useState(getCurrentPortalCompany())
+  const [activeCompany, setActiveCompany] = useState(companies[0]) // Initial safe state
   const [isCompanySelectorOpen, setIsCompanySelectorOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Initialize component after mount (client-side only)
+  useEffect(() => {
+    setMounted(true)
+    setActiveCompany(getCurrentPortalCompany())
+  }, [])
 
   // Update active company when localStorage changes
   useEffect(() => {
+    if (!mounted) return
     const savedCompanyId = localStorage.getItem('activeCompanyId')
     if (savedCompanyId) {
       const foundCompany = companies.find(c => c.id === savedCompanyId)
@@ -283,322 +291,252 @@ export default function PortalDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* Modern Navigation Header */}
-      <MinimalHeader variant="premium" />
+    <div className="min-h-screen bg-gray-50">
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Hero Section - Simplified since logo is now in header */}
-        <div className="text-center mb-12 pt-4">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Portal Multi-Empresa</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto font-medium">
-            Centro de control empresarial - Sistema Integrado de Gestión
-          </p>
-          <p className="text-xl text-blue-700 max-w-3xl mx-auto font-bold">
-            para <span className="text-blue-800">PyMEs Chilenas</span>
-          </p>
-        </div>
-
-        {/* Selector de Empresa Activa */}
-        <div className="mb-8">
-          <div className="flex items-center justify-center">
-            <Card variant="elevated" className="relative inline-block">
-              <div className="p-4">
-                <div className="flex items-center space-x-4">
-                  <div className="text-sm font-medium text-gray-600">Trabajando con:</div>
-                  <div className="relative">
-                    <button
-                      onClick={() => setIsCompanySelectorOpen(!isCompanySelectorOpen)}
-                      className={`flex items-center space-x-3 px-4 py-3 rounded-lg border-2 transition-all duration-200 min-w-64 ${
-                        activeCompany.color === 'blue'
-                          ? 'border-blue-200 bg-blue-50 hover:border-blue-300'
-                          : 'border-purple-200 bg-purple-50 hover:border-purple-300'
-                      }`}
-                    >
-                      <Building2 className={`w-5 h-5 ${
-                        activeCompany.color === 'blue' ? 'text-blue-600' : 'text-purple-600'
-                      }`} />
-                      <div className="flex-1 text-left">
-                        <div className="font-semibold text-gray-900">{activeCompany.name}</div>
-                        <div className="text-sm text-gray-600">RUT: {activeCompany.rut}</div>
-                      </div>
-                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${
-                        isCompanySelectorOpen ? 'rotate-180' : ''
-                      }`} />
-                    </button>
-
-                    {/* Dropdown */}
-                    {isCompanySelectorOpen && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-40"
-                          onClick={() => setIsCompanySelectorOpen(false)}
-                        />
-                        <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-xl shadow-xl border border-gray-200 z-50 py-2">
-                          {companies.map((company) => (
-                            <button
-                              key={company.id}
-                              onClick={() => handleCompanyChange(company)}
-                              className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors ${
-                                activeCompany.id === company.id ? 'bg-blue-50' : ''
-                              }`}
-                            >
-                              <Building2 className={`w-5 h-5 ${
-                                company.color === 'blue' ? 'text-blue-600' : 'text-purple-600'
-                              }`} />
-                              <div className="flex-1 text-left">
-                                <div className="font-semibold text-gray-900">{company.name}</div>
-                                <div className="text-sm text-gray-600">RUT: {company.rut}</div>
-                              </div>
-                              {activeCompany.id === company.id && (
-                                <Check className="w-4 h-4 text-blue-600" />
-                              )}
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0">
+          {/* Hero Section - Simplified */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8 overflow-hidden">
+            <div className="bg-gradient-to-r from-slate-900 to-slate-700 px-8 py-6">
+              <h1 className="text-2xl font-bold text-white mb-2">Centro de Control Empresarial</h1>
+              <p className="text-slate-300 text-sm">
+                Gestión integral multi-empresa para PyMEs chilenas
+              </p>
+            </div>
+            {/* Quick Stats */}
+            <div className="grid grid-cols-3 divide-x divide-gray-200 bg-gray-50">
+              <div className="px-6 py-4 text-center">
+                <div className="text-lg font-semibold text-gray-900">{activeCompany.name}</div>
+                <div className="text-sm text-gray-600">Empresa Activa</div>
               </div>
-            </Card>
-          </div>
-        </div>
-
-        {/* Gestión de Empresas */}
-        <div className="mb-12">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Mis Empresas</h2>
-            <Link
-              href="/companies/new"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg hover:shadow-xl"
-            >
-              + Nueva Empresa
-            </Link>
+              <div className="px-6 py-4 text-center">
+                <div className="text-lg font-semibold text-gray-900">{companies.length}</div>
+                <div className="text-sm text-gray-600">Empresas Registradas</div>
+              </div>
+              <div className="px-6 py-4 text-center">
+                <div className="text-lg font-semibold text-red-600">{metrics.executive.alerts}</div>
+                <div className="text-sm text-gray-600">Alertas Activas</div>
+              </div>
+            </div>
           </div>
 
-          {/* Demo data for multiple companies (premium version) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {companies.map((company) => {
-              const isActive = activeCompany.id === company.id
-              const colorClasses = company.color === 'blue'
-                ? {
-                    border: isActive ? 'border-blue-300 ring-2 ring-blue-100' : 'border-blue-200',
-                    icon: 'text-blue-600',
-                    badge: 'text-blue-700 bg-blue-100',
-                    button: 'bg-blue-600 hover:bg-blue-700'
-                  }
-                : {
-                    border: isActive ? 'border-purple-300 ring-2 ring-purple-100' : 'border-purple-200',
-                    icon: 'text-purple-600',
-                    badge: 'text-purple-700 bg-purple-100',
-                    button: 'bg-purple-600 hover:bg-purple-700'
-                  }
+          {/* Selector de Empresa - Simplificado */}
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">🏢 Cambiar Empresa Activa</h2>
+              <div className="text-sm text-gray-500">Gestión multi-empresa</div>
+            </div>
 
-              return (
-                <Card
-                  key={company.id}
-                  variant="elevated"
-                  className={`group hover:shadow-xl transition-all duration-300 cursor-pointer ${colorClasses.border} hover:border-opacity-60`}
-                  onClick={() => handleCompanyChange(company)}
-                >
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <Building2 className={`w-8 h-8 ${colorClasses.icon}`} />
-                      <div className="flex space-x-2">
-                        {isActive && (
-                          <span className="px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded flex items-center">
-                            <Check className="w-3 h-3 mr-1" />
-                            ACTIVA
-                          </span>
-                        )}
-                        <span className={`px-2 py-1 text-xs font-medium rounded ${colorClasses.badge}`}>
-                          {company.color === 'blue' ? 'Principal' : 'Secundaria'}
-                        </span>
-                      </div>
-                    </div>
-                    <h3 className="font-semibold text-gray-900 text-lg mb-2">{company.name}</h3>
-                    <p className="text-gray-600 mb-4">RUT: {company.rut}</p>
-                    <div className="space-y-2">
-                      <Link
-                        href="/dashboard-new"
-                        className={`w-full ${colorClasses.button} text-white px-4 py-2 rounded-lg text-center text-sm font-medium inline-block transition-colors`}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        🎯 Dashboard Ejecutivo
-                      </Link>
-                      <div className="grid grid-cols-2 gap-2">
-                        <Link
-                          href="/accounting"
-                          className="w-full bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg text-center text-xs font-medium inline-block transition-colors"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          📊 Contabilidad
-                        </Link>
-                        <Link
-                          href="/payroll"
-                          className="w-full bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg text-center text-xs font-medium inline-block transition-colors"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          👥 Remuneraciones
-                        </Link>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {companies.map((company) => {
+                const isActive = activeCompany.id === company.id
+                const colorClasses = company.color === 'blue'
+                  ? 'border-blue-200 bg-blue-50'
+                  : 'border-purple-200 bg-purple-50'
+
+                return (
+                  <div
+                    key={company.id}
+                    onClick={() => handleCompanyChange(company)}
+                    className={`bg-white rounded-lg shadow-sm border-2 p-6 cursor-pointer transition-all duration-200 hover:shadow-md ${
+                      isActive ? colorClasses : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <Building2 className={`w-8 h-8 ${
+                        company.color === 'blue' ? 'text-blue-600' : 'text-purple-600'
+                      }`} />
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900">{company.name}</h3>
+                        <p className="text-sm text-gray-600">RUT: {company.rut}</p>
                       </div>
                       {isActive && (
-                        <div className="text-xs text-center text-gray-500">
-                          Empresa actualmente seleccionada
+                        <div className="flex items-center space-x-2">
+                          <Check className="w-5 h-5 text-green-600" />
+                          <span className="text-xs font-medium text-green-700 bg-green-100 px-2 py-1 rounded">
+                            ACTIVA
+                          </span>
                         </div>
                       )}
                     </div>
-                  </div>
-                </Card>
-              )
-            })}
-
-            <Card variant="bordered" className="group hover:shadow-lg transition-all duration-300 border-dashed border-2 border-gray-300 hover:border-gray-400">
-              <div className="p-6 text-center">
-                <div className="w-12 h-12 bg-gray-100 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-gray-400" />
-                </div>
-                <h3 className="font-medium text-gray-700 mb-2">Agregar Empresa</h3>
-                <p className="text-sm text-gray-500 mb-4">
-                  Gestiona múltiples empresas en una cuenta premium
-                </p>
-                <Link
-                  href="/companies/new"
-                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium inline-block transition-colors"
-                >
-                  + Crear Empresa
-                </Link>
-              </div>
-            </Card>
-          </div>
-        </div>
-
-        {/* Previsualización de Datos de la Empresa */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Resumen de {activeCompany.name}
-          </h2>
-          <div className="grid lg:grid-cols-3 gap-8">
-            {modules.map((module) => {
-              const Icon = module.icon
-              const colors = getColorClasses(module.color)
-
-              return (
-                <Card
-                  key={module.id}
-                  variant="elevated"
-                  className={`transition-all duration-300 ${colors.border} overflow-hidden`}
-                >
-                  {/* Header del Módulo */}
-                  <div className={`${colors.bg} p-4 text-white relative overflow-hidden`}>
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full transform translate-x-6 -translate-y-6"></div>
-                    <div className="relative z-10">
-                      <div className="flex items-center space-x-3">
-                        <Icon className="w-6 h-6" />
-                        <div>
-                          <h3 className="text-lg font-bold">{module.title}</h3>
-                          <p className="text-blue-100 text-xs">{module.description}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Indicadores Tipo Semáforo */}
-                  <div className="p-6">
-                    <div className="grid grid-cols-1 gap-3">
-                      {module.statusIndicators.map((indicator, idx) => {
-                        const getStatusColor = (status: string) => {
-                          switch (status) {
-                            case 'critical':
-                              return 'text-red-600 bg-red-100'
-                            case 'warning':
-                              return 'text-yellow-600 bg-yellow-100'
-                            case 'healthy':
-                              return 'text-green-600 bg-green-100'
-                            case 'info':
-                              return 'text-blue-600 bg-blue-100'
-                            default:
-                              return 'text-gray-600 bg-gray-100'
-                          }
-                        }
-
-                        const getStatusIcon = (status: string) => {
-                          switch (status) {
-                            case 'critical':
-                              return '🔴'
-                            case 'warning':
-                              return '🟡'
-                            case 'healthy':
-                              return '🟢'
-                            case 'info':
-                              return '🔵'
-                            default:
-                              return '⚪'
-                          }
-                        }
-
-                        return (
-                          <div key={idx} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
-                            <div className="flex items-center space-x-2">
-                              <span className="text-sm">{getStatusIcon(indicator.status)}</span>
-                              <span className="text-sm text-gray-600">{indicator.label}</span>
-                            </div>
-                            <span className={`text-xs px-2 py-1 rounded-full font-medium ${getStatusColor(indicator.status)}`}>
-                              {indicator.value}
-                            </span>
-                          </div>
-                        )
-                      })}
-                    </div>
-
-                    {/* Botón de acceso directo al dashboard ejecutivo solo en el módulo ejecutivo */}
-                    {module.id === 'executive' && (
-                      <div className="mt-4 pt-4 border-t border-gray-100">
-                        <Link
-                          href="/dashboard-new"
-                          className="w-full bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-center text-sm font-medium inline-block transition-colors"
-                        >
-                          📊 Ver Análisis Completo
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                </Card>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Actividad Reciente */}
-        <Card variant="bordered" className="bg-white/80 backdrop-blur-sm">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Actividad Reciente</h2>
-              <Button variant="outline" size="sm">
-                Ver Todo
-              </Button>
-            </div>
-
-            <div className="space-y-4">
-              {recentActivity.map((activity, idx) => {
-                const Icon = activity.icon
-                return (
-                  <div key={idx} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className={`p-2 rounded-lg ${getModuleColor(activity.type)}`}>
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">{activity.message}</p>
-                      <p className="text-xs text-gray-600">hace {activity.time}</p>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
                   </div>
                 )
               })}
             </div>
           </div>
-        </Card>
+
+          {/* Dashboard Principal - Navegación Rápida */}
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">🎯 Acceso Rápido a Módulos</h2>
+              <div className="text-sm text-gray-500">Estado general</div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Contabilidad */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                      <Calculator className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Contabilidad</h3>
+                      <p className="text-blue-100 text-sm">Estado tributario</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-6 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">F29 Pendientes:</span>
+                    <span className={`text-sm font-medium ${
+                      metrics.accounting.pendingF29 > 0 ? 'text-red-600' : 'text-green-600'
+                    }`}>
+                      {metrics.accounting.pendingF29 > 0 ? `${metrics.accounting.pendingF29} pendientes` : 'Al día'}
+                    </span>
+                  </div>
+                  <Link href="/accounting" className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all text-sm border border-blue-200">
+                    <Calculator className="w-4 h-4" />
+                    <span>Ir a Contabilidad</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Remuneraciones */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 overflow-hidden">
+                <div className="bg-gradient-to-r from-green-600 to-green-700 p-6 text-white">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                      <Users className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Remuneraciones</h3>
+                      <p className="text-green-100 text-sm">Gestión RRHH</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-6 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Empleados:</span>
+                    <span className="text-sm font-medium text-gray-900">{metrics.payroll.activeEmployees}</span>
+                  </div>
+                  <Link href="/payroll" className="w-full bg-green-50 hover:bg-green-100 text-green-700 px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all text-sm border border-green-200">
+                    <Users className="w-4 h-4" />
+                    <span>Ir a Remuneraciones</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Dashboard Ejecutivo */}
+              <div className="bg-white rounded-xl shadow-sm border-2 border-purple-200 hover:shadow-md transition-all duration-200 overflow-hidden">
+                <div className="bg-gradient-to-r from-purple-600 to-purple-700 p-6 text-white">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                      <TrendingUp className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Dashboard Ejecutivo</h3>
+                      <p className="text-purple-100 text-sm">Insights avanzados</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-6 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Eficiencia:</span>
+                    <span className={`text-sm font-medium ${
+                      metrics.executive.efficiency > 85 ? 'text-green-600' : 'text-yellow-600'
+                    }`}>
+                      {metrics.executive.efficiency}%
+                    </span>
+                  </div>
+                  <Link href="/dashboard-new" className="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all text-sm border border-purple-200">
+                    <TrendingUp className="w-4 h-4" />
+                    <span>Ver Dashboard</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Alertas y Notificaciones */}
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">⚠️ Estado General de {activeCompany.name}</h2>
+              <div className="text-sm text-gray-500">Sistema de alertas</div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Alerta Contable */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                    metrics.accounting.pendingF29 > 0
+                      ? 'bg-gradient-to-r from-red-500 to-red-600'
+                      : 'bg-gradient-to-r from-green-500 to-green-600'
+                  }`}>
+                    <Calculator className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 text-sm">Estado Tributario</h3>
+                    <p className="text-gray-500 text-xs">Cumplimiento fiscal</p>
+                  </div>
+                </div>
+                <div className={`text-2xl font-bold mb-2 ${
+                  metrics.accounting.pendingF29 > 0 ? 'text-red-600' : 'text-green-600'
+                }`}>
+                  {metrics.accounting.pendingF29 > 0 ? '⚠️' : '✅'}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {metrics.accounting.pendingF29 > 0
+                    ? `${metrics.accounting.pendingF29} F29 pendientes`
+                    : 'Todo al día'
+                  }
+                </div>
+              </div>
+
+              {/* Alerta RRHH */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 text-sm">Gestión RRHH</h3>
+                    <p className="text-gray-500 text-xs">Capital humano</p>
+                  </div>
+                </div>
+                <div className="text-2xl font-bold text-blue-600 mb-2">
+                  {metrics.payroll.activeEmployees}
+                </div>
+                <div className="text-xs text-gray-500">Empleados activos</div>
+              </div>
+
+              {/* Score Empresarial */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                    metrics.executive.efficiency > 85
+                      ? 'bg-gradient-to-r from-green-500 to-green-600'
+                      : 'bg-gradient-to-r from-yellow-500 to-yellow-600'
+                  }`}>
+                    <TrendingUp className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 text-sm">Score Empresarial</h3>
+                    <p className="text-gray-500 text-xs">Eficiencia general</p>
+                  </div>
+                </div>
+                <div className={`text-2xl font-bold mb-2 ${
+                  metrics.executive.efficiency > 85 ? 'text-green-600' : 'text-yellow-600'
+                }`}>
+                  {metrics.executive.efficiency}%
+                </div>
+                <div className="text-xs text-gray-500">Rendimiento global</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

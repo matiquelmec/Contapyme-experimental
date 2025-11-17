@@ -1,14 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { MinimalHeader } from '@/components/layout/MinimalHeader'
 
 export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* Modern Navigation Header */}
-      <MinimalHeader variant="premium" />
 
       <div className="p-8">
         {/* Hero Section */}

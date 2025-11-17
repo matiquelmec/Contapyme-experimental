@@ -324,6 +324,41 @@ export default function MissingEntitiesManager({
     }).format(amount);
   };
 
+  // Formatear porcentaje de cobertura de forma segura
+  const formatCoveragePercentage = () => {
+    if (!missingData || missingData.total_analyzed === 0) {
+      return '0';
+    }
+
+    // Si viene como string, parsearlo
+    if (typeof missingData.coverage_percentage === 'string' && missingData.coverage_percentage !== '') {
+      const parsed = parseFloat(missingData.coverage_percentage);
+      return isNaN(parsed) ? '0' : parsed.toFixed(1);
+    }
+
+    // Si viene como número
+    if (typeof missingData.coverage_percentage === 'number') {
+      return isNaN(missingData.coverage_percentage) ? '0' : missingData.coverage_percentage.toFixed(1);
+    }
+
+    // Calcular manualmente como fallback
+    const covered = missingData.total_analyzed - missingData.total_missing;
+    const percentage = (covered / missingData.total_analyzed) * 100;
+    return isNaN(percentage) ? '0' : percentage.toFixed(1);
+  };
+
+  // Formatear conteo de cobertura
+  const formatCoverageCount = () => {
+    if (!missingData) {
+      return '0/0';
+    }
+
+    const covered = Math.max(0, missingData.total_analyzed - missingData.total_missing);
+    const total = Math.max(0, missingData.total_analyzed);
+
+    return `${covered}/${total}`;
+  };
+
   if (loading) {
     return (
       <Card className="mt-4">
@@ -351,7 +386,7 @@ export default function MissingEntitiesManager({
               ✅ Todas las entidades del RCV están configuradas
             </span>
             <span className="text-sm">
-              ({missingData.coverage_percentage}% cobertura)
+              ({formatCoveragePercentage()}% cobertura)
             </span>
           </div>
         </CardContent>
@@ -372,7 +407,7 @@ export default function MissingEntitiesManager({
                   {missingData.total_missing} entidades faltantes encontradas
                 </span>
                 <div className="text-sm text-orange-600">
-                  Cobertura actual: {missingData.coverage_percentage}% ({missingData.total_analyzed - missingData.total_missing}/{missingData.total_analyzed})
+                  Cobertura actual: {formatCoveragePercentage()}% ({formatCoverageCount()})
                 </div>
               </div>
             </div>

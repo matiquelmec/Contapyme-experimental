@@ -305,7 +305,6 @@ export type {
   PaginatedResponse,
   FormField,
   LoadingState,
-  BreakpointSize,
   ResponsiveValue,
 } from './global';
 
@@ -353,6 +352,8 @@ export interface NavigationItem {
 // =============================================
 // THEME TYPES
 // =============================================
+
+export type BreakpointSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 export interface ThemeColors {
   primary: Record<number, string>;

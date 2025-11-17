@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, Badge } from '@/components/ui';
-import { Users, FileText, Clock, Calendar, BarChart3, Plus, ChevronRight, Settings, FileSpreadsheet, DollarSign, Activity, TrendingUp, ArrowRight, Database, Sparkles, FileX, Calculator } from 'lucide-react';
+import { Users, FileText, Clock, Calendar, BarChart3, Plus, ChevronRight, Settings, FileSpreadsheet, DollarSign, Activity, TrendingUp, ArrowRight, Database, Sparkles, FileX, Calculator, AlertTriangle, Shield } from 'lucide-react';
 
 interface PayrollStats {
   totalEmployees: number;
@@ -13,7 +13,6 @@ interface PayrollStats {
 }
 
 export default function PayrollPage() {
-  const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState<PayrollStats>({
     totalEmployees: 0,
     activeContracts: 0,
@@ -25,10 +24,8 @@ export default function PayrollPage() {
   const COMPANY_ID = '8033ee69-b420-4d91-ba0e-482f46cd6fce';
 
   useEffect(() => {
-    if (activeTab === 'overview') {
-      fetchStats();
-    }
-  }, [activeTab]);
+    fetchStats();
+  }, []);
 
   const fetchStats = async () => {
     try {
@@ -51,7 +48,7 @@ export default function PayrollPage() {
           totalEmployees: employees.length,
           activeContracts: activeContracts,
           monthlyPayroll: monthlyPayroll,
-          upcomingEvents: 0 // Por ahora 0, futuro desarrollo
+          upcomingEvents: 3 // Simulado para demostración
         });
       }
     } catch (error) {
@@ -70,439 +67,269 @@ export default function PayrollPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* Header Section - Consistente con Dashboard Ejecutivo */}
-      <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-sm">
-                  <Users className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-4xl font-bold mb-2">Gestión de Remuneraciones</h1>
-                  <p className="text-xl text-blue-100">
-                    Sistema Integral de RRHH para PyMEs Chilenas
-                  </p>
-                </div>
-              </div>
-
-              {/* Stats Cards en Hero - Estilo Dashboard Ejecutivo */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                  <div className="flex items-center space-x-3">
-                    <Users className="w-6 h-6 text-green-300" />
-                    <div>
-                      <p className="font-semibold">
-                        {loadingStats ? (
-                          <div className="animate-pulse bg-white/20 rounded h-5 w-8"></div>
-                        ) : (
-                          `${stats.totalEmployees} Empleados`
-                        )}
-                      </p>
-                      <p className="text-sm text-blue-100">Personal activo</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                  <div className="flex items-center space-x-3">
-                    <FileText className="w-6 h-6 text-yellow-300" />
-                    <div>
-                      <p className="font-semibold">
-                        {loadingStats ? (
-                          <div className="animate-pulse bg-white/20 rounded h-5 w-8"></div>
-                        ) : (
-                          `${stats.activeContracts} Contratos`
-                        )}
-                      </p>
-                      <p className="text-sm text-blue-100">Vigentes</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                  <div className="flex items-center space-x-3">
-                    <DollarSign className="w-6 h-6 text-purple-300" />
-                    <div>
-                      <p className="font-semibold text-sm">
-                        {loadingStats ? (
-                          <div className="animate-pulse bg-white/20 rounded h-5 w-20"></div>
-                        ) : (
-                          formatCurrency(stats.monthlyPayroll).slice(0, 12) + '...'
-                        )}
-                      </p>
-                      <p className="text-sm text-blue-100">Nómina mensual</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <Link
-              href="/portal"
-              className="hidden lg:flex items-center space-x-2 bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl transition-all backdrop-blur-sm border border-white/20 hover:scale-105"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              <span className="font-medium">Portal Principal</span>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Tabs - Estilo Dashboard Ejecutivo */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 shadow-sm sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            {/* View Selector */}
-            <div className="flex items-center space-x-1">
-              {[
-                { key: 'overview', label: 'Vista General', icon: BarChart3 },
-                { key: 'employees', label: 'Empleados', icon: Users },
-                { key: 'contracts', label: 'Contratos', icon: FileText },
-                { key: 'liquidations', label: 'Liquidaciones', icon: DollarSign },
-                { key: 'libro-remuneraciones', label: 'Libros', icon: FileSpreadsheet },
-                { key: 'settings', label: 'Configuración', icon: Settings }
-              ].map(({ key, label, icon: Icon }) => {
-                const isActive = activeTab === key
-                return (
-                  <button
-                    key={key}
-                    onClick={() => setActiveTab(key)}
-                    className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all ${
-                      isActive
-                        ? 'bg-blue-100 text-blue-700 shadow-sm'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span className="hidden sm:inline">{label}</span>
-                    {isActive && <Sparkles className="w-4 h-4 text-blue-500" />}
-                  </button>
-                )
-              })}
-            </div>
-
-            {/* Dashboard Controls */}
-            <div className="flex items-center space-x-2">
-              <div className="text-sm text-gray-600 mr-4">
-                <span className="font-medium">RRHH</span>
-              </div>
-
-              <Link href="/payroll/employees/new">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="flex items-center space-x-1"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Nuevo Empleado</span>
-                </Button>
-              </Link>
-
-              <Link href="/payroll/liquidations/generate">
-                <Button
-                  size="sm"
-                  className="flex items-center space-x-1 bg-green-600 hover:bg-green-700"
-                >
-                  <DollarSign className="w-4 h-4" />
-                  <span>Nueva Liquidación</span>
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* Tab Description */}
-          <div className="mt-2 flex items-center space-x-3">
-            <Users className="w-5 h-5 text-blue-600" />
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">
-                {activeTab === 'overview' && 'Vista General del Sistema'}
-                {activeTab === 'employees' && 'Gestión de Empleados'}
-                {activeTab === 'contracts' && 'Gestión de Contratos'}
-                {activeTab === 'liquidations' && 'Liquidaciones de Sueldo'}
-                {activeTab === 'libro-remuneraciones' && 'Libro de Remuneraciones'}
-                {activeTab === 'settings' && 'Configuración del Sistema'}
-              </h1>
-              <p className="text-sm text-gray-600">
-                {activeTab === 'overview' && 'Dashboard con métricas y accesos rápidos'}
-                {activeTab === 'employees' && 'Crear, editar y gestionar empleados'}
-                {activeTab === 'contracts' && 'Gestión integral de contratos laborales'}
-                {activeTab === 'liquidations' && 'Cálculo automático según normativa chilena'}
-                {activeTab === 'libro-remuneraciones' && 'Generación de reportes previsionales'}
-                {activeTab === 'settings' && 'Configuración AFP, Salud y parámetros'}
-              </p>
-            </div>
-            <Badge variant="outline" className="ml-auto">
-              Sistema Activo
-            </Badge>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
-        {activeTab === 'overview' && (
-          <div className="space-y-6">
-            {/* Stats Cards Principales */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:shadow-xl transition-all duration-300 hover:scale-105">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-600 mb-2">Total Empleados</p>
-                    <div className="text-3xl font-bold text-gray-900">
-                      {loadingStats ? (
-                        <div className="animate-pulse bg-gray-200/60 rounded-lg w-12 h-8"></div>
-                      ) : (
-                        stats.totalEmployees
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">Personal activo</p>
-                  </div>
-                  <div className="p-3 bg-gradient-to-br from-blue-500/10 to-blue-600/20 rounded-xl">
-                    <Users className="w-8 h-8 text-blue-600" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:shadow-xl transition-all duration-300 hover:scale-105">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-600 mb-2">Contratos Activos</p>
-                    <div className="text-3xl font-bold text-gray-900">
-                      {loadingStats ? (
-                        <div className="animate-pulse bg-gray-200/60 rounded-lg w-12 h-8"></div>
-                      ) : (
-                        stats.activeContracts
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">Vigentes</p>
-                  </div>
-                  <div className="p-3 bg-gradient-to-br from-green-500/10 to-green-600/20 rounded-xl">
-                    <FileText className="w-8 h-8 text-green-600" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:shadow-xl transition-all duration-300 hover:scale-105 col-span-1 sm:col-span-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-600 mb-2">Nómina Mensual</p>
-                    <div className="text-2xl font-bold text-gray-900 truncate">
-                      {loadingStats ? (
-                        <div className="animate-pulse bg-gray-200/60 rounded-lg w-32 h-8"></div>
-                      ) : (
-                        formatCurrency(stats.monthlyPayroll)
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">Sueldos base totales</p>
-                  </div>
-                  <div className="p-3 bg-gradient-to-br from-purple-500/10 to-purple-600/20 rounded-xl">
-                    <DollarSign className="w-8 h-8 text-purple-600" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="group hover:shadow-2xl transition-all duration-300 bg-white/60 backdrop-blur-sm border-2 border-transparent hover:border-blue-200 hover:scale-105">
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl">
-                      <Users className="w-8 h-8 text-blue-700" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-900 mb-1">Empleados</h3>
-                      <p className="text-gray-600 text-sm mb-3">Gestión integral de personal</p>
-                      <Link href="/payroll/employees">
-                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-                          Ver Lista <ArrowRight className="w-4 h-4 ml-1" />
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="group hover:shadow-2xl transition-all duration-300 bg-white/60 backdrop-blur-sm border-2 border-transparent hover:border-green-200 hover:scale-105">
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl">
-                      <DollarSign className="w-8 h-8 text-green-700" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-900 mb-1">Liquidaciones</h3>
-                      <p className="text-gray-600 text-sm mb-3">Cálculo automático normativa 2025</p>
-                      <Link href="/payroll/liquidations">
-                        <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
-                          Gestionar <ArrowRight className="w-4 h-4 ml-1" />
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="group hover:shadow-2xl transition-all duration-300 bg-white/60 backdrop-blur-sm border-2 border-transparent hover:border-purple-200 hover:scale-105">
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl">
-                      <FileSpreadsheet className="w-8 h-8 text-purple-700" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-900 mb-1">Libros</h3>
-                      <p className="text-gray-600 text-sm mb-3">Reportes previsionales oficiales</p>
-                      <Link href="/payroll/libro-remuneraciones">
-                        <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white">
-                          Generar <ArrowRight className="w-4 h-4 ml-1" />
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        )}
-
-        {/* Otros tabs mantienen el contenido original */}
-        {activeTab === 'employees' && (
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-white/20 text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full mx-auto mb-6 flex items-center justify-center">
-              <Users className="w-10 h-10 text-blue-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">Lista Completa de Empleados</h3>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              Ve la lista completa de empleados con detalles, búsquedas y filtros avanzados
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/payroll/employees">
-                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-                  <Users className="w-5 h-5 mr-2" />
-                  Ir a Lista de Empleados
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'contracts' && (
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-white/20 text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full mx-auto mb-6 flex items-center justify-center">
-              <FileText className="w-10 h-10 text-blue-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">Gestión de Contratos</h3>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              Gestiona todos los contratos laborales de la empresa desde aquí
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/payroll/contracts">
-                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-                  <FileText className="w-5 h-5 mr-2" />
-                  Ver Todos los Contratos
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'liquidations' && (
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-white/20 text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-blue-100 rounded-full mx-auto mb-6 flex items-center justify-center">
-              <DollarSign className="w-10 h-10 text-green-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">Sistema de Liquidaciones</h3>
-            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              Genera liquidaciones de sueldo con cálculo automático según la normativa chilena 2025
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/payroll/liquidations">
-                <Button size="lg" className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white">
-                  <BarChart3 className="w-5 h-5 mr-2" />
-                  Ver Liquidaciones
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'libro-remuneraciones' && (
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-white/20 text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-full mx-auto mb-6 flex items-center justify-center">
-              <FileSpreadsheet className="w-10 h-10 text-green-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">Gestión de Libros de Remuneraciones</h3>
-            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              Genera y gestiona libros de remuneraciones electrónicos con exportación CSV
-            </p>
-            <Link href="/payroll/libro-remuneraciones">
-              <Button size="lg" className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white">
-                <FileSpreadsheet className="w-5 h-5 mr-2" />
-                Gestionar Libros
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
-        )}
-
-        {activeTab === 'settings' && (
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-white/20 text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-200 rounded-full mx-auto mb-6 flex items-center justify-center">
-              <Settings className="w-10 h-10 text-indigo-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">Configuración de Remuneraciones</h3>
-            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              Configura los parámetros del sistema incluyendo AFP, Isapres y topes imponibles
-            </p>
-            <Link href="/payroll/settings">
-              <Button size="lg" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white">
-                <Settings className="w-5 h-5 mr-2" />
-                Ir a Configuración
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
-        )}
-
-        {/* System Integration Notice - Estilo Dashboard Ejecutivo */}
-        <div className="mt-12 bg-gradient-to-r from-indigo-50 via-blue-50 to-cyan-50 rounded-2xl p-8 border border-indigo-200">
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0">
-              <div className="p-3 bg-indigo-100 rounded-xl">
-                <Sparkles className="w-6 h-6 text-indigo-600" />
-              </div>
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-indigo-900 mb-2">
-                Módulo de Remuneraciones Completamente Integrado
-              </h3>
-              <p className="text-indigo-700 mb-4">
-                Sistema completo de RRHH con cálculos automáticos según normativa chilena 2025.
-                Gestión de empleados, contratos, liquidaciones y reportes previsionales en una sola plataforma.
+      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0">
+          {/* Hero Section - Simplified */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8 overflow-hidden">
+            <div className="bg-gradient-to-r from-slate-900 to-slate-700 px-8 py-6">
+              <h1 className="text-2xl font-bold text-white mb-2">Centro de Control de RRHH</h1>
+              <p className="text-slate-300 text-sm">
+                Gestión integral de capital humano con normativa chilena actualizada
               </p>
-              <div className="flex flex-wrap gap-3">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-indigo-800">Cálculos Automáticos</span>
+            </div>
+            {/* Quick Stats */}
+            <div className="grid grid-cols-4 divide-x divide-gray-200 bg-gray-50">
+              <div className="px-6 py-4 text-center">
+                <div className="text-lg font-semibold text-gray-900">
+                  {loadingStats ? (
+                    <div className="animate-pulse bg-gray-200 rounded h-5 w-8 mx-auto"></div>
+                  ) : (
+                    stats.totalEmployees
+                  )}
                 </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-indigo-800">Normativa 2025</span>
+                <div className="text-sm text-gray-600">Empleados</div>
+              </div>
+              <div className="px-6 py-4 text-center">
+                <div className="text-lg font-semibold text-gray-900">
+                  {loadingStats ? (
+                    <div className="animate-pulse bg-gray-200 rounded h-5 w-8 mx-auto"></div>
+                  ) : (
+                    formatCurrency(stats.monthlyPayroll / 1000000).replace('$', '$') + 'M'
+                  )}
                 </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-indigo-800">Reportes Oficiales</span>
+                <div className="text-sm text-gray-600">Nómina Mensual</div>
+              </div>
+              <div className="px-6 py-4 text-center">
+                <div className="text-lg font-semibold text-gray-900">
+                  {loadingStats ? (
+                    <div className="animate-pulse bg-gray-200 rounded h-5 w-8 mx-auto"></div>
+                  ) : (
+                    stats.activeContracts
+                  )}
+                </div>
+                <div className="text-sm text-gray-600">Contratos Activos</div>
+              </div>
+              <div className="px-6 py-4 text-center">
+                <div className="text-lg font-semibold text-red-600">
+                  {stats.upcomingEvents}
+                </div>
+                <div className="text-sm text-gray-600">Alertas Pendientes</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Primary RRHH Tools */}
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">👥 Gestión de Capital Humano</h2>
+              <div className="text-sm text-gray-500">Herramientas principales</div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Employee Management */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                      <Users className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Gestión de Empleados</h3>
+                      <p className="text-blue-100 text-sm">Personal y contratos</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-6 space-y-3">
+                  <Link href="/payroll/employees" className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all text-sm border border-blue-200">
+                    <Users className="w-4 h-4" />
+                    <span>Ver Empleados</span>
+                  </Link>
+                  <Link href="/payroll/employees/new" className="w-full bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all text-sm">
+                    <Plus className="w-4 h-4" />
+                    <span>Nuevo Empleado</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Liquidations */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 overflow-hidden">
+                <div className="bg-gradient-to-r from-green-600 to-green-700 p-6 text-white">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                      <DollarSign className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Liquidaciones</h3>
+                      <p className="text-green-100 text-sm">Cálculo automático</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-6 space-y-3">
+                  <Link href="/payroll/liquidations" className="w-full bg-green-50 hover:bg-green-100 text-green-700 px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all text-sm border border-green-200">
+                    <BarChart3 className="w-4 h-4" />
+                    <span>Gestionar</span>
+                  </Link>
+                  <Link href="/payroll/liquidations/generate" className="w-full bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all text-sm">
+                    <Calculator className="w-4 h-4" />
+                    <span>Nueva Liquidación</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Contract Management - Premium */}
+              <div className="bg-white rounded-xl shadow-sm border-2 border-amber-200 hover:shadow-md transition-all duration-200 overflow-hidden">
+                <div className="bg-gradient-to-r from-amber-600 to-amber-700 p-6 text-white">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Contratos Inteligentes</h3>
+                      <p className="text-amber-100 text-sm">Alertas automáticas</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-6 space-y-3">
+                  <Link href="/payroll/contracts" className="w-full bg-amber-50 hover:bg-amber-100 text-amber-700 px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all text-sm border border-amber-200">
+                    <Shield className="w-4 h-4" />
+                    <span>Gestionar Contratos</span>
+                  </Link>
+                  <div className="flex items-center justify-center space-x-2 py-2">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      {stats.upcomingEvents} Alertas
+                    </span>
+                    <span className="text-xs text-gray-500">Vencimientos próximos</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* RRHH Compliance & Alerts */}
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">⚠️ Alertas de Gestión de Contratos</h2>
+              <div className="text-sm text-gray-500">Sistema proactivo</div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Contract Expiration Alert */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+                    <AlertTriangle className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 text-sm">Contratos por Vencer</h3>
+                    <p className="text-gray-500 text-xs">Próximos 30 días</p>
+                  </div>
+                </div>
+                <div className="text-2xl font-bold text-red-600 mb-2">3</div>
+                <div className="text-xs text-gray-500">Requieren renovación</div>
+              </div>
+
+              {/* Trial Periods Ending */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center">
+                    <Clock className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 text-sm">Períodos de Prueba</h3>
+                    <p className="text-gray-500 text-xs">Finalizando</p>
+                  </div>
+                </div>
+                <div className="text-2xl font-bold text-yellow-600 mb-2">2</div>
+                <div className="text-xs text-gray-500">Evaluaciones pendientes</div>
+              </div>
+
+              {/* Contract Modifications */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <FileText className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 text-sm">Anexos por Generar</h3>
+                    <p className="text-gray-500 text-xs">Modificaciones</p>
+                  </div>
+                </div>
+                <div className="text-2xl font-bold text-blue-600 mb-2">1</div>
+                <div className="text-xs text-gray-500">Cambio de condiciones</div>
+              </div>
+
+              {/* Payroll Cost Trend */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 text-sm">Costo Mensual</h3>
+                    <p className="text-gray-500 text-xs">Tendencia</p>
+                  </div>
+                </div>
+                <div className="text-lg font-bold text-green-600 mb-2">↗ +2.3%</div>
+                <div className="text-xs text-gray-500">vs mes anterior</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Libros Oficiales & Reports */}
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">📋 Reportes y Libros Oficiales</h2>
+              <div className="text-sm text-gray-500">Cumplimiento normativo</div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Libro Remuneraciones */}
+              <Link href="/payroll/libro-remuneraciones" className="group bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-purple-300 transition-all duration-200 p-6">
+                <div className="w-12 h-12 bg-purple-500 group-hover:bg-purple-600 rounded-lg mb-4 flex items-center justify-center transition-colors">
+                  <FileSpreadsheet className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="font-semibold text-gray-900 text-lg mb-2">Libro de Remuneraciones</h3>
+                <p className="text-gray-600 text-sm mb-3">Generación automática mensual con exportación CSV</p>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded font-medium">Mensual</span>
+                  <span className="text-gray-500">Normativa DT</span>
+                </div>
+              </Link>
+
+              {/* Configuración */}
+              <Link href="/payroll/settings" className="group bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-indigo-300 transition-all duration-200 p-6">
+                <div className="w-12 h-12 bg-indigo-500 group-hover:bg-indigo-600 rounded-lg mb-4 flex items-center justify-center transition-colors">
+                  <Settings className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="font-semibold text-gray-900 text-lg mb-2">Configuración</h3>
+                <p className="text-gray-600 text-sm mb-3">AFP, Isapres y parámetros del sistema</p>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="bg-indigo-100 text-indigo-800 px-2 py-1 rounded font-medium">Sistema</span>
+                  <span className="text-gray-500">Actualizado 2025</span>
+                </div>
+              </Link>
+
+              {/* Integration Info */}
+              <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
+                    <Sparkles className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-green-900 text-sm">Sistema Integrado</h3>
+                    <p className="text-green-700 text-xs mt-1">
+                      Los costos de nómina se integran automáticamente con el flujo de caja proyectado del módulo contable.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

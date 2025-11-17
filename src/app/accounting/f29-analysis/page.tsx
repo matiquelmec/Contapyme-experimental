@@ -157,7 +157,7 @@ export default function F29AnalysisPage() {
     return 'Baja Confianza';
   };
 
-  // Función para exportar resultados a CSV
+  // Función para exportar resultados a CSV (con codificación corregida)
   const handleExportResults = () => {
     if (!result) return;
 
@@ -182,8 +182,15 @@ export default function F29AnalysisPage() {
       ['Método', result.method, '']
     ];
 
-    const csvContent = csvData.map(row => row.join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    // Crear contenido CSV con BOM para compatibilidad con Excel
+    const csvContent = csvData.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+    const bomUtf8 = new Uint8Array([0xEF, 0xBB, 0xBF]); // BOM UTF-8
+    const csvContentWithBom = new TextEncoder().encode(csvContent);
+    const finalContent = new Uint8Array(bomUtf8.length + csvContentWithBom.length);
+    finalContent.set(bomUtf8);
+    finalContent.set(csvContentWithBom, bomUtf8.length);
+    
+    const blob = new Blob([finalContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     
     if (link.download !== undefined) {
@@ -202,7 +209,7 @@ export default function F29AnalysisPage() {
     setShowDetailedAnalysis(!showDetailedAnalysis);
   };
 
-  // Función para generar CSV del asiento contable
+  // Función para generar CSV del asiento contable (con codificación corregida)
   const generateJournalCSV = (journalData: any) => {
     const headers = ['Cuenta', 'Nombre Cuenta', 'Descripción', 'Debe', 'Haber'];
     const rows = journalData.lines.map((line: any) => [
@@ -226,7 +233,14 @@ export default function F29AnalysisPage() {
       .map(row => row.map(cell => `"${cell}"`).join(','))
       .join('\n');
 
-    return csvContent;
+    // Agregar BOM UTF-8 para compatibilidad
+    const bomUtf8 = new Uint8Array([0xEF, 0xBB, 0xBF]);
+    const csvContentWithBom = new TextEncoder().encode(csvContent);
+    const finalContent = new Uint8Array(bomUtf8.length + csvContentWithBom.length);
+    finalContent.set(bomUtf8);
+    finalContent.set(csvContentWithBom, bomUtf8.length);
+    
+    return finalContent;
   };
 
   // Función para generar asiento contable F29

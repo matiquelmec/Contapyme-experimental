@@ -23,8 +23,8 @@ interface MappingResult {
   external_account: string;
   mapped_code: string;
   mapped_name: string;
-  amount: number;
-  side: 'debit' | 'credit';
+  amount?: number;
+  side?: 'debit' | 'credit';
   confidence: number;
 }
 
@@ -896,7 +896,7 @@ export default function BalanceAnalyzerPage() {
 
         console.log('✅ Cuentas procesadas:', allAccounts.length);
         console.log('🔍 Primera cuenta:', allAccounts[0]);
-        console.log('📋 Tipos de cuenta encontrados:', [...new Set(allAccounts.map(acc => acc.account_type))]);
+        console.log('📋 Tipos de cuenta encontrados:', [...new Set(allAccounts.map((acc: any) => acc.account_type))]);
         setAvailableAccounts(allAccounts);
         console.log('✅ State actualizado con TUS', allAccounts.length, 'cuentas reales');
       } else {
