@@ -259,7 +259,7 @@ export function JobDescriptionAssistant({
       ...prev,
       [field]: field === 'position' || field === 'department' 
         ? value 
-        : prev[field as keyof typeof prev].map((item: string, i: number) => i === index ? value : item),
+        : (prev[field as keyof typeof prev] as any).map((item: string, i: number) => i === index ? value : item),
     }));
   };
 

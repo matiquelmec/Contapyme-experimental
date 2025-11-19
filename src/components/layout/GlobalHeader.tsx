@@ -35,7 +35,7 @@ import { useAuth } from '@/contexts/AuthContext'
  * - Status del sistema
  */
 export function GlobalHeader() {
-  const { user, signOut } = useAuth()
+  const { user, signOut } = useAuth() as any
   const pathname = usePathname()
   const [notifications, setNotifications] = useState(3)
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -76,8 +76,8 @@ export function GlobalHeader() {
   }
 
   const getUserDisplayName = () => {
-    if (user?.user_metadata?.full_name) {
-      return user.user_metadata.full_name
+    if ((user as any)?.user_metadata?.full_name) {
+      return (user as any).user_metadata.full_name
     }
     if (user?.email) {
       return user.email.split('@')[0]

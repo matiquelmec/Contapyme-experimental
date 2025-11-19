@@ -231,7 +231,7 @@ export function AIQuickActions() {
                           {action.title}
                         </h4>
                         <Badge
-                          variant="outline"
+                          variant="default"
                           size="sm"
                           className={getPriorityColor(action.priority)}
                         >
