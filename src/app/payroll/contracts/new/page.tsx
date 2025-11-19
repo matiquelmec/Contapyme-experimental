@@ -204,25 +204,25 @@ export default function NewContractPage() {
         birthDate: (employee as any).birth_date || '',
         gender: (employee as any).gender || '',
         maritalStatus: (employee as any).marital_status || '',
-        nationality: employee.nationality || '',
-        
+        nationality: (employee as any).nationality || '',
+
         // Datos de contacto
-        email: employee.email || '',
-        phone: employee.phone || '',
-        mobilePhone: employee.mobile_phone || '',
-        address: employee.address || '',
-        city: employee.city || '',
-        region: employee.region || '',
-        postalCode: employee.postal_code || '',
-        
+        email: (employee as any).email || '',
+        phone: (employee as any).phone || '',
+        mobilePhone: (employee as any).mobile_phone || '',
+        address: (employee as any).address || '',
+        city: (employee as any).city || '',
+        region: (employee as any).region || '',
+        postalCode: (employee as any).postal_code || '',
+
         // Contacto de emergencia
-        emergencyContactName: employee.emergency_contact_name || '',
-        emergencyContactPhone: employee.emergency_contact_phone || '',
-        emergencyContactRelationship: employee.emergency_contact_relationship || '',
-        
+        emergencyContactName: (employee as any).emergency_contact_name || '',
+        emergencyContactPhone: (employee as any).emergency_contact_phone || '',
+        emergencyContactRelationship: (employee as any).emergency_contact_relationship || '',
+
         // Datos de contrato si existen contratos previos
-        position: employee.employment_contracts?.[0]?.position || '',
-        department: employee.employment_contracts?.[0]?.department || '',
+        position: (employee as any).employment_contracts?.[0]?.position || '',
+        department: (employee as any).employment_contracts?.[0]?.department || '',
       }));
       
       console.log('✅ Datos del empleado cargados en el formulario');
