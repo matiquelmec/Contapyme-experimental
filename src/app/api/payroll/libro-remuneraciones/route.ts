@@ -523,7 +523,7 @@ export async function POST(request: NextRequest) {
 
     // ✅ Crear detalles por empleado con cálculos desde liquidaciones reales
     const bookDetails = liquidations.map(liquidation => {
-      const employee = liquidation.employees;
+      const employee = (liquidation.employees as any)?.[0] || liquidation.employees;
       
       console.log(`🔍 Procesando empleado ${employee?.rut}:`, {
         haberes: liquidation.total_gross_income,
@@ -1258,9 +1258,9 @@ async function generateRealCSV(book: any, companyId: string): Promise<string> {
       '101',                                               // 1107: Código tipo de jornada
       '0',                                                 // 1108: Persona con Discapacidad - Pensionado por Invalidez
       '0',                                                 // 1109: Pensionado por vejez
-      getAfpCode(employee?.afp_id || 1),                  // 1141: AFP
+      getAfpCode((employee as any)?.afp_id || 1),                  // 1141: AFP
       '0',                                                 // 1142: IPS (ExINP)
-      getHealthCode(employee?.health_insurance_id || 16), // 1143: FONASA - ISAPRE (Tabla Nº11)
+      getHealthCode((employee as any)?.health_insurance_id || 16), // 1143: FONASA - ISAPRE (Tabla Nº11)
       '1',                                                 // 1151: AFC
       getCcafCode(employee?.ccaf_id || 1),                // 1110: CCAF (Tabla Nº13)
       getMutualCode(employee?.mutual_id || 3),            // 1152: Org. administrador ley 16.744 (Tabla Nº14)
