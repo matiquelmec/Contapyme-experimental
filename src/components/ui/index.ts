@@ -16,4 +16,5 @@ export type { BadgeProps } from './Badge'
 
 export { default as Preloader } from './Preloader'
 export { EconomicIndicatorsTicker, CompactIndicatorsTicker } from './IndicatorsTicker'
+export { default as IndicatorsTicker } from './IndicatorsTicker'
 export { LazyLoader, LazyRoute, useLazyComponent } from './LazyLoader'

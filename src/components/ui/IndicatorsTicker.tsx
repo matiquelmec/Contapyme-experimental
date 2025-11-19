@@ -210,3 +210,6 @@ export function CompactIndicatorsTicker() {
     </div>
   )
 }
+
+// Export default para compatibilidad
+export default EconomicIndicatorsTicker
