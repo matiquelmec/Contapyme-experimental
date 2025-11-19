@@ -73,45 +73,45 @@ export async function GET(
       );
     }
 
-    console.log('✅ Liquidation detail found:', liquidation.id);
+    console.log('✅ Liquidation detail found:', (liquidation as any).id);
     console.log('🔍 Raw liquidation data:', {
-      legal_gratification_art50: liquidation.legal_gratification_art50,
-      total_gross_income: liquidation.total_gross_income,
-      total_taxable_income: liquidation.total_taxable_income,
-      base_salary: liquidation.base_salary,
-      employee: liquidation.employees,
+      legal_gratification_art50: (liquidation as any).legal_gratification_art50,
+      total_gross_income: (liquidation as any).total_gross_income,
+      total_taxable_income: (liquidation as any).total_taxable_income,
+      base_salary: (liquidation as any).base_salary,
+      employee: (liquidation as any).employees,
     });
 
     // ✅ USAR VALORES DE DB TAL COMO VIENEN (sin corrección duplicada)
     console.log('🔍 Raw liquidation data:', {
-      legal_gratification_art50: liquidation.legal_gratification_art50,
-      total_gross_income: liquidation.total_gross_income,
-      total_taxable_income: liquidation.total_taxable_income,
-      base_salary: liquidation.base_salary,
+      legal_gratification_art50: (liquidation as any).legal_gratification_art50,
+      total_gross_income: (liquidation as any).total_gross_income,
+      total_taxable_income: (liquidation as any).total_taxable_income,
+      base_salary: (liquidation as any).base_salary,
     });
 
     // 🎯 APLICAR CALCULADORA UNIFICADA - SINGLE SOURCE OF TRUTH
     const unifiedData = {
-      employee_rut: liquidation.employees?.rut || '',
-      employee_name: `${liquidation.employees?.first_name || ''} ${liquidation.employees?.last_name || ''}`.trim(),
-      period_year: liquidation.period_year,
-      period_month: liquidation.period_month,
+      employee_rut: (liquidation as any).employees?.rut || '',
+      employee_name: `${(liquidation as any).employees?.first_name || ''} ${(liquidation as any).employees?.last_name || ''}`.trim(),
+      period_year: (liquidation as any).period_year,
+      period_month: (liquidation as any).period_month,
       sueldo_base: liquidation.base_salary || 0,
-      sobresueldo: liquidation.overtime_amount || 0,
-      gratificacion: (liquidation.gratification || 0) + (liquidation.legal_gratification_art50 || 0),
-      bonos: liquidation.bonuses || 0,
-      comisiones: liquidation.commissions || 0,
+      sobresueldo: (liquidation as any).overtime_amount || 0,
+      gratificacion: ((liquidation as any).gratification || 0) + (liquidation.legal_gratification_art50 || 0),
+      bonos: (liquidation as any).bonuses || 0,
+      comisiones: (liquidation as any).commissions || 0,
       horas_extras: 0, // Se puede derivar de overtime_amount si es necesario
-      other_income: (liquidation.food_allowance || 0) + (liquidation.transport_allowance || 0) + (liquidation.family_allowance || 0),
-      afp_amount: liquidation.afp_amount || 0,
-      afp_commission_amount: liquidation.afp_commission_amount || 0,
-      health_amount: liquidation.health_amount || 0,
-      unemployment_amount: liquidation.unemployment_amount || 0,
-      income_tax_amount: liquidation.income_tax_amount || 0,
-      loan_deductions: liquidation.loan_deductions || 0,
-      advance_payments: liquidation.advance_payments || 0,
-      apv_amount: liquidation.apv_amount || 0,
-      other_deductions: liquidation.other_deductions || 0,
+      other_income: ((liquidation as any).food_allowance || 0) + ((liquidation as any).transport_allowance || 0) + ((liquidation as any).family_allowance || 0),
+      afp_amount: (liquidation as any).afp_amount || 0,
+      afp_commission_amount: (liquidation as any).afp_commission_amount || 0,
+      health_amount: (liquidation as any).health_amount || 0,
+      unemployment_amount: (liquidation as any).unemployment_amount || 0,
+      income_tax_amount: (liquidation as any).income_tax_amount || 0,
+      loan_deductions: (liquidation as any).loan_deductions || 0,
+      advance_payments: (liquidation as any).advance_payments || 0,
+      apv_amount: (liquidation as any).apv_amount || 0,
+      other_deductions: (liquidation as any).other_deductions || 0,
     };
 
     // ✅ CALCULAR TOTALES USANDO CALCULADORA UNIFICADA
@@ -131,43 +131,43 @@ export async function GET(
     const formattedLiquidation = {
       id: liquidation.id,
       employee: {
-        rut: liquidation.employees?.rut || '',
-        first_name: liquidation.employees?.first_name || '',
-        last_name: liquidation.employees?.last_name || '',
+        rut: (liquidation as any).employees?.rut || '',
+        first_name: (liquidation as any).employees?.first_name || '',
+        last_name: (liquidation as any).employees?.last_name || '',
       },
-      period_year: liquidation.period_year,
-      period_month: liquidation.period_month,
+      period_year: (liquidation as any).period_year,
+      period_month: (liquidation as any).period_month,
       days_worked: liquidation.days_worked || 30,
 
       // Haberes - Componentes originales
       base_salary: liquidation.base_salary || 0,
-      overtime_amount: liquidation.overtime_amount || 0,
-      bonuses: liquidation.bonuses || 0,
-      commissions: liquidation.commissions || 0,
-      gratification: liquidation.gratification || 0,
+      overtime_amount: (liquidation as any).overtime_amount || 0,
+      bonuses: (liquidation as any).bonuses || 0,
+      commissions: (liquidation as any).commissions || 0,
+      gratification: (liquidation as any).gratification || 0,
       legal_gratification_art50: liquidation.legal_gratification_art50 || 0,
-      food_allowance: liquidation.food_allowance || 0,
-      transport_allowance: liquidation.transport_allowance || 0,
-      family_allowance: liquidation.family_allowance || 0,
+      food_allowance: (liquidation as any).food_allowance || 0,
+      transport_allowance: (liquidation as any).transport_allowance || 0,
+      family_allowance: (liquidation as any).family_allowance || 0,
       total_taxable_income: liquidation.total_taxable_income || 0,
       total_non_taxable_income: liquidation.total_non_taxable_income || 0,
 
       // Descuentos - Componentes originales
       afp_percentage: liquidation.afp_percentage || 10.0,
       afp_commission_percentage: liquidation.afp_commission_percentage || 0.58,
-      afp_amount: liquidation.afp_amount || 0,
-      afp_commission_amount: liquidation.afp_commission_amount || 0,
+      afp_amount: (liquidation as any).afp_amount || 0,
+      afp_commission_amount: (liquidation as any).afp_commission_amount || 0,
       health_percentage: liquidation.health_percentage || 7.0,
-      health_amount: liquidation.health_amount || 0,
+      health_amount: (liquidation as any).health_amount || 0,
       unemployment_percentage: liquidation.unemployment_percentage || 0.6,
-      unemployment_amount: liquidation.unemployment_amount || 0,
-      income_tax_amount: liquidation.income_tax_amount || 0,
+      unemployment_amount: (liquidation as any).unemployment_amount || 0,
+      income_tax_amount: (liquidation as any).income_tax_amount || 0,
 
       // Otros descuentos
-      loan_deductions: liquidation.loan_deductions || 0,
-      advance_payments: liquidation.advance_payments || 0,
-      apv_amount: liquidation.apv_amount || 0,
-      other_deductions: liquidation.other_deductions || 0,
+      loan_deductions: (liquidation as any).loan_deductions || 0,
+      advance_payments: (liquidation as any).advance_payments || 0,
+      apv_amount: (liquidation as any).apv_amount || 0,
+      other_deductions: (liquidation as any).other_deductions || 0,
       total_other_deductions: liquidation.total_other_deductions || 0,
 
       // 🎯 TOTALES CALCULADOS CON CALCULADORA UNIFICADA
