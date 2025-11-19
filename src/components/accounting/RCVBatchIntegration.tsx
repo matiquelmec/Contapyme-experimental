@@ -24,12 +24,6 @@ import {
   CardContent,
   Button,
   Badge,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-  Progress,
-  Checkbox,
 } from '@/components/ui';
 
 interface EntityValidation {
@@ -228,15 +222,30 @@ export default function RCVBatchIntegration({
       </Card>
 
       {/* Tabs de validación y resultados */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="validation">Validación</TabsTrigger>
-          <TabsTrigger value="configuration">Configuración</TabsTrigger>
-          <TabsTrigger value="results">Resultados</TabsTrigger>
-        </TabsList>
+      <div className="tabs-container">
+        <div className="grid w-full grid-cols-3 mb-4">
+          <button
+            onClick={() => setActiveTab('validation')}
+            className={`px-4 py-2 text-sm font-medium ${activeTab === 'validation' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+          >
+            Validación
+          </button>
+          <button
+            onClick={() => setActiveTab('configuration')}
+            className={`px-4 py-2 text-sm font-medium ${activeTab === 'configuration' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+          >
+            Configuración
+          </button>
+          <button
+            onClick={() => setActiveTab('results')}
+            className={`px-4 py-2 text-sm font-medium ${activeTab === 'results' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+          >
+            Resultados
+          </button>
+        </div>
 
         {/* Tab de Validación */}
-        <TabsContent value="validation">
+        {activeTab === 'validation' && (
           <Card>
             <CardHeader>
               <CardTitle>Estado de Validación</CardTitle>
@@ -277,10 +286,12 @@ export default function RCVBatchIntegration({
                         </Badge>
                       </div>
                     </div>
-                    <Progress 
-                      value={validationStatus.entity_status.coverage_percentage} 
-                      className="h-2"
-                    />
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-blue-600 h-2 rounded-full"
+                        style={{ width: `${validationStatus.entity_status.coverage_percentage}%` }}
+                      ></div>
+                    </div>
                   </div>
 
                   {/* Estado de configuración central */}
@@ -351,10 +362,10 @@ export default function RCVBatchIntegration({
               )}
             </CardContent>
           </Card>
-        </TabsContent>
+        )}
 
         {/* Tab de Configuración */}
-        <TabsContent value="configuration">
+        {activeTab === 'configuration' && (
           <Card>
             <CardHeader>
               <CardTitle>Configuración de Procesamiento</CardTitle>
@@ -394,10 +405,12 @@ export default function RCVBatchIntegration({
                 <h4 className="font-medium">Opciones de Procesamiento</h4>
                 
                 <div className="flex items-center space-x-2">
-                  <Checkbox 
+                  <input
+                    type="checkbox"
                     id="save-db"
                     checked={saveToDatabase}
-                    onCheckedChange={(checked) => { setSaveToDatabase(checked as boolean); }}
+                    onChange={(e) => setSaveToDatabase(e.target.checked)}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
                   />
                   <label 
                     htmlFor="save-db" 
@@ -408,10 +421,12 @@ export default function RCVBatchIntegration({
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <Checkbox 
+                  <input
+                    type="checkbox"
                     id="force-process"
                     checked={forceProcess}
-                    onCheckedChange={(checked) => { setForceProcess(checked as boolean); }}
+                    onChange={(e) => setForceProcess(e.target.checked)}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
                   />
                   <label 
                     htmlFor="force-process" 
@@ -434,10 +449,10 @@ export default function RCVBatchIntegration({
               )}
             </CardContent>
           </Card>
-        </TabsContent>
+        )}
 
         {/* Tab de Resultados */}
-        <TabsContent value="results">
+        {activeTab === 'results' && (
           <Card>
             <CardHeader>
               <CardTitle>Resultados del Procesamiento</CardTitle>
@@ -553,8 +568,8 @@ export default function RCVBatchIntegration({
               )}
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        )}
+      </div>
 
       {/* Botones de acción */}
       <div className="flex justify-between">
