@@ -250,17 +250,17 @@ export default function RCVBatchIntegration({
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex justify-between">
                         <span className="text-sm">Total configuradas:</span>
-                        <Badge variant="outline">{validationStatus.entity_status.total_entities}</Badge>
+                        <Badge variant="info" outline>{validationStatus.entity_status.total_entities}</Badge>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm">Con cuentas asignadas:</span>
-                        <Badge variant="outline" className="bg-green-50">
+                        <Badge variant="success" outline className="bg-green-50">
                           {validationStatus.entity_status.entities_with_accounts}
                         </Badge>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm">Sin cuentas:</span>
-                        <Badge variant="outline" className="bg-yellow-50">
+                        <Badge variant="warning" outline className="bg-yellow-50">
                           {validationStatus.entity_status.entities_without_accounts}
                         </Badge>
                       </div>

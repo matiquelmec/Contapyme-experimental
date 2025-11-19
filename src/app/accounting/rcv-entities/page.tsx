@@ -323,15 +323,16 @@ export default function RCVEntitiesPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge 
-                      variant={entity.entity_type === 'supplier' ? 'default' : 
-                              entity.entity_type === 'customer' ? 'secondary' : 'outline'}
+                    <Badge
+                      variant={entity.entity_type === 'supplier' ? 'default' :
+                              entity.entity_type === 'customer' ? 'secondary' : 'secondary'}
+                      outline={entity.entity_type === 'both'}
                     >
                       {entity.entity_type === 'supplier' ? 'Proveedor' :
                        entity.entity_type === 'customer' ? 'Cliente' : 'Ambos'}
                     </Badge>
                     {entity.is_tax_exempt && (
-                      <Badge variant="outline">Sin IVA</Badge>
+                      <Badge variant="info" outline>Sin IVA</Badge>
                     )}
                   </div>
                 </CardHeader>
