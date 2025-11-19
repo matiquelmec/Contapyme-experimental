@@ -104,12 +104,12 @@ export default function GenerateLiquidationPage() {
     if (!emp?.employment_contracts?.[0]) return null;
 
     const contract = emp.employment_contracts[0];
-    const payrollConfig = emp.payroll_config; // ✅ ARREGLADO: Es objeto directo, no array
+    const payrollConfig = (emp as any).payroll_config; // ✅ ARREGLADO: Es objeto directo, no array
     
     // ✅ DEBUG: Verificar estructura de datos del empleado
     console.log(`🔍 DEBUG EMPLEADO - Empleado completo:`, emp);
     console.log(`🔍 DEBUG EMPLEADO - Contrato:`, contract);
-    console.log(`🔍 DEBUG EMPLEADO - weekly_hours del contrato:`, contract.weekly_hours);
+    console.log(`🔍 DEBUG EMPLEADO - weekly_hours del contrato:`, (contract as any).weekly_hours);
     console.log(`🔍 DEBUG EMPLEADO - payroll_config encontrado:`, payrollConfig);
     console.log(`🔍 DEBUG EMPLEADO - afp_code será:`, payrollConfig?.afp_code || 'MODELO');
     
@@ -119,7 +119,7 @@ export default function GenerateLiquidationPage() {
       first_name: emp.first_name,
       last_name: emp.last_name,
       base_salary: contract.base_salary,
-      weekly_hours: contract.weekly_hours, // ✅ NUEVO: Incluir horas semanales del contrato
+      weekly_hours: (contract as any).weekly_hours, // ✅ NUEVO: Incluir horas semanales del contrato
       contract_type: contract.contract_type as 'indefinido' | 'plazo_fijo' | 'obra_faena',
       afp_code: payrollConfig?.afp_code || 'MODELO', // ✅ CORREGIDO: Desde payroll_config
       health_institution_code: payrollConfig?.health_institution_code || 'FONASA', // ✅ CORREGIDO
@@ -128,7 +128,7 @@ export default function GenerateLiquidationPage() {
       legal_gratification_type: formData.apply_legal_gratification ? 'article_50' : 'none',
       // Guardar el tipo original para referencia
       _original_gratification_type: payrollConfig?.legal_gratification_type || 'none',
-    } as EmployeeData;
+    } as any;
   }, [employees, selectedEmployeeId, formData.apply_legal_gratification]);
 
   // Datos para el cálculo en tiempo real
@@ -180,7 +180,7 @@ export default function GenerateLiquidationPage() {
   useEffect(() => {
     if (selectedEmployeeId && employees.length > 0) {
       const emp = employees.find(e => e.id === selectedEmployeeId);
-      const hasGratificationConfigured = emp?.payroll_config?.legal_gratification_type === 'article_50';
+      const hasGratificationConfigured = (emp as any)?.payroll_config?.legal_gratification_type === 'article_50';
       
       // Solo auto-marcar si no se ha interactuado manualmente con el checkbox
       setFormData(prev => ({
@@ -311,24 +311,24 @@ export default function GenerateLiquidationPage() {
   useEffect(() => {
     if (selectedEmployeeId && employees.length > 0) {
       const emp = employees.find(e => e.id === selectedEmployeeId);
-      const activeContract = emp?.employment_contracts?.find(c => c.status === 'active');
+      const activeContract = emp?.employment_contracts?.find(c => (c as any).status === 'active');
 
-      if (activeContract?.start_date) {
+      if ((activeContract as any)?.start_date) {
         console.log('🔍 AUTO-PRECARGA PARA EMPLEADO:', {
           name: `${emp.first_name} ${emp.last_name}`,
-          start_date: activeContract.start_date,
+          start_date: (activeContract as any).start_date,
           period: `${formData.period_month}/${formData.period_year}`,
         });
 
         // Precargar fecha en datos Previred
         setPreviredData(prev => ({
           ...prev,
-          start_work_date: activeContract.start_date,
+          start_work_date: (activeContract as any).start_date,
         }));
 
         // Calcular días trabajados automáticamente
         const calculatedDays = calculateWorkedDays(
-          activeContract.start_date,
+          (activeContract as any).start_date,
           formData.period_year,
           formData.period_month,
         );
@@ -516,7 +516,7 @@ export default function GenerateLiquidationPage() {
       const weeklyHours = selectedEmployee.weekly_hours || 44;
       const calculatedAmount = calculateOvertimeAmount(newValue as number, baseSalary, weeklyHours);
       
-      setFormData(prev => ({
+      setFormData((prev: any) => ({
         ...prev,
         [name]: newValue,
         overtime_amount: calculatedAmount,
