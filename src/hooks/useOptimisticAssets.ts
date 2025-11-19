@@ -52,7 +52,7 @@ export function useOptimisticAssets() {
     const tempId = generateTempId();
     
     // Crear activo temporal para UI inmediata
-    const optimisticAsset: OptimisticAsset = {
+    const optimisticAsset = {
       id: tempId,
       user_id: 'demo-user',
       name: assetData.name,

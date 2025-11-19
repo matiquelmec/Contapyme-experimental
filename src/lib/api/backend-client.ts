@@ -3,6 +3,8 @@
  * Maneja la comunicación entre frontend Next.js y backend Express
  */
 
+import React from 'react'
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8000';
 
 interface ApiResponse<T = any> {
