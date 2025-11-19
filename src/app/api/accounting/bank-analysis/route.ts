@@ -176,7 +176,7 @@ async function parsePDFBankStatement(buffer: ArrayBuffer, filename: string): Pro
     if (extractedText.length > 50) {
       console.log('🔍 Trying to parse extracted text with Universal Parser...');
       const parser = new UniversalBankStatementParser(extractedText);
-      const result = parser.parse();
+      const result = await parser.parse();
       
       if (result.transactions.length > 0) {
         console.log(`✅ Successfully extracted ${result.transactions.length} transactions from PDF text`);

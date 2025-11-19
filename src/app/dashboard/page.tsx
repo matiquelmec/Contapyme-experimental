@@ -11,7 +11,7 @@ export default function DashboardPage() {
   return (
     <CompanyProvider demoMode>
       <div className="min-h-screen bg-gray-50">
-        <MinimalHeader variant="premium" />
+        <MinimalHeader />
 
         <main className="max-w-7xl mx-auto py-8 px-4">
           {/* Page Header */}

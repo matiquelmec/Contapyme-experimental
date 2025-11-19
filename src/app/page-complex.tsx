@@ -33,7 +33,7 @@ export default function Home() {
       </div>
 
       {/* Header Minimalista */}
-      <MinimalHeader variant="glass" />
+      <MinimalHeader />
 
       {/* Cinta de Indicadores Económicos */}
       <EconomicIndicatorsTicker />

@@ -30,7 +30,7 @@ const PayrollHeader: React.FC<PayrollHeaderProps> = ({
 }) => (
     <>
       {/* MinimalHeader con logo prominente */}
-      <MinimalHeader variant="premium" showNavigation />
+      <MinimalHeader />
       
       {/* Context Header con información de la página */}
       <div className={cn("bg-white border-b border-gray-200", className)}>

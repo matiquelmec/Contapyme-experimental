@@ -289,15 +289,9 @@ function mapByCode(extCode: string, internalAccounts: any[]) {
     '6.3.1.023': { code: '6.3.1.023', name: 'Diferencias de Cambio', confidence: 85 },
     '6.3.1.024': { code: '6.3.1.024', name: 'Gastos No Deducibles', confidence: 85 },
     
-    // Más gastos típicos de Gastrologica con códigos 4.xx
-    '4.01.01.01': { code: '6.3.2.001', name: 'Costo de Ventas', confidence: 95 },
-    '4.01.02.01': { code: '6.3.2.002', name: 'Mermas y Deterioros', confidence: 90 },
-    '4.01.04.01': { code: '6.3.1.025', name: 'Gastos de Administración', confidence: 90 },
+    // Gastrologica códigos únicos 4.xx (las duplicadas se removieron)
     '4.01.05.01': { code: '6.3.1.026', name: 'Gastos Generales', confidence: 85 },
-    '4.02.01.01': { code: '6.2.1.007', name: 'Aguinaldos', confidence: 90 },
-    '4.02.02.01': { code: '6.2.1.008', name: 'Asignación Familiar', confidence: 90 },
     '4.02.03.01': { code: '6.2.1.009', name: 'Indemnizaciones', confidence: 90 },
-    '4.02.05.01': { code: '6.2.1.010', name: 'Viáticos', confidence: 90 },
   };
 
   if (exactMappings[extCode]) {
