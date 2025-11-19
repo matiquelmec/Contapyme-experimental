@@ -455,43 +455,43 @@ export default function NewContractPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                         <div>
                           <span className="font-medium text-green-900">RUT:</span>
-                          <span className="ml-2 text-green-800">{formData.rut || 'No especificado'}</span>
+                          <span className="ml-2 text-green-800">{(formData as any).rut || 'No especificado'}</span>
                         </div>
                         <div>
                           <span className="font-medium text-green-900">Nombre:</span>
                           <span className="ml-2 text-green-800">
-                            {formData.firstName} {formData.middleName} {formData.lastName}
+                            {(formData as any).firstName} {(formData as any).middleName} {(formData as any).lastName}
                           </span>
                         </div>
                         <div>
                           <span className="font-medium text-green-900">Email:</span>
-                          <span className="ml-2 text-green-800">{formData.email || 'No especificado'}</span>
+                          <span className="ml-2 text-green-800">{(formData as any).email || 'No especificado'}</span>
                         </div>
                         <div>
                           <span className="font-medium text-green-900">Teléfono:</span>
-                          <span className="ml-2 text-green-800">{formData.phone || formData.mobilePhone || 'No especificado'}</span>
+                          <span className="ml-2 text-green-800">{(formData as any).phone || (formData as any).mobilePhone || 'No especificado'}</span>
                         </div>
                         <div>
                           <span className="font-medium text-green-900">Dirección:</span>
-                          <span className="ml-2 text-green-800">{formData.address ? `${formData.address}, ${formData.city}` : 'No especificada'}</span>
+                          <span className="ml-2 text-green-800">{(formData as any).address ? `${(formData as any).address}, ${(formData as any).city}` : 'No especificada'}</span>
                         </div>
                         <div>
                           <span className="font-medium text-green-900">Nacionalidad:</span>
-                          <span className="ml-2 text-green-800">{formData.nationality || 'No especificada'}</span>
+                          <span className="ml-2 text-green-800">{(formData as any).nationality || 'No especificada'}</span>
                         </div>
                       </div>
                       
-                      {formData.emergencyContactName && (
+                      {(formData as any).emergencyContactName && (
                         <div className="mt-3 pt-3 border-t border-green-300">
                           <h4 className="font-medium text-green-900 mb-2">Contacto de Emergencia:</h4>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                             <div>
                               <span className="font-medium text-green-700">Nombre:</span>
-                              <span className="ml-2 text-green-800">{formData.emergencyContactName}</span>
+                              <span className="ml-2 text-green-800">{(formData as any).emergencyContactName}</span>
                             </div>
                             <div>
                               <span className="font-medium text-green-700">Teléfono:</span>
-                              <span className="ml-2 text-green-800">{formData.emergencyContactPhone || 'No especificado'}</span>
+                              <span className="ml-2 text-green-800">{(formData as any).emergencyContactPhone || 'No especificado'}</span>
                             </div>
                           </div>
                         </div>
