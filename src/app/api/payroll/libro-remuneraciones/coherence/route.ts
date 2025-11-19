@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
 
     // Fuente 2: Datos calculados con PayrollUnifiedCalculator
     const calculatedSource = PayrollDataCoherenceEngine.generateCoherentDataSource(
-      liquidations as LiquidationData[],
+      liquidations as any,
       actualCompanyId,
       year,
       month,
@@ -148,7 +148,7 @@ export async function GET(request: NextRequest) {
     let autoFixAnalysis = null;
     if (!coherenceValidation.is_coherent && coherenceValidation.auto_fixable) {
       autoFixAnalysis = await PayrollDataCoherenceEngine.autoFixIncoherentData(
-        liquidations as LiquidationData[],
+        liquidations as any,
         'database',
       );
     }
@@ -247,7 +247,7 @@ export async function POST(request: NextRequest) {
 
     // Ejecutar auto-corrección
     const fixResult = await PayrollDataCoherenceEngine.autoFixIncoherentData(
-      liquidations as LiquidationData[],
+      liquidations as any,
       'database',
     );
 
@@ -265,7 +265,7 @@ export async function POST(request: NextRequest) {
       month,
       [
         PayrollDataCoherenceEngine.generateCoherentDataSource(
-          liquidations as LiquidationData[],
+          liquidations as any,
           actualCompanyId,
           year,
           month,
