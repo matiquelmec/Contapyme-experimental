@@ -244,8 +244,8 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
   const [state, setState] = useState<DashboardState>({
     currentView: 'vision_360',
     user: {
-      id: user?.id || '',
-      email: user?.email || '',
+      id: (user as any)?.id || '',
+      email: (user as any)?.email || '',
       role: 'general_manager', // Default role
     },
     layouts: [],
@@ -291,99 +291,99 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
 
   // Determine user role based on email or other criteria
   useEffect(() => {
-    if (user?.email) {
+    if ((user as any)?.email) {
       let userRole: UserRole = 'general_manager' // default
 
       // Simple role detection logic (can be enhanced)
-      if (user.email.includes('contador') || user.email.includes('admin')) {
+      if ((user as any).email.includes('contador') || (user as any).email.includes('admin')) {
         userRole = 'accountant'
-      } else if (user.email.includes('rrhh') || user.email.includes('hr')) {
+      } else if ((user as any).email.includes('rrhh') || (user as any).email.includes('hr')) {
         userRole = 'hr_manager'
       }
 
       setState(prev => ({
         ...prev,
         user: {
-          ...prev.user,
+          ...(prev as any).user,
           role: userRole,
           preferredView: userRole === 'accountant' ? 'compliance_cockpit' :
                         userRole === 'hr_manager' ? 'human_capital' : 'vision_360',
-        },
+        } as any,
       }))
     }
   }, [user])
 
   const switchView = (view: DashboardView) => {
-    const targetLayout = state.layouts.find(layout =>
-      layout.isDefault && layout.role === DASHBOARD_VIEWS[view].role,
+    const targetLayout = (state as any).layouts.find((layout: any) =>
+      (layout as any).isDefault && (layout as any).role === (DASHBOARD_VIEWS as any)[view].role,
     )
 
     setState(prev => ({
       ...prev,
       currentView: view,
-      activeLayout: targetLayout?.id || prev.activeLayout,
+      activeLayout: (targetLayout as any)?.id || (prev as any).activeLayout,
     }))
   }
 
   const updateWidget = (widgetId: string, updates: Partial<WidgetConfig>) => {
     setState(prev => {
-      const layouts = prev.layouts.map(layout => {
-        if (layout.id === prev.activeLayout) {
+      const layouts = (prev as any).layouts.map((layout: any) => {
+        if ((layout as any).id === (prev as any).activeLayout) {
           return {
             ...layout,
-            widgets: layout.widgets.map(widget =>
-              widget.id === widgetId
+            widgets: (layout as any).widgets.map((widget: any) =>
+              (widget as any).id === widgetId
                 ? { ...widget, ...updates, lastUpdated: new Date().toISOString() }
                 : widget,
             ),
             updatedAt: new Date().toISOString(),
-          }
+          } as any
         }
         return layout
       })
 
-      return { ...prev, layouts }
+      return { ...prev, layouts } as any
     })
   }
 
   const addWidget = (widget: Omit<WidgetConfig, 'id'>) => {
     const newWidget: WidgetConfig = {
       ...widget,
-      id: `widget_${widget.type}_${Date.now()}`,
+      id: `widget_${(widget as any).type}_${Date.now()}`,
       status: 'active',
       lastUpdated: new Date().toISOString(),
-    }
+    } as any
 
     setState(prev => {
-      const layouts = prev.layouts.map(layout => {
-        if (layout.id === prev.activeLayout) {
+      const layouts = (prev as any).layouts.map((layout: any) => {
+        if ((layout as any).id === (prev as any).activeLayout) {
           return {
             ...layout,
-            widgets: [...layout.widgets, newWidget],
+            widgets: [...(layout as any).widgets, newWidget],
             updatedAt: new Date().toISOString(),
-          }
+          } as any
         }
         return layout
       })
 
-      return { ...prev, layouts }
+      return { ...prev, layouts } as any
     })
   }
 
   const removeWidget = (widgetId: string) => {
     setState(prev => {
-      const layouts = prev.layouts.map(layout => {
-        if (layout.id === prev.activeLayout) {
+      const layouts = (prev as any).layouts.map((layout: any) => {
+        if ((layout as any).id === (prev as any).activeLayout) {
           return {
             ...layout,
-            widgets: layout.widgets.filter(widget => widget.id !== widgetId),
+            widgets: (layout as any).widgets.filter((widget: any) => (widget as any).id !== widgetId),
             updatedAt: new Date().toISOString(),
-          }
+          } as any
         }
         return layout
       })
 
-      return { ...prev, layouts }
+      return { ...prev, layouts } as any
     })
   }
 
@@ -393,12 +393,12 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
       id: `layout_${Date.now()}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    }
+    } as any
 
     setState(prev => ({
       ...prev,
-      layouts: [...prev.layouts, newLayout],
-    }))
+      layouts: [...(prev as any).layouts, newLayout],
+    } as any))
   }
 
   const loadLayout = (layoutId: string) => {
@@ -439,11 +439,11 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
   }
 
   const refreshAllWidgets = () => {
-    const activeLayout = state.layouts.find(layout => layout.id === state.activeLayout)
+    const activeLayout = (state as any).layouts.find((layout: any) => (layout as any).id === (state as any).activeLayout)
     if (activeLayout) {
-      activeLayout.widgets.forEach(widget => {
-        if (widget.visible && widget.status === 'active') {
-          refreshWidget(widget.id)
+      (activeLayout as any).widgets.forEach((widget: any) => {
+        if ((widget as any).visible && (widget as any).status === 'active') {
+          refreshWidget((widget as any).id)
         }
       })
     }
