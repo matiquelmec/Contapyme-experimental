@@ -149,12 +149,12 @@ export async function POST(request: NextRequest) {
 
       if (!templateError && template) {
         templateData = {
-          job_functions: job_functions || template.job_functions,
-          obligations: obligations || template.obligations,
-          prohibitions: prohibitions || template.prohibitions,
-          bonuses: bonuses || template.standard_bonuses,
-          allowances: allowances || template.standard_allowances,
-          resignation_notice_days: resignation_notice_days || template.resignation_notice_days,
+          job_functions: job_functions || (template as any).job_functions,
+          obligations: obligations || (template as any).obligations,
+          prohibitions: prohibitions || (template as any).prohibitions,
+          bonuses: bonuses || (template as any).standard_bonuses,
+          allowances: allowances || (template as any).standard_allowances,
+          resignation_notice_days: resignation_notice_days || (template as any).resignation_notice_days,
         };
       }
     }
