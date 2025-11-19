@@ -38,17 +38,17 @@ interface TransactionFormProps {
 
 export default function TransactionForm({ companyId, accounts, transaction }: TransactionFormProps) {
   const [formData, setFormData] = useState({
-    date: transaction?.date ? new Date(transaction.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-    description: transaction?.description || '',
-    reference: transaction?.reference || '',
+    date: (transaction as any)?.date ? new Date((transaction as any).date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+    description: (transaction as any)?.description || '',
+    reference: (transaction as any)?.reference || '',
   })
   
   const [entries, setEntries] = useState<TransactionEntry[]>(
-    transaction?.entries?.map(entry => ({
-      accountId: entry.account_id,
-      debit: Number(entry.debit),
-      credit: Number(entry.credit),
-      description: entry.description || '',
+    (transaction as any)?.entries?.map((entry: any) => ({
+      accountId: (entry as any).account_id,
+      debit: Number((entry as any).debit),
+      credit: Number((entry as any).credit),
+      description: (entry as any).description || '',
     })) || [
       { accountId: '', debit: 0, credit: 0, description: '' },
       { accountId: '', debit: 0, credit: 0, description: '' },
@@ -68,16 +68,16 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
-    })
+      [(e.target as any).name]: (e.target as any).value,
+    } as any)
   }
 
   const handleEntryChange = (index: number, field: keyof TransactionEntry, value: string | number) => {
     const newEntries = [...entries]
     if (field === 'debit' || field === 'credit') {
-      newEntries[index][field] = Number(value) || 0
+      (newEntries as any)[index][field] = Number(value) || 0
     } else {
-      newEntries[index][field] = value as string
+      (newEntries as any)[index][field] = value as string
     }
     setEntries(newEntries)
   }
@@ -104,8 +104,8 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
       return
     }
 
-    const validEntries = entries.filter(entry => 
-      entry.accountId && (entry.debit > 0 || entry.credit > 0),
+    const validEntries = entries.filter((entry: any) =>
+      (entry as any).accountId && ((entry as any).debit > 0 || (entry as any).credit > 0),
     )
 
     if (validEntries.length < 2) {
@@ -117,36 +117,36 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
     try {
       if (transaction) {
         // Update existing transaction
-        const { error: updateError } = await supabase
+        const { error: updateError } = await (supabase as any)
           .from('transactions')
           .update({
-            date: formData.date,
-            description: formData.description,
-            reference: formData.reference || null,
+            date: (formData as any).date,
+            description: (formData as any).description,
+            reference: (formData as any).reference || null,
             updated_at: new Date().toISOString(),
           })
-          .eq('id', transaction.id)
+          .eq('id', (transaction as any).id)
 
         if (updateError) throw updateError
 
         // Delete existing entries
-        const { error: deleteError } = await supabase
+        const { error: deleteError } = await (supabase as any)
           .from('transaction_entries')
           .delete()
-          .eq('transaction_id', transaction.id)
+          .eq('transaction_id', (transaction as any).id)
 
         if (deleteError) throw deleteError
 
         // Insert new entries
-        const entriesToInsert = validEntries.map(entry => ({
-          transaction_id: transaction.id,
-          account_id: entry.accountId,
-          debit: entry.debit,
-          credit: entry.credit,
-          description: entry.description || null,
+        const entriesToInsert = (validEntries as any).map((entry: any) => ({
+          transaction_id: (transaction as any).id,
+          account_id: (entry as any).accountId,
+          debit: (entry as any).debit,
+          credit: (entry as any).credit,
+          description: (entry as any).description || null,
         }))
 
-        const { error: entriesError } = await supabase
+        const { error: entriesError } = await (supabase as any)
           .from('transaction_entries')
           .insert(entriesToInsert)
 
@@ -154,13 +154,13 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
 
       } else {
         // Create new transaction
-        const { data: transactionData, error: transactionError } = await supabase
+        const { data: transactionData, error: transactionError } = await (supabase as any)
           .from('transactions')
           .insert([{
             company_id: companyId,
-            date: formData.date,
-            description: formData.description,
-            reference: formData.reference || null,
+            date: (formData as any).date,
+            description: (formData as any).description,
+            reference: (formData as any).reference || null,
           }])
           .select()
           .single()
@@ -168,15 +168,15 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
         if (transactionError) throw transactionError
 
         // Insert entries
-        const entriesToInsert = validEntries.map(entry => ({
-          transaction_id: transactionData.id,
-          account_id: entry.accountId,
-          debit: entry.debit,
-          credit: entry.credit,
-          description: entry.description || null,
+        const entriesToInsert = (validEntries as any).map((entry: any) => ({
+          transaction_id: (transactionData as any).id,
+          account_id: (entry as any).accountId,
+          debit: (entry as any).debit,
+          credit: (entry as any).credit,
+          description: (entry as any).description || null,
         }))
 
-        const { error: entriesError } = await supabase
+        const { error: entriesError } = await (supabase as any)
           .from('transaction_entries')
           .insert(entriesToInsert)
 
@@ -187,7 +187,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
       router.refresh()
 
     } catch (err: any) {
-      setError(err.message || 'Error inesperado. Intenta nuevamente.')
+      setError((err as any).message || 'Error inesperado. Intenta nuevamente.')
     } finally {
       setLoading(false)
     }
@@ -206,7 +206,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
             name="date"
             id="date"
             required
-            value={formData.date}
+            value={(formData as any).date}
             onChange={handleFormChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
@@ -220,7 +220,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
             type="text"
             name="reference"
             id="reference"
-            value={formData.reference}
+            value={(formData as any).reference}
             onChange={handleFormChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             placeholder="Nº factura, cheque, etc."
@@ -248,7 +248,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
           name="description"
           id="description"
           required
-          value={formData.description}
+          value={(formData as any).description}
           onChange={handleFormChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           placeholder="Descripción de la transacción"
@@ -281,15 +281,15 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
             <div key={index} className="grid grid-cols-12 gap-2 p-3 border-b last:border-b-0">
               <div className="col-span-4">
                 <select
-                  value={entry.accountId}
-                  onChange={(e) => { handleEntryChange(index, 'accountId', e.target.value); }}
+                  value={(entry as any).accountId}
+                  onChange={(e) => { handleEntryChange(index, 'accountId', (e.target as any).value); }}
                   className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   required
                 >
                   <option value="">Seleccionar cuenta</option>
-                  {accounts.map((account) => (
-                    <option key={account.id} value={account.id}>
-                      {account.code} - {account.name}
+                  {(accounts as any).map((account: any) => (
+                    <option key={(account as any).id} value={(account as any).id}>
+                      {(account as any).code} - {(account as any).name}
                     </option>
                   ))}
                 </select>
@@ -298,8 +298,8 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
               <div className="col-span-3">
                 <input
                   type="text"
-                  value={entry.description}
-                  onChange={(e) => { handleEntryChange(index, 'description', e.target.value); }}
+                  value={(entry as any).description}
+                  onChange={(e) => { handleEntryChange(index, 'description', (e.target as any).value); }}
                   className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Detalle específico"
                 />
@@ -310,8 +310,8 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
                   type="number"
                   step="0.01"
                   min="0"
-                  value={entry.debit || ''}
-                  onChange={(e) => { handleEntryChange(index, 'debit', e.target.value); }}
+                  value={(entry as any).debit || ''}
+                  onChange={(e) => { handleEntryChange(index, 'debit', (e.target as any).value); }}
                   className="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="0.00"
                 />
@@ -322,8 +322,8 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
                   type="number"
                   step="0.01"
                   min="0"
-                  value={entry.credit || ''}
-                  onChange={(e) => { handleEntryChange(index, 'credit', e.target.value); }}
+                  value={(entry as any).credit || ''}
+                  onChange={(e) => { handleEntryChange(index, 'credit', (e.target as any).value); }}
                   className="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="0.00"
                 />
