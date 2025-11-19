@@ -273,11 +273,11 @@ export default function NewContractPage() {
           lunch_end: formData.lunch_end,
           days: 'Lunes a Sábado',
         },
-        bonuses: formData.bonuses,
+        bonuses: (formData as any).bonuses,
         allowances: {
-          meal: Number(formData.allowances.meal) || 0,
-          transport: Number(formData.allowances.transport) || 0,
-          cash: Number(formData.allowances.cash) || 0,
+          meal: Number((formData as any).allowances?.meal) || 0,
+          transport: Number((formData as any).allowances?.transport) || 0,
+          cash: Number((formData as any).allowances?.cash) || 0,
         },
         // Incorporar datos del asistente IA si están disponibles
         job_functions: jobDescriptionData?.job_functions || jobDescriptionData?.refined_functions || [],
@@ -791,7 +791,7 @@ export default function NewContractPage() {
                     <CardTitle className="flex items-center">
                       <CheckCircle className="h-5 w-5 mr-2 text-green-600" />
                       Información Previsional
-                      {formData.afp_auto_detected && (
+                      {(formData as any).afp_auto_detected && (
                         <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                           ✨ Detectada automáticamente
                         </span>
@@ -808,14 +808,14 @@ export default function NewContractPage() {
                           AFP *
                         </label>
                         <select
-                          value={formData.afp_name}
+                          value={(formData as any).afp_name}
                           onChange={(e) => { setFormData(prev => ({ 
                             ...prev, 
                             afp_name: e.target.value,
                             afp_auto_detected: false, // Se cambió manualmente
                           })); }}
                           className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 ${
-                            formData.afp_auto_detected 
+                            (formData as any).afp_auto_detected 
                               ? 'border-green-300 bg-green-50' 
                               : 'border-gray-300'
                           }`}
@@ -835,7 +835,7 @@ export default function NewContractPage() {
                           Institución de Salud *
                         </label>
                         <select
-                          value={formData.health_institution}
+                          value={(formData as any).health_institution}
                           onChange={(e) => { setFormData(prev => ({ 
                             ...prev, 
                             health_institution: e.target.value,
@@ -843,7 +843,7 @@ export default function NewContractPage() {
                             afp_auto_detected: false, // Se cambió manualmente
                           })); }}
                           className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 ${
-                            formData.afp_auto_detected 
+                            (formData as any).afp_auto_detected 
                               ? 'border-green-300 bg-green-50' 
                               : 'border-gray-300'
                           }`}
