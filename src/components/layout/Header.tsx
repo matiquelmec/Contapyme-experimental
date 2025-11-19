@@ -1,10 +1,13 @@
 'use client'
 
 import React, { useState } from 'react'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+
+import { ChevronDown, Home, Calculator, TrendingUp } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
-import { ChevronDown, Home, Calculator, Users, TrendingUp } from 'lucide-react'
 
 interface HeaderProps {
   title?: string
@@ -27,8 +30,7 @@ interface BreadcrumbsProps {
   className?: string
 }
 
-const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className }) => {
-  return (
+const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className }) => (
     <nav className={cn("flex text-sm text-gray-500", className)} aria-label="Breadcrumb">
       <ol className="flex items-center space-x-2">
         {items.map((item, index) => (
@@ -61,7 +63,6 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className }) => {
       </ol>
     </nav>
   )
-}
 
 const Header: React.FC<HeaderProps> = ({
   title,
@@ -71,7 +72,7 @@ const Header: React.FC<HeaderProps> = ({
   actions,
   className,
   showNavigation = true,
-  variant = 'default'
+  variant = 'default',
 }) => {
   const pathname = usePathname()
   const [isNavOpen, setIsNavOpen] = useState(false)
@@ -115,7 +116,7 @@ const Header: React.FC<HeaderProps> = ({
       
       breadcrumbs.push({
         label: label.charAt(0).toUpperCase() + label.slice(1),
-        href: index === paths.length - 1 ? undefined : currentPath
+        href: index === paths.length - 1 ? undefined : currentPath,
       })
     })
     
@@ -130,26 +131,26 @@ const Header: React.FC<HeaderProps> = ({
       label: 'Análisis F29',
       href: '/accounting/f29-analysis',
       icon: Calculator,
-      description: 'Análisis automático de formularios'
+      description: 'Análisis automático de formularios',
     },
     {
       label: 'Análisis Comparativo',
       href: '/accounting/f29-comparative',
       icon: TrendingUp,
-      description: 'Compara múltiples períodos'
+      description: 'Compara múltiples períodos',
     },
     {
       label: 'Activos Fijos',
       href: '/accounting/fixed-assets',
       icon: Home,
-      description: 'Gestión y depreciación'
+      description: 'Gestión y depreciación',
     },
     {
       label: 'Indicadores',
       href: '/accounting/indicators',
       icon: TrendingUp,
-      description: 'UF, UTM, divisas en tiempo real'
-    }
+      description: 'UF, UTM, divisas en tiempo real',
+    },
   ]
   const getHeaderClasses = () => {
     const baseClasses = "relative z-20"
@@ -205,7 +206,7 @@ const Header: React.FC<HeaderProps> = ({
             {showNavigation && (
               <div className="relative ml-6">
                 <button
-                  onClick={() => setIsNavOpen(!isNavOpen)}
+                  onClick={() => { setIsNavOpen(!isNavOpen); }}
                   className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-gray-900 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   <span className="font-medium">Navegación</span>
@@ -224,7 +225,7 @@ const Header: React.FC<HeaderProps> = ({
                             <Link
                               key={item.href}
                               href={item.href}
-                              onClick={() => setIsNavOpen(false)}
+                              onClick={() => { setIsNavOpen(false); }}
                               className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
                             >
                               <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
@@ -242,7 +243,7 @@ const Header: React.FC<HeaderProps> = ({
                       <div className="border-t border-gray-200 mt-4 pt-4">
                         <Link
                           href="/explore"
-                          onClick={() => setIsNavOpen(false)}
+                          onClick={() => { setIsNavOpen(false); }}
                           className="flex items-center justify-center w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                         >
                           Ver Todas las Funcionalidades

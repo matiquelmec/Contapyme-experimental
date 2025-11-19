@@ -1,12 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getFixedAssets, getFixedAssetsReport } from '@/lib/database/databaseSimple';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
+import { getFixedAssets } from '@/lib/database/databaseSimple';
 
 export const dynamic = 'force-dynamic';
 
 // GET /api/fixed-assets/export - Exportar activos fijos a CSV
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const format = searchParams.get('format') || 'csv';
     const userId = 'demo-user';
 
@@ -17,14 +19,14 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching assets for export:', error);
       return NextResponse.json(
         { error: 'Error al obtener activos fijos' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (!assets || assets.length === 0) {
       return NextResponse.json(
         { error: 'No hay activos fijos para exportar' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -33,7 +35,7 @@ export async function GET(request: NextRequest) {
       const currentDate = new Date();
       const startDate = new Date(asset.start_depreciation_date);
       const monthsElapsed = Math.max(0, Math.floor(
-        (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 30)
+        (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 30),
       ));
       
       const depreciableValue = asset.purchase_value - (asset.residual_value || 0);
@@ -42,19 +44,19 @@ export async function GET(request: NextRequest) {
       
       const accumulatedDepreciation = Math.min(
         monthsElapsed * monthlyDepreciation,
-        depreciableValue
+        depreciableValue,
       );
       
       const bookValue = Math.max(
         asset.purchase_value - accumulatedDepreciation, 
-        asset.residual_value || 0
+        asset.residual_value || 0,
       );
 
       return {
         ...asset,
         accumulated_depreciation: accumulatedDepreciation,
         book_value: bookValue,
-        monthly_depreciation: monthlyDepreciation
+        monthly_depreciation: monthlyDepreciation,
       };
     });
 
@@ -82,7 +84,7 @@ export async function GET(request: NextRequest) {
         'Cuenta de Activo',
         'Cuenta Depreciación',
         'Cuenta Gasto',
-        'Fecha Creación'
+        'Fecha Creación',
       ];
 
       const csvRows = [
@@ -109,8 +111,8 @@ export async function GET(request: NextRequest) {
           `"${asset.asset_account_code || ''}"`,
           `"${asset.depreciation_account_code || ''}"`,
           `"${asset.expense_account_code || ''}"`,
-          asset.created_at ? new Date(asset.created_at).toLocaleDateString('es-CL') : ''
-        ].join(','))
+          asset.created_at ? new Date(asset.created_at).toLocaleDateString('es-CL') : '',
+        ].join(',')),
       ];
 
       const csvContent = csvRows.join('\n');
@@ -122,22 +124,22 @@ export async function GET(request: NextRequest) {
         headers: {
           'Content-Type': 'text/csv; charset=utf-8',
           'Content-Disposition': `attachment; filename="${filename}"`,
-          'Cache-Control': 'no-cache'
-        }
+          'Cache-Control': 'no-cache',
+        },
       });
     }
 
     // Para otros formatos en el futuro
     return NextResponse.json(
       { error: 'Formato de exportación no soportado' },
-      { status: 400 }
+      { status: 400 },
     );
 
   } catch (error) {
     console.error('Error in export API:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

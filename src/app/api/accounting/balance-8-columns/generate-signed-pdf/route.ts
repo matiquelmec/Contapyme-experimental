@@ -1,7 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
+import { createSupabaseServerClient } from '@/lib/database/databaseSimple';
 import { BalancePDFGenerator } from '@/lib/services/balancePDFGenerator';
 import { DigitalSignatureService } from '@/lib/services/digitalSignatureService';
-import { createSupabaseServerClient } from '@/lib/database/databaseSimple';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,14 +16,14 @@ export async function POST(request: NextRequest) {
       signerRole,
       signerEmail,
       companyName,
-      balanceData
+      balanceData,
     } = body;
 
     // Validaciones básicas
     if (!companyId || !period || !signerName || !signerRut || !signerRole || !balanceData) {
       return NextResponse.json(
         { success: false, error: 'Faltan campos requeridos para la firma' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -34,7 +36,7 @@ export async function POST(request: NextRequest) {
       generatedAt: new Date(),
       accounts: balanceData.accounts || [],
       totals: balanceData.totals || {},
-      net_income: balanceData.net_income || 0
+      net_income: balanceData.net_income || 0,
     };
 
     // Generar PDF base del balance
@@ -52,7 +54,7 @@ export async function POST(request: NextRequest) {
       signerRole,
       signerEmail,
       documentContent: balanceData,
-      companyId
+      companyId,
     });
 
     // Agregar firma al PDF
@@ -63,8 +65,8 @@ export async function POST(request: NextRequest) {
       {
         name: signerName,
         rut: signerRut,
-        role: signerRole
-      }
+        role: signerRole,
+      },
     );
 
     // Guardar información de la firma en la base de datos
@@ -92,8 +94,8 @@ export async function POST(request: NextRequest) {
         metadata: {
           generated_at: new Date().toISOString(),
           pdf_size: signedPdfBytes.length,
-          accounts_count: balanceData.accounts?.length || 0
-        }
+          accounts_count: balanceData.accounts?.length || 0,
+        },
       })
       .select()
       .single();
@@ -102,7 +104,7 @@ export async function POST(request: NextRequest) {
       console.error('Error guardando firma:', saveError);
       return NextResponse.json(
         { success: false, error: 'Error guardando información de la firma' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -114,13 +116,13 @@ export async function POST(request: NextRequest) {
         name: signerName,
         rut: signerRut,
         role: signerRole,
-        email: signerEmail
+        email: signerEmail,
       },
       {
         type: 'Balance de 8 Columnas',
         name: `Balance de 8 Columnas ${period}`,
-        period
-      }
+        period,
+      },
     );
 
     console.log('PDF firmado generado exitosamente');
@@ -135,8 +137,8 @@ export async function POST(request: NextRequest) {
         signatureHash: signatureResult.signatureHash,
         qrCodeData: signatureResult.qrCodeData,
         pdfBase64: Buffer.from(signedPdfBytes).toString('base64'),
-        certificateBase64: Buffer.from(certificateBytes).toString('base64')
-      }
+        certificateBase64: Buffer.from(certificateBytes).toString('base64'),
+      },
     });
 
   } catch (error) {
@@ -145,9 +147,9 @@ export async function POST(request: NextRequest) {
       { 
         success: false, 
         error: 'Error interno del servidor',
-        details: error instanceof Error ? error.message : 'Error desconocido'
+        details: error instanceof Error ? error.message : 'Error desconocido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -166,21 +168,21 @@ export async function GET(request: NextRequest) {
       return new NextResponse(pdfBytes, {
         headers: {
           'Content-Type': 'application/pdf',
-          'Content-Disposition': 'attachment; filename="balance-8-columnas-prueba.pdf"'
-        }
+          'Content-Disposition': 'attachment; filename="balance-8-columnas-prueba.pdf"',
+        },
       });
     }
 
     return NextResponse.json(
       { success: false, error: 'Endpoint GET solo disponible para pruebas con ?test=true' },
-      { status: 400 }
+      { status: 400 },
     );
 
   } catch (error) {
     console.error('Error generando PDF de prueba:', error);
     return NextResponse.json(
       { success: false, error: 'Error generando PDF de prueba' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

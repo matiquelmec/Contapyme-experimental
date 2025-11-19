@@ -146,8 +146,7 @@ export function useF29AnalyticsWorker() {
   }, []);
 
   // Función genérica para enviar tareas al Worker
-  const sendTask = useCallback((type: string, data: any): Promise<any> => {
-    return new Promise((resolve, reject) => {
+  const sendTask = useCallback((type: string, data: any): Promise<any> => new Promise((resolve, reject) => {
       // Verificar que el Worker esté disponible
       if (!workerRef.current || !isWorkerReady) {
         reject(new Error('F29 Analytics Worker no está disponible'));
@@ -168,7 +167,7 @@ export function useF29AnalyticsWorker() {
         type,
         resolve,
         reject,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       try {
@@ -176,7 +175,7 @@ export function useF29AnalyticsWorker() {
         workerRef.current.postMessage({
           type,
           data,
-          taskId
+          taskId,
         });
 
         // Timeout de seguridad (15 segundos para análisis complejos)
@@ -190,8 +189,7 @@ export function useF29AnalyticsWorker() {
         tasksRef.current.delete(taskId);
         reject(new Error(`Error enviando mensaje al Worker: ${error}`));
       }
-    });
-  }, [isWorkerReady]);
+    }), [isWorkerReady]);
 
   // Detectar patrones estacionales
   const detectSeasonalPatterns = useCallback(async (f29Data: any[]): Promise<SeasonalAnalysis> => {
@@ -200,7 +198,7 @@ export function useF29AnalyticsWorker() {
         hasSeasonality: false,
         patterns: [],
         confidence: 0,
-        insights: ['Worker no disponible - análisis estacional no realizado']
+        insights: ['Worker no disponible - análisis estacional no realizado'],
       };
     }
 
@@ -212,7 +210,7 @@ export function useF29AnalyticsWorker() {
         hasSeasonality: false,
         patterns: [],
         confidence: 0,
-        insights: ['Error en análisis estacional']
+        insights: ['Error en análisis estacional'],
       };
     }
   }, [isWorkerReady, sendTask]);
@@ -224,7 +222,7 @@ export function useF29AnalyticsWorker() {
         trend: 'INSUFFICIENT_DATA',
         growth: 0,
         projections: [],
-        insights: ['Worker no disponible - análisis de tendencias no realizado']
+        insights: ['Worker no disponible - análisis de tendencias no realizado'],
       };
     }
 
@@ -236,7 +234,7 @@ export function useF29AnalyticsWorker() {
         trend: 'INSUFFICIENT_DATA',
         growth: 0,
         projections: [],
-        insights: ['Error en análisis de tendencias']
+        insights: ['Error en análisis de tendencias'],
       };
     }
   }, [isWorkerReady, sendTask]);
@@ -246,7 +244,7 @@ export function useF29AnalyticsWorker() {
     if (!isWorkerReady) {
       return {
         anomalies: [],
-        insights: ['Worker no disponible - detección de anomalías no realizada']
+        insights: ['Worker no disponible - detección de anomalías no realizada'],
       };
     }
 
@@ -256,7 +254,7 @@ export function useF29AnalyticsWorker() {
       console.warn('Error en detección de anomalías:', error);
       return {
         anomalies: [],
-        insights: ['Error en detección de anomalías']
+        insights: ['Error en detección de anomalías'],
       };
     }
   }, [isWorkerReady, sendTask]);
@@ -267,7 +265,7 @@ export function useF29AnalyticsWorker() {
       return {
         insights: [],
         comparisons: [],
-        recommendations: ['Worker no disponible - análisis comparativo no realizado']
+        recommendations: ['Worker no disponible - análisis comparativo no realizado'],
       };
     }
 
@@ -278,7 +276,7 @@ export function useF29AnalyticsWorker() {
       return {
         insights: [],
         comparisons: [],
-        recommendations: ['Error en análisis comparativo']
+        recommendations: ['Error en análisis comparativo'],
       };
     }
   }, [isWorkerReady, sendTask]);
@@ -291,29 +289,29 @@ export function useF29AnalyticsWorker() {
           hasSeasonality: false,
           patterns: [],
           confidence: 0,
-          insights: []
+          insights: [],
         },
         trends: {
           trend: 'INSUFFICIENT_DATA',
           growth: 0,
           projections: [],
-          insights: []
+          insights: [],
         },
         anomalies: {
           anomalies: [],
-          insights: []
+          insights: [],
         },
         comparative: {
           insights: [],
           comparisons: [],
-          recommendations: []
+          recommendations: [],
         },
         summary: {
           overallHealth: 'POOR',
           keyInsights: ['Worker no disponible'],
           actionItems: [],
-          riskFactors: ['Sistema de análisis no operativo']
-        }
+          riskFactors: ['Sistema de análisis no operativo'],
+        },
       };
     }
 
@@ -340,6 +338,6 @@ export function useF29AnalyticsWorker() {
     analyzeTrends,
     detectAnomalies,
     performComparativeAnalysis,
-    performFullAnalysis
+    performFullAnalysis,
   };
 }

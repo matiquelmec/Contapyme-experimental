@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection, isSupabaseConfigured } from '@/lib/database/databaseSimple';
 import { SettlementCalculator, type EmployeeTerminationData } from '@/lib/services/settlementCalculator';
 
@@ -13,14 +15,14 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!isSupabaseConfigured()) {
       return NextResponse.json(
         { success: false, error: 'Base de datos no configurada' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -28,7 +30,7 @@ export async function GET(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { success: false, error: 'Error de configuración de base de datos' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -56,9 +58,9 @@ export async function GET(request: NextRequest) {
           success: false, 
           error: 'Error al obtener finiquitos',
           details: error.message,
-          hint: error.hint 
+          hint: error.hint, 
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -86,21 +88,21 @@ export async function GET(request: NextRequest) {
         ...termination,
         employees: {
           ...employee,
-          employment_contracts: contracts || []
-        }
+          employment_contracts: contracts || [],
+        },
       });
     }
 
     return NextResponse.json({
       success: true,
-      data: enrichedTerminations
+      data: enrichedTerminations,
     });
 
   } catch (error) {
     console.error('Error in GET /api/payroll/terminations:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -114,14 +116,14 @@ export async function POST(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!isSupabaseConfigured()) {
       return NextResponse.json(
         { success: false, error: 'Base de datos no configurada' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -129,7 +131,7 @@ export async function POST(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { success: false, error: 'Error de configuración de base de datos' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -147,7 +149,7 @@ export async function POST(request: NextRequest) {
     if (employeeError || !employee) {
       return NextResponse.json(
         { success: false, error: 'Empleado no encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -164,7 +166,7 @@ export async function POST(request: NextRequest) {
     if (!contract) {
       return NextResponse.json(
         { success: false, error: 'Contrato activo no encontrado para el empleado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -175,20 +177,20 @@ export async function POST(request: NextRequest) {
       employee_name: `${employee.first_name} ${employee.last_name}`,
       position: contract.position,
       
-      contract_start_date: new Date(contract.start_date + 'T12:00:00'),
+      contract_start_date: new Date(`${contract.start_date  }T12:00:00`),
       contract_type: contract.contract_type as 'indefinido' | 'plazo_fijo' | 'obra_faena',
       monthly_salary: contract.base_salary,
       weekly_hours: contract.weekly_hours || 45,
       
-      termination_date: new Date(termination_date + 'T12:00:00'),
-      termination_cause_code: termination_cause_code,
-      last_work_date: new Date((last_work_date || termination_date) + 'T12:00:00'),
+      termination_date: new Date(`${termination_date  }T12:00:00`),
+      termination_cause_code,
+      last_work_date: new Date(`${last_work_date || termination_date  }T12:00:00`),
       
       // Datos adicionales del formulario
       vacation_days_taken: additionalData.vacation_days_taken || 0,
       pending_overtime_amount: additionalData.pending_overtime_amount || 0,
       christmas_bonus_pending: additionalData.christmas_bonus_pending || false,
-      other_bonuses: additionalData.other_bonuses || 0
+      other_bonuses: additionalData.other_bonuses || 0,
     };
 
     console.log('📋 Datos para calculador de finiquito:', {
@@ -196,7 +198,7 @@ export async function POST(request: NextRequest) {
       contract_start_date: terminationData.contract_start_date,
       termination_date: terminationData.termination_date,
       monthly_salary: terminationData.monthly_salary,
-      termination_cause_code: terminationData.termination_cause_code
+      termination_cause_code: terminationData.termination_cause_code,
     });
 
     // 4. Usar el calculador real de finiquitos
@@ -208,9 +210,9 @@ export async function POST(request: NextRequest) {
       .from('employee_terminations')
       .insert({
         company_id: companyId,
-        employee_id: employee_id,
-        termination_date: termination_date,
-        termination_cause_code: termination_cause_code,
+        employee_id,
+        termination_date,
+        termination_cause_code,
         termination_cause_description: calculation.termination_cause.article_name,
         notice_given: calculation.termination_cause.requires_notice,
         notice_days: calculation.termination_cause.notice_days || 0,
@@ -243,7 +245,7 @@ export async function POST(request: NextRequest) {
         final_net_amount: calculation.final_net_amount,
         
         status: 'calculated',
-        termination_reason_details: additionalData.termination_reason_details || null
+        termination_reason_details: additionalData.termination_reason_details || null,
       })
       .select()
       .single();
@@ -256,31 +258,31 @@ export async function POST(request: NextRequest) {
           error: 'Error al guardar finiquito',
           details: saveError.message,
           hint: saveError.hint,
-          code: saveError.code
+          code: saveError.code,
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     console.log('✅ Finiquito calculado exitosamente:', {
       employee_name: terminationData.employee_name,
       total_compensations: calculation.total_compensations,
-      final_net_amount: calculation.final_net_amount
+      final_net_amount: calculation.final_net_amount,
     });
 
     return NextResponse.json({
       success: true,
       data: {
         termination: savedTermination,
-        calculation: calculation
-      }
+        calculation,
+      },
     });
 
   } catch (error) {
     console.error('Error in POST /api/payroll/terminations:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -294,7 +296,7 @@ export async function PUT(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -302,7 +304,7 @@ export async function PUT(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { success: false, error: 'Error de configuración de base de datos' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -317,7 +319,7 @@ export async function PUT(request: NextRequest) {
         company_signature_date,
         witness_name,
         witness_rut,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', termination_id)
       .eq('company_id', companyId)
@@ -328,20 +330,20 @@ export async function PUT(request: NextRequest) {
       console.error('Error updating termination:', updateError);
       return NextResponse.json(
         { success: false, error: 'Error al actualizar finiquito' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     return NextResponse.json({
       success: true,
-      data: updatedTermination
+      data: updatedTermination,
     });
 
   } catch (error) {
     console.error('Error in PUT /api/payroll/terminations:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

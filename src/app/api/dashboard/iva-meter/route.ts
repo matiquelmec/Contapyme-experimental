@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   try {
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
       historicoMeses: [
         { mes: '2024-10', monto: 1850000, estado: 'pagar' },
         { mes: '2024-11', monto: 2150000, estado: 'pagar' },
-        { mes: '2024-12', monto: ivaAPagar, estado: ivaAPagar > 0 ? 'pagar' : 'favor' }
+        { mes: '2024-12', monto: ivaAPagar, estado: ivaAPagar > 0 ? 'pagar' : 'favor' },
       ],
 
       // Proyección próximo mes basado en tendencia
@@ -34,16 +35,16 @@ export async function GET(request: NextRequest) {
         factores: [
           'Incremento estacional diciembre-enero',
           'Tendencia de ventas últimos 3 meses',
-          'Promedio compras vs ventas'
-        ]
-      }
+          'Promedio compras vs ventas',
+        ],
+      },
     }
 
     return NextResponse.json({
       success: true,
       data: ivaData,
       timestamp: new Date().toISOString(),
-      message: 'Datos de IVA calculados exitosamente'
+      message: 'Datos de IVA calculados exitosamente',
     })
 
   } catch (error) {
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error al calcular datos de IVA',
-      details: error instanceof Error ? error.message : 'Error desconocido'
+      details: error instanceof Error ? error.message : 'Error desconocido',
     }, { status: 500 })
   }
 }

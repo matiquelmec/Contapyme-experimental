@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button, Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
-import { Save, Eye, Trash2, Clock, TrendingUp, X, Loader2 } from 'lucide-react';
+
+import { Save, Eye, Clock, TrendingUp, X, Loader2 } from 'lucide-react';
+
+import { Button } from '@/components/ui';
 
 interface JobDescriptor {
   id: string;
@@ -26,7 +28,7 @@ interface SavedJobDescriptionsSelectorProps {
 export function SavedJobDescriptionsSelector({ 
   companyId, 
   onSelect, 
-  onClose 
+  onClose, 
 }: SavedJobDescriptionsSelectorProps) {
   const [descriptors, setDescriptors] = useState<JobDescriptor[]>([]);
   const [loading, setLoading] = useState(false);
@@ -58,7 +60,7 @@ export function SavedJobDescriptionsSelector({
       await fetch(`/api/payroll/job-descriptions/${descriptor.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ company_id: companyId })
+        body: JSON.stringify({ company_id: companyId }),
       });
 
       onSelect(descriptor);
@@ -71,7 +73,7 @@ export function SavedJobDescriptionsSelector({
 
   const filteredDescriptors = descriptors.filter(desc =>
     desc.job_position.toLowerCase().includes(filter.toLowerCase()) ||
-    (desc.department?.toLowerCase().includes(filter.toLowerCase()))
+    (desc.department?.toLowerCase().includes(filter.toLowerCase())),
   );
 
   return (
@@ -94,7 +96,7 @@ export function SavedJobDescriptionsSelector({
             type="text"
             placeholder="Buscar por cargo o departamento..."
             value={filter}
-            onChange={(e) => setFilter(e.target.value)}
+            onChange={(e) => { setFilter(e.target.value); }}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           />
         </div>

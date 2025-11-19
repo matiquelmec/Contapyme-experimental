@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import { FixedAsset, CreateFixedAssetData } from '@/types';
+
+import type { FixedAsset, CreateFixedAssetData } from '@/types';
 
 interface OptimisticAsset extends FixedAsset {
   isOptimistic?: boolean;
@@ -11,13 +12,12 @@ interface OptimisticAsset extends FixedAsset {
 // Función de debounce
 function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => Promise<void> {
   let timeout: NodeJS.Timeout | null = null;
   let resolvePromise: ((value: void) => void) | null = null;
   
-  return (...args: Parameters<T>) => {
-    return new Promise<void>((resolve) => {
+  return (...args: Parameters<T>) => new Promise<void>((resolve) => {
       if (timeout) {
         clearTimeout(timeout);
       }
@@ -31,7 +31,6 @@ function debounce<T extends (...args: any[]) => any>(
         }
       }, wait);
     });
-  };
 }
 
 export function useOptimisticAssets() {
@@ -48,7 +47,7 @@ export function useOptimisticAssets() {
   const createAssetOptimistic = useCallback(async (
     assetData: CreateFixedAssetData,
     onSuccess?: () => void,
-    onError?: (error: string) => void
+    onError?: (error: string) => void,
   ) => {
     const tempId = generateTempId();
     
@@ -76,7 +75,7 @@ export function useOptimisticAssets() {
       status: 'active',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      isOptimistic: true // Marcador para saber que es temporal
+      isOptimistic: true, // Marcador para saber que es temporal
     };
 
     // 1. Actualizar UI inmediatamente (optimistic)
@@ -101,7 +100,7 @@ export function useOptimisticAssets() {
       // 3. Reemplazar optimistic con real
       console.log('✅ Activo guardado, reemplazando optimistic');
       setAssets(prev => prev.map(asset => 
-        asset.id === tempId ? { ...savedAsset.asset, isOptimistic: false } : asset
+        asset.id === tempId ? { ...savedAsset.asset, isOptimistic: false } : asset,
       ));
 
       onSuccess?.();
@@ -113,7 +112,7 @@ export function useOptimisticAssets() {
       setAssets(prev => prev.map(asset => 
         asset.id === tempId 
           ? { ...asset, isReverting: true } // Mostrar estado de error
-          : asset
+          : asset,
       ));
 
       // Remover después de 2 segundos con animación
@@ -151,23 +150,23 @@ export function useOptimisticAssets() {
           
           // Confirmar con datos reales
           setAssets(prev => prev.map(asset => 
-            asset.id === id ? { ...updatedAsset.asset, isOptimistic: false } : asset
+            asset.id === id ? { ...updatedAsset.asset, isOptimistic: false } : asset,
           ));
           
         } catch (error: any) {
           console.error(`❌ Error actualizando activo ${id}:`, error);
           // En caso de error, revertir el estado optimista
           setAssets(prev => prev.map(asset => 
-            asset.id === id ? { ...asset, isOptimistic: false, isReverting: true } : asset
+            asset.id === id ? { ...asset, isOptimistic: false, isReverting: true } : asset,
           ));
         }
-      })
+      }),
     );
   }, []);
 
   // Debounced update processor
   const debouncedUpdate = useRef(
-    debounce(processUpdateQueue, 500) // 500ms de debounce
+    debounce(processUpdateQueue, 500), // 500ms de debounce
   ).current;
 
   // Actualizar activo con optimistic update y debouncing
@@ -175,7 +174,7 @@ export function useOptimisticAssets() {
     id: string,
     updateData: Partial<CreateFixedAssetData>,
     onSuccess?: () => void,
-    onError?: (error: string) => void
+    onError?: (error: string) => void,
   ) => {
     // 1. Guardar estado original para posible reversión
     const originalAsset = assets.find(a => a.id === id);
@@ -189,12 +188,12 @@ export function useOptimisticAssets() {
       ...originalAsset,
       ...updateData,
       updated_at: new Date().toISOString(),
-      isOptimistic: true
+      isOptimistic: true,
     };
 
     console.log('⚡ Actualizando activo optimistic:', id);
     setAssets(prev => prev.map(asset => 
-      asset.id === id ? optimisticUpdate : asset
+      asset.id === id ? optimisticUpdate : asset,
     ));
 
     // 3. Agregar a la cola de actualizaciones
@@ -207,7 +206,7 @@ export function useOptimisticAssets() {
     } catch (error: any) {
       // 5. En caso de error, revertir al estado original
       setAssets(prev => prev.map(asset => 
-        asset.id === id ? originalAsset : asset
+        asset.id === id ? originalAsset : asset,
       ));
       onError?.(error.message || 'Error al actualizar activo');
     }
@@ -217,7 +216,7 @@ export function useOptimisticAssets() {
   const deleteAssetOptimistic = useCallback(async (
     id: string,
     onSuccess?: () => void,
-    onError?: (error: string) => void
+    onError?: (error: string) => void,
   ) => {
     // 1. Guardar para posible reversión
     const assetToDelete = assets.find(a => a.id === id);
@@ -231,13 +230,13 @@ export function useOptimisticAssets() {
     setAssets(prev => prev.map(asset => 
       asset.id === id 
         ? { ...asset, isOptimistic: true, isReverting: true } 
-        : asset
+        : asset,
     ));
 
     try {
       // 3. Eliminar de base de datos
       const response = await fetch(`/api/fixed-assets/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       if (!response.ok) {
@@ -257,7 +256,7 @@ export function useOptimisticAssets() {
       
       // 5. Revertir al estado original
       setAssets(prev => prev.map(asset => 
-        asset.id === id ? assetToDelete : asset
+        asset.id === id ? assetToDelete : asset,
       ));
 
       onError?.(error.message || 'Error al eliminar activo');
@@ -273,7 +272,7 @@ export function useOptimisticAssets() {
         const data = await response.json();
         setAssets((data.assets || []).map((asset: FixedAsset) => ({
           ...asset,
-          isOptimistic: false
+          isOptimistic: false,
         })));
       }
     } catch (error) {
@@ -290,6 +289,6 @@ export function useOptimisticAssets() {
     createAssetOptimistic,
     updateAssetOptimistic,
     deleteAssetOptimistic,
-    refreshAssets
+    refreshAssets,
   };
 }

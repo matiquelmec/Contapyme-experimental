@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -14,7 +16,7 @@ const AFP_CODES: Record<string, string> = {
   'MODELO': '34',    // AFP Modelo
   'PLANVITAL': '29', // AFP PlanVital
   'PROVIDA': '08',   // AFP ProVida
-  'UNO': '35'        // AFP Uno
+  'UNO': '35',        // AFP Uno
 };
 
 // Función para limpiar RUT (remover puntos y guión)
@@ -90,7 +92,7 @@ function generatePreviredLine(employee: any, liquidation: any, period: string, c
 
   // Mapeo correcto de AFP según errores Previred - CORRIGIENDO BASADO EN ERRORES DE VALIDACIÓN
   let afpCode = '34'; // Default: MODELO
-  let afpRate = 0.10; // Tasa base 10% 
+  const afpRate = 0.10; // Tasa base 10% 
   let comisionAfp = 0.0058; // Comisión AFP
   // 📋 TIPOS DE TRABAJADOR SEGÚN TABLA N°5 PREVIRED:
   // 0 = Activo (No Pensionado) - COTIZA AFP + FONASA
@@ -126,7 +128,7 @@ function generatePreviredLine(employee: any, liquidation: any, period: string, c
 
   // Calcular cotización AFP CON 0.1% adicional según validación Previred
   const afpTasaCompleta = afpRate + comisionAfp + 0.001; // 10% + comisión + 0.1% adicional
-  let afpAmount = Math.round(imponibleAfp * afpTasaCompleta);
+  const afpAmount = Math.round(imponibleAfp * afpTasaCompleta);
   
   // 🔍 CORRECCIÓN MONTO FONASA: Usar cálculo directo con tope UF
   // Previred espera: 7% de renta imponible salud (con límite UF)
@@ -173,7 +175,7 @@ function generatePreviredLine(employee: any, liquidation: any, period: string, c
       'ISALUD': '11',
       'FUNDACION': '12',
       'CRUZ DEL NORTE': '25',
-      'ESENCIAL': '28'
+      'ESENCIAL': '28',
     };
     
     const isapreName = contractHealth?.toUpperCase() || '';
@@ -365,7 +367,7 @@ export async function GET(request: NextRequest) {
     if (!companyId || !period) {
       return NextResponse.json(
         { success: false, error: 'company_id y period son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -395,7 +397,7 @@ export async function GET(request: NextRequest) {
     if (bookError || !payrollBook) {
       return NextResponse.json(
         { success: false, error: 'Libro de remuneraciones no encontrado para el período especificado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -423,7 +425,7 @@ export async function GET(request: NextRequest) {
       console.error('Error obteniendo liquidaciones:', liquidationsError);
       return NextResponse.json(
         { success: false, error: 'Error al obtener liquidaciones' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -455,7 +457,7 @@ export async function GET(request: NextRequest) {
     for (const employee of payrollBook.payroll_book_details || []) {
       // Buscar liquidación correspondiente
       const liquidation = liquidations?.find(liq => 
-        liq.employees?.rut === employee.employee_rut
+        liq.employees?.rut === employee.employee_rut,
       );
       
       if (liquidation) {
@@ -465,7 +467,7 @@ export async function GET(request: NextRequest) {
           apellido_paterno: employee.apellido_paterno,
           apellido_materno: employee.apellido_materno,
           nombres: employee.nombres,
-          gender: liquidation.employees?.gender
+          gender: liquidation.employees?.gender,
         };
         
         const previredLine = generatePreviredLine(employeeData, liquidation, period, contractsData);
@@ -480,7 +482,7 @@ export async function GET(request: NextRequest) {
     if (previredLines.length === 0) {
       return NextResponse.json(
         { success: false, error: 'No se pudieron generar líneas para el archivo Previred' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -495,15 +497,15 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
-        'Content-Disposition': `attachment; filename="${filename}"`
-      }
+        'Content-Disposition': `attachment; filename="${filename}"`,
+      },
     });
 
   } catch (error) {
     console.error('Error generando archivo Previred:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

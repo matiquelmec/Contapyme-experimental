@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { useRouter } from 'next/navigation';
+
+import { Save, FileText, Sparkles, CheckCircle2, Trash2, Eye } from 'lucide-react';
+
 import { PayrollHeader } from '@/components/layout';
 import { JobDescriptionAssistant } from '@/components/payroll/JobDescriptionAssistant';
 import { Button, Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
-import { ArrowLeft, Save, FileText, Sparkles, CheckCircle2, Trash2, Eye, Clock, TrendingUp } from 'lucide-react';
 import { useCompanyId } from '@/contexts/CompanyContext';
 
 interface ExtractedData {
@@ -92,8 +95,8 @@ export default function JobDescriptionAssistantPage() {
           job_functions: extractedData.job_functions || [],
           obligations: extractedData.obligations || [],
           prohibitions: extractedData.prohibitions || [],
-          source_type: 'ai_assistant'
-        })
+          source_type: 'ai_assistant',
+        }),
       });
 
       const data = await response.json();
@@ -119,7 +122,7 @@ export default function JobDescriptionAssistantPage() {
       await fetch(`/api/payroll/job-descriptions/${descriptor.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ company_id: companyId })
+        body: JSON.stringify({ company_id: companyId }),
       });
 
       // Cargar datos en el estado actual
@@ -128,7 +131,7 @@ export default function JobDescriptionAssistantPage() {
         department: descriptor.department,
         job_functions: descriptor.job_functions,
         obligations: descriptor.obligations,
-        prohibitions: descriptor.prohibitions
+        prohibitions: descriptor.prohibitions,
       });
       setIsComplete(true);
       setShowSaved(false);
@@ -143,7 +146,7 @@ export default function JobDescriptionAssistantPage() {
 
     try {
       const response = await fetch(`/api/payroll/job-descriptions/${descriptorId}?company_id=${companyId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       if (response.ok) {
@@ -331,7 +334,7 @@ export default function JobDescriptionAssistantPage() {
                   Descriptores Guardados ({savedDescriptions.length})
                 </CardTitle>
                 <Button
-                  onClick={() => setShowSaved(!showSaved)}
+                  onClick={() => { setShowSaved(!showSaved); }}
                   variant="outline"
                   className="text-sm"
                 >
@@ -342,7 +345,7 @@ export default function JobDescriptionAssistantPage() {
             <CardContent>
               {loadingSaved ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-2"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-2" />
                   <p className="text-sm text-gray-600">Cargando descriptores...</p>
                 </div>
               ) : savedDescriptions.length === 0 ? (

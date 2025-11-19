@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/Button';
+
 import { X, FileText, Shield, Download, Eye, QrCode } from 'lucide-react';
+
+import { Button } from '@/components/ui/Button';
 
 interface DigitalSignatureModalProps {
   isOpen: boolean;
@@ -41,7 +43,7 @@ export default function DigitalSignatureModal({
   balanceData,
   period,
   companyName,
-  companyId
+  companyId,
 }: DigitalSignatureModalProps) {
   const [step, setStep] = useState<'form' | 'result'>('form');
   const [signatureResult, setSignatureResult] = useState<SignatureResult | null>(null);
@@ -49,7 +51,7 @@ export default function DigitalSignatureModal({
     signerName: '',
     signerRut: '',
     signerRole: 'Contador',
-    signerEmail: ''
+    signerEmail: '',
   });
   const [formErrors, setFormErrors] = useState<Partial<SignatureFormData>>({});
 
@@ -89,15 +91,15 @@ export default function DigitalSignatureModal({
       const response = await fetch('/api/accounting/balance-8-columns/generate-signed-pdf', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           companyId,
           period,
           companyName,
           balanceData,
-          ...formData
-        })
+          ...formData,
+        }),
       });
 
       const result = await response.json();
@@ -135,7 +137,7 @@ export default function DigitalSignatureModal({
     if (signatureResult) {
       downloadPDF(
         signatureResult.certificateBase64, 
-        `Certificado-Firma-${signatureResult.verificationCode}.pdf`
+        `Certificado-Firma-${signatureResult.verificationCode}.pdf`,
       );
     }
   };
@@ -144,7 +146,7 @@ export default function DigitalSignatureModal({
     if (signatureResult) {
       downloadPDF(
         signatureResult.pdfBase64, 
-        `Balance-8-Columnas-Firmado-${period}.pdf`
+        `Balance-8-Columnas-Firmado-${period}.pdf`,
       );
     }
   };
@@ -163,7 +165,7 @@ export default function DigitalSignatureModal({
       signerName: '',
       signerRut: '',
       signerRole: 'Contador',
-      signerEmail: ''
+      signerEmail: '',
     });
     setFormErrors({});
     onClose();
@@ -227,7 +229,7 @@ export default function DigitalSignatureModal({
                 <input
                   type="text"
                   value={formData.signerName}
-                  onChange={(e) => handleInputChange('signerName', e.target.value)}
+                  onChange={(e) => { handleInputChange('signerName', e.target.value); }}
                   className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${formErrors.signerName ? 'border-red-500' : ''}`}
                   placeholder="Ej: Juan Carlos González"
                   disabled={isLoading}
@@ -244,7 +246,7 @@ export default function DigitalSignatureModal({
                 <input
                   type="text"
                   value={formData.signerRut}
-                  onChange={(e) => handleInputChange('signerRut', e.target.value)}
+                  onChange={(e) => { handleInputChange('signerRut', e.target.value); }}
                   className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${formErrors.signerRut ? 'border-red-500' : ''}`}
                   placeholder="12.345.678-9"
                   disabled={isLoading}
@@ -260,7 +262,7 @@ export default function DigitalSignatureModal({
                 </label>
                 <select
                   value={formData.signerRole}
-                  onChange={(e) => handleInputChange('signerRole', e.target.value)}
+                  onChange={(e) => { handleInputChange('signerRole', e.target.value); }}
                   className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${formErrors.signerRole ? 'border-red-500' : ''}`}
                   disabled={isLoading}
                 >
@@ -284,7 +286,7 @@ export default function DigitalSignatureModal({
                 <input
                   type="email"
                   value={formData.signerEmail}
-                  onChange={(e) => handleInputChange('signerEmail', e.target.value)}
+                  onChange={(e) => { handleInputChange('signerEmail', e.target.value); }}
                   className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${formErrors.signerEmail ? 'border-red-500' : ''}`}
                   placeholder="email@empresa.com"
                   disabled={isLoading}

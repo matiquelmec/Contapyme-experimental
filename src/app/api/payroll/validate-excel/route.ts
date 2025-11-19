@@ -1,5 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
+
 import { PayrollUnifiedCalculator } from '@/services/PayrollUnifiedCalculator';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -19,19 +22,19 @@ export async function POST(request: NextRequest) {
       company_id,
       period_year,
       period_month,
-      excel_data
+      excel_data,
     } = body;
 
     console.log('🔍 Validating Excel vs System:', {
       company_id,
       period: `${period_year}-${period_month}`,
-      excel_entries: excel_data?.length || 0
+      excel_entries: excel_data?.length || 0,
     });
 
     if (!company_id || !period_year || !period_month || !excel_data) {
       return NextResponse.json({
         success: false,
-        error: 'Faltan parámetros requeridos: company_id, period_year, period_month, excel_data'
+        error: 'Faltan parámetros requeridos: company_id, period_year, period_month, excel_data',
       }, { status: 400 });
     }
 
@@ -54,14 +57,14 @@ export async function POST(request: NextRequest) {
       console.error('❌ Error fetching system liquidations:', systemError);
       return NextResponse.json({
         success: false,
-        error: 'Error al obtener liquidaciones del sistema'
+        error: 'Error al obtener liquidaciones del sistema',
       }, { status: 500 });
     }
 
     if (!systemLiquidations || systemLiquidations.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'No se encontraron liquidaciones en el sistema para el período especificado'
+        error: 'No se encontraron liquidaciones en el sistema para el período especificado',
       }, { status: 404 });
     }
 
@@ -87,7 +90,7 @@ export async function POST(request: NextRequest) {
         health_amount: liq.health_amount || 0,
         unemployment_amount: liq.unemployment_amount || 0,
         income_tax_amount: liq.income_tax_amount || 0,
-        other_deductions: (liq.loan_deductions || 0) + (liq.advance_payments || 0) + (liq.apv_amount || 0) + (liq.other_deductions || 0)
+        other_deductions: (liq.loan_deductions || 0) + (liq.advance_payments || 0) + (liq.apv_amount || 0) + (liq.other_deductions || 0),
       };
 
       const result = PayrollUnifiedCalculator.calculateWithValidation(unifiedData);
@@ -99,7 +102,7 @@ export async function POST(request: NextRequest) {
       return {
         rut: unifiedData.employee_rut,
         name: unifiedData.employee_name,
-        calculated: result
+        calculated: result,
       };
     });
 
@@ -138,21 +141,21 @@ export async function POST(request: NextRequest) {
     if (!haberesMatch) {
       const diff = systemTotalHaberes - excelTotalHaberes;
       recommendations.push(
-        `Revisar cálculo de haberes: Sistema $${systemTotalHaberes.toLocaleString('es-CL')} vs Excel $${excelTotalHaberes.toLocaleString('es-CL')} (diferencia: $${diff.toLocaleString('es-CL')})`
+        `Revisar cálculo de haberes: Sistema $${systemTotalHaberes.toLocaleString('es-CL')} vs Excel $${excelTotalHaberes.toLocaleString('es-CL')} (diferencia: $${diff.toLocaleString('es-CL')})`,
       );
     }
 
     if (!descuentosMatch) {
       const diff = systemTotalDescuentos - excelTotalDescuentos;
       recommendations.push(
-        `Revisar cálculo de descuentos: Sistema $${systemTotalDescuentos.toLocaleString('es-CL')} vs Excel $${excelTotalDescuentos.toLocaleString('es-CL')} (diferencia: $${diff.toLocaleString('es-CL')})`
+        `Revisar cálculo de descuentos: Sistema $${systemTotalDescuentos.toLocaleString('es-CL')} vs Excel $${excelTotalDescuentos.toLocaleString('es-CL')} (diferencia: $${diff.toLocaleString('es-CL')})`,
       );
     }
 
     if (!liquidoMatch) {
       const diff = systemTotalLiquido - excelTotalLiquido;
       recommendations.push(
-        `Revisar cálculo de líquido: Sistema $${systemTotalLiquido.toLocaleString('es-CL')} vs Excel $${excelTotalLiquido.toLocaleString('es-CL')} (diferencia: $${diff.toLocaleString('es-CL')})`
+        `Revisar cálculo de líquido: Sistema $${systemTotalLiquido.toLocaleString('es-CL')} vs Excel $${excelTotalLiquido.toLocaleString('es-CL')} (diferencia: $${diff.toLocaleString('es-CL')})`,
       );
     }
 
@@ -164,7 +167,7 @@ export async function POST(request: NextRequest) {
     const employeeComparisons = excel_data.map((excelRow: any) => {
       const systemEmployee = systemCalculations.find(sys =>
         sys.rut === excelRow.rut ||
-        sys.name.toLowerCase().includes(excelRow.name?.toLowerCase() || '')
+        sys.name.toLowerCase().includes(excelRow.name?.toLowerCase() || ''),
       );
 
       if (!systemEmployee) {
@@ -174,7 +177,7 @@ export async function POST(request: NextRequest) {
           status: 'not_found_in_system',
           excel: excelRow,
           system: null,
-          differences: null
+          differences: null,
         };
       }
 
@@ -194,18 +197,18 @@ export async function POST(request: NextRequest) {
         excel: {
           haberes: excelRow.total_haberes || 0,
           descuentos: excelRow.total_descuentos || 0,
-          liquido: excelRow.total_liquido || 0
+          liquido: excelRow.total_liquido || 0,
         },
         system: {
           haberes: systemEmployee.calculated.total_haberes,
           descuentos: systemEmployee.calculated.total_descuentos,
-          liquido: systemEmployee.calculated.total_liquido
+          liquido: systemEmployee.calculated.total_liquido,
         },
         differences: {
           haberes: haberesEmployeeDiff,
           descuentos: descuentosEmployeeDiff,
-          liquido: liquidoEmployeeDiff
-        }
+          liquido: liquidoEmployeeDiff,
+        },
       };
     });
 
@@ -223,38 +226,38 @@ export async function POST(request: NextRequest) {
             haberes: systemTotalHaberes,
             descuentos: systemTotalDescuentos,
             liquido: systemTotalLiquido,
-            employees: systemLiquidations.length
+            employees: systemLiquidations.length,
           },
           excel: {
             haberes: excelTotalHaberes,
             descuentos: excelTotalDescuentos,
             liquido: excelTotalLiquido,
-            employees: excel_data.length
+            employees: excel_data.length,
           },
           differences: {
             haberes: systemTotalHaberes - excelTotalHaberes,
             descuentos: systemTotalDescuentos - excelTotalDescuentos,
-            liquido: systemTotalLiquido - excelTotalLiquido
+            liquido: systemTotalLiquido - excelTotalLiquido,
           },
           matches: {
             haberes: haberesMatch,
             descuentos: descuentosMatch,
-            liquido: liquidoMatch
-          }
+            liquido: liquidoMatch,
+          },
         },
         employees: {
           total_compared: employeeComparisons.length,
           matches: employeeComparisons.filter(comp => comp.status === 'match').length,
           discrepancies: employeesWithDiscrepancies.length,
-          not_found: employeesNotFound.length
+          not_found: employeesNotFound.length,
         },
-        recommendations
+        recommendations,
       },
       detailed_comparison: {
         employees_with_discrepancies: employeesWithDiscrepancies,
         employees_not_found: employeesNotFound,
-        tolerance_used: tolerance
-      }
+        tolerance_used: tolerance,
+      },
     };
 
     console.log('✅ Excel validation completed:', {
@@ -262,9 +265,9 @@ export async function POST(request: NextRequest) {
       total_differences: {
         haberes: result.validation.totals.differences.haberes,
         descuentos: result.validation.totals.differences.descuentos,
-        liquido: result.validation.totals.differences.liquido
+        liquido: result.validation.totals.differences.liquido,
       },
-      employees_with_issues: employeesWithDiscrepancies.length + employeesNotFound.length
+      employees_with_issues: employeesWithDiscrepancies.length + employeesNotFound.length,
     });
 
     return NextResponse.json(result);
@@ -273,7 +276,7 @@ export async function POST(request: NextRequest) {
     console.error('❌ Error in Excel validation:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor al validar Excel vs Sistema'
+      error: 'Error interno del servidor al validar Excel vs Sistema',
     }, { status: 500 });
   }
 }
@@ -289,7 +292,7 @@ export async function GET(request: NextRequest) {
     if (!company_id) {
       return NextResponse.json({
         success: false,
-        error: 'company_id es requerido'
+        error: 'company_id es requerido',
       }, { status: 400 });
     }
 
@@ -305,7 +308,7 @@ export async function GET(request: NextRequest) {
       console.error('❌ Error fetching available periods:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error al obtener períodos disponibles'
+        error: 'Error al obtener períodos disponibles',
       }, { status: 500 });
     }
 
@@ -316,7 +319,7 @@ export async function GET(request: NextRequest) {
         acc.push({
           period_year: curr.period_year,
           period_month: curr.period_month,
-          period_label: `${curr.period_year}-${String(curr.period_month).padStart(2, '0')}`
+          period_label: `${curr.period_year}-${String(curr.period_month).padStart(2, '0')}`,
         });
       }
       return acc;
@@ -325,14 +328,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       available_periods: uniquePeriods,
-      total_periods: uniquePeriods.length
+      total_periods: uniquePeriods.length,
     });
 
   } catch (error) {
     console.error('❌ Error in GET /api/payroll/validate-excel:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }

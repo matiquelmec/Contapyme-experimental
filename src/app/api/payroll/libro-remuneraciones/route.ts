@@ -1,7 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { PayrollUnifiedCalculator } from '@/services/PayrollUnifiedCalculator';
+
 import { SmartCompanyIdResolver } from '@/services/PayrollDataCoherenceEngine';
+import { PayrollUnifiedCalculator } from '@/services/PayrollUnifiedCalculator';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -30,7 +33,7 @@ const demoPayrollBooks = [
         apellido_materno: 'Silva',
         nombres: 'Juan Carlos',
         cargo: 'Desarrollador Senior',
-        area: 'Tecnología'
+        area: 'Tecnología',
       },
       {
         employee_rut: '87.654.321-0',
@@ -38,7 +41,7 @@ const demoPayrollBooks = [
         apellido_materno: 'López',
         nombres: 'María Elena',
         cargo: 'Contadora',
-        area: 'Administración'
+        area: 'Administración',
       },
       {
         employee_rut: '11.222.333-4',
@@ -46,9 +49,9 @@ const demoPayrollBooks = [
         apellido_materno: 'Pérez',
         nombres: 'Carlos Alberto',
         cargo: 'Gerente Comercial',
-        area: 'Ventas'
-      }
-    ]
+        area: 'Ventas',
+      },
+    ],
   },
   {
     id: '550e8400-e29b-41d4-a716-446655440002',
@@ -70,7 +73,7 @@ const demoPayrollBooks = [
         apellido_materno: 'Silva',
         nombres: 'Juan Carlos',
         cargo: 'Desarrollador Senior',
-        area: 'Tecnología'
+        area: 'Tecnología',
       },
       {
         employee_rut: '87.654.321-0',
@@ -78,16 +81,16 @@ const demoPayrollBooks = [
         apellido_materno: 'López',
         nombres: 'María Elena',
         cargo: 'Contadora',
-        area: 'Administración'
-      }
-    ]
-  }
+        area: 'Administración',
+      },
+    ],
+  },
 ];
 
 // GET - Obtener libros de remuneraciones
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const companyId = searchParams.get('company_id');
     const period = searchParams.get('period');
     const format = searchParams.get('format') || 'json';
@@ -95,7 +98,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -106,7 +109,7 @@ export async function GET(request: NextRequest) {
       companyId,
       period ? parseInt(period.split('-')[0]) : new Date().getFullYear(),
       period ? parseInt(period.split('-')[1]) : new Date().getMonth() + 1,
-      supabase
+      supabase,
     );
 
     console.log('🎯 Company ID resolved:', { requested: companyId, actual: actualCompanyId });
@@ -150,7 +153,7 @@ export async function GET(request: NextRequest) {
       console.error('❌ Error obteniendo libros de base de datos:', booksError);
       return NextResponse.json(
         { success: false, error: 'Error obteniendo libros de base de datos' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -161,7 +164,7 @@ export async function GET(request: NextRequest) {
         success: true,
         data: [],
         source: 'database',
-        message: 'No hay libros de remuneraciones generados'
+        message: 'No hay libros de remuneraciones generados',
       });
     }
 
@@ -187,8 +190,8 @@ export async function GET(request: NextRequest) {
           status: 200,
           headers: {
             'Content-Type': 'text/csv; charset=utf-8',
-            'Content-Disposition': `attachment; filename="libro_remuneraciones_${book.period}.csv"`
-          }
+            'Content-Disposition': `attachment; filename="libro_remuneraciones_${book.period}.csv"`,
+          },
         });
       }
 
@@ -196,7 +199,7 @@ export async function GET(request: NextRequest) {
         success: true,
         data: demoBooks,
         count: demoBooks.length,
-        source: 'demo'
+        source: 'demo',
       });
     }
 
@@ -213,8 +216,8 @@ export async function GET(request: NextRequest) {
         status: 200,
         headers: {
           'Content-Type': 'text/csv; charset=utf-8',
-          'Content-Disposition': `attachment; filename="libro_remuneraciones_${book.period}.csv"`
-        }
+          'Content-Disposition': `attachment; filename="libro_remuneraciones_${book.period}.csv"`,
+        },
       });
     }
 
@@ -228,14 +231,14 @@ export async function GET(request: NextRequest) {
       company_id_resolution: {
         requested: companyId,
         actual_used: actualCompanyId,
-        auto_resolved: companyId !== actualCompanyId
-      }
+        auto_resolved: companyId !== actualCompanyId,
+      },
     });
   } catch (error) {
     console.error('Error en GET /api/payroll/libro-remuneraciones:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -250,7 +253,7 @@ export async function POST(request: NextRequest) {
     if (!body.company_id || !body.period || !body.company_name || !body.company_rut) {
       return NextResponse.json(
         { error: 'Faltan campos requeridos: company_id, period, company_name, company_rut' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -331,14 +334,14 @@ export async function POST(request: NextRequest) {
       console.error('Error obteniendo liquidaciones:', liquidationsError);
       return NextResponse.json(
         { error: 'Error al obtener liquidaciones del período' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (!liquidations || liquidations.length === 0) {
       return NextResponse.json(
         { error: 'No se encontraron liquidaciones aprobadas para este período. Para generar el libro, debe tener liquidaciones con estado "Aprobada".' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -350,7 +353,7 @@ export async function POST(request: NextRequest) {
       .order('book_number', { ascending: false })
       .limit(1);
 
-    const bookNumber = (lastBook && lastBook[0]?.book_number || 0) + 1;
+    const bookNumber = (lastBook?.[0]?.book_number || 0) + 1;
 
     // 🎯 CALCULAR TOTALES USANDO CALCULADORA UNIFICADA - SINGLE SOURCE OF TRUTH
     const totalEmployees = liquidations.length;
@@ -391,7 +394,7 @@ export async function POST(request: NextRequest) {
         loan_deductions: liq.loan_deductions || 0,
         advance_payments: liq.advance_payments || 0,
         apv_amount: liq.apv_amount || 0,
-        other_deductions: liq.other_deductions || 0
+        other_deductions: liq.other_deductions || 0,
       };
 
       const calculatedResult = PayrollUnifiedCalculator.calculateWithValidation(unifiedData);
@@ -447,14 +450,14 @@ export async function POST(request: NextRequest) {
         final_values: {
           haberes: finalHaberes,
           descuentos: finalDescuentos,
-          liquido: finalLiquido
+          liquido: finalLiquido,
         },
         source: useStoredValues ? 'stored' : 'calculated',
         stored: {
           haberes: liq.total_gross_income || 0,
           descuentos: liq.total_deductions || 0,
-          liquido: liq.net_salary || 0
-        }
+          liquido: liq.net_salary || 0,
+        },
       };
     });
 
@@ -469,14 +472,14 @@ export async function POST(request: NextRequest) {
       descuentos: totalDescuentos,
       liquido: totalLiquido,
       verificacion: Math.abs(totalHaberes - totalDescuentos - totalLiquido) < 0.01 ? '✅ CUADRA' : '❌ NO CUADRA',
-      unified_calculations: unifiedCalculations.length
+      unified_calculations: unifiedCalculations.length,
     });
 
     // 📊 Log detallado de diferencias (para debugging)
     const inconsistencies = unifiedCalculations.filter(calc =>
       Math.abs(calc.final_values.haberes - calc.stored.haberes) > 0.01 ||
       Math.abs(calc.final_values.descuentos - calc.stored.descuentos) > 0.01 ||
-      Math.abs(calc.final_values.liquido - calc.stored.liquido) > 0.01
+      Math.abs(calc.final_values.liquido - calc.stored.liquido) > 0.01,
     );
 
     if (inconsistencies.length > 0) {
@@ -485,7 +488,7 @@ export async function POST(request: NextRequest) {
         rut: inc.employee_rut,
         haberes_diff: inc.final_values.haberes - inc.stored.haberes,
         descuentos_diff: inc.final_values.descuentos - inc.stored.descuentos,
-        liquido_diff: inc.final_values.liquido - inc.stored.liquido
+        liquido_diff: inc.final_values.liquido - inc.stored.liquido,
       })));
     }
 
@@ -503,7 +506,7 @@ export async function POST(request: NextRequest) {
         total_employees: totalEmployees,
         total_haberes: totalHaberes,
         total_descuentos: totalDescuentos,
-        total_liquido: totalLiquido
+        total_liquido: totalLiquido,
       })
       .select()
       .single();
@@ -512,7 +515,7 @@ export async function POST(request: NextRequest) {
       console.error('Error creando libro:', bookError);
       return NextResponse.json(
         { error: 'Error al crear libro de remuneraciones' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -523,7 +526,7 @@ export async function POST(request: NextRequest) {
       console.log(`🔍 Procesando empleado ${employee?.rut}:`, {
         haberes: liquidation.total_gross_income,
         descuentos: liquidation.total_deductions, 
-        liquido: liquidation.net_salary
+        liquido: liquidation.net_salary,
       });
       
       // ✅ USAR VALORES DIRECTOS DE LA LIQUIDACIÓN (ya calculados correctamente)
@@ -563,7 +566,7 @@ export async function POST(request: NextRequest) {
         cesantia: liquidation.unemployment_amount || 0,
         impuesto_unico: liquidation.income_tax_amount || 0,
         total_descuentos: descuentosReales,
-        sueldo_liquido: liquidoReal
+        sueldo_liquido: liquidoReal,
       };
     });
 
@@ -575,7 +578,7 @@ export async function POST(request: NextRequest) {
       console.error('Error creando detalles:', detailsError);
       return NextResponse.json(
         { error: 'Error al crear detalles del libro' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -596,18 +599,18 @@ export async function POST(request: NextRequest) {
           apellido_materno: detail.apellido_materno,
           nombres: detail.nombres,
           cargo: detail.cargo,
-          area: detail.area
-        }))
+          area: detail.area,
+        })),
       },
       message,
-      replaced: wasReplaced
+      replaced: wasReplaced,
     }, { status: 201 });
     
   } catch (error) {
     console.error('Error en POST /api/payroll/libro-remuneraciones:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -634,7 +637,7 @@ function generateCSV(book: any): string {
     'DESCUENTO OPTICA', 'FALP', 'MUTUAL DE SEGUROS', 'PRÉSTAMO DE EMPRESA',
     'PROTEGER', 'RETENCION 3% PRESTAMO SOLIDARIO', 'SEGURO COMPLEMENTARIO',
     'CRÉDITO PERSONAL CAJA LOS ANDES', 'LEASING (AHORRO) CAJA LOS ANDES',
-    'SEGURO DE VIDA CAJA LOS ANDES', 'TOTAL DESCUENTOS', 'SUELDO LÍQUIDO', 'SOBREGIRO'
+    'SEGURO DE VIDA CAJA LOS ANDES', 'TOTAL DESCUENTOS', 'SUELDO LÍQUIDO', 'SOBREGIRO',
   ];
 
   // Encabezados del libro
@@ -644,7 +647,7 @@ function generateCSV(book: any): string {
     `Periodo: ${formatPeriod(book.period)}${';'.repeat(headers.length - 1)}`,
     `Fecha Generación: ${formatDate(book.generation_date)}${';'.repeat(headers.length - 1)}`,
     ';'.repeat(headers.length - 1),
-    headers.join(';')
+    headers.join(';'),
   ];
 
   // Datos de empleados con fórmula simple exacta
@@ -692,13 +695,13 @@ function generateCSV(book: any): string {
       '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', // otros descuentos
       totalDescuentos.toFixed(0), // total_descuentos = 120,811
       sueldoLiquido.toFixed(0), // sueldo_liquido = 540,439
-      '0' // sobregiro
+      '0', // sobregiro
     ].join(';');
   });
 
   return [
     ...bookHeaders,
-    ...employeeRows
+    ...employeeRows,
   ].join('\n');
 }
 
@@ -707,7 +710,7 @@ function formatPeriod(period: string): string {
   const [year, month] = period.split('-');
   const months = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
   ];
   return `${months[parseInt(month) - 1]} ${year}`;
 }
@@ -727,7 +730,7 @@ function generateSimpleCSVFromLiquidations(liquidations: any[], book: any): stri
   const headers = [
     'RUT', 'AP PATERNO', 'AP MATERNO', 'NOMBRES', 'CARGO', 'AREA',
     'DÍAS TRABAJADOS', 'SUELDO BASE', 'HORAS EXTRAS', 'GRATIFICACION', 'COLACIÓN', 'MOVILIZACIÓN', 'ASIG FAMILIAR',
-    'TOTAL HABERES', 'AFP 10%', 'AFP COMISIÓN', 'SALUD', 'CESANTÍA', 'IMPUESTO ÚNICO', 'TOTAL DESCUENTOS', 'LÍQUIDO A PAGAR'
+    'TOTAL HABERES', 'AFP 10%', 'AFP COMISIÓN', 'SALUD', 'CESANTÍA', 'IMPUESTO ÚNICO', 'TOTAL DESCUENTOS', 'LÍQUIDO A PAGAR',
   ];
 
   const bookHeaders = [
@@ -735,7 +738,7 @@ function generateSimpleCSVFromLiquidations(liquidations: any[], book: any): stri
     `${book.company_name || 'ContaPyme Puq'} - RUT: ${book.company_rut || '78.223.873-6'}`,
     `Generado el: ${formatDate(book.generation_date)}`,
     '', // Fila vacía
-    headers.join(';')
+    headers.join(';'),
   ];
 
   const employeeRows = liquidations.map(liquidation => {
@@ -762,7 +765,7 @@ function generateSimpleCSVFromLiquidations(liquidations: any[], book: any): stri
       afpComision,
       afpTotal,
       afp_amount_field: liquidation.afp_amount,
-      afp_commission_field: liquidation.afp_commission_amount
+      afp_commission_field: liquidation.afp_commission_amount,
     });
     const salud = liquidation.health_amount || 0;
     const cesantia = liquidation.unemployment_amount || 0;
@@ -794,13 +797,13 @@ function generateSimpleCSVFromLiquidations(liquidations: any[], book: any): stri
       cesantia.toFixed(0),
       impuesto.toFixed(0),
       totalDescuentos.toFixed(0),
-      liquidoAPagar.toFixed(0)
+      liquidoAPagar.toFixed(0),
     ].join(';');
   });
 
   return [
     ...bookHeaders,
-    ...employeeRows
+    ...employeeRows,
   ].join('\n');
 }
 
@@ -1073,7 +1076,7 @@ async function generateRealCSV(book: any, companyId: string): Promise<string> {
     'Total líquido(5501)',
     'Total indemnizaciones(5502)',
     'Total indemnizaciones tributables(5564)',
-    'Total indemnizaciones no tributables(5565)'
+    'Total indemnizaciones no tributables(5565)',
   ];
 
   // Solo devolvemos los headers y las filas de datos, sin metadatos adicionales
@@ -1090,7 +1093,7 @@ async function generateRealCSV(book: any, companyId: string): Promise<string> {
       employee_id: employee?.id,
       liquidation: !!liquidation,
       total_gross_income: liquidation?.total_gross_income,
-      base_salary: liquidation?.base_salary
+      base_salary: liquidation?.base_salary,
     });
     
     // Formatear RUT sin puntos y con guión
@@ -1123,11 +1126,10 @@ async function generateRealCSV(book: any, companyId: string): Promise<string> {
         5: '103', // MODELO
         6: '11',  // PLANVITAL
         7: '19',  // UNO
-        8: '100'  // NO ESTÁ EN AFP
+        8: '100',  // NO ESTÁ EN AFP
       };
       return afpMap[afpId] || '100'; // Default: No está en AFP
     };
-
 
     // ✅ CÓDIGOS FONASA/ISAPRE OFICIALES SEGÚN TABLA Nº11 DT
     const getHealthCode = (healthId: number) => {
@@ -1147,7 +1149,7 @@ async function generateRealCSV(book: any, companyId: string): Promise<string> {
         13: '43',  // Nueva Mas Vida
         14: '44',  // Esencial
         15: '99',  // Sin Isapre
-        16: '102'  // Fonasa
+        16: '102',  // Fonasa
       };
       return healthMap[healthId] || '102'; // Default: FONASA
     };
@@ -1159,7 +1161,7 @@ async function generateRealCSV(book: any, companyId: string): Promise<string> {
         1: '1',   // Los Andes
         2: '2',   // La Araucana
         3: '3',   // Los Héroes
-        4: '4'    // 18 De Septiembre
+        4: '4',    // 18 De Septiembre
       };
       return ccafMap[ccafId] || '1'; // Default: Los Andes
     };
@@ -1170,7 +1172,7 @@ async function generateRealCSV(book: any, companyId: string): Promise<string> {
         0: '0',   // Sin Mutual/Instituto De Seguridad Laboral
         1: '1',   // Asociación Chilena de Seguridad (ACHS)
         2: '2',   // Mutual de Seguridad CCHC
-        3: '3'    // Instituto de Seguridad del Trabajo (IST)
+        3: '3',    // Instituto de Seguridad del Trabajo (IST)
       };
       return mutualMap[mutualId] || '3'; // Default: IST
     };
@@ -1182,7 +1184,7 @@ async function generateRealCSV(book: any, companyId: string): Promise<string> {
         'B': 'B',   // Segundo Tramo
         'C': 'C',   // Tercer Tramo
         'D': 'D',   // Sin Derecho
-        'S': 'S'    // Sin Información
+        'S': 'S',    // Sin Información
       };
       return tramoMap[tramo?.toString().toUpperCase()] || 'S';
     };
@@ -1216,7 +1218,7 @@ async function generateRealCSV(book: any, companyId: string): Promise<string> {
     console.log(`💰 DEBUG Líquido - ${detail.employee_rut}:`, {
       totalHaberesFijo,
       totalDescuentos: { afpReal, saludReal, cesantiaReal, impuestoReal, otrosDescReal, total: totalDescuentos },
-      liquidoFijo
+      liquidoFijo,
     });
     
     const totalCotizaciones = afpReal + saludReal + cesantiaReal;
@@ -1390,7 +1392,7 @@ async function generateRealCSV(book: any, companyId: string): Promise<string> {
       liquidoFijo,              // 5501: Total líquido calculado real
       '0',                                                 // 5502: Total indemnizaciones
       '0',                                                 // 5564: Total indemnizaciones tributables
-      '0'                                                  // 5565: Total indemnizaciones no tributables
+      '0',                                                  // 5565: Total indemnizaciones no tributables
     ].join(';');
   });
 

@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 // Inicializar cliente de Supabase
@@ -17,7 +19,7 @@ export async function GET(request: NextRequest) {
       payroll_config: { exists: false, count: 0, structure: null },
       payroll_documents: { exists: false, count: 0, structure: null },
       payroll_parameters: { exists: false, count: 0, structure: null },
-      users: { exists: false, count: 0, structure: null }
+      users: { exists: false, count: 0, structure: null },
     };
 
     // Verificar cada tabla
@@ -51,19 +53,19 @@ export async function GET(request: NextRequest) {
     // Verificar funciones de la base de datos
     const functions = {
       calculate_unique_tax: false,
-      validate_chilean_rut: false
+      validate_chilean_rut: false,
     };
 
     try {
       // Intentar llamar a las funciones para verificar si existen
       const { error: taxError } = await supabase.rpc('calculate_unique_tax', {
         taxable_income: 1000000,
-        utm_value: 65967
+        utm_value: 65967,
       });
       functions.calculate_unique_tax = !taxError || !taxError.message.includes('function') || !taxError.message.includes('does not exist');
 
       const { error: rutError } = await supabase.rpc('validate_chilean_rut', {
-        rut_to_validate: '12345678-9'
+        rut_to_validate: '12345678-9',
       });
       functions.validate_chilean_rut = !rutError || !rutError.message.includes('function') || !rutError.message.includes('does not exist');
     } catch (funcError) {
@@ -91,7 +93,7 @@ export async function GET(request: NextRequest) {
       tables: checks,
       functions,
       migrations_count: migrations.length,
-      migrations: migrations.map(m => ({ version: m.version, name: m.name }))
+      migrations: migrations.map(m => ({ version: m.version, name: m.name })),
     });
 
   } catch (error) {
@@ -99,7 +101,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error al verificar la base de datos',
-      details: error instanceof Error ? error.message : 'Error desconocido'
+      details: error instanceof Error ? error.message : 'Error desconocido',
     }, { status: 500 });
   }
 }

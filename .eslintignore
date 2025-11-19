@@ -7,6 +7,7 @@ dist/
 
 # Config files
 *.config.js
+*.config.*.js
 .eslintrc.js
 jest.setup.js
 jest.config.js
@@ -17,11 +18,17 @@ jest.integration.setup.js
 postcss.config.js
 tailwind.config.js
 next.config.js
+next.config.*.js
+next.config.backup.js
+next.config.EMERGENCY.js
+next.config.simple.js
+.lintstagedrc.js
 
 # Database migrations and scripts
 apply_migration.js
 apply_migration_simple.js
 check-db-structure.js
+capture-console-errors.js
 *.sql
 
 # Mocks
@@ -58,3 +65,14 @@ yarn-error.log*
 # Testing
 coverage/
 .nyc_output/
+
+# Public folder scripts
+public/**/*.js
+
+# Workers
+public/workers/
+
+# Temporary files
+*.backup.js
+*.EMERGENCY.js
+*.simple.js

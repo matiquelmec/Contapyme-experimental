@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -14,13 +16,13 @@ export async function POST(request: NextRequest) {
       parsedData, 
       fileName, 
       userId = '550e8400-e29b-41d4-a716-446655440000', // Demo user por defecto
-      companyId = '550e8400-e29b-41d4-a716-446655440001' // Demo company por defecto
+      companyId = '550e8400-e29b-41d4-a716-446655440001', // Demo company por defecto
     } = body;
 
     if (!parsedData) {
       return NextResponse.json({ 
         success: false, 
-        error: 'No se proporcionaron datos para guardar' 
+        error: 'No se proporcionaron datos para guardar', 
       }, { status: 400 });
     }
 
@@ -45,10 +47,10 @@ export async function POST(request: NextRequest) {
     const f29Record = {
       user_id: userId,
       company_id: companyId,
-      period: period,
+      period,
       file_name: fileName || 'f29_upload.pdf',
-      year: year,
-      month: month,
+      year,
+      month,
       rut: parsedData.rut || '',
       folio: parsedData.folio || '',
       
@@ -57,7 +59,7 @@ export async function POST(request: NextRequest) {
       calculated_data: {
         method: parsedData.method || 'unknown',
         confidence: parsedData.confidence || 0,
-        processing_time: new Date().toISOString()
+        processing_time: new Date().toISOString(),
       },
       
       // Campos principales para queries rápidas
@@ -81,7 +83,7 @@ export async function POST(request: NextRequest) {
       // Validación
       confidence_score: parsedData.confidence || 0,
       validation_status: parsedData.confidence > 80 ? 'validated' : 'manual_review',
-      validation_errors: parsedData.errors || []
+      validation_errors: parsedData.errors || [],
     };
 
     console.log('📝 Preparando insert para período:', period);
@@ -91,7 +93,7 @@ export async function POST(request: NextRequest) {
       .from('f29_forms')
       .upsert(f29Record, {
         onConflict: 'company_id,period',
-        ignoreDuplicates: false
+        ignoreDuplicates: false,
       })
       .select()
       .single();
@@ -119,7 +121,7 @@ export async function POST(request: NextRequest) {
           success: true,
           message: 'F29 actualizado exitosamente',
           data: updateData,
-          action: 'updated'
+          action: 'updated',
         });
       }
       
@@ -141,21 +143,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'F29 guardado exitosamente en base de datos',
-      data: data,
+      data,
       action: 'created',
       summary: {
         id: data?.id,
-        period: period,
+        period,
         ventas: f29Record.ventas_netas,
-        confidence: f29Record.confidence_score
-      }
+        confidence: f29Record.confidence_score,
+      },
     });
 
   } catch (error) {
     console.error('❌ Error en F29 Save API:', error);
     return NextResponse.json({ 
       success: false,
-      error: error instanceof Error ? error.message : 'Error guardando F29'
+      error: error instanceof Error ? error.message : 'Error guardando F29',
     }, { status: 500 });
   }
 }
@@ -210,15 +212,15 @@ export async function GET(request: NextRequest) {
         total: data?.length || 0,
         years: Object.keys(groupedByYear),
         latest: data?.[0]?.period,
-        oldest: data?.[data.length - 1]?.period
-      }
+        oldest: data?.[data.length - 1]?.period,
+      },
     });
 
   } catch (error) {
     console.error('❌ Error obteniendo F29:', error);
     return NextResponse.json({ 
       success: false,
-      error: error instanceof Error ? error.message : 'Error obteniendo F29'
+      error: error instanceof Error ? error.message : 'Error obteniendo F29',
     }, { status: 500 });
   }
 }

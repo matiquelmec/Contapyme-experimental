@@ -3,9 +3,11 @@
 // Procesa múltiples archivos en paralelo
 // ==========================================
 
-import { NextRequest, NextResponse } from 'next/server';
-import { parseF29 } from '@/lib/parsers/f29Parser';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { insertF29Form } from '@/lib/database/databaseSimple';
+import { parseF29 } from '@/lib/parsers/f29Parser';
 
 // Configuración para archivos grandes
 export const runtime = 'nodejs';
@@ -33,14 +35,14 @@ export async function POST(request: NextRequest) {
     if (!files || files.length === 0) {
       return NextResponse.json(
         { error: 'No se enviaron archivos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!companyId || !userId) {
       return NextResponse.json(
         { error: 'company_id y user_id son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -103,13 +105,13 @@ export async function POST(request: NextRequest) {
                 totalAPagar: extracted.totalAPagar,
                 confidence: extracted.confidence,
                 method: extracted.method,
-                debugInfo: extracted.debugInfo
+                debugInfo: extracted.debugInfo,
               },
               file_size: file.size,
               period,
               rut: extracted.rut || '',
-              folio: extracted.folio || ''
-            }
+              folio: extracted.folio || '',
+            },
           };
 
         } catch (error) {
@@ -117,7 +119,7 @@ export async function POST(request: NextRequest) {
           return {
             file_name: file.name,
             success: false,
-            error: error instanceof Error ? error.message : 'Error desconocido'
+            error: error instanceof Error ? error.message : 'Error desconocido',
           };
         }
       });
@@ -169,7 +171,7 @@ export async function POST(request: NextRequest) {
             codigo_062: result.extracted_data.calculated_data?.codigo062 || 0,
             codigo_077: result.extracted_data.calculated_data?.codigo077 || 0,
             year: result.period ? parseInt(result.period.substring(0, 4)) : new Date().getFullYear(),
-            month: result.period ? parseInt(result.period.substring(4, 6)) : new Date().getMonth() + 1
+            month: result.period ? parseInt(result.period.substring(4, 6)) : new Date().getMonth() + 1,
           };
 
           const { error: insertError } = await insertF29Form(dbRecord);
@@ -207,7 +209,7 @@ export async function POST(request: NextRequest) {
         processed: validFiles.length,
         successful: successful.length,
         failed: failed.length,
-        has_analysis: !!analysis
+        has_analysis: !!analysis,
       },
       results: results.map(r => ({
         file_name: r.file_name,
@@ -215,10 +217,10 @@ export async function POST(request: NextRequest) {
         period: r.period,
         confidence_score: r.confidence_score,
         error: r.error,
-        data: (r as any).data // Incluir datos extraídos
+        data: (r as any).data, // Incluir datos extraídos
       })),
       analysis,
-      next_steps: generateNextSteps(successful.length, failed.length)
+      next_steps: generateNextSteps(successful.length, failed.length),
     };
 
     console.log('🎉 Upload múltiple completado exitosamente');
@@ -229,9 +231,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { 
         error: 'Error interno del servidor',
-        details: error instanceof Error ? error.message : 'Error desconocido'
+        details: error instanceof Error ? error.message : 'Error desconocido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -344,12 +346,12 @@ async function generateQuickAnalysis(successful: ProcessResult[], companyId: str
       
       return {
         period: periodo,
-        rut: rut,
+        rut,
         ventas: typeof ventas === 'number' ? ventas : parseFloat(ventas.toString()) || 0,
         comprasNetas: typeof comprasNetas === 'number' ? comprasNetas : parseFloat(comprasNetas.toString()) || 0,
         codigo511: calcs.codigo511 || 0,
         codigo538: calcs.codigo538 || 0,
-        codigo562: calcs.codigo562 || 0
+        codigo562: calcs.codigo562 || 0,
       };
     }).filter(d => d.period);
 
@@ -363,7 +365,7 @@ async function generateQuickAnalysis(successful: ProcessResult[], companyId: str
     if (uniqueRuts.length > 1) {
       return {
         error: 'Los formularios F29 corresponden a diferentes RUTs',
-        ruts_encontrados: uniqueRuts
+        ruts_encontrados: uniqueRuts,
       };
     }
 
@@ -381,7 +383,7 @@ async function generateQuickAnalysis(successful: ProcessResult[], companyId: str
     
     for (const [year, data] of Object.entries(yearGroups)) {
       const months = data.map(d => parseInt(d.period.substring(4, 6)));
-      const hasAllMonths = Array.from({length: 12}, (_, i) => i + 1)
+      const hasAllMonths = Array.from({ length: 12 }, (_, i) => i + 1)
         .every(month => months.includes(month));
       
       if (hasAllMonths && data.length === 12) {
@@ -415,19 +417,19 @@ async function generateQuickAnalysis(successful: ProcessResult[], companyId: str
       periodos_analizados: periods.length,
       rango_temporal: {
         inicio: periods[0],
-        fin: periods[periods.length - 1]
+        fin: periods[periods.length - 1],
       },
       validacion_anual: {
         tiene_año_completo: !!yearCompleteData,
         año_analizado: selectedYear || null,
         meses_presentes: yearCompleteData ? yearCompleteData.map(d => parseInt(d.period.substring(4, 6))) : [],
-        rut_validado: uniqueRuts[0] || 'No detectado'
+        rut_validado: uniqueRuts[0] || 'No detectado',
       },
       metricas_anuales: {
         total_ventas_anual: totalVentasAnual,
         total_compras_netas_anual: totalComprasNetasAnual,
         margen_bruto_anual_porcentaje: margenBrutoAnual,
-        margen_bruto_anual_monto: totalVentasAnual - totalComprasNetasAnual
+        margen_bruto_anual_monto: totalVentasAnual - totalComprasNetasAnual,
       },
       metricas_clave: {
         total_ventas: totalVentasAnual,
@@ -435,7 +437,7 @@ async function generateQuickAnalysis(successful: ProcessResult[], companyId: str
         promedio_compras_mensual: promedioCompras,
         crecimiento_periodo: crecimiento,
         mejor_mes: mejorMes,
-        peor_mes: peorMes
+        peor_mes: peorMes,
       },
       insights_iniciales: [
         `📊 Se analizaron ${periods.length} períodos de F29`,
@@ -446,8 +448,8 @@ async function generateQuickAnalysis(successful: ProcessResult[], companyId: str
         `📅 Mejor mes: ${mejorMes.period} con $${Math.round(mejorMes.ventas).toLocaleString()} en ventas`,
         crecimiento > 0 
           ? `🚀 Crecimiento positivo del ${crecimiento.toFixed(1)}%`
-          : `📉 Decrecimiento del ${Math.abs(crecimiento).toFixed(1)}%`
-      ]
+          : `📉 Decrecimiento del ${Math.abs(crecimiento).toFixed(1)}%`,
+      ],
     };
 
   } catch (error) {

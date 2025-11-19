@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createServerClient } from '@/lib/database/supabase';
 
 export async function POST(request: NextRequest) {
@@ -8,7 +10,7 @@ export async function POST(request: NextRequest) {
     if (!liquidation_id) {
       return NextResponse.json(
         { error: 'liquidation_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -24,7 +26,7 @@ export async function POST(request: NextRequest) {
     if (fetchError || !liquidation) {
       return NextResponse.json(
         { error: 'Liquidación no encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
     
@@ -48,7 +50,7 @@ export async function POST(request: NextRequest) {
       .update({
         total_taxable_income: taxableIncome,
         total_non_taxable_income: nonTaxableIncome,
-        total_gross_income: grossIncome
+        total_gross_income: grossIncome,
       })
       .eq('id', liquidation_id)
       .select()
@@ -58,7 +60,7 @@ export async function POST(request: NextRequest) {
       console.error('Error actualizando liquidación:', updateError);
       return NextResponse.json(
         { error: 'Error al actualizar la liquidación', details: updateError },
-        { status: 500 }
+        { status: 500 },
       );
     }
     
@@ -70,27 +72,27 @@ export async function POST(request: NextRequest) {
         previous: {
           total_taxable_income: liquidation.total_taxable_income,
           total_non_taxable_income: liquidation.total_non_taxable_income,
-          total_gross_income: liquidation.total_gross_income
+          total_gross_income: liquidation.total_gross_income,
         },
         updated: {
           total_taxable_income: taxableIncome,
           total_non_taxable_income: nonTaxableIncome,
-          total_gross_income: grossIncome
+          total_gross_income: grossIncome,
         },
         details: {
           base_salary: liquidation.base_salary || 0,
           bonuses: liquidation.bonuses || 0,
           legal_gratification_art50: liquidation.legal_gratification_art50 || 0,
-          food_allowance: liquidation.food_allowance || 0
-        }
-      }
+          food_allowance: liquidation.food_allowance || 0,
+        },
+      },
     });
     
   } catch (error) {
     console.error('Error en fix-liquidation:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -104,7 +106,7 @@ export async function GET(request: NextRequest) {
     if (!liquidation_id) {
       return NextResponse.json(
         { error: 'ID de liquidación requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
     
@@ -119,7 +121,7 @@ export async function GET(request: NextRequest) {
     if (error || !data) {
       return NextResponse.json(
         { error: 'Liquidación no encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
     
@@ -142,12 +144,12 @@ export async function GET(request: NextRequest) {
         id: data.id,
         total_taxable_income: data.total_taxable_income,
         total_non_taxable_income: data.total_non_taxable_income,
-        total_gross_income: data.total_gross_income
+        total_gross_income: data.total_gross_income,
       },
       expected: {
         total_taxable_income: expectedTaxableIncome,
         total_non_taxable_income: expectedNonTaxableIncome,
-        total_gross_income: expectedGrossIncome
+        total_gross_income: expectedGrossIncome,
       },
       needs_fix: data.total_taxable_income !== expectedTaxableIncome || 
                  data.total_gross_income !== expectedGrossIncome,
@@ -155,15 +157,15 @@ export async function GET(request: NextRequest) {
         base_salary: data.base_salary || 0,
         bonuses: data.bonuses || 0,
         legal_gratification_art50: data.legal_gratification_art50 || 0,
-        food_allowance: data.food_allowance || 0
-      }
+        food_allowance: data.food_allowance || 0,
+      },
     });
     
   } catch (error) {
     console.error('Error verificando liquidación:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

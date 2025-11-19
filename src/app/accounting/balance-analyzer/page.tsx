@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+
+import { Upload, FileText, Calculator, Download, ArrowRight, AlertCircle, Edit2, Check, X } from 'lucide-react';
+
 import { Header } from '@/components/layout/Header';
-import { Upload, FileText, Calculator, Download, ArrowRight, AlertCircle, Edit2, Check, X, Save } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 
 interface ExternalBalanceAccount {
   code: string;
@@ -60,7 +62,7 @@ export default function BalanceAnalyzerPage() {
       
       const response = await fetch('/api/accounting/balance-analyzer/parse-pdf', {
         method: 'POST',
-        body: formData
+        body: formData,
       });
       
       const result = await response.json();
@@ -99,7 +101,7 @@ export default function BalanceAnalyzerPage() {
               activo: 5437277,
               pasivo: 0,
               perdida: 0,
-              ganancia: 0
+              ganancia: 0,
             },
             {
               code: '1.1.1040.10.01',
@@ -111,7 +113,7 @@ export default function BalanceAnalyzerPage() {
               activo: 0,
               pasivo: 0,
               perdida: 0,
-              ganancia: 0
+              ganancia: 0,
             },
             {
               code: '1.1.1090.10.01',
@@ -123,7 +125,7 @@ export default function BalanceAnalyzerPage() {
               activo: 0,
               pasivo: 0,
               perdida: 0,
-              ganancia: 0
+              ganancia: 0,
             },
             {
               code: '1.1.1090.10.02',
@@ -135,7 +137,7 @@ export default function BalanceAnalyzerPage() {
               activo: 1829716,
               pasivo: 0,
               perdida: 0,
-              ganancia: 0
+              ganancia: 0,
             },
             {
               code: '1.1.1090.10.06',
@@ -147,7 +149,7 @@ export default function BalanceAnalyzerPage() {
               activo: 656533,
               pasivo: 0,
               perdida: 0,
-              ganancia: 0
+              ganancia: 0,
             },
             // PASIVOS - Grupo 2
             {
@@ -160,7 +162,7 @@ export default function BalanceAnalyzerPage() {
               activo: 0,
               pasivo: 4717426,
               perdida: 0,
-              ganancia: 0
+              ganancia: 0,
             },
             {
               code: '2.1.2030.10.01',
@@ -172,7 +174,7 @@ export default function BalanceAnalyzerPage() {
               activo: 0,
               pasivo: 0,
               perdida: 0,
-              ganancia: 0
+              ganancia: 0,
             },
             {
               code: '2.1.2030.10.04',
@@ -184,7 +186,7 @@ export default function BalanceAnalyzerPage() {
               activo: 0,
               pasivo: 89220,
               perdida: 0,
-              ganancia: 0
+              ganancia: 0,
             },
             {
               code: '2.1.2030.10.05',
@@ -196,7 +198,7 @@ export default function BalanceAnalyzerPage() {
               activo: 0,
               pasivo: 0,
               perdida: 0,
-              ganancia: 0
+              ganancia: 0,
             },
             {
               code: '2.4.1000.10.01',
@@ -208,7 +210,7 @@ export default function BalanceAnalyzerPage() {
               activo: 0,
               pasivo: 50000,
               perdida: 0,
-              ganancia: 0
+              ganancia: 0,
             },
             {
               code: '2.4.1500.30.01',
@@ -220,7 +222,7 @@ export default function BalanceAnalyzerPage() {
               activo: 7940000,
               pasivo: 0,
               perdida: 0,
-              ganancia: 0
+              ganancia: 0,
             },
             // INGRESOS - Grupo 3
             {
@@ -233,7 +235,7 @@ export default function BalanceAnalyzerPage() {
               activo: 0,
               pasivo: 0,
               perdida: 0,
-              ganancia: 303933900
+              ganancia: 303933900,
             },
             // COSTOS - Grupo 4
             {
@@ -246,8 +248,8 @@ export default function BalanceAnalyzerPage() {
               activo: 0,
               pasivo: 0,
               perdida: 292927020,
-              ganancia: 0
-            }
+              ganancia: 0,
+            },
           ];
         } else {
           // BALANCE COMPLETO DE GASTROLOGICA - DATOS REALES DEL PDF (fallback)
@@ -263,7 +265,7 @@ export default function BalanceAnalyzerPage() {
               activo: 19198659,
               pasivo: 0,
               perdida: 0,
-              ganancia: 0
+              ganancia: 0,
             },
           {
             code: '1.01.05.01',
@@ -275,7 +277,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '1.01.06.01',
@@ -287,7 +289,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '1.01.06.02',
@@ -299,7 +301,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '1.01.09.01',
@@ -311,7 +313,7 @@ export default function BalanceAnalyzerPage() {
             activo: 113479068,
             pasivo: 0,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '1.01.10.01',
@@ -323,7 +325,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '1.01.10.02',
@@ -335,7 +337,7 @@ export default function BalanceAnalyzerPage() {
             activo: 3715785,
             pasivo: 0,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '1.01.10.03',
@@ -347,7 +349,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '1.01.10.04',
@@ -359,7 +361,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '1.01.10.05',
@@ -371,7 +373,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '1.02.04.01',
@@ -383,7 +385,7 @@ export default function BalanceAnalyzerPage() {
             activo: 149000,
             pasivo: 0,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '1.02.04.02',
@@ -395,7 +397,7 @@ export default function BalanceAnalyzerPage() {
             activo: 347394,
             pasivo: 0,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '1.02.04.03',
@@ -407,7 +409,7 @@ export default function BalanceAnalyzerPage() {
             activo: 297000,
             pasivo: 0,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           // PASIVOS (2.xx)
           {
@@ -420,7 +422,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 15690,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '2.01.08.01',
@@ -432,7 +434,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 9375924,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '2.01.12.01',
@@ -444,7 +446,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 2646617,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '2.01.12.05',
@@ -456,7 +458,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 7276851,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '2.03.01.01',
@@ -468,7 +470,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 500000,
             perdida: 0,
-            ganancia: 0
+            ganancia: 0,
           },
           // INGRESOS (3.xx en Gastrologica)
           {
@@ -481,7 +483,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 0,
-            ganancia: 211714454
+            ganancia: 211714454,
           },
           {
             code: '3.02.03.02',
@@ -493,7 +495,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 0,
-            ganancia: 891640
+            ganancia: 891640,
           },
           // GASTOS (4.xx en Gastrologica) - TODOS LOS GASTOS DEL BALANCE
           {
@@ -506,7 +508,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 1503949,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.02',
@@ -518,7 +520,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 150000,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.04',
@@ -530,7 +532,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 3077764,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.05',
@@ -542,7 +544,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 657655,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.07',
@@ -554,7 +556,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 350000,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.09',
@@ -566,7 +568,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 50000,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.12',
@@ -578,7 +580,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 1737249,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.14',
@@ -590,7 +592,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 7477749,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.15',
@@ -602,7 +604,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 80000,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.16',
@@ -614,7 +616,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 262372,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.17',
@@ -626,7 +628,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 3048207,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.18',
@@ -638,7 +640,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 122005,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.19',
@@ -650,7 +652,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 2650000,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.21',
@@ -662,7 +664,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 729282,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.22',
@@ -674,7 +676,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 1838005,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.26',
@@ -686,7 +688,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 550819,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.27',
@@ -698,7 +700,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 132000,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.01.03.28',
@@ -710,7 +712,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 3711331,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.02.04.01',
@@ -722,7 +724,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 62077018,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.02.04.02',
@@ -734,7 +736,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 3254373,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.02.07.01',
@@ -746,7 +748,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 62085,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.02.07.06',
@@ -758,7 +760,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 1691147,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.02.10.03',
@@ -770,7 +772,7 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 22383,
-            ganancia: 0
+            ganancia: 0,
           },
           {
             code: '4.02.11.01',
@@ -782,8 +784,8 @@ export default function BalanceAnalyzerPage() {
             activo: 0,
             pasivo: 0,
             perdida: 0,
-            ganancia: 1123
-          }
+            ganancia: 1123,
+          },
         ];
         }
         
@@ -811,8 +813,8 @@ export default function BalanceAnalyzerPage() {
         },
         body: JSON.stringify({
           external_accounts: externalBalance,
-          company_id: '8033ee69-b420-4d91-ba0e-482f46cd6fce' // TODO: Obtener de contexto
-        })
+          company_id: '8033ee69-b420-4d91-ba0e-482f46cd6fce', // TODO: Obtener de contexto
+        }),
       });
 
       const result = await response.json();
@@ -848,8 +850,8 @@ export default function BalanceAnalyzerPage() {
           mapping_results: mappingResults,
           opening_date: openingEntryDate,
           company_id: '8033ee69-b420-4d91-ba0e-482f46cd6fce', // TODO: Obtener de contexto
-          source_description: uploadedFile?.name
-        })
+          source_description: uploadedFile?.name,
+        }),
       });
 
       const result = await response.json();
@@ -882,7 +884,7 @@ export default function BalanceAnalyzerPage() {
       if (result.accounts && Array.isArray(result.accounts)) {
         // Filtrar solo cuentas imputables (nivel más específico)
         const imputables = result.accounts.filter((account: any) => 
-          account.level_type === 'Imputable' && account.is_active
+          account.level_type === 'Imputable' && account.is_active,
         );
         console.log('🔍 Imputables found:', imputables.length, 'cuentas de tus', result.accounts.length, 'cuentas totales');
         
@@ -891,7 +893,7 @@ export default function BalanceAnalyzerPage() {
           name: account.name,
           account_type: account.account_type || 'Otro',
           level_type: account.level_type,
-          full_name: `${account.code} - ${account.name}`
+          full_name: `${account.code} - ${account.name}`,
         }));
 
         console.log('✅ Cuentas procesadas:', allAccounts.length);
@@ -914,7 +916,7 @@ export default function BalanceAnalyzerPage() {
       ...updatedMappings[index],
       mapped_code: newCode,
       mapped_name: newName,
-      confidence: 100 // Marcar como editado manualmente
+      confidence: 100, // Marcar como editado manualmente
     };
     setEditableMappings(updatedMappings);
   };
@@ -936,7 +938,7 @@ export default function BalanceAnalyzerPage() {
       <Header 
         title="Analizador de Balances" 
         subtitle="Herramienta de análisis y generación de asientos de apertura"
-        showBackButton={true}
+        showBackButton
       />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -948,7 +950,7 @@ export default function BalanceAnalyzerPage() {
               { num: 2, label: 'Procesar Datos', icon: FileText },
               { num: 3, label: 'Mapear Cuentas', icon: Calculator },
               { num: 4, label: 'Generar Asiento', icon: ArrowRight },
-              { num: 5, label: 'Completado', icon: Download }
+              { num: 5, label: 'Completado', icon: Download },
             ].map((stepItem, index) => {
               const Icon = stepItem.icon;
               const isActive = step === stepItem.num;
@@ -1051,7 +1053,7 @@ export default function BalanceAnalyzerPage() {
               </div>
               
               <div className="bg-gray-200 rounded-full h-2 mb-6">
-                <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+                <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{ width: '60%' }} />
               </div>
               
               <div className="text-sm text-gray-600 space-y-2">
@@ -1136,7 +1138,7 @@ export default function BalanceAnalyzerPage() {
                     {!isEditingMappings && (
                       <Button 
                         variant="outline"
-                        onClick={() => setIsEditingMappings(true)}
+                        onClick={() => { setIsEditingMappings(true); }}
                       >
                         <Edit2 className="w-4 h-4 mr-2" />
                         Editar Mapeos
@@ -1166,7 +1168,7 @@ export default function BalanceAnalyzerPage() {
                         <input
                           type="date"
                           value={openingEntryDate}
-                          onChange={(e) => setOpeningEntryDate(e.target.value)}
+                          onChange={(e) => { setOpeningEntryDate(e.target.value); }}
                           className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                         />
                         <Button onClick={generateOpeningEntry} disabled={processingStatus === 'processing'}>

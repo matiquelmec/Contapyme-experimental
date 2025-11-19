@@ -10,6 +10,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // Don't run on these paths for now
-    '/api/middleware-test-only'
+    '/api/middleware-test-only',
   ],
 }

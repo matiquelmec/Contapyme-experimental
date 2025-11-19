@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 
@@ -48,7 +49,7 @@ export default function PreviredAdditionalDataForm({
   baseSalary = 0,
   data = {}, 
   onChange,
-  onApplyConcepts 
+  onApplyConcepts, 
 }: Props) {
   const [formData, setFormData] = useState<PreviredAdditionalData>(data);
   const [concepts, setConcepts] = useState<PreviredConcept[]>([]);
@@ -102,7 +103,7 @@ export default function PreviredAdditionalDataForm({
       case 'days':
         calculatedAmount = calculateProportionalAmount(
           concept.fixed_amount || Math.round(baseSalary / 30), 
-          daysWorked
+          daysWorked,
         );
         break;
     }
@@ -126,7 +127,7 @@ export default function PreviredAdditionalDataForm({
         concept_code: conceptCode,
         concept_name: concept.concept_name,
         amount: calculatedAmount,
-        is_taxable: concept.is_taxable
+        is_taxable: concept.is_taxable,
       }]);
     }
   };
@@ -146,14 +147,14 @@ export default function PreviredAdditionalDataForm({
     { value: '12', label: '12 - Reliquidación, Premio, Bono' },
     { value: '13', label: '13 - Suspensión Contrato acto de autoridad (Ley N°21.227)' },
     { value: '14', label: '14 - Suspensión Contrato por pacto (Ley N°21.227)' },
-    { value: '15', label: '15 - Reducción de Jornada (Ley N°21.227)' }
+    { value: '15', label: '15 - Reducción de Jornada (Ley N°21.227)' },
   ];
 
   const getWorkerTypeOptions = () => [
     { value: '0', label: 'Trabajador activo normal' },
     { value: '1', label: 'Trabajador con régimen especial' },
     { value: '2', label: 'Trabajador temporal' },
-    { value: '3', label: 'Trabajador por obra' }
+    { value: '3', label: 'Trabajador por obra' },
   ];
 
   // Solo mostrar si hay 29 días o menos trabajados
@@ -167,7 +168,7 @@ export default function PreviredAdditionalDataForm({
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+              <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
               <div>
                 <p className="font-medium text-orange-900">
                   📋 Movimiento de Personal Previred
@@ -180,7 +181,7 @@ export default function PreviredAdditionalDataForm({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setIsExpanded(true)}
+              onClick={() => { setIsExpanded(true); }}
               className="border-orange-300 text-orange-700 hover:bg-orange-100"
             >
               Configurar
@@ -201,7 +202,7 @@ export default function PreviredAdditionalDataForm({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsExpanded(false)}
+            onClick={() => { setIsExpanded(false); }}
             className="text-white hover:bg-white/20"
           >
             ✕
@@ -230,7 +231,7 @@ export default function PreviredAdditionalDataForm({
             </label>
             <select
               value={formData.movement_code || '0'}
-              onChange={(e) => handleInputChange('movement_code', e.target.value)}
+              onChange={(e) => { handleInputChange('movement_code', e.target.value); }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white"
             >
               {getMovementOptions().map(option => (
@@ -256,7 +257,7 @@ export default function PreviredAdditionalDataForm({
               <input
                 type="date"
                 value={formData.start_work_date || ''}
-                onChange={(e) => handleInputChange('start_work_date', e.target.value)}
+                onChange={(e) => { handleInputChange('start_work_date', e.target.value); }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -268,7 +269,7 @@ export default function PreviredAdditionalDataForm({
               <input
                 type="date"
                 value={formData.end_work_date || ''}
-                onChange={(e) => handleInputChange('end_work_date', e.target.value)}
+                onChange={(e) => { handleInputChange('end_work_date', e.target.value); }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -287,7 +288,7 @@ export default function PreviredAdditionalDataForm({
                 <input
                   type="number"
                   value={formData.incorporation_workplace_amount || ''}
-                  onChange={(e) => handleInputChange('incorporation_workplace_amount', parseInt(e.target.value) || 0)}
+                  onChange={(e) => { handleInputChange('incorporation_workplace_amount', parseInt(e.target.value) || 0); }}
                   placeholder="Monto en pesos"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 />
@@ -318,7 +319,7 @@ export default function PreviredAdditionalDataForm({
                 min="0"
                 max="30"
                 value={formData.sick_leave_days || ''}
-                onChange={(e) => handleInputChange('sick_leave_days', parseInt(e.target.value) || 0)}
+                onChange={(e) => { handleInputChange('sick_leave_days', parseInt(e.target.value) || 0); }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               />
             </div>
@@ -330,7 +331,7 @@ export default function PreviredAdditionalDataForm({
               <input
                 type="date"
                 value={formData.sick_leave_start_date || ''}
-                onChange={(e) => handleInputChange('sick_leave_start_date', e.target.value)}
+                onChange={(e) => { handleInputChange('sick_leave_start_date', e.target.value); }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               />
             </div>
@@ -342,7 +343,7 @@ export default function PreviredAdditionalDataForm({
               <input
                 type="date"
                 value={formData.sick_leave_end_date || ''}
-                onChange={(e) => handleInputChange('sick_leave_end_date', e.target.value)}
+                onChange={(e) => { handleInputChange('sick_leave_end_date', e.target.value); }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               />
             </div>
@@ -355,7 +356,7 @@ export default function PreviredAdditionalDataForm({
                 <input
                   type="number"
                   value={formData.sick_leave_amount || ''}
-                  onChange={(e) => handleInputChange('sick_leave_amount', parseInt(e.target.value) || 0)}
+                  onChange={(e) => { handleInputChange('sick_leave_amount', parseInt(e.target.value) || 0); }}
                   placeholder="Monto subsidio en pesos"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 />
@@ -386,7 +387,7 @@ export default function PreviredAdditionalDataForm({
                 min="0"
                 max="30"
                 value={formData.vacation_days || ''}
-                onChange={(e) => handleInputChange('vacation_days', parseInt(e.target.value) || 0)}
+                onChange={(e) => { handleInputChange('vacation_days', parseInt(e.target.value) || 0); }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               />
             </div>
@@ -399,7 +400,7 @@ export default function PreviredAdditionalDataForm({
                 <input
                   type="number"
                   value={formData.vacation_amount || ''}
-                  onChange={(e) => handleInputChange('vacation_amount', parseInt(e.target.value) || 0)}
+                  onChange={(e) => { handleInputChange('vacation_amount', parseInt(e.target.value) || 0); }}
                   placeholder="Monto en pesos"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 />
@@ -427,7 +428,7 @@ export default function PreviredAdditionalDataForm({
               </label>
               <select
                 value={formData.worker_type_code || '0'}
-                onChange={(e) => handleInputChange('worker_type_code', e.target.value)}
+                onChange={(e) => { handleInputChange('worker_type_code', e.target.value); }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               >
                 {getWorkerTypeOptions().map(option => (
@@ -443,7 +444,7 @@ export default function PreviredAdditionalDataForm({
                 <input
                   type="checkbox"
                   checked={formData.has_special_regime || false}
-                  onChange={(e) => handleInputChange('has_special_regime', e.target.checked)}
+                  onChange={(e) => { handleInputChange('has_special_regime', e.target.checked); }}
                   className="w-4 h-4 text-purple-500 rounded focus:ring-purple-500"
                 />
                 <span className="text-sm text-gray-700">
@@ -463,7 +464,7 @@ export default function PreviredAdditionalDataForm({
             <input
               type="text"
               value={formData.partial_period_reason || ''}
-              onChange={(e) => handleInputChange('partial_period_reason', e.target.value)}
+              onChange={(e) => { handleInputChange('partial_period_reason', e.target.value); }}
               placeholder="Ej: Ingreso el día 15, Licencia médica, etc."
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
             />
@@ -475,7 +476,7 @@ export default function PreviredAdditionalDataForm({
             </label>
             <textarea
               value={formData.previred_notes || ''}
-              onChange={(e) => handleInputChange('previred_notes', e.target.value)}
+              onChange={(e) => { handleInputChange('previred_notes', e.target.value); }}
               placeholder="Observaciones especiales para el reporte Previred..."
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none"

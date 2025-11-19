@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useRef } from 'react';
+
+import JournalEntryEditor from '@/components/accounting/JournalEntryEditor';
+import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Header } from '@/components/layout/Header';
-import JournalEntryEditor from '@/components/accounting/JournalEntryEditor';
 
 interface BankTransaction {
   date: string;
@@ -89,24 +90,20 @@ export default function BankAnalysisPage() {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL', {
+  const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('es-CL', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
     });
-  };
 
   const handleCreateJournalEntries = () => {
-    if (!analysis || !analysis.transactions) {
+    if (!analysis?.transactions) {
       alert('No hay transacciones para procesar');
       return;
     }
@@ -131,7 +128,7 @@ export default function BankAnalysisPage() {
       creditAccountName: transaction.suggestedEntry.creditAccountName,
       amount: transaction.suggestedEntry.amount,
       type: transaction.suggestedEntry.type,
-      originalTransaction: transaction
+      originalTransaction: transaction,
     }));
 
     setJournalEntries(entries);
@@ -160,11 +157,11 @@ export default function BankAnalysisPage() {
               creditAccountName: entry.creditAccountName,
               amount: entry.amount,
               description: entry.description,
-              type: entry.type
-            }
+              type: entry.type,
+            },
           })),
-          companyId: '8033ee69-b420-4d91-ba0e-482f46cd6fce' // TODO: Get from context/auth
-        })
+          companyId: '8033ee69-b420-4d91-ba0e-482f46cd6fce', // TODO: Get from context/auth
+        }),
       });
 
       const result = await response.json();
@@ -173,8 +170,8 @@ export default function BankAnalysisPage() {
         setCreationResult(result.data);
         alert(
           `✅ ${result.message}\n\n` +
-          `Asientos creados: ${result.data.created}\n` +
-          (result.data.failed > 0 ? `Errores: ${result.data.failed}` : '')
+          `Asientos creados: ${result.data.created}\n${ 
+          result.data.failed > 0 ? `Errores: ${result.data.failed}` : ''}`,
         );
         console.log('✅ Journal entries created:', result.data);
       } else {
@@ -199,7 +196,7 @@ export default function BankAnalysisPage() {
       <Header 
         title="Análisis de Cartolas Bancarias"
         subtitle="Herramienta para analizar y categorizar movimientos bancarios"
-        showBackButton={true}
+        showBackButton
       />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -237,7 +234,7 @@ export default function BankAnalysisPage() {
                     >
                       {isAnalyzing ? (
                         <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                           Analizando...
                         </>
                       ) : (
@@ -310,7 +307,7 @@ export default function BankAnalysisPage() {
                             {entry.date} - {new Intl.NumberFormat('es-CL', {
                               style: 'currency',
                               currency: 'CLP',
-                              minimumFractionDigits: 0
+                              minimumFractionDigits: 0,
                             }).format(entry.amount)} - {entry.type}
                           </div>
                         </div>
@@ -465,7 +462,7 @@ export default function BankAnalysisPage() {
                   >
                     {isCreatingEntries ? (
                       <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                         Creando...
                       </>
                     ) : (

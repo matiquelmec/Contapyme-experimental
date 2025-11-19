@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { parseF29 } from '@/lib/parsers/f29Parser';
 
 export const runtime = 'nodejs';
@@ -24,7 +26,7 @@ export async function POST(request: NextRequest) {
     if (file.type !== 'application/pdf') {
       console.error('❌ Wrong file type:', file.type);
       return NextResponse.json({ 
-        error: 'Only PDF files supported' 
+        error: 'Only PDF files supported', 
       }, { status: 400 });
     }
     
@@ -44,7 +46,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: result,
       method: result.method,
-      confidence: result.confidence
+      confidence: result.confidence,
     });
     
   } catch (error) {
@@ -58,7 +60,7 @@ export async function POST(request: NextRequest) {
       success: false,
       error: 'No se pudieron extraer datos del PDF. Verifica que el archivo sea un F29 válido.',
       details: error instanceof Error ? error.message : 'Error desconocido',
-      errorType: error?.constructor?.name || 'Unknown'
+      errorType: error?.constructor?.name || 'Unknown',
     }, { status: 500 });
   }
 }

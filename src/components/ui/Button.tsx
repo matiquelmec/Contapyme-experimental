@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { cn } from '@/lib/utils'
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -35,7 +36,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       warning: "bg-warning-500 hover:bg-warning-600 text-white focus:ring-warning-500 active:bg-warning-700 shadow-sm hover:shadow-md",
       danger: "bg-error-600 hover:bg-error-700 text-white focus:ring-error-500 active:bg-error-800 shadow-sm hover:shadow-md",
       ghost: "hover:bg-gray-100 text-gray-700 focus:ring-gray-500 active:bg-gray-200",
-      outline: "border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 focus:ring-gray-500 active:bg-gray-100"
+      outline: "border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 focus:ring-gray-500 active:bg-gray-100",
     }
     
     const sizes = {
@@ -43,7 +44,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       sm: "px-3 py-2 text-sm h-8 gap-1.5",
       md: "px-4 py-2 text-sm h-10 gap-2",
       lg: "px-5 py-2.5 text-base h-11 gap-2",
-      xl: "px-6 py-3 text-lg h-12 gap-2.5"
+      xl: "px-6 py-3 text-lg h-12 gap-2.5",
     }
     
     const roundedStyles = {
@@ -51,7 +52,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       sm: "rounded",
       md: "rounded-md",
       lg: "rounded-lg",
-      full: "rounded-full"
+      full: "rounded-full",
     }
     
     const isDisabled = disabled || loading
@@ -64,7 +65,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           sizes[size],
           roundedStyles[rounded],
           fullWidth && "w-full",
-          className
+          className,
         )}
         ref={ref}
         disabled={isDisabled}
@@ -104,7 +105,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
       </button>
     )
-  }
+  },
 )
 
 Button.displayName = "Button"

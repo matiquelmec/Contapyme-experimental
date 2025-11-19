@@ -39,7 +39,7 @@ export function useRCVEntityLookup() {
     return matches.map(rut => 
       rut.trim()
         .replace(/−/g, '-') // Normalizar guiones
-        .replace(/\s+/g, '') // Remover espacios extra
+        .replace(/\s+/g, ''), // Remover espacios extra
     ).filter((rut, index, arr) => arr.indexOf(rut) === index); // Remover duplicados
   }, []);
 
@@ -62,19 +62,19 @@ export function useRCVEntityLookup() {
         return {
           found: true,
           entity: data.data,
-          message: data.message
+          message: data.message,
         };
       } else {
         return {
           found: false,
-          message: data.error || 'Entidad no encontrada'
+          message: data.error || 'Entidad no encontrada',
         };
       }
     } catch (error) {
       console.error('Error looking up RCV entity:', error);
       return {
         found: false,
-        message: 'Error en búsqueda de entidad'
+        message: 'Error en búsqueda de entidad',
       };
     } finally {
       setLoading(false);
@@ -87,7 +87,7 @@ export function useRCVEntityLookup() {
   const autoLookupFromText = useCallback(async (
     text: string,
     onEntityFound?: (entity: RCVEntitySuggestion) => void,
-    onEntityNotFound?: (rut: string) => void
+    onEntityNotFound?: (rut: string) => void,
   ): Promise<RCVLookupResult[]> => {
     const ruts = extractRUTsFromText(text);
     
@@ -114,7 +114,7 @@ export function useRCVEntityLookup() {
         console.error(`Error looking up RUT ${rut}:`, error);
         results.push({
           found: false,
-          message: `Error buscando RUT ${rut}`
+          message: `Error buscando RUT ${rut}`,
         });
       }
     }
@@ -129,7 +129,7 @@ export function useRCVEntityLookup() {
     text: string,
     onEntityFound?: (entity: RCVEntitySuggestion) => void,
     onEntityNotFound?: (rut: string) => void,
-    delay: number = 1000
+    delay: number = 1000,
   ) => {
     // Cancelar lookup anterior
     if (lookupTimeoutRef.current) {
@@ -153,7 +153,7 @@ export function useRCVEntityLookup() {
       code: entity.account_code,
       name: entity.account_name,
       type: 'main',
-      description: `Cuenta principal de ${entity.entity_name}`
+      description: `Cuenta principal de ${entity.entity_name}`,
     });
 
     // Sugerencias de IVA si aplica
@@ -163,7 +163,7 @@ export function useRCVEntityLookup() {
           code: '1.1.2.002', // IVA Crédito Fiscal  
           name: 'IVA Crédito Fiscal',
           type: 'tax',
-          description: `IVA ${entity.default_tax_rate}% para compras`
+          description: `IVA ${entity.default_tax_rate}% para compras`,
         });
       }
       
@@ -172,7 +172,7 @@ export function useRCVEntityLookup() {
           code: '2.1.2.001', // IVA Débito Fiscal
           name: 'IVA Débito Fiscal', 
           type: 'tax',
-          description: `IVA ${entity.default_tax_rate}% para ventas`
+          description: `IVA ${entity.default_tax_rate}% para ventas`,
         });
       }
     }
@@ -187,6 +187,6 @@ export function useRCVEntityLookup() {
     autoLookupFromText,
     debouncedAutoLookup,
     generateAccountSuggestions,
-    lastLookup
+    lastLookup,
   };
 }

@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+
+import { Calculator, Plus, FileText, Users, Calendar, Filter, Search, Download, Eye, DollarSign, ArrowRight, CheckCircle, AlertTriangle, Trash2, RotateCcw, Clock } from 'lucide-react';
+
 import { PayrollHeader } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { Calculator, Plus, FileText, Users, TrendingUp, Calendar, Filter, Search, Download, Eye, DollarSign, ArrowRight, Activity, CheckCircle, AlertTriangle, Trash2, RotateCcw, Clock } from 'lucide-react';
 
 interface LiquidationSummary {
   id: string;
@@ -56,7 +59,7 @@ export default function LiquidationsPage() {
     pending_count: 0,
     review_count: 0,
     approved_count: 0,
-    paid_count: 0
+    paid_count: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -95,7 +98,7 @@ export default function LiquidationsPage() {
     if (saved === 'true') {
       setSavedMessage('✅ Liquidación guardada exitosamente');
       // Limpiar mensaje después de 5 segundos
-      setTimeout(() => setSavedMessage(null), 5000);
+      setTimeout(() => { setSavedMessage(null); }, 5000);
     }
   }, [searchParams]);
 
@@ -107,8 +110,8 @@ export default function LiquidationsPage() {
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
-          'Expires': '0'
-        }
+          'Expires': '0',
+        },
       });
       
       if (!response.ok) {
@@ -136,7 +139,7 @@ export default function LiquidationsPage() {
         // Extraer RUTs y períodos únicos para los filtros
         const uniqueRuts = [...new Set(validLiquidations.map((l: LiquidationSummary) => l.employee_rut))];
         const uniquePeriods = [...new Set(validLiquidations.map((l: LiquidationSummary) => 
-          `${l.period_year}-${l.period_month.toString().padStart(2, '0')}`
+          `${l.period_year}-${l.period_month.toString().padStart(2, '0')}`,
         ))].sort().reverse();
         
         setAvailableRuts(uniqueRuts);
@@ -160,11 +163,11 @@ export default function LiquidationsPage() {
     const currentYear = currentDate.getFullYear();
 
     const currentMonthLiquidations = liquidationsData.filter(
-      liq => liq.period_month === currentMonth && liq.period_year === currentYear
+      liq => liq.period_month === currentMonth && liq.period_year === currentYear,
     );
 
     const currentMonthTotal = currentMonthLiquidations.reduce(
-      (sum, liq) => sum + calculateNetSalary(liq), 0
+      (sum, liq) => sum + calculateNetSalary(liq), 0,
     );
 
     const pendingCount = liquidationsData.filter(liq => liq.status === 'draft').length;
@@ -178,7 +181,7 @@ export default function LiquidationsPage() {
       pending_count: pendingCount,
       review_count: reviewCount,
       approved_count: approvedCount,
-      paid_count: paidCount
+      paid_count: paidCount,
     });
   };
 
@@ -202,25 +205,22 @@ export default function LiquidationsPage() {
       .trim();
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   const formatPeriod = (year: number, month: number) => {
     const monthNames = [
       'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic',
     ];
     return `${monthNames[month - 1]} ${year}`;
   };
 
   // ✅ FUNCIÓN PARA CALCULAR TOTAL DESCUENTOS DINÁMICAMENTE (SIN SIS - correcto según página individual)
-  const calculateTotalDeductions = (liq: LiquidationSummary) => {
-    return (liq.afp_amount || 0) + 
+  const calculateTotalDeductions = (liq: LiquidationSummary) => (liq.afp_amount || 0) + 
            (liq.afp_commission_amount || 0) +
            (liq.health_amount || 0) + 
            (liq.unemployment_amount || 0) + 
@@ -229,12 +229,9 @@ export default function LiquidationsPage() {
            (liq.advance_payments || 0) +
            (liq.apv_amount || 0) +
            (liq.other_deductions || 0);
-  };
 
   // ✅ CALCULAR LÍQUIDO A PAGAR DINÁMICAMENTE (correcto: 507.750)
-  const calculateNetSalary = (liq: LiquidationSummary) => {
-    return liq.total_gross_income - calculateTotalDeductions(liq);
-  };
+  const calculateNetSalary = (liq: LiquidationSummary) => liq.total_gross_income - calculateTotalDeductions(liq);
 
   // ✅ FUNCIÓN PARA APROBAR LIQUIDACIONES MANUALMENTE
   const approveLiquidations = async () => {
@@ -248,7 +245,7 @@ export default function LiquidationsPage() {
     const periodLiquidations = liquidations.filter(liq =>
       liq.period_year === parseInt(year) &&
       liq.period_month === parseInt(month) &&
-      liq.status === 'draft'
+      liq.status === 'draft',
     );
 
     if (periodLiquidations.length === 0) {
@@ -263,7 +260,7 @@ export default function LiquidationsPage() {
       `• Cambiará el estado de BORRADOR a APROBADA\n` +
       `• Las liquidaciones aprobadas están listas para pago\n` +
       `• Se puede revertir usando el botón "Revertir Aprobaciones"\n\n` +
-      `¿Estás seguro de que quieres aprobar estas liquidaciones?`
+      `¿Estás seguro de que quieres aprobar estas liquidaciones?`,
     );
 
     if (!confirmApproval) return;
@@ -280,7 +277,7 @@ export default function LiquidationsPage() {
         },
         body: JSON.stringify({
           liquidation_ids: periodLiquidations.map(liq => liq.id),
-          status: 'approved'
+          status: 'approved',
         }),
       });
 
@@ -307,7 +304,7 @@ export default function LiquidationsPage() {
               const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
               return `${monthNames[parseInt(month) - 1]} ${year}`;
             })()} \n\n` +
-            `¿Deseas generar el Libro de Remuneraciones ahora?`
+            `¿Deseas generar el Libro de Remuneraciones ahora?`,
           );
 
           if (shouldGenerateBook) {
@@ -316,17 +313,17 @@ export default function LiquidationsPage() {
           }
         }, 2000);
         
-        setTimeout(() => setValidationMessage(null), 8000);
+        setTimeout(() => { setValidationMessage(null); }, 8000);
       } else {
         const errorMessage = result.error || `Error ${response.status}: ${response.statusText}`;
         console.error('Validation failed:', errorMessage);
         setValidationMessage(`❌ ${errorMessage}`);
-        setTimeout(() => setValidationMessage(null), 8000);
+        setTimeout(() => { setValidationMessage(null); }, 8000);
       }
     } catch (error) {
       console.error('Error validating liquidations:', error);
       setValidationMessage('❌ Error de conexión al validar liquidaciones');
-      setTimeout(() => setValidationMessage(null), 5000);
+      setTimeout(() => { setValidationMessage(null); }, 5000);
     } finally {
       setValidatingLiquidations(false);
     }
@@ -344,7 +341,7 @@ export default function LiquidationsPage() {
     const approvedLiquidations = liquidations.filter(liq =>
       liq.period_year === parseInt(year) &&
       liq.period_month === parseInt(month) &&
-      liq.status === 'approved'
+      liq.status === 'approved',
     );
 
     if (approvedLiquidations.length === 0) {
@@ -359,7 +356,7 @@ export default function LiquidationsPage() {
       `• Cambiará el estado de APROBADA a BORRADOR\n` +
       `• Las liquidaciones volverán a estar en edición\n` +
       `• Solo afecta liquidaciones que NO han sido pagadas\n\n` +
-      `¿Estás seguro de que quieres revertir estas aprobaciones?`
+      `¿Estás seguro de que quieres revertir estas aprobaciones?`,
     );
 
     if (!confirmRevert) return;
@@ -376,7 +373,7 @@ export default function LiquidationsPage() {
         },
         body: JSON.stringify({
           liquidation_ids: approvedLiquidations.map(liq => liq.id),
-          status: 'draft'
+          status: 'draft',
         }),
       });
 
@@ -387,17 +384,17 @@ export default function LiquidationsPage() {
         const successMessage = `🔄 ${approvedLiquidations.length} aprobaciones revertidas exitosamente • Las liquidaciones volvieron a estado borrador`;
         setValidationMessage(successMessage);
         fetchLiquidations(); // Refrescar lista
-        setTimeout(() => setValidationMessage(null), 5000);
+        setTimeout(() => { setValidationMessage(null); }, 5000);
       } else {
         const errorMessage = result.error || `Error ${response.status}: ${response.statusText}`;
         console.error('Reversion failed:', errorMessage);
         setValidationMessage(`❌ ${errorMessage}`);
-        setTimeout(() => setValidationMessage(null), 8000);
+        setTimeout(() => { setValidationMessage(null); }, 8000);
       }
     } catch (error) {
       console.error('Error reverting approvals:', error);
       setValidationMessage('❌ Error de conexión al revertir aprobaciones');
-      setTimeout(() => setValidationMessage(null), 5000);
+      setTimeout(() => { setValidationMessage(null); }, 5000);
     } finally {
       setValidatingLiquidations(false);
     }
@@ -414,7 +411,7 @@ export default function LiquidationsPage() {
     const confirmApproval = confirm(
       `🔒 APROBAR LIQUIDACIÓN INDIVIDUAL\n\n` +
       `¿Estás seguro de que quieres aprobar la liquidación de ${employeeName}?\n\n` +
-      `Esta acción cambiará el estado de BORRADOR a APROBADA.`
+      `Esta acción cambiará el estado de BORRADOR a APROBADA.`,
     );
 
     if (!confirmApproval) return;
@@ -428,7 +425,7 @@ export default function LiquidationsPage() {
         },
         body: JSON.stringify({
           liquidation_ids: [liquidationId],
-          status: 'approved'
+          status: 'approved',
         }),
       });
 
@@ -436,15 +433,15 @@ export default function LiquidationsPage() {
       if (response.ok && result.success) {
         setValidationMessage(`✅ Liquidación de ${employeeName} aprobada exitosamente`);
         fetchLiquidations();
-        setTimeout(() => setValidationMessage(null), 3000);
+        setTimeout(() => { setValidationMessage(null); }, 3000);
       } else {
         setValidationMessage(`❌ Error al aprobar liquidación: ${result.error}`);
-        setTimeout(() => setValidationMessage(null), 5000);
+        setTimeout(() => { setValidationMessage(null); }, 5000);
       }
     } catch (error) {
       console.error('Error approving single liquidation:', error);
       setValidationMessage('❌ Error de conexión al aprobar liquidación');
-      setTimeout(() => setValidationMessage(null), 5000);
+      setTimeout(() => { setValidationMessage(null); }, 5000);
     } finally {
       setValidatingLiquidations(false);
     }
@@ -461,7 +458,7 @@ export default function LiquidationsPage() {
     const confirmRevert = confirm(
       `🔄 REVERTIR APROBACIÓN INDIVIDUAL\n\n` +
       `¿Estás seguro de que quieres revertir la aprobación de ${employeeName}?\n\n` +
-      `Esta acción cambiará el estado de APROBADA a BORRADOR.`
+      `Esta acción cambiará el estado de APROBADA a BORRADOR.`,
     );
 
     if (!confirmRevert) return;
@@ -475,7 +472,7 @@ export default function LiquidationsPage() {
         },
         body: JSON.stringify({
           liquidation_ids: [liquidationId],
-          status: 'draft'
+          status: 'draft',
         }),
       });
 
@@ -483,15 +480,15 @@ export default function LiquidationsPage() {
       if (response.ok && result.success) {
         setValidationMessage(`🔄 Aprobación de ${employeeName} revertida exitosamente`);
         fetchLiquidations();
-        setTimeout(() => setValidationMessage(null), 3000);
+        setTimeout(() => { setValidationMessage(null); }, 3000);
       } else {
         setValidationMessage(`❌ Error al revertir aprobación: ${result.error}`);
-        setTimeout(() => setValidationMessage(null), 5000);
+        setTimeout(() => { setValidationMessage(null); }, 5000);
       }
     } catch (error) {
       console.error('Error reverting single approval:', error);
       setValidationMessage('❌ Error de conexión al revertir aprobación');
-      setTimeout(() => setValidationMessage(null), 5000);
+      setTimeout(() => { setValidationMessage(null); }, 5000);
     } finally {
       setValidatingLiquidations(false);
     }
@@ -508,7 +505,7 @@ export default function LiquidationsPage() {
     const [year, month] = filterPeriod.split('-');
     const periodLiquidations = liquidations.filter(liq =>
       liq.period_year === parseInt(year) &&
-      liq.period_month === parseInt(month)
+      liq.period_month === parseInt(month),
     );
 
     if (periodLiquidations.length === 0) {
@@ -527,7 +524,7 @@ export default function LiquidationsPage() {
       })()} \n` +
       `Liquidaciones a exportar: ${periodLiquidations.length}\n` +
       `Empleados: ${[...new Set(periodLiquidations.map(liq => liq.employee_name))].join(', ')}\n\n` +
-      `¿Generar archivo Excel con todas las liquidaciones del período?`
+      `¿Generar archivo Excel con todas las liquidaciones del período?`,
     );
 
     if (!confirmExport) return;
@@ -539,8 +536,8 @@ export default function LiquidationsPage() {
       const response = await fetch(`/api/payroll/liquidations/export-batch?company_id=${COMPANY_ID}&period=${filterPeriod}`, {
         method: 'GET',
         headers: {
-          'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        }
+          'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        },
       });
 
       if (!response.ok) {
@@ -559,12 +556,12 @@ export default function LiquidationsPage() {
       window.URL.revokeObjectURL(url);
 
       setValidationMessage(`📊 Lote exportado exitosamente • ${periodLiquidations.length} liquidaciones • Archivo: liquidaciones_lote_${filterPeriod}.xlsx`);
-      setTimeout(() => setValidationMessage(null), 5000);
+      setTimeout(() => { setValidationMessage(null); }, 5000);
 
     } catch (error) {
       console.error('Error exporting batch:', error);
       setValidationMessage(`❌ Error al exportar lote: ${error.message}`);
-      setTimeout(() => setValidationMessage(null), 8000);
+      setTimeout(() => { setValidationMessage(null); }, 8000);
     } finally {
       setValidatingLiquidations(false);
     }
@@ -578,7 +575,7 @@ export default function LiquidationsPage() {
     }
 
     const confirmDelete = confirm(
-      `¿Estás seguro de que deseas eliminar ${selectedLiquidations.length} liquidación(es)? Esta acción no se puede deshacer.`
+      `¿Estás seguro de que deseas eliminar ${selectedLiquidations.length} liquidación(es)? Esta acción no se puede deshacer.`,
     );
 
     if (!confirmDelete) return;
@@ -593,7 +590,7 @@ export default function LiquidationsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          liquidation_ids: selectedLiquidations
+          liquidation_ids: selectedLiquidations,
         }),
       });
 
@@ -604,17 +601,17 @@ export default function LiquidationsPage() {
         setValidationMessage(`🗑️ ${result.message || `${selectedLiquidations.length} liquidación(es) eliminada(s) exitosamente`}`);
         setSelectedLiquidations([]);
         fetchLiquidations(); // Refrescar lista
-        setTimeout(() => setValidationMessage(null), 5000);
+        setTimeout(() => { setValidationMessage(null); }, 5000);
       } else {
         const errorMessage = result.error || `Error ${response.status}: ${response.statusText}`;
         console.error('Delete failed:', errorMessage);
         setValidationMessage(`❌ ${errorMessage}`);
-        setTimeout(() => setValidationMessage(null), 8000);
+        setTimeout(() => { setValidationMessage(null); }, 8000);
       }
     } catch (error) {
       console.error('Error deleting liquidations:', error);
       setValidationMessage('❌ Error de conexión al eliminar liquidaciones');
-      setTimeout(() => setValidationMessage(null), 5000);
+      setTimeout(() => { setValidationMessage(null); }, 5000);
     } finally {
       setDeletingLiquidations(false);
     }
@@ -632,7 +629,7 @@ export default function LiquidationsPage() {
       `✅ APROBACIÓN RÁPIDA\n\n` +
       `Empleado: ${cleanText(employeeName)}\n` +
       `Esta liquidación será marcada como aprobada y estará lista para el pago.\n\n` +
-      `¿Confirmas la aprobación?`
+      `¿Confirmas la aprobación?`,
     );
 
     if (!confirmed) return;
@@ -645,8 +642,8 @@ export default function LiquidationsPage() {
         },
         body: JSON.stringify({
           status: 'approved',
-          updated_at: new Date().toISOString()
-        })
+          updated_at: new Date().toISOString(),
+        }),
       });
 
       const data = await response.json();
@@ -657,19 +654,19 @@ export default function LiquidationsPage() {
           prev.map(liq =>
             liq.id === liquidationId
               ? { ...liq, status: 'approved' }
-              : liq
-          )
+              : liq,
+          ),
         );
 
         // Mostrar mensaje de éxito
         setSavedMessage(`✅ Liquidación de ${cleanText(employeeName)} aprobada exitosamente`);
-        setTimeout(() => setSavedMessage(null), 4000);
+        setTimeout(() => { setSavedMessage(null); }, 4000);
 
         // Actualizar estadísticas
         updateStats(liquidations.map(liq =>
           liq.id === liquidationId
             ? { ...liq, status: 'approved' }
-            : liq
+            : liq,
         ));
       } else {
         alert(`Error al aprobar liquidación: ${data.error || 'Error desconocido'}`);
@@ -687,11 +684,11 @@ export default function LiquidationsPage() {
     const currentMonth = currentDate.getMonth() + 1;
 
     const currentMonthLiquidations = liquidationsData.filter(liq =>
-      liq.period_year === currentYear && liq.period_month === currentMonth
+      liq.period_year === currentYear && liq.period_month === currentMonth,
     );
 
     const currentMonthTotal = currentMonthLiquidations.reduce(
-      (sum, liq) => sum + calculateNetSalary(liq), 0
+      (sum, liq) => sum + calculateNetSalary(liq), 0,
     );
 
     const pendingCount = liquidationsData.filter(liq => liq.status === 'draft').length;
@@ -705,7 +702,7 @@ export default function LiquidationsPage() {
       pending_count: pendingCount,
       review_count: reviewCount,
       approved_count: approvedCount,
-      paid_count: paidCount
+      paid_count: paidCount,
     });
   };
 
@@ -714,7 +711,7 @@ export default function LiquidationsPage() {
     setSelectedLiquidations(prev => 
       prev.includes(liquidationId)
         ? prev.filter(id => id !== liquidationId)
-        : [...prev, liquidationId]
+        : [...prev, liquidationId],
     );
   };
 
@@ -722,7 +719,7 @@ export default function LiquidationsPage() {
     const statusConfig = {
       draft: { label: 'Borrador', class: 'bg-gray-100 text-gray-800' },
       approved: { label: 'Aprobada', class: 'bg-green-100 text-green-800' },
-      paid: { label: 'Pagada', class: 'bg-blue-100 text-blue-800' }
+      paid: { label: 'Pagada', class: 'bg-blue-100 text-blue-800' },
     };
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.draft;
@@ -760,7 +757,7 @@ export default function LiquidationsPage() {
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
               <p className="mt-4 text-gray-600">Cargando liquidaciones...</p>
             </div>
           </div>
@@ -800,7 +797,7 @@ export default function LiquidationsPage() {
                 className="group relative px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 disabled:bg-gray-500/20 border border-white/20 hover:border-white/40 disabled:border-gray-500/30 backdrop-blur-sm transition-all duration-200 flex items-center justify-center gap-2 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {validatingLiquidations ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
                 ) : (
                   <Download className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 )}
@@ -1104,7 +1101,7 @@ export default function LiquidationsPage() {
                 className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none disabled:hover:scale-100"
               >
                 {validatingLiquidations ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
                 ) : (
                   <CheckCircle className="w-4 h-4" />
                 )}
@@ -1120,7 +1117,7 @@ export default function LiquidationsPage() {
                 className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none disabled:hover:scale-100"
               >
                 {validatingLiquidations ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
                 ) : (
                   <RotateCcw className="w-4 h-4" />
                 )}
@@ -1136,7 +1133,7 @@ export default function LiquidationsPage() {
                 className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none disabled:hover:scale-100"
               >
                 {deletingLiquidations ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
                 ) : (
                   <Trash2 className="w-4 h-4" />
                 )}
@@ -1180,7 +1177,7 @@ export default function LiquidationsPage() {
                 type="text"
                 placeholder="Buscar por nombre o RUT..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => { setSearchTerm(e.target.value); }}
                 className="w-full pl-11 pr-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
               />
             </div>
@@ -1189,7 +1186,7 @@ export default function LiquidationsPage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <select
                 value={filterPeriod}
-                onChange={(e) => setFilterPeriod(e.target.value)}
+                onChange={(e) => { setFilterPeriod(e.target.value); }}
                 className="flex-1 px-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
               >
                 <option value="">Todos los períodos</option>
@@ -1197,7 +1194,7 @@ export default function LiquidationsPage() {
                   const [year, month] = period.split('-');
                   const monthNames = [
                     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
                   ];
                   return (
                     <option key={period} value={period}>
@@ -1209,7 +1206,7 @@ export default function LiquidationsPage() {
 
               <select
                 value={filterRut}
-                onChange={(e) => setFilterRut(e.target.value)}
+                onChange={(e) => { setFilterRut(e.target.value); }}
                 className="flex-1 px-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
               >
                 <option value="">Todos los empleados</option>
@@ -1225,7 +1222,7 @@ export default function LiquidationsPage() {
 
               <select
                 value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
+                onChange={(e) => { setFilterStatus(e.target.value); }}
                 className="flex-1 px-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200"
               >
                 <option value="">Todos los estados</option>
@@ -1265,7 +1262,7 @@ export default function LiquidationsPage() {
               <p className="text-yellow-700 text-sm">Se han filtrado {liquidations.filter(l => l.status !== 'review').length} liquidaciones con otros estados</p>
             </div>
             <button
-              onClick={() => setFilterStatus('')}
+              onClick={() => { setFilterStatus(''); }}
               className="px-3 py-1 bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-300 text-yellow-700 rounded-lg text-sm font-medium transition-all duration-200"
             >
               Mostrar Todas
@@ -1303,7 +1300,7 @@ export default function LiquidationsPage() {
                   <div className="flex items-center gap-4 flex-1">
                     {/* ✅ CHECKBOX DE SELECCIÓN */}
                     <div 
-                      onClick={() => toggleLiquidationSelection(liquidation.id)}
+                      onClick={() => { toggleLiquidationSelection(liquidation.id); }}
                       className="cursor-pointer p-2 hover:bg-blue-100/50 rounded-lg transition-all duration-200"
                     >
                       <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 ${
@@ -1447,7 +1444,7 @@ export default function LiquidationsPage() {
                 if (exportButton) {
                   exportButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
                   exportButton.classList.add('ring-4', 'ring-green-300');
-                  setTimeout(() => exportButton.classList.remove('ring-4', 'ring-green-300'), 2000);
+                  setTimeout(() => { exportButton.classList.remove('ring-4', 'ring-green-300'); }, 2000);
                 }
               }}>
                 <div className="p-6 bg-gradient-to-br from-green-50/80 to-green-100/80 rounded-xl border border-green-200/50 hover:border-green-300 transition-all duration-200 group-hover:shadow-md group-hover:scale-105">

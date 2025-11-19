@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { cn } from '@/lib/utils'
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -49,21 +50,21 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
         : "bg-primary-100 text-primary-800",
       purple: outline 
         ? "border border-purple-300 text-purple-700 bg-white" 
-        : "bg-purple-100 text-purple-800"
+        : "bg-purple-100 text-purple-800",
     }
     
     const sizes = {
       xs: "px-2 py-0.5 text-xs gap-1",
       sm: "px-2.5 py-0.5 text-xs gap-1",
       md: "px-3 py-1 text-sm gap-1.5",
-      lg: "px-4 py-1.5 text-base gap-2"
+      lg: "px-4 py-1.5 text-base gap-2",
     }
     
     const roundedStyles = {
       sm: "rounded",
       md: "rounded-md",
       lg: "rounded-lg",
-      full: "rounded-full"
+      full: "rounded-full",
     }
     
     const dotColors = {
@@ -74,7 +75,7 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
       warning: "bg-warning-500",
       error: "bg-error-500",
       info: "bg-primary-500",
-      purple: "bg-purple-500"
+      purple: "bg-purple-500",
     }
     
     return (
@@ -85,14 +86,14 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
           variants[variant],
           sizes[size],
           roundedStyles[rounded],
-          className
+          className,
         )}
         {...props}
       >
         {dot && (
           <span className={cn(
             "w-1.5 h-1.5 rounded-full",
-            dotColors[variant]
+            dotColors[variant],
           )} />
         )}
         
@@ -103,7 +104,7 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
         {children && <span>{children}</span>}
       </div>
     )
-  }
+  },
 )
 
 Badge.displayName = "Badge"

@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -18,7 +20,7 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get('offset') || '0');
 
     console.log('🔍 API Journal Book - GET:', { 
-      period, start_date, end_date, reference_type, limit, offset 
+      period, start_date, end_date, reference_type, limit, offset, 
     });
 
     // Query base para obtener asientos con sus líneas de detalle
@@ -80,7 +82,7 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching journal entries:', error);
       return NextResponse.json(
         { success: false, error: 'Error al obtener asientos del libro diario' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -134,13 +136,13 @@ export async function GET(request: NextRequest) {
         total_debit: 0, 
         total_credit: 0, 
         total_entries: 0,
-        by_type: {} as Record<string, { count: number; debit: number; credit: number }>
-      }
+        by_type: {} as Record<string, { count: number; debit: number; credit: number }>,
+      },
     ) || { 
       total_debit: 0, 
       total_credit: 0, 
       total_entries: 0,
-      by_type: {}
+      by_type: {},
     };
 
     console.log(`✅ Libro diario: ${entries?.length || 0} asientos`);
@@ -154,16 +156,16 @@ export async function GET(request: NextRequest) {
           limit,
           offset,
           total: count || 0,
-          has_more: (count || 0) > offset + limit
-        }
-      }
+          has_more: (count || 0) > offset + limit,
+        },
+      },
     });
 
   } catch (error) {
     console.error('Error in GET /api/accounting/journal-book:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -180,21 +182,21 @@ export async function POST(request: NextRequest) {
       document_number = null,
       reference_type = 'MANUAL',
       reference_id = null,
-      entry_lines // Array de líneas: [{account_code, account_name, debit_amount, credit_amount, description}]
+      entry_lines, // Array de líneas: [{account_code, account_name, debit_amount, credit_amount, description}]
     } = body;
 
     // Validaciones
     if (!date || !description || !entry_lines || !Array.isArray(entry_lines)) {
       return NextResponse.json(
         { success: false, error: 'date, description y entry_lines son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (entry_lines.length < 2) {
       return NextResponse.json(
         { success: false, error: 'Un asiento debe tener al menos 2 líneas' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -204,7 +206,7 @@ export async function POST(request: NextRequest) {
       if (!line.account_code || !line.account_name) {
         return NextResponse.json(
           { success: false, error: `Línea ${i + 1}: account_code y account_name son requeridos` },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -215,7 +217,7 @@ export async function POST(request: NextRequest) {
       if ((debit > 0 && credit > 0) || (debit === 0 && credit === 0)) {
         return NextResponse.json(
           { success: false, error: `Línea ${i + 1}: debe tener SOLO débito O SOLO crédito` },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -228,7 +230,7 @@ export async function POST(request: NextRequest) {
     if (Math.abs(totalDebit - totalCredit) > 0.01) { // Tolerancia para decimales
       return NextResponse.json(
         { success: false, error: `Asiento desbalanceado: Débito=${totalDebit}, Crédito=${totalCredit}` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -241,17 +243,17 @@ export async function POST(request: NextRequest) {
     const { data: journalEntry, error: entryError } = await supabase
       .from('journal_book')
       .insert({
-        jbid: jbid,
+        jbid,
         entry_number: entryNumber,
-        date: date,
-        description: description,
-        document_number: document_number,
-        reference_type: reference_type,
-        reference_id: reference_id,
+        date,
+        description,
+        document_number,
+        reference_type,
+        reference_id,
         status: 'active',
         total_debit: totalDebit,
         total_credit: totalCredit,
-        is_balanced: Math.abs(totalDebit - totalCredit) < 0.01
+        is_balanced: Math.abs(totalDebit - totalCredit) < 0.01,
       })
       .select('jbid')
       .single();
@@ -260,19 +262,19 @@ export async function POST(request: NextRequest) {
       console.error('Error creating journal entry:', entryError);
       return NextResponse.json(
         { success: false, error: 'Error al crear el asiento contable' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     // Crear las líneas de detalle
     const detailLines = entry_lines.map((line, index) => ({
-      jbid: jbid,
+      jbid,
       line_number: index + 1,
       account_code: line.account_code,
       account_name: line.account_name,
       debit_amount: parseFloat(line.debit_amount) || 0,
       credit_amount: parseFloat(line.credit_amount) || 0,
-      description: line.description || null
+      description: line.description || null,
     }));
 
     const { error: detailError } = await supabase
@@ -290,7 +292,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json(
         { success: false, error: 'Error al crear las líneas del asiento' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -299,20 +301,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: {
-        jbid: jbid,
+        jbid,
         entry_number: entryNumber,
         entry_lines_count: entry_lines.length,
         total_debit: totalDebit,
-        total_credit: totalCredit
+        total_credit: totalCredit,
       },
-      message: `Asiento ${jbid} creado exitosamente con ${entry_lines.length} líneas`
+      message: `Asiento ${jbid} creado exitosamente con ${entry_lines.length} líneas`,
     });
 
   } catch (error) {
     console.error('Error in POST /api/accounting/journal-book:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -328,7 +330,7 @@ export async function PUT(request: NextRequest) {
     if (!jbid) {
       return NextResponse.json(
         { success: false, error: 'jbid es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -342,21 +344,21 @@ export async function PUT(request: NextRequest) {
     if (fetchError) {
       return NextResponse.json(
         { success: false, error: 'Asiento no encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (existingEntry.reference_type !== 'MANUAL') {
       return NextResponse.json(
         { success: false, error: 'Solo se pueden editar asientos manuales' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (existingEntry.status !== 'active') {
       return NextResponse.json(
         { success: false, error: 'No se puede editar un asiento inactivo' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -368,7 +370,7 @@ export async function PUT(request: NextRequest) {
       if (Math.abs(totalDebit - totalCredit) > 0.01) {
         return NextResponse.json(
           { success: false, error: 'Las nuevas líneas no están balanceadas' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -390,7 +392,7 @@ export async function PUT(request: NextRequest) {
             account_name: line.account_name,
             debit_amount: parseFloat(line.debit_amount) || 0,
             credit_amount: parseFloat(line.credit_amount) || 0,
-            description: line.description || null
+            description: line.description || null,
           });
       }
 
@@ -415,7 +417,7 @@ export async function PUT(request: NextRequest) {
         console.error('Error updating journal entry:', error);
         return NextResponse.json(
           { success: false, error: 'Error al actualizar asiento' },
-          { status: 500 }
+          { status: 500 },
         );
       }
     }
@@ -424,14 +426,14 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Asiento actualizado exitosamente'
+      message: 'Asiento actualizado exitosamente',
     });
 
   } catch (error) {
     console.error('Error in PUT /api/accounting/journal-book:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -445,7 +447,7 @@ export async function DELETE(request: NextRequest) {
     if (!jbid) {
       return NextResponse.json(
         { success: false, error: 'jbid es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -461,14 +463,14 @@ export async function DELETE(request: NextRequest) {
     if (fetchError) {
       return NextResponse.json(
         { success: false, error: 'Asiento no encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (existingEntry.reference_type !== 'MANUAL') {
       return NextResponse.json(
         { success: false, error: 'Solo se pueden eliminar asientos manuales' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -484,7 +486,7 @@ export async function DELETE(request: NextRequest) {
       console.error('Error reversing journal entry:', error);
       return NextResponse.json(
         { success: false, error: 'Error al revertir asiento' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -493,14 +495,14 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: revertedEntry,
-      message: 'Asiento revertido exitosamente'
+      message: 'Asiento revertido exitosamente',
     });
 
   } catch (error) {
     console.error('Error in DELETE /api/accounting/journal-book:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

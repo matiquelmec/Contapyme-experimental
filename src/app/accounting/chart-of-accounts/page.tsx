@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { 
-  Search, Plus, Edit2, Trash2, Download, Upload, 
-  FolderTree, FileText, Eye, Filter, RefreshCw
+  Search, Plus, Edit2, Trash2, Download, FileText, RefreshCw,
 } from 'lucide-react';
+
 import { Header } from '@/components/layout';
 import { Button } from '@/components/ui';
 
@@ -74,26 +75,24 @@ export default function ChartOfAccountsPage() {
   };
 
   // Calcular estadísticas
-  const calculateStatistics = (accounts: ChartAccount[]): Statistics => {
-    return {
+  const calculateStatistics = (accounts: ChartAccount[]): Statistics => ({
       total: accounts.length,
       by_level: {
         nivel_1: accounts.filter(a => a.level_type === '1er Nivel').length,
         nivel_2: accounts.filter(a => a.level_type === '2do Nivel').length,
         nivel_3: accounts.filter(a => a.level_type === '3er Nivel').length,
-        imputable: accounts.filter(a => a.level_type === 'Imputable').length
+        imputable: accounts.filter(a => a.level_type === 'Imputable').length,
       },
       by_type: {
         activo: accounts.filter(a => a.account_type === 'ACTIVO').length,
         pasivo: accounts.filter(a => a.account_type === 'PASIVO').length,
         patrimonio: accounts.filter(a => a.account_type === 'PATRIMONIO').length,
         ingreso: accounts.filter(a => a.account_type === 'INGRESO').length,
-        gasto: accounts.filter(a => a.account_type === 'GASTO').length
+        gasto: accounts.filter(a => a.account_type === 'GASTO').length,
       },
       active: accounts.filter(a => a.is_active).length,
-      inactive: accounts.filter(a => !a.is_active).length
-    };
-  };
+      inactive: accounts.filter(a => !a.is_active).length,
+    });
 
   // Aplicar filtros
   useEffect(() => {
@@ -103,7 +102,7 @@ export default function ChartOfAccountsPage() {
     if (searchTerm) {
       filtered = filtered.filter(account => 
         account.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        account.name.toLowerCase().includes(searchTerm.toLowerCase())
+        account.name.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
@@ -120,7 +119,7 @@ export default function ChartOfAccountsPage() {
     // Filtro de activo/inactivo
     if (activeFilter !== '') {
       filtered = filtered.filter(account => 
-        activeFilter === 'true' ? account.is_active : !account.is_active
+        activeFilter === 'true' ? account.is_active : !account.is_active,
       );
     }
 
@@ -145,7 +144,7 @@ export default function ChartOfAccountsPage() {
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(accountData)
+        body: JSON.stringify(accountData),
       });
 
       const result = await response.json();
@@ -156,7 +155,7 @@ export default function ChartOfAccountsPage() {
         setEditingAccount(null);
         alert(result.message);
       } else {
-        alert('Error: ' + result.error);
+        alert(`Error: ${  result.error}`);
       }
     } catch (error) {
       console.error('Error saving account:', error);
@@ -176,7 +175,7 @@ export default function ChartOfAccountsPage() {
 
     try {
       const response = await fetch(`/api/chart-of-accounts?id=${account.id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       const result = await response.json();
@@ -190,7 +189,7 @@ export default function ChartOfAccountsPage() {
         // Mostrar mensaje de éxito
         alert(result.message || 'Cuenta eliminada exitosamente');
       } else {
-        alert('Error: ' + (result.error || 'Error al eliminar cuenta'));
+        alert(`Error: ${  result.error || 'Error al eliminar cuenta'}`);
       }
     } catch (error) {
       console.error('Error deleting account:', error);
@@ -219,7 +218,7 @@ export default function ChartOfAccountsPage() {
         URL.revokeObjectURL(url);
       } else {
         const error = await response.json();
-        alert('Error al exportar: ' + error.error);
+        alert(`Error al exportar: ${  error.error}`);
       }
     } catch (error) {
       console.error('Error exporting:', error);
@@ -233,11 +232,11 @@ export default function ChartOfAccountsPage() {
         <Header 
           title="Plan de Cuentas"
           subtitle="Gestión completa del plan de cuentas contable"
-          showBackButton={true}
+          showBackButton
           backHref="/accounting"
         />
         <div className="flex items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
           <span className="ml-4 text-gray-600">Cargando plan de cuentas...</span>
         </div>
       </div>
@@ -249,7 +248,7 @@ export default function ChartOfAccountsPage() {
       <Header 
         title="Plan de Cuentas"
         subtitle="Gestión completa del plan de cuentas contable"
-        showBackButton={true}
+        showBackButton
         backHref="/accounting"
         actions={
           <div className="flex items-center space-x-3">
@@ -325,7 +324,7 @@ export default function ChartOfAccountsPage() {
                   type="text"
                   placeholder="Buscar por código o nombre..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => { setSearchTerm(e.target.value); }}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-300"
                 />
               </div>
@@ -333,7 +332,7 @@ export default function ChartOfAccountsPage() {
             
             <select
               value={levelFilter}
-              onChange={(e) => setLevelFilter(e.target.value)}
+              onChange={(e) => { setLevelFilter(e.target.value); }}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-300"
             >
               <option value="">Todos los niveles</option>
@@ -345,7 +344,7 @@ export default function ChartOfAccountsPage() {
 
             <select
               value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
+              onChange={(e) => { setTypeFilter(e.target.value); }}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-300"
             >
               <option value="">Todos los tipos</option>
@@ -358,7 +357,7 @@ export default function ChartOfAccountsPage() {
 
             <select
               value={activeFilter}
-              onChange={(e) => setActiveFilter(e.target.value)}
+              onChange={(e) => { setActiveFilter(e.target.value); }}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-300"
             >
               <option value="true">Solo activas</option>
@@ -499,7 +498,7 @@ function AccountFormModal({ account, onSave, onClose }: AccountFormModalProps) {
     level_type: account?.level_type || '1er Nivel',
     account_type: account?.account_type || 'ACTIVO',
     parent_code: account?.parent_code || '',
-    is_active: account?.is_active !== undefined ? account.is_active : true
+    is_active: account?.is_active !== undefined ? account.is_active : true,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -528,7 +527,7 @@ function AccountFormModal({ account, onSave, onClose }: AccountFormModalProps) {
             <input
               type="text"
               value={formData.code}
-              onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value }))}
+              onChange={(e) => { setFormData(prev => ({ ...prev, code: e.target.value })); }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-300"
               placeholder="1.1.1.001"
               required
@@ -542,7 +541,7 @@ function AccountFormModal({ account, onSave, onClose }: AccountFormModalProps) {
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => { setFormData(prev => ({ ...prev, name: e.target.value })); }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-300"
               placeholder="Nombre de la cuenta"
               required
@@ -555,7 +554,7 @@ function AccountFormModal({ account, onSave, onClose }: AccountFormModalProps) {
             </label>
             <select
               value={formData.level_type}
-              onChange={(e) => setFormData(prev => ({ ...prev, level_type: e.target.value }))}
+              onChange={(e) => { setFormData(prev => ({ ...prev, level_type: e.target.value })); }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-300"
               required
             >
@@ -572,7 +571,7 @@ function AccountFormModal({ account, onSave, onClose }: AccountFormModalProps) {
             </label>
             <select
               value={formData.account_type}
-              onChange={(e) => setFormData(prev => ({ ...prev, account_type: e.target.value }))}
+              onChange={(e) => { setFormData(prev => ({ ...prev, account_type: e.target.value })); }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-300"
               required
             >
@@ -591,7 +590,7 @@ function AccountFormModal({ account, onSave, onClose }: AccountFormModalProps) {
             <input
               type="text"
               value={formData.parent_code}
-              onChange={(e) => setFormData(prev => ({ ...prev, parent_code: e.target.value }))}
+              onChange={(e) => { setFormData(prev => ({ ...prev, parent_code: e.target.value })); }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-300"
               placeholder="1.1.1 (opcional)"
             />
@@ -602,7 +601,7 @@ function AccountFormModal({ account, onSave, onClose }: AccountFormModalProps) {
               type="checkbox"
               id="is_active"
               checked={formData.is_active}
-              onChange={(e) => setFormData(prev => ({ ...prev, is_active: e.target.checked }))}
+              onChange={(e) => { setFormData(prev => ({ ...prev, is_active: e.target.checked })); }}
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
             <label htmlFor="is_active" className="ml-2 text-sm text-gray-700">

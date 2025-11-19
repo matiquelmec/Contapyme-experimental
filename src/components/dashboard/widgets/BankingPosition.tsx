@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
+
 import {
   Building2,
   CreditCard,
@@ -10,8 +10,10 @@ import {
   AlertTriangle,
   RefreshCw,
   Eye,
-  EyeOff
+  EyeOff,
 } from 'lucide-react'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 
 interface BankAccount {
   id: string
@@ -64,7 +66,7 @@ export function BankingPosition() {
             balance: 32400000,
             currency: 'CLP',
             lastUpdate: new Date().toISOString(),
-            status: 'active'
+            status: 'active',
           },
           {
             id: '2',
@@ -74,7 +76,7 @@ export function BankingPosition() {
             balance: 8750000,
             currency: 'CLP',
             lastUpdate: new Date().toISOString(),
-            status: 'active'
+            status: 'active',
           },
           {
             id: '3',
@@ -84,19 +86,19 @@ export function BankingPosition() {
             balance: 4600000,
             currency: 'CLP',
             lastUpdate: new Date().toISOString(),
-            status: 'active'
-          }
+            status: 'active',
+          },
         ],
         alerts: [
           {
             type: 'info',
-            message: 'Liquidez saludable para operaciones'
+            message: 'Liquidez saludable para operaciones',
           },
           {
             type: 'warning',
-            message: 'Concentración alta en cuenta corriente'
-          }
-        ]
+            message: 'Concentración alta en cuenta corriente',
+          },
+        ],
       }
 
       setData(mockData)
@@ -114,20 +116,19 @@ export function BankingPosition() {
       style: 'currency',
       currency: 'CLP',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(amount)
   }
 
-  const getBankLogo = (bank: string) => {
+  const getBankLogo = (bank: string) => 
     // In a real app, you'd have actual bank logos
-    return <Building2 className="w-6 h-6 text-blue-600" />
-  }
+     <Building2 className="w-6 h-6 text-blue-600" />
 
   const getAccountTypeLabel = (type: string) => {
     const labels = {
       checking: 'Cuenta Corriente',
       savings: 'Cuenta de Ahorro',
-      credit: 'Línea de Crédito'
+      credit: 'Línea de Crédito',
     }
     return labels[type as keyof typeof labels] || type
   }
@@ -136,7 +137,7 @@ export function BankingPosition() {
     const colors = {
       checking: 'text-blue-600',
       savings: 'text-green-600',
-      credit: 'text-purple-600'
+      credit: 'text-purple-600',
     }
     return colors[type as keyof typeof colors] || 'text-gray-600'
   }
@@ -163,11 +164,11 @@ export function BankingPosition() {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-16 bg-gray-200 rounded"></div>
+            <div className="h-16 bg-gray-200 rounded" />
             <div className="space-y-2">
-              <div className="h-12 bg-gray-200 rounded"></div>
-              <div className="h-12 bg-gray-200 rounded"></div>
-              <div className="h-12 bg-gray-200 rounded"></div>
+              <div className="h-12 bg-gray-200 rounded" />
+              <div className="h-12 bg-gray-200 rounded" />
+              <div className="h-12 bg-gray-200 rounded" />
             </div>
           </div>
         </CardContent>
@@ -198,7 +199,7 @@ export function BankingPosition() {
           </div>
           <div className="flex items-center space-x-2">
             <button
-              onClick={() => setShowBalances(!showBalances)}
+              onClick={() => { setShowBalances(!showBalances); }}
               className="p-1 hover:bg-gray-100 rounded"
               title={showBalances ? 'Ocultar saldos' : 'Mostrar saldos'}
             >

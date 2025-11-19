@@ -46,9 +46,9 @@ const supabaseOptions = {
   },
   global: {
     headers: {
-      'Cache-Control': 'public, max-age=60' // Cache de 1 minuto
-    }
-  }
+      'Cache-Control': 'public, max-age=60', // Cache de 1 minuto
+    },
+  },
 };
 
 const supabase = isServer && supabaseServiceKey 
@@ -133,7 +133,7 @@ export async function insertF29Form(data: any) {
         confidence_score: data.confidence_score,
         validation_status: data.validation_status,
         year: data.year,
-        month: data.month
+        month: data.month,
       }])
       .select();
 
@@ -179,7 +179,7 @@ export async function upsertAnalysis(data: any) {
         seasonality: data.seasonality,
         anomalies: data.anomalies,
         generated_at: data.generated_at,
-        expires_at: data.expires_at
+        expires_at: data.expires_at,
       });
 
     return { error };
@@ -208,7 +208,7 @@ export async function generateDemoData() {
     { period: '202409', ventas_base: 21000000, variation: 1.17 },
     { period: '202410', ventas_base: 22500000, variation: 1.25 },
     { period: '202411', ventas_base: 24000000, variation: 1.34 },
-    { period: '202412', ventas_base: 26500000, variation: 1.48 }
+    { period: '202412', ventas_base: 26500000, variation: 1.48 },
   ];
 
   let insertedCount = 0;
@@ -234,7 +234,7 @@ export async function generateDemoData() {
       raw_data: {
         source: 'demo_generator',
         extraction_method: 'simulated',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       calculated_data: {
         codigo563: ventas_netas,
@@ -243,9 +243,9 @@ export async function generateDemoData() {
         codigo062: ppm,
         codigo077: remanente,
         compras_calculadas: compras_netas,
-        iva_determinado: iva_determinado,
-        margen_bruto: margen_bruto,
-        total_a_pagar: Math.max(0, iva_determinado + ppm + remanente)
+        iva_determinado,
+        margen_bruto,
+        total_a_pagar: Math.max(0, iva_determinado + ppm + remanente),
       },
       ventas_netas,
       compras_netas,
@@ -263,7 +263,7 @@ export async function generateDemoData() {
       confidence_score: 85 + Math.round(Math.random() * 15),
       validation_status: 'validated',
       year: parseInt(data.period.substring(0, 4)),
-      month: parseInt(data.period.substring(4, 6))
+      month: parseInt(data.period.substring(4, 6)),
     };
 
     try {
@@ -283,7 +283,7 @@ export async function generateDemoData() {
   return {
     total_records: demoData.length,
     inserted: insertedCount,
-    failed: demoData.length - insertedCount
+    failed: demoData.length - insertedCount,
   };
 }
 
@@ -315,7 +315,7 @@ export async function createFixedAsset(assetData: any) {
         model: assetData.model,
         location: assetData.location,
         responsible_person: assetData.responsible_person,
-        status: 'active'
+        status: 'active',
       }])
       .select()
       .single();
@@ -378,7 +378,7 @@ export async function updateFixedAsset(id: string, updateData: any, userId: stri
       .from('fixed_assets')
       .update({
         ...updateData,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id_fixed_assets', id)
       .eq('user_id', userId)
@@ -449,9 +449,9 @@ export async function getFixedAssetsReport(userId: string = 'demo-user', year?: 
           total_accumulated_depreciation: 0,
           monthly_depreciation: 0,
           assets_by_category: {},
-          assets_near_full_depreciation: []
+          assets_near_full_depreciation: [],
         },
-        error: null
+        error: null,
       };
     }
 
@@ -464,7 +464,7 @@ export async function getFixedAssetsReport(userId: string = 'demo-user', year?: 
       total_accumulated_depreciation: 0,
       monthly_depreciation: 0,
       assets_by_category: {} as any,
-      assets_near_full_depreciation: [] as any[]
+      assets_near_full_depreciation: [] as any[],
     };
 
     assets.forEach(asset => {
@@ -481,13 +481,13 @@ export async function getFixedAssetsReport(userId: string = 'demo-user', year?: 
       // Calcular depreciación acumulada aproximada para activos activos
       const startDate = new Date(asset.start_depreciation_date);
       const monthsElapsed = Math.max(0, Math.floor(
-        (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 30)
+        (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 30),
       ));
       
       const monthlyDepreciation = (asset.purchase_value - asset.residual_value) / (asset.useful_life_years * 12);
       const accumulatedDepreciation = Math.min(
         monthsElapsed * monthlyDepreciation,
-        asset.purchase_value - asset.residual_value
+        asset.purchase_value - asset.residual_value,
       );
       const bookValue = Math.max(asset.purchase_value - accumulatedDepreciation, asset.residual_value);
 
@@ -503,7 +503,7 @@ export async function getFixedAssetsReport(userId: string = 'demo-user', year?: 
           count: 0,
           purchase_value: 0,
           book_value: 0,
-          accumulated_depreciation: 0
+          accumulated_depreciation: 0,
         };
       }
       
@@ -519,7 +519,7 @@ export async function getFixedAssetsReport(userId: string = 'demo-user', year?: 
           ...asset,
           accumulated_depreciation: accumulatedDepreciation,
           book_value: bookValue,
-          depreciation_percentage: depreciationPercentage * 100
+          depreciation_percentage: depreciationPercentage * 100,
         });
       }
     });
@@ -535,7 +535,7 @@ export async function getFixedAssetsReport(userId: string = 'demo-user', year?: 
 export const databaseSimple = {
   async query(sql: string, params: any[] = []) {
     try {
-      console.log('🔄 Database query:', sql.substring(0, 100) + '...');
+      console.log('🔄 Database query:', `${sql.substring(0, 100)  }...`);
       
       // Mapear queries SQL a funciones de Supabase
       if (sql.includes('INSERT INTO fixed_assets')) {
@@ -557,7 +557,7 @@ export const databaseSimple = {
           brand: params[14],               // body.brand
           model: params[15],               // body.model
           location: params[16],            // body.location
-          responsible_person: params[17]   // body.responsible_person
+          responsible_person: params[17],   // body.responsible_person
         };
         
         return await createFixedAsset(assetData);
@@ -599,7 +599,7 @@ export const databaseSimple = {
             level_type: params[2],
             account_type: params[3],
             parent_code: params[4] || null,
-            is_active: params[5]
+            is_active: params[5],
           })
           .select()
           .single();
@@ -655,7 +655,7 @@ export const databaseSimple = {
             console.log(`🎉 VERSION 5.0 - EARLY RETURN with success:`, { code: accountInfo.code, name: accountInfo.name });
             return { 
               data: [{ code: accountInfo.code, name: accountInfo.name }], 
-              error: null 
+              error: null, 
             };
             
           } catch (version5Error: any) {
@@ -805,7 +805,7 @@ export const databaseSimple = {
           console.log(`🎉 VERSION 4.0 - Returning success with:`, { code: accountInfo.code, name: accountInfo.name });
           return { 
             data: [{ code: accountInfo.code, name: accountInfo.name }], 
-            error: null 
+            error: null, 
           };
         }
 
@@ -860,7 +860,7 @@ export const databaseSimple = {
       console.error('❌ Database query error:', error);
       return { data: null, error };
     }
-  }
+  },
 };
 
 // ======================================
@@ -877,14 +877,14 @@ async function fetchRealIndicators() {
     try {
       const ufResponse = await fetch('https://mindicador.cl/api/uf');
       const ufData = await ufResponse.json();
-      if (ufData && ufData.serie && ufData.serie.length > 0) {
+      if (ufData?.serie && ufData.serie.length > 0) {
         realData.push({
           code: 'uf',
           name: 'Unidad de Fomento',
           value: ufData.serie[0].valor,
           unit: 'CLP',
           category: 'monetary',
-          updated_at: ufData.serie[0].fecha
+          updated_at: ufData.serie[0].fecha,
         });
       }
     } catch (error) {
@@ -895,14 +895,14 @@ async function fetchRealIndicators() {
     try {
       const utmResponse = await fetch('https://mindicador.cl/api/utm');
       const utmData = await utmResponse.json();
-      if (utmData && utmData.serie && utmData.serie.length > 0) {
+      if (utmData?.serie && utmData.serie.length > 0) {
         realData.push({
           code: 'utm',
           name: 'Unidad Tributaria Mensual',
           value: utmData.serie[0].valor,
           unit: 'CLP',
           category: 'monetary',
-          updated_at: utmData.serie[0].fecha
+          updated_at: utmData.serie[0].fecha,
         });
       }
     } catch (error) {
@@ -913,14 +913,14 @@ async function fetchRealIndicators() {
     try {
       const usdResponse = await fetch('https://mindicador.cl/api/dolar');
       const usdData = await usdResponse.json();
-      if (usdData && usdData.serie && usdData.serie.length > 0) {
+      if (usdData?.serie && usdData.serie.length > 0) {
         realData.push({
           code: 'dolar',
           name: 'Dólar Observado',
           value: usdData.serie[0].valor,
           unit: 'CLP',
           category: 'currency',
-          updated_at: usdData.serie[0].fecha
+          updated_at: usdData.serie[0].fecha,
         });
       }
     } catch (error) {
@@ -931,14 +931,14 @@ async function fetchRealIndicators() {
     try {
       const eurResponse = await fetch('https://mindicador.cl/api/euro');
       const eurData = await eurResponse.json();
-      if (eurData && eurData.serie && eurData.serie.length > 0) {
+      if (eurData?.serie && eurData.serie.length > 0) {
         realData.push({
           code: 'euro',
           name: 'Euro',
           value: eurData.serie[0].valor,
           unit: 'CLP',
           category: 'currency',
-          updated_at: eurData.serie[0].fecha
+          updated_at: eurData.serie[0].fecha,
         });
       }
     } catch (error) {
@@ -949,14 +949,14 @@ async function fetchRealIndicators() {
     try {
       const btcResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
       const btcData = await btcResponse.json();
-      if (btcData && btcData.bitcoin) {
+      if (btcData?.bitcoin) {
         realData.push({
           code: 'bitcoin',
           name: 'Bitcoin',
           value: btcData.bitcoin.usd,
           unit: 'USD',
           category: 'crypto',
-          updated_at: today
+          updated_at: today,
         });
       }
     } catch (error) {
@@ -967,14 +967,14 @@ async function fetchRealIndicators() {
     try {
       const tpmResponse = await fetch('https://mindicador.cl/api/tpm');
       const tpmData = await tpmResponse.json();
-      if (tpmData && tpmData.serie && tpmData.serie.length > 0) {
+      if (tpmData?.serie && tpmData.serie.length > 0) {
         realData.push({
           code: 'tpm',
           name: 'Tasa de Política Monetaria',
           value: tpmData.serie[0].valor,
           unit: '%',
           category: 'monetary',
-          updated_at: tpmData.serie[0].fecha
+          updated_at: tpmData.serie[0].fecha,
         });
       }
     } catch (error) {
@@ -994,7 +994,7 @@ async function fetchRealIndicators() {
         format_type: 'currency',
         decimal_places: 0,
         description: 'Ingreso Mínimo Mensual (18-65 años) vigente desde mayo 2025',
-        updated_at: today
+        updated_at: today,
       });
     } catch (error) {
       console.warn('Error adding minimum wage:', error);
@@ -1020,7 +1020,7 @@ function getFallbackIndicators() {
       value: 39474.24, // Valor oficial Sept 8, 2025
       unit: 'CLP',
       category: 'monetary',
-      updated_at: today
+      updated_at: today,
     },
     {
       code: 'utm',
@@ -1028,7 +1028,7 @@ function getFallbackIndicators() {
       value: 69265.00, // Valor oficial Sept 8, 2025
       unit: 'CLP',
       category: 'monetary',
-      updated_at: today
+      updated_at: today,
     },
     {
       code: 'dolar',
@@ -1036,7 +1036,7 @@ function getFallbackIndicators() {
       value: 964.58, // Valor oficial Sept 8, 2025
       unit: 'CLP', // Pesos chilenos por dólar
       category: 'currency',
-      updated_at: today
+      updated_at: today,
     },
     {
       code: 'euro',
@@ -1044,7 +1044,7 @@ function getFallbackIndicators() {
       value: 1130.28, // Valor oficial Sept 8, 2025 (CORREGIDO)
       unit: 'CLP', // Pesos chilenos por euro
       category: 'currency',
-      updated_at: today
+      updated_at: today,
     },
     {
       code: 'bitcoin',
@@ -1052,7 +1052,7 @@ function getFallbackIndicators() {
       value: 112460.00, // Valor oficial Sept 8, 2025 (CORREGIDO)
       unit: 'USD',
       category: 'crypto',
-      updated_at: today
+      updated_at: today,
     },
     {
       code: 'tpm',
@@ -1060,7 +1060,7 @@ function getFallbackIndicators() {
       value: 4.75, // Valor oficial Banco Central Sept 8, 2025 (CORREGIDO)
       unit: '%',
       category: 'monetary',
-      updated_at: today
+      updated_at: today,
     },
     {
       code: 'sueldo_minimo',
@@ -1071,8 +1071,8 @@ function getFallbackIndicators() {
       format_type: 'currency',
       decimal_places: 0,
       description: 'Ingreso Mínimo Mensual (18-65 años) vigente desde mayo 2025',
-      updated_at: today
-    }
+      updated_at: today,
+    },
   ];
 }
 
@@ -1159,7 +1159,7 @@ export async function getIndicatorHistory(code: string, days: number = 30): Prom
 export async function updateIndicatorValue(
   code: string, 
   value: number, 
-  date: string = new Date().toISOString().split('T')[0]
+  date: string = new Date().toISOString().split('T')[0],
 ): Promise<{ data: any; error: any }> {
   try {
     // Obtener configuración del indicador
@@ -1198,7 +1198,7 @@ export async function updateIndicatorValue(
           name: config.name,
           unit: config.unit,
           category: config.category,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('code', code)
         .eq('date', date)
@@ -1218,7 +1218,7 @@ export async function updateIndicatorValue(
           date,
           category: config.category,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -1311,7 +1311,7 @@ export async function getLatestIndicators(): Promise<{ data: any; error: any }> 
     }, {});
 
     const result = Object.values(latest).sort(
-      (a: any, b: any) => a.indicator_config.display_order - b.indicator_config.display_order
+      (a: any, b: any) => a.indicator_config.display_order - b.indicator_config.display_order,
     );
 
     return { data: result, error: null };
@@ -1400,7 +1400,7 @@ const BASIC_CHART_OF_ACCOUNTS = [
   { code: '2.1.2.004', name: 'SIS por Pagar', level_type: 'Imputable', account_type: 'PASIVO', parent_code: '2.1.2' },
   { code: '2.1.2.005', name: 'Esperanza Vida por Pagar', level_type: 'Imputable', account_type: 'PASIVO', parent_code: '2.1.2' },
   { code: '2.1.2.006', name: 'Mutual por Pagar', level_type: 'Imputable', account_type: 'PASIVO', parent_code: '2.1.2' },
-  { code: '2.1.3.001', name: 'Impuesto 2da Categoría por Pagar', level_type: 'Imputable', account_type: 'PASIVO', parent_code: '2.1.3' }
+  { code: '2.1.3.001', name: 'Impuesto 2da Categoría por Pagar', level_type: 'Imputable', account_type: 'PASIVO', parent_code: '2.1.3' },
 ];
 
 // Crear plan de cuentas básico
@@ -1410,14 +1410,14 @@ export async function createBasicChartOfAccounts() {
     
     const accountsToCreate = BASIC_CHART_OF_ACCOUNTS.map(account => ({
       ...account,
-      is_active: true
+      is_active: true,
     }));
 
     const { data, error } = await supabase
       .from('chart_of_accounts')
       .upsert(accountsToCreate, { 
         onConflict: 'code',
-        ignoreDuplicates: false 
+        ignoreDuplicates: false, 
       })
       .select();
 

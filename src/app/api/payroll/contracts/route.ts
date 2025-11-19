@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -84,14 +86,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       data: data || [],
-      count: data?.length || 0
+      count: data?.length || 0,
     });
 
   } catch (error) {
     console.error('Error in GET /api/payroll/contracts:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }
@@ -123,14 +125,14 @@ export async function POST(request: NextRequest) {
       allowances,
       health_insurance,
       pension_fund,
-      resignation_notice_days = 30
+      resignation_notice_days = 30,
     } = body;
 
     // Validaciones básicas
     if (!employee_id || !company_id || !contract_type || !position || !start_date || !base_salary) {
       return NextResponse.json({ 
         error: 'Campos requeridos faltantes',
-        required: ['employee_id', 'company_id', 'contract_type', 'position', 'start_date', 'base_salary']
+        required: ['employee_id', 'company_id', 'contract_type', 'position', 'start_date', 'base_salary'],
       }, { status: 400 });
     }
 
@@ -152,7 +154,7 @@ export async function POST(request: NextRequest) {
           prohibitions: prohibitions || template.prohibitions,
           bonuses: bonuses || template.standard_bonuses,
           allowances: allowances || template.standard_allowances,
-          resignation_notice_days: resignation_notice_days || template.resignation_notice_days
+          resignation_notice_days: resignation_notice_days || template.resignation_notice_days,
         };
       }
     }
@@ -185,7 +187,7 @@ export async function POST(request: NextRequest) {
       ...(obligations && { obligations }),
       ...(prohibitions && { prohibitions }),
       ...(bonuses && { bonuses }),
-      ...(allowances && { allowances })
+      ...(allowances && { allowances }),
     };
 
     const { data: newContract, error: insertError } = await supabase
@@ -202,14 +204,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       data: newContract,
-      message: 'Contrato creado exitosamente'
+      message: 'Contrato creado exitosamente',
     });
 
   } catch (error) {
     console.error('Error in POST /api/payroll/contracts:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }
@@ -242,14 +244,14 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       data,
-      message: 'Contrato actualizado exitosamente'
+      message: 'Contrato actualizado exitosamente',
     });
 
   } catch (error) {
     console.error('Error in PUT /api/payroll/contracts:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }

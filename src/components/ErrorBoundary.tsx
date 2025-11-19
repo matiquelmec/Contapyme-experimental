@@ -1,9 +1,13 @@
 'use client';
 
-import React, { ErrorInfo, ReactNode } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
+import React from 'react';
+
 import { AlertTriangle, RefreshCw, Home, ChevronDown, Copy, Mail } from 'lucide-react';
+
+import type { ErrorBoundaryState } from '@/types';
+
 import { Button } from './ui/Button';
-import type { AppError, ErrorBoundaryState } from '@/types';
 
 interface Props {
   children: ReactNode;
@@ -82,8 +86,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     this.notifyUser(error);
   }
 
-  createErrorReport = (error: Error, errorInfo: ErrorInfo) => {
-    return {
+  createErrorReport = (error: Error, errorInfo: ErrorInfo) => ({
       errorId: this.state.errorId,
       timestamp: this.state.timestamp,
       level: this.props.level || 'component',
@@ -100,8 +103,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
       sessionId: this.getSessionId(),
       buildVersion: process.env.NEXT_PUBLIC_APP_VERSION || 'unknown',
       environment: process.env.NODE_ENV,
-    };
-  };
+    });
 
   reportError = async (errorReport: any) => {
     try {
@@ -146,7 +148,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   copyErrorInfo = async () => {
     const errorReport = this.createErrorReport(
       this.state.error!,
-      this.state.errorInfo!
+      this.state.errorInfo!,
     );
 
     const errorText = `
@@ -186,7 +188,7 @@ ${errorReport.componentStack}
   sendErrorReport = () => {
     const errorReport = this.createErrorReport(
       this.state.error!,
-      this.state.errorInfo!
+      this.state.errorInfo!,
     );
 
     const subject = `ContaPyme Error Report - ${errorReport.errorId}`;

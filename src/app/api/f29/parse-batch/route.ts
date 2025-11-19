@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { parseF29 } from '@/lib/parsers/f29Parser';
 
 export const runtime = 'nodejs';
@@ -62,8 +64,8 @@ export async function POST(request: NextRequest) {
                 parsedData: result,
                 fileName: file.name,
                 userId: '550e8400-e29b-41d4-a716-446655440000', // Demo user
-                companyId: '550e8400-e29b-41d4-a716-446655440001' // Demo company
-              })
+                companyId: '550e8400-e29b-41d4-a716-446655440001', // Demo company
+              }),
             });
             
             const saveData = await saveResponse.json();
@@ -87,7 +89,7 @@ export async function POST(request: NextRequest) {
             method: result.method,
             period: result.periodo,
             processing_time: new Date().getTime(),
-            saved_to_db: true // Indicar que se intentó guardar
+            saved_to_db: true, // Indicar que se intentó guardar
           };
           
         } catch (error) {
@@ -98,7 +100,7 @@ export async function POST(request: NextRequest) {
             success: false,
             error: error instanceof Error ? error.message : 'Error desconocido',
             confidence_score: 0,
-            processing_time: new Date().getTime()
+            processing_time: new Date().getTime(),
           };
         }
       });
@@ -139,11 +141,11 @@ export async function POST(request: NextRequest) {
         processed_successfully: successCount,
         failed: errorCount,
         success_rate: Math.round(successRate * 100) / 100,
-        average_confidence: Math.round(avgConfidence * 100) / 100
+        average_confidence: Math.round(avgConfidence * 100) / 100,
       },
-      results: results,
+      results,
       errors: errors.length > 0 ? errors : undefined,
-      processing_completed_at: new Date().toISOString()
+      processing_completed_at: new Date().toISOString(),
     });
     
   } catch (error) {
@@ -152,9 +154,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Error interno del servidor',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }, { 
-      status: 500 
+      status: 500, 
     });
   }
 }

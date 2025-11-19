@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 // Force dynamic rendering for this API route
@@ -19,14 +21,14 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!period) {
       return NextResponse.json(
         { success: false, error: 'period es requerido (formato YYYY-MM)' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -44,7 +46,7 @@ export async function GET(request: NextRequest) {
       console.error('Error checking liquidations:', error);
       return NextResponse.json(
         { success: false, error: 'Error al verificar liquidaciones' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -70,15 +72,15 @@ export async function GET(request: NextRequest) {
         total_employees: totalEmployees,
         coverage_percentage: totalEmployees > 0 ? Math.round((liquidationsCount / totalEmployees) * 100) : 0,
         can_generate_book: liquidationsCount > 0,
-        missing_liquidations: Math.max(0, totalEmployees - liquidationsCount)
-      }
+        missing_liquidations: Math.max(0, totalEmployees - liquidationsCount),
+      },
     });
 
   } catch (error) {
     console.error('Error in GET /api/payroll/liquidations/available:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

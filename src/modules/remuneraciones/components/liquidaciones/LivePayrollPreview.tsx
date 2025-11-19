@@ -1,8 +1,5 @@
 'use client';
 
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
-import { useChileanCurrency, useContractTypeInfo } from '../../hooks/useCalculadora';
-import { LiquidationResult } from '../../services/calculadorService';
 import { 
   Calculator, 
   TrendingUp, 
@@ -19,8 +16,13 @@ import {
   PiggyBank,
   Receipt,
   Settings,
-  Database
+  Database,
 } from 'lucide-react';
+
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
+
+import { useChileanCurrency, useContractTypeInfo } from '../../hooks/useCalculadora';
+import type { LiquidationResult } from '../../services/calculadorService';
 
 interface LivePayrollPreviewProps {
   result: LiquidationResult | null;
@@ -39,7 +41,7 @@ export function LivePayrollPreview({
   warnings,
   isValid,
   employeeName,
-  configurationStatus = 'default' // ✅ NUEVO
+  configurationStatus = 'default', // ✅ NUEVO
 }: LivePayrollPreviewProps) {
   const formatCurrency = useChileanCurrency();
   const getContractInfo = useContractTypeInfo();
@@ -57,7 +59,7 @@ export function LivePayrollPreview({
           <div className="space-y-2">
             {errors.map((error, index) => (
               <div key={index} className="flex items-center gap-2 text-sm text-red-600">
-                <span className="w-1 h-1 bg-red-400 rounded-full"></span>
+                <span className="w-1 h-1 bg-red-400 rounded-full" />
                 {error}
               </div>
             ))}
@@ -141,7 +143,7 @@ export function LivePayrollPreview({
                 <span className="text-sm font-medium">
                   {new Date(result.period.year, result.period.month - 1).toLocaleDateString('es-CL', {
                     month: 'long',
-                    year: 'numeric'
+                    year: 'numeric',
                   })}
                 </span>
               </div>
@@ -309,7 +311,6 @@ export function LivePayrollPreview({
                 <span className="font-medium">{formatCurrency(result.afp_commission_amount)}</span>
               </div>
 
-
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <Heart className="w-3 h-3" />
@@ -457,3 +458,5 @@ export function LivePayrollPreview({
     </div>
   );
 }
+
+export default LivePayrollPreview;

@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic({
@@ -55,8 +57,8 @@ Genera contenido práctico y realista para el contexto chileno.
       temperature: 0.7,
       messages: [{
         role: 'user',
-        content: prompt
-      }]
+        content: prompt,
+      }],
     });
 
     const generatedContent = response.content[0];
@@ -105,19 +107,19 @@ Genera contenido práctico y realista para el contexto chileno.
 
     // Limpiar y formatear las funciones
     const cleanedJobFunctions = jobFunctions.map(func => 
-      func.replace(/^\d+\.?\s*/, '').replace(/^[-•*]\s*/, '').trim()
+      func.replace(/^\d+\.?\s*/, '').replace(/^[-•*]\s*/, '').trim(),
     );
 
     const cleanedObligations = obligations.map(obl => 
-      obl.replace(/^\d+\.?\s*/, '').replace(/^[-•*]\s*/, '').trim()
+      obl.replace(/^\d+\.?\s*/, '').replace(/^[-•*]\s*/, '').trim(),
     );
 
     const cleanedProhibitions = prohibitions.map(proh => 
-      proh.replace(/^\d+\.?\s*/, '').replace(/^[-•*]\s*/, '').trim()
+      proh.replace(/^\d+\.?\s*/, '').replace(/^[-•*]\s*/, '').trim(),
     );
 
     const cleanedRequirements = requirements.map(req => 
-      req.replace(/^\d+\.?\s*/, '').replace(/^[-•*]\s*/, '').trim()
+      req.replace(/^\d+\.?\s*/, '').replace(/^[-•*]\s*/, '').trim(),
     );
 
     return NextResponse.json({
@@ -129,10 +131,10 @@ Genera contenido práctico y realista para el contexto chileno.
         obligations: cleanedObligations,
         prohibitions: cleanedProhibitions,
         requirements: cleanedRequirements,
-        raw_response: responseText
+        raw_response: responseText,
       },
       generated_by: 'ai',
-      message: 'Descriptor de cargo generado exitosamente por IA'
+      message: 'Descriptor de cargo generado exitosamente por IA',
     });
 
   } catch (error) {
@@ -142,13 +144,13 @@ Genera contenido práctico y realista para el contexto chileno.
     if (error instanceof Error && error.message.includes('API key')) {
       return NextResponse.json({ 
         error: 'Error de configuración de IA - verifique las credenciales',
-        details: 'ANTHROPIC_API_KEY no configurada correctamente'
+        details: 'ANTHROPIC_API_KEY no configurada correctamente',
       }, { status: 500 });
     }
 
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }

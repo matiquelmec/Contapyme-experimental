@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -22,7 +24,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json({
         success: false,
-        error: 'company_id es requerido'
+        error: 'company_id es requerido',
       }, { status: 400 });
     }
 
@@ -78,7 +80,7 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching RCV records:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error al obtener registros RCV'
+        error: 'Error al obtener registros RCV',
       }, { status: 500 });
     }
 
@@ -87,7 +89,7 @@ export async function GET(request: NextRequest) {
       .rpc('get_rcv_statistics', {
         p_company_id: companyId,
         p_year: startDate ? new Date(startDate).getFullYear() : null,
-        p_month: startDate ? new Date(startDate).getMonth() + 1 : null
+        p_month: startDate ? new Date(startDate).getMonth() + 1 : null,
       });
 
     return NextResponse.json({
@@ -104,17 +106,17 @@ export async function GET(request: NextRequest) {
           total_tax_amount: 0,
           total_amount: 0,
           pending_records: 0,
-          processed_records: 0
-        }
+          processed_records: 0,
+        },
       },
-      message: `${count || 0} registros encontrados`
+      message: `${count || 0} registros encontrados`,
     });
 
   } catch (error) {
     console.error('Error in GET /api/accounting/rcv/records:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -136,14 +138,14 @@ export async function POST(request: NextRequest) {
       tax_amount,
       exempt_amount,
       total_amount,
-      description
+      description,
     } = body;
 
     // Validaciones
     if (!company_id || !record_type || !entity_rut || !entity_name || !document_date || !total_amount) {
       return NextResponse.json({
         success: false,
-        error: 'Campos requeridos: company_id, record_type, entity_rut, entity_name, document_date, total_amount'
+        error: 'Campos requeridos: company_id, record_type, entity_rut, entity_name, document_date, total_amount',
       }, { status: 400 });
     }
 
@@ -168,7 +170,7 @@ export async function POST(request: NextRequest) {
         total_amount,
         description,
         status: 'pending',
-        import_source: 'manual'
+        import_source: 'manual',
       })
       .select()
       .single();
@@ -177,7 +179,7 @@ export async function POST(request: NextRequest) {
       console.error('Error creating RCV record:', insertError);
       return NextResponse.json({
         success: false,
-        error: 'Error al crear registro RCV'
+        error: 'Error al crear registro RCV',
       }, { status: 500 });
     }
 
@@ -192,14 +194,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: newRecord,
-      message: 'Registro RCV creado y entidad procesada exitosamente'
+      message: 'Registro RCV creado y entidad procesada exitosamente',
     }, { status: 201 });
 
   } catch (error) {
     console.error('Error in POST /api/accounting/rcv/records:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -214,7 +216,7 @@ export async function DELETE(request: NextRequest) {
     if (!recordId || !companyId) {
       return NextResponse.json({
         success: false,
-        error: 'id y company_id son requeridos'
+        error: 'id y company_id son requeridos',
       }, { status: 400 });
     }
 
@@ -228,20 +230,20 @@ export async function DELETE(request: NextRequest) {
       console.error('Error deleting RCV record:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error al eliminar registro'
+        error: 'Error al eliminar registro',
       }, { status: 500 });
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Registro eliminado exitosamente'
+      message: 'Registro eliminado exitosamente',
     });
 
   } catch (error) {
     console.error('Error in DELETE /api/accounting/rcv/records:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }

@@ -8,8 +8,8 @@ export function cn(...inputs: ClassValue[]) {
 export function formatCurrency(amount: number, currency = 'CLP') {
   return new Intl.NumberFormat('es-CL', {
     style: 'currency',
-    currency: currency,
-    minimumFractionDigits: 0
+    currency,
+    minimumFractionDigits: 0,
   }).format(amount)
 }
 
@@ -59,7 +59,7 @@ export function formatDate(date: string | Date | null | undefined, format: 'shor
     return dateObj.toLocaleDateString('es-CL', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     })
   }
   
@@ -73,7 +73,7 @@ export function formatPeriod(period: string) {
   const month = period.substring(4, 6)
   const monthNames = [
     '', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
   ]
   
   return `${monthNames[parseInt(month)]} ${year}`

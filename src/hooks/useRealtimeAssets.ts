@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+
 import { createClient } from '@supabase/supabase-js';
-import { FixedAsset } from '@/types';
+
+import type { FixedAsset } from '@/types';
 
 // Cliente Supabase para real-time
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -19,7 +21,7 @@ export function useRealtimeAssets(
   onAssetInserted?: (asset: FixedAsset) => void,
   onAssetUpdated?: (asset: FixedAsset) => void,
   onAssetDeleted?: (assetId: string) => void,
-  userId: string = 'demo-user'
+  userId: string = 'demo-user',
 ): RealtimeAssetsHookReturn {
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
@@ -54,7 +56,7 @@ export function useRealtimeAssets(
               event: '*', // Todos los eventos en una sola subscripción
               schema: 'public',
               table: 'fixed_assets',
-              filter: `user_id=eq.${userId}`
+              filter: `user_id=eq.${userId}`,
             },
             (payload) => {
               if (!isUnmounted) {
@@ -76,7 +78,7 @@ export function useRealtimeAssets(
                     break;
                 }
               }
-            }
+            },
           )
           .subscribe((status) => {
             if (!isUnmounted) {
@@ -123,13 +125,13 @@ export function useRealtimeAssets(
   return {
     isConnected,
     connectionError,
-    lastUpdate
+    lastUpdate,
   };
 }
 
 // Hook específico para indicadores real-time
 export function useRealtimeIndicators(
-  onIndicatorUpdated?: (indicator: any) => void
+  onIndicatorUpdated?: (indicator: any) => void,
 ) {
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<string | null>(null);
@@ -148,13 +150,13 @@ export function useRealtimeIndicators(
             {
               event: '*', // Todos los eventos
               schema: 'public',
-              table: 'economic_indicators'
+              table: 'economic_indicators',
             },
             (payload) => {
               console.log('📊 Indicador actualizado (real-time):', payload);
               setLastUpdate(new Date().toISOString());
               onIndicatorUpdated?.(payload.new || payload.old);
-            }
+            },
           )
           .subscribe((status) => {
             console.log('📡 Estado subscripción indicadores:', status);
@@ -179,6 +181,6 @@ export function useRealtimeIndicators(
 
   return {
     isConnected,
-    lastUpdate
+    lastUpdate,
   };
 }

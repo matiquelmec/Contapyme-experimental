@@ -23,15 +23,13 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
   companyPhone = "+56 9 1234 5678",
   employeeRut = liquidationData.employee?.rut || "No especificado",
   employeePosition = "Empleado",
-  employeeStartDate = "01-01-2024"
+  employeeStartDate = "01-01-2024",
 }) => {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   // Función para limpiar caracteres especiales malformados
   const cleanText = (text: string) => {
@@ -79,7 +77,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
       result += `${num}`;
     }
     
-    return result.trim() + ' pesos';
+    return `${result.trim()  } pesos`;
   };
 
   // ✅ TOTAL HABERES IMPONIBLES: Incluir gratificación Art. 50
@@ -127,7 +125,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
         fontSize: '12px',
         lineHeight: '1.4',
         border: '2px solid #000',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
       }}
     >
       {/* Header Empresa */}
@@ -135,7 +133,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
         width: '100%', 
         borderCollapse: 'collapse', 
         marginBottom: '20px',
-        border: '1px solid #000'
+        border: '1px solid #000',
       }}>
         <tbody>
         <tr>
@@ -144,25 +142,25 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             fontSize: '11px', 
             fontWeight: 'bold',
             borderRight: '1px solid #000',
-            width: '15%'
+            width: '15%',
           }}>EMPRESA:</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
             borderRight: '1px solid #000',
-            width: '35%'
+            width: '35%',
           }}>{companyName}</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px', 
             fontWeight: 'bold',
             borderRight: '1px solid #000',
-            width: '15%'
+            width: '15%',
           }}>Nro. Interno:</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
-            width: '35%'
+            width: '35%',
           }}>001</td>
         </tr>
         <tr>
@@ -171,25 +169,25 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             fontSize: '11px', 
             fontWeight: 'bold',
             borderRight: '1px solid #000',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>R.U.T.:</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
             borderRight: '1px solid #000',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>{companyRut}</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px', 
             fontWeight: 'bold',
             borderRight: '1px solid #000',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>Fecha Ingreso:</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>{employeeStartDate}</td>
         </tr>
         <tr>
@@ -198,25 +196,25 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             fontSize: '11px', 
             fontWeight: 'bold',
             borderRight: '1px solid #000',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>DIRECCIÓN:</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
             borderRight: '1px solid #000',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>{companyAddress}</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px', 
             fontWeight: 'bold',
             borderRight: '1px solid #000',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>Días Trab.:</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>30</td>
         </tr>
         <tr>
@@ -225,25 +223,25 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             fontSize: '11px', 
             fontWeight: 'bold',
             borderRight: '1px solid #000',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>TELÉFONO:</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
             borderRight: '1px solid #000',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>{companyPhone}</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px', 
             fontWeight: 'bold',
             borderRight: '1px solid #000',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>Días Licencia:</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>0</td>
         </tr>
         </tbody>
@@ -256,7 +254,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
         fontSize: '16px', 
         fontWeight: 'bold',
         border: '2px solid #000',
-        padding: '10px'
+        padding: '10px',
       }}>
         LIQUIDACIÓN DE SUELDO
       </div>
@@ -266,7 +264,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
         width: '100%', 
         borderCollapse: 'collapse', 
         marginBottom: '20px',
-        border: '1px solid #000'
+        border: '1px solid #000',
       }}>
         <tbody>
         <tr>
@@ -275,25 +273,25 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             fontSize: '11px', 
             fontWeight: 'bold',
             borderRight: '1px solid #000',
-            width: '20%'
+            width: '20%',
           }}>TRABAJADOR:</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
             borderRight: '1px solid #000',
-            width: '30%'
+            width: '30%',
           }}>{cleanText(employeeName).toUpperCase()}</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px', 
             fontWeight: 'bold',
             borderRight: '1px solid #000',
-            width: '15%'
+            width: '15%',
           }}>RUT:</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
-            width: '35%'
+            width: '35%',
           }}>{employeeRut}</td>
         </tr>
         <tr>
@@ -302,25 +300,25 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             fontSize: '11px', 
             fontWeight: 'bold',
             borderRight: '1px solid #000',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>MES:</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
             borderRight: '1px solid #000',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>{period.toUpperCase()}</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px', 
             fontWeight: 'bold',
             borderRight: '1px solid #000',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>CARGO:</td>
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
-            borderTop: '1px solid #000'
+            borderTop: '1px solid #000',
           }}>{employeePosition.toUpperCase()}</td>
         </tr>
         </tbody>
@@ -331,7 +329,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
         width: '100%', 
         borderCollapse: 'collapse', 
         marginBottom: '20px',
-        border: '2px solid #000'
+        border: '2px solid #000',
       }}>
         <tbody>
         {/* Headers */}
@@ -343,7 +341,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             textAlign: 'center',
             borderRight: '2px solid #000',
             borderBottom: '2px solid #000',
-            width: '50%'
+            width: '50%',
           }}>HABERES</td>
           <td style={{ 
             padding: '12px', 
@@ -351,7 +349,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             fontWeight: 'bold', 
             textAlign: 'center',
             borderBottom: '2px solid #000',
-            width: '50%'
+            width: '50%',
           }}>DESCUENTOS</td>
         </tr>
 
@@ -361,7 +359,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             padding: '8px', 
             fontSize: '11px',
             borderRight: '2px solid #000',
-            borderBottom: '1px solid #ccc'
+            borderBottom: '1px solid #ccc',
           }}>
             SUELDO BASE: <span style={{ float: 'right', fontWeight: 'bold' }}>
               ${(liquidationData.base_salary || 0).toLocaleString('es-CL')}
@@ -370,7 +368,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
-            borderBottom: '1px solid #ccc'
+            borderBottom: '1px solid #ccc',
           }}>
             AFP {liquidationData.afp_code || 'HABITAT'} (10%): <span style={{ float: 'right', fontWeight: 'bold' }}>
               ${(liquidationData.afp_amount || 0).toLocaleString('es-CL')}
@@ -385,12 +383,12 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
               padding: '8px', 
               fontSize: '11px',
               borderRight: '2px solid #000',
-              borderBottom: '1px solid #ccc'
-            }}></td>
+              borderBottom: '1px solid #ccc',
+            }} />
             <td style={{ 
               padding: '8px', 
               fontSize: '11px',
-              borderBottom: '1px solid #ccc'
+              borderBottom: '1px solid #ccc',
             }}>
               COMISIÓN AFP ({((liquidationData.afp_commission_percentage || 0)).toFixed(2)}%): <span style={{ float: 'right', fontWeight: 'bold' }}>
                 ${(liquidationData.afp_commission_amount || 0).toLocaleString('es-CL')}
@@ -406,7 +404,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
               padding: '8px', 
               fontSize: '11px',
               borderRight: '2px solid #000',
-              borderBottom: '1px solid #ccc'
+              borderBottom: '1px solid #ccc',
             }}>
               GRATIFICACIÓN ART. 50: <span style={{ float: 'right', fontWeight: 'bold' }}>
                 ${legalGratificationArt50.toLocaleString('es-CL')}
@@ -415,8 +413,8 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             <td style={{ 
               padding: '8px', 
               fontSize: '11px',
-              borderBottom: '1px solid #ccc'
-            }}></td>
+              borderBottom: '1px solid #ccc',
+            }} />
           </tr>
         )}
 
@@ -427,7 +425,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
               padding: '8px', 
               fontSize: '11px',
               borderRight: '2px solid #000',
-              borderBottom: '1px solid #ccc'
+              borderBottom: '1px solid #ccc',
             }}>
               BONOS: <span style={{ float: 'right', fontWeight: 'bold' }}>
                 ${(liquidationData.bonuses || 0).toLocaleString('es-CL')}
@@ -436,8 +434,8 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             <td style={{ 
               padding: '8px', 
               fontSize: '11px',
-              borderBottom: '1px solid #ccc'
-            }}></td>
+              borderBottom: '1px solid #ccc',
+            }} />
           </tr>
         )}
 
@@ -448,7 +446,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
               padding: '8px', 
               fontSize: '11px',
               borderRight: '2px solid #000',
-              borderBottom: '1px solid #ccc'
+              borderBottom: '1px solid #ccc',
             }}>
               HORAS EXTRAS {(liquidationData.overtime_hours || 0) > 0 && `(${liquidationData.overtime_hours}h)`}: <span style={{ float: 'right', fontWeight: 'bold' }}>
                 ${(liquidationData.overtime_amount || 0).toLocaleString('es-CL')}
@@ -457,8 +455,8 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             <td style={{ 
               padding: '8px', 
               fontSize: '11px',
-              borderBottom: '1px solid #ccc'
-            }}></td>
+              borderBottom: '1px solid #ccc',
+            }} />
           </tr>
         )}
 
@@ -468,12 +466,12 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             padding: '8px', 
             fontSize: '11px',
             borderRight: '2px solid #000',
-            borderBottom: '1px solid #ccc'
-          }}></td>
+            borderBottom: '1px solid #ccc',
+          }} />
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
-            borderBottom: '1px solid #ccc'
+            borderBottom: '1px solid #ccc',
           }}>
             {liquidationData.health_institution_code === 'FONASA' ? 'FONASA' : 'ISAPRE'} (7%): <span style={{ float: 'right', fontWeight: 'bold' }}>
               ${(liquidationData.health_amount || 0).toLocaleString('es-CL')}
@@ -488,12 +486,12 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
               padding: '8px', 
               fontSize: '11px',
               borderRight: '2px solid #000',
-              borderBottom: '1px solid #ccc'
-            }}></td>
+              borderBottom: '1px solid #ccc',
+            }} />
             <td style={{ 
               padding: '8px', 
               fontSize: '11px',
-              borderBottom: '1px solid #ccc'
+              borderBottom: '1px solid #ccc',
             }}>
               ADICIONAL SALUD ISAPRE: <span style={{ float: 'right', fontWeight: 'bold' }}>
                 ${(liquidationData.additional_health_amount || 0).toLocaleString('es-CL')}
@@ -509,12 +507,12 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
               padding: '8px', 
               fontSize: '11px',
               borderRight: '2px solid #000',
-              borderBottom: '1px solid #ccc'
-            }}></td>
+              borderBottom: '1px solid #ccc',
+            }} />
             <td style={{ 
               padding: '8px', 
               fontSize: '11px',
-              borderBottom: '1px solid #ccc'
+              borderBottom: '1px solid #ccc',
             }}>
               SEGURO CESANTÍA ({liquidationData.unemployment_percentage || 0.6}%): <span style={{ float: 'right', fontWeight: 'bold' }}>
                 ${(liquidationData.unemployment_amount || 0).toLocaleString('es-CL')}
@@ -532,7 +530,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             borderRight: '2px solid #000',
             borderTop: '2px solid #000',
             borderBottom: '2px solid #000',
-            textAlign: 'center'
+            textAlign: 'center',
           }}>
             TOTAL IMPONIBLE: ${totalImponible.toLocaleString('es-CL')}
           </td>
@@ -542,7 +540,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             fontWeight: 'bold',
             borderTop: '2px solid #000',
             borderBottom: '2px solid #000',
-            textAlign: 'center'
+            textAlign: 'center',
           }}>
             TOTAL DESCUENTOS: ${totalDescuentos.toLocaleString('es-CL')}
           </td>
@@ -554,7 +552,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             padding: '8px', 
             fontSize: '11px',
             borderRight: '2px solid #000',
-            borderBottom: '1px solid #ccc'
+            borderBottom: '1px solid #ccc',
           }}>
             COLACIÓN: <span style={{ float: 'right', fontWeight: 'bold' }}>
               ${(liquidationData.food_allowance || 0).toLocaleString('es-CL')}
@@ -563,7 +561,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
-            borderBottom: '1px solid #ccc'
+            borderBottom: '1px solid #ccc',
           }}>
             IMPUESTO ÚNICO: <span style={{ float: 'right', fontWeight: 'bold' }}>
               ${(liquidationData.income_tax_amount || 0).toLocaleString('es-CL')}
@@ -576,7 +574,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             padding: '8px', 
             fontSize: '11px',
             borderRight: '2px solid #000',
-            borderBottom: '1px solid #ccc'
+            borderBottom: '1px solid #ccc',
           }}>
             MOVILIZACIÓN: <span style={{ float: 'right', fontWeight: 'bold' }}>
               ${(liquidationData.transport_allowance || 0).toLocaleString('es-CL')}
@@ -585,7 +583,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
-            borderBottom: '1px solid #ccc'
+            borderBottom: '1px solid #ccc',
           }}>
             OTROS DESCUENTOS: <span style={{ float: 'right', fontWeight: 'bold' }}>
               ${(liquidationData.total_other_deductions || 0).toLocaleString('es-CL')}
@@ -597,7 +595,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
           <td style={{ 
             padding: '8px', 
             fontSize: '11px',
-            borderRight: '2px solid #000'
+            borderRight: '2px solid #000',
           }}>
             ASIG. FAMILIAR: <span style={{ float: 'right', fontWeight: 'bold' }}>
               ${(liquidationData.family_allowance || 0).toLocaleString('es-CL')}
@@ -605,8 +603,8 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
           </td>
           <td style={{ 
             padding: '8px', 
-            fontSize: '11px'
-          }}></td>
+            fontSize: '11px',
+          }} />
         </tr>
         </tbody>
       </table>
@@ -616,7 +614,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
         border: '3px solid #000', 
         padding: '20px', 
         textAlign: 'center',
-        marginBottom: '20px'
+        marginBottom: '20px',
       }}>
         <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '10px' }}>
           RESUMEN FINAL
@@ -634,7 +632,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
           fontSize: '18px', 
           fontWeight: 'bold', 
           border: '2px solid #000',
-          padding: '10px'
+          padding: '10px',
         }}>
           SUELDO LÍQUIDO: ${liquidoAPagar.toLocaleString('es-CL')}
         </div>
@@ -647,7 +645,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
       <table style={{ 
         width: '100%', 
         borderCollapse: 'collapse',
-        border: '1px solid #000'
+        border: '1px solid #000',
       }}>
         <tbody>
         <tr>
@@ -655,7 +653,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
             textAlign: 'center', 
             padding: '30px 10px 10px 10px',
             borderRight: '1px solid #000',
-            width: '50%'
+            width: '50%',
           }}>
             <div style={{ borderTop: '1px solid #000', paddingTop: '5px' }}>
               FIRMA REPRESENTANTE LEGAL
@@ -670,7 +668,7 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
           <td style={{ 
             textAlign: 'center', 
             padding: '30px 10px 10px 10px',
-            width: '50%'
+            width: '50%',
           }}>
             <div style={{ borderTop: '1px solid #000', paddingTop: '5px' }}>
               RECIBO Y FIRMO CONFORME
@@ -688,3 +686,5 @@ export const LiquidationPDFTemplate: React.FC<LiquidationPDFTemplateProps> = ({
     </div>
   );
 };
+
+export default LiquidationPDFTemplate;

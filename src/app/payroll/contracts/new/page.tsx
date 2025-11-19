@@ -1,16 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+
 import Link from 'next/link';
-import { PayrollHeader } from '@/components/layout';
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { 
-  ArrowLeft, Save, FileText, User, Calendar, DollarSign, 
-  Clock, MapPin, AlertCircle, Search, Sparkles, CheckCircle 
+import { useRouter } from 'next/navigation';
+
+import { Save, User, Calendar, DollarSign, AlertCircle, Sparkles, CheckCircle, 
 } from 'lucide-react';
-import { useCompanyId } from '@/contexts/CompanyContext';
+
+import { PayrollHeader } from '@/components/layout';
 import { JobDescriptionAssistant } from '@/components/payroll/JobDescriptionAssistant';
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
+import { useCompanyId } from '@/contexts/CompanyContext';
 
 interface Employee {
   id: string;
@@ -63,13 +64,13 @@ export default function NewContractPage() {
     allowances: {
       meal: '',
       transport: '',
-      cash: ''
+      cash: '',
     },
     // NUEVOS CAMPOS PREVISIONALES
     afp_name: 'MODELO',
     health_institution: 'FONASA',
     isapre_plan: '',
-    afp_auto_detected: false // Flag para indicar si se detectó automáticamente
+    afp_auto_detected: false, // Flag para indicar si se detectó automáticamente
   });
 
   // Estado para datos del asistente de descriptores
@@ -96,7 +97,7 @@ export default function NewContractPage() {
             setFormData(prev => ({
               ...prev,
               position: data.position || '',
-              department: data.department || ''
+              department: data.department || '',
             }));
             
             // Limpiar sessionStorage después de usar
@@ -151,7 +152,7 @@ export default function NewContractPage() {
       const response = await fetch('/api/external/sii/consulta-afp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rut: employeeRut })
+        body: JSON.stringify({ rut: employeeRut }),
       });
       
       const data = await response.json();
@@ -165,7 +166,7 @@ export default function NewContractPage() {
           afp_name: data.data.afp_name,
           health_institution: data.data.health_institution,
           isapre_plan: data.data.isapre_plan || '',
-          afp_auto_detected: true
+          afp_auto_detected: true,
         }));
         
         return data.data;
@@ -270,13 +271,13 @@ export default function NewContractPage() {
           exit: formData.schedule_exit,
           lunch_start: formData.lunch_start,
           lunch_end: formData.lunch_end,
-          days: 'Lunes a Sábado'
+          days: 'Lunes a Sábado',
         },
         bonuses: formData.bonuses,
         allowances: {
           meal: Number(formData.allowances.meal) || 0,
           transport: Number(formData.allowances.transport) || 0,
-          cash: Number(formData.allowances.cash) || 0
+          cash: Number(formData.allowances.cash) || 0,
         },
         // Incorporar datos del asistente IA si están disponibles
         job_functions: jobDescriptionData?.job_functions || jobDescriptionData?.refined_functions || [],
@@ -288,15 +289,15 @@ export default function NewContractPage() {
           company_rut: companySettings.company_rut,
           company_address: companySettings.company_address,
           company_city: companySettings.company_city,
-          legal_representative: companySettings.legal_representative
-        } : undefined
+          legal_representative: companySettings.legal_representative,
+        } : undefined,
       };
 
       // Crear el contrato
       const response = await fetch('/api/payroll/contracts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(contractData)
+        body: JSON.stringify(contractData),
       });
 
       const result = await response.json();
@@ -516,7 +517,7 @@ export default function NewContractPage() {
                         <input
                           type="text"
                           value={formData.position}
-                          onChange={(e) => setFormData(prev => ({ ...prev, position: e.target.value }))}
+                          onChange={(e) => { setFormData(prev => ({ ...prev, position: e.target.value })); }}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                           placeholder="Ej: Vendedor, Contador, Gerente"
                         />
@@ -532,7 +533,7 @@ export default function NewContractPage() {
                         <input
                           type="text"
                           value={formData.department}
-                          onChange={(e) => setFormData(prev => ({ ...prev, department: e.target.value }))}
+                          onChange={(e) => { setFormData(prev => ({ ...prev, department: e.target.value })); }}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                           placeholder="Ej: Ventas, Administración"
                         />
@@ -546,7 +547,7 @@ export default function NewContractPage() {
                         </label>
                         <select
                           value={formData.contract_type}
-                          onChange={(e) => setFormData(prev => ({ ...prev, contract_type: e.target.value }))}
+                          onChange={(e) => { setFormData(prev => ({ ...prev, contract_type: e.target.value })); }}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="indefinido">Indefinido</option>
@@ -563,7 +564,7 @@ export default function NewContractPage() {
                         <input
                           type="number"
                           value={formData.weekly_hours}
-                          onChange={(e) => setFormData(prev => ({ ...prev, weekly_hours: e.target.value }))}
+                          onChange={(e) => { setFormData(prev => ({ ...prev, weekly_hours: e.target.value })); }}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                           min="1"
                           max="48"
@@ -595,7 +596,7 @@ export default function NewContractPage() {
                         setFormData(prev => ({
                           ...prev,
                           position: data.position || prev.position,
-                          department: data.department || prev.department
+                          department: data.department || prev.department,
                         }));
                       }}
                       currentPosition={formData.position}
@@ -663,7 +664,7 @@ export default function NewContractPage() {
                         <input
                           type="date"
                           value={formData.start_date}
-                          onChange={(e) => setFormData(prev => ({ ...prev, start_date: e.target.value }))}
+                          onChange={(e) => { setFormData(prev => ({ ...prev, start_date: e.target.value })); }}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.start_date && (
@@ -678,7 +679,7 @@ export default function NewContractPage() {
                         <input
                           type="date"
                           value={formData.end_date}
-                          onChange={(e) => setFormData(prev => ({ ...prev, end_date: e.target.value }))}
+                          onChange={(e) => { setFormData(prev => ({ ...prev, end_date: e.target.value })); }}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                           disabled={formData.contract_type === 'indefinido'}
                         />
@@ -693,7 +694,7 @@ export default function NewContractPage() {
                         <input
                           type="number"
                           value={formData.base_salary}
-                          onChange={(e) => setFormData(prev => ({ ...prev, base_salary: e.target.value }))}
+                          onChange={(e) => { setFormData(prev => ({ ...prev, base_salary: e.target.value })); }}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                           placeholder="0"
                           min="0"
@@ -710,7 +711,7 @@ export default function NewContractPage() {
                         <input
                           type="number"
                           value={formData.gratification_amount}
-                          onChange={(e) => setFormData(prev => ({ ...prev, gratification_amount: e.target.value }))}
+                          onChange={(e) => { setFormData(prev => ({ ...prev, gratification_amount: e.target.value })); }}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                           placeholder="Se calculará automáticamente (25%)"
                           min="0"
@@ -737,10 +738,10 @@ export default function NewContractPage() {
                         <input
                           type="number"
                           value={formData.allowances.meal}
-                          onChange={(e) => setFormData(prev => ({ 
+                          onChange={(e) => { setFormData(prev => ({ 
                             ...prev, 
-                            allowances: { ...prev.allowances, meal: e.target.value }
-                          }))}
+                            allowances: { ...prev.allowances, meal: e.target.value },
+                          })); }}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                           placeholder="0"
                           min="0"
@@ -754,10 +755,10 @@ export default function NewContractPage() {
                         <input
                           type="number"
                           value={formData.allowances.transport}
-                          onChange={(e) => setFormData(prev => ({ 
+                          onChange={(e) => { setFormData(prev => ({ 
                             ...prev, 
-                            allowances: { ...prev.allowances, transport: e.target.value }
-                          }))}
+                            allowances: { ...prev.allowances, transport: e.target.value },
+                          })); }}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                           placeholder="0"
                           min="0"
@@ -771,10 +772,10 @@ export default function NewContractPage() {
                         <input
                           type="number"
                           value={formData.allowances.cash}
-                          onChange={(e) => setFormData(prev => ({ 
+                          onChange={(e) => { setFormData(prev => ({ 
                             ...prev, 
-                            allowances: { ...prev.allowances, cash: e.target.value }
-                          }))}
+                            allowances: { ...prev.allowances, cash: e.target.value },
+                          })); }}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                           placeholder="0"
                           min="0"
@@ -808,11 +809,11 @@ export default function NewContractPage() {
                         </label>
                         <select
                           value={formData.afp_name}
-                          onChange={(e) => setFormData(prev => ({ 
+                          onChange={(e) => { setFormData(prev => ({ 
                             ...prev, 
                             afp_name: e.target.value,
-                            afp_auto_detected: false // Se cambió manualmente
-                          }))}
+                            afp_auto_detected: false, // Se cambió manualmente
+                          })); }}
                           className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 ${
                             formData.afp_auto_detected 
                               ? 'border-green-300 bg-green-50' 
@@ -835,12 +836,12 @@ export default function NewContractPage() {
                         </label>
                         <select
                           value={formData.health_institution}
-                          onChange={(e) => setFormData(prev => ({ 
+                          onChange={(e) => { setFormData(prev => ({ 
                             ...prev, 
                             health_institution: e.target.value,
                             isapre_plan: e.target.value === 'FONASA' ? '' : prev.isapre_plan,
-                            afp_auto_detected: false // Se cambió manualmente
-                          }))}
+                            afp_auto_detected: false, // Se cambió manualmente
+                          })); }}
                           className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 ${
                             formData.afp_auto_detected 
                               ? 'border-green-300 bg-green-50' 
@@ -866,11 +867,11 @@ export default function NewContractPage() {
                         <input
                           type="text"
                           value={formData.isapre_plan}
-                          onChange={(e) => setFormData(prev => ({ 
+                          onChange={(e) => { setFormData(prev => ({ 
                             ...prev, 
                             isapre_plan: e.target.value,
-                            afp_auto_detected: false
-                          }))}
+                            afp_auto_detected: false,
+                          })); }}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                           placeholder="Ej: Plan Base, Plan Premium"
                         />
@@ -920,7 +921,7 @@ export default function NewContractPage() {
                   >
                     {loading ? (
                       <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                         Creando...
                       </>
                     ) : (

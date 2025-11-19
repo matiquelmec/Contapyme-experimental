@@ -31,7 +31,7 @@ export interface IncomeStatementData {
 export async function generateTrialBalance(
   companyId: string,
   startDate: string,
-  endDate: string
+  endDate: string,
 ): Promise<AccountBalance[]> {
   const supabase = createServerClient()
   
@@ -83,7 +83,7 @@ export async function generateTrialBalance(
       type: account.type,
       debit,
       credit,
-      balance
+      balance,
     }
   })
 
@@ -92,7 +92,7 @@ export async function generateTrialBalance(
 
 export async function generateBalanceSheet(
   companyId: string,
-  asOfDate: string
+  asOfDate: string,
 ): Promise<BalanceSheetData> {
   const trialBalance = await generateTrialBalance(companyId, '1900-01-01', asOfDate)
   
@@ -118,14 +118,14 @@ export async function generateBalanceSheet(
     totalAssets,
     totalLiabilities,
     totalEquity: finalTotalEquity,
-    isBalanced
+    isBalanced,
   }
 }
 
 export async function generateIncomeStatement(
   companyId: string,
   startDate: string,
-  endDate: string
+  endDate: string,
 ): Promise<IncomeStatementData> {
   const trialBalance = await generateTrialBalance(companyId, startDate, endDate)
   
@@ -141,7 +141,7 @@ export async function generateIncomeStatement(
     expenses,
     totalIncome,
     totalExpenses,
-    netIncome
+    netIncome,
   }
 }
 
@@ -150,7 +150,7 @@ export async function saveFinancialReport(
   reportType: 'BALANCE_SHEET' | 'INCOME_STATEMENT' | 'TRIAL_BALANCE',
   startDate: string,
   endDate: string,
-  data: any
+  data: any,
 ) {
   const supabase = createServerClient()
   
@@ -161,7 +161,7 @@ export async function saveFinancialReport(
       company_id: companyId,
       start_date: startDate,
       end_date: endDate,
-      data
+      data,
     }])
 
   if (error) throw error

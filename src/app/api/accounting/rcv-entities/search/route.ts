@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -15,14 +17,14 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json({
         success: false,
-        error: 'company_id es requerido'
+        error: 'company_id es requerido',
       }, { status: 400 });
     }
 
     if (!rut) {
       return NextResponse.json({
         success: false,
-        error: 'rut es requerido para búsqueda'
+        error: 'rut es requerido para búsqueda',
       }, { status: 400 });
     }
 
@@ -30,14 +32,14 @@ export async function GET(request: NextRequest) {
     const { data: entities, error } = await supabase
       .rpc('get_rcv_entity_by_rut', {
         p_company_id: companyId,
-        p_rut: rut
+        p_rut: rut,
       });
 
     if (error) {
       console.error('Error searching RCV entity by RUT:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error en búsqueda de entidad'
+        error: 'Error en búsqueda de entidad',
       }, { status: 500 });
     }
 
@@ -54,9 +56,9 @@ export async function GET(request: NextRequest) {
           account_code: entity.account_code,
           account_name: entity.account_name,
           default_tax_rate: entity.default_tax_rate,
-          is_tax_exempt: entity.is_tax_exempt
+          is_tax_exempt: entity.is_tax_exempt,
         },
-        message: `Entidad encontrada: ${entity.entity_name}`
+        message: `Entidad encontrada: ${entity.entity_name}`,
       });
     }
 
@@ -65,14 +67,14 @@ export async function GET(request: NextRequest) {
       success: true,
       found: false,
       data: null,
-      message: `No se encontró entidad con RUT ${rut}`
+      message: `No se encontró entidad con RUT ${rut}`,
     });
 
   } catch (error) {
     console.error('Error in GET /api/accounting/rcv-entities/search:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -87,13 +89,13 @@ export async function POST(request: NextRequest) {
       entity_type, 
       is_active,
       account_type,
-      limit = 20 
+      limit = 20, 
     } = body;
 
     if (!company_id) {
       return NextResponse.json({
         success: false,
-        error: 'company_id es requerido'
+        error: 'company_id es requerido',
       }, { status: 400 });
     }
 
@@ -128,7 +130,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Búsqueda de texto
-    if (search_term && search_term.trim()) {
+    if (search_term?.trim()) {
       const term = search_term.trim();
       query = query.or(`entity_name.ilike.%${term}%,entity_rut.ilike.%${term}%,entity_business_name.ilike.%${term}%,account_name.ilike.%${term}%`);
     }
@@ -144,7 +146,7 @@ export async function POST(request: NextRequest) {
       console.error('Error in advanced search:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error en búsqueda avanzada'
+        error: 'Error en búsqueda avanzada',
       }, { status: 500 });
     }
 
@@ -152,14 +154,14 @@ export async function POST(request: NextRequest) {
       success: true,
       data: entities || [],
       total_found: entities?.length || 0,
-      message: `${entities?.length || 0} entidades encontradas`
+      message: `${entities?.length || 0} entidades encontradas`,
     });
 
   } catch (error) {
     console.error('Error in POST /api/accounting/rcv-entities/search:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }

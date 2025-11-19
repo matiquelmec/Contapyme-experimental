@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+
+import { Settings, Building2, Heart, Users, Calculator, Globe, AlertCircle, CheckCircle, Save } from 'lucide-react';
+
 import { PayrollHeader } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { Settings, Building2, Heart, Users, Calculator, Globe, AlertCircle, CheckCircle, Save } from 'lucide-react';
 import { useCompanyId } from '@/contexts/CompanyContext';
 
 interface AFPConfig {
@@ -118,7 +120,7 @@ export default function PayrollSettingsPage() {
     return () => {
       clearInterval(interval);
       setProgress(100);
-      setTimeout(() => setProgress(0), 500);
+      setTimeout(() => { setProgress(0); }, 500);
     };
   };
 
@@ -242,14 +244,12 @@ export default function PayrollSettingsPage() {
   }, []);
 
   // 🔧 OPTIMIZACIÓN: Cleanup de timeouts al desmontar
-  useEffect(() => {
-    return () => {
+  useEffect(() => () => {
       // Limpiar todos los timeouts pendientes
       Object.values(timeouts.current).forEach(timeout => {
         if (timeout) clearTimeout(timeout);
       });
-    };
-  }, []);
+    }, []);
 
   // 🔧 OPTIMIZACIÓN: Eliminado auto-guardado - Solo guardado manual
   // Ya no se usa debounce automático, solo actualización de estado local
@@ -263,11 +263,11 @@ export default function PayrollSettingsPage() {
       const finishProgress = simulateProgress(setLoadingProgress, 3000);
       
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
+      const timeoutId = setTimeout(() => { controller.abort(); }, 10000); // 10 segundos timeout
       
       try {
         const response = await fetch(`/api/payroll/settings?company_id=${companyId}`, {
-          signal: controller.signal
+          signal: controller.signal,
         });
         
         clearTimeout(timeoutId);
@@ -306,7 +306,7 @@ export default function PayrollSettingsPage() {
       setValidationErrors({});
 
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 segundos para operaciones de escritura
+      const timeoutId = setTimeout(() => { controller.abort(); }, 15000); // 15 segundos para operaciones de escritura
 
       try {
         const response = await fetch(`/api/payroll/settings?company_id=${companyId}`, {
@@ -315,7 +315,7 @@ export default function PayrollSettingsPage() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(updatedSettings),
-          signal: controller.signal
+          signal: controller.signal,
         });
 
         clearTimeout(timeoutId);
@@ -330,7 +330,7 @@ export default function PayrollSettingsPage() {
         if (data.success) {
           setSettings(data.data);
           setSuccessMessage(data.message || '✅ Configuración actualizada exitosamente');
-          setTimeout(() => setSuccessMessage(null), 3000);
+          setTimeout(() => { setSuccessMessage(null); }, 3000);
         } else {
           throw new Error(data.error || 'Error al actualizar configuración');
         }
@@ -430,7 +430,7 @@ export default function PayrollSettingsPage() {
       if (response.ok && data.success) {
         // Opcional: mostrar mensaje de éxito breve
         setSuccessMessage(`✅ ${field === 'mutual_percentage' ? 'Porcentaje mutual' : 'Configuración'} guardada correctamente`);
-        setTimeout(() => setSuccessMessage(null), 2000);
+        setTimeout(() => { setSuccessMessage(null); }, 2000);
       } else {
         throw new Error(data.error || 'Error al guardar configuración');
       }
@@ -496,7 +496,7 @@ export default function PayrollSettingsPage() {
       setSuccessMessage(null);
 
       const response = await fetch(`/api/payroll/settings?company_id=${companyId}`, {
-        method: 'POST'
+        method: 'POST',
       });
 
       const data = await response.json();
@@ -504,7 +504,7 @@ export default function PayrollSettingsPage() {
       if (response.ok && data.success) {
         setSettings(data.data);
         setSuccessMessage('✅ Configuración actualizada desde Previred exitosamente');
-        setTimeout(() => setSuccessMessage(null), 5000);
+        setTimeout(() => { setSuccessMessage(null); }, 5000);
       } else {
         setError(data.error || 'Error al actualizar desde Previred');
       }
@@ -547,7 +547,7 @@ export default function PayrollSettingsPage() {
       if (response.ok && data.success) {
         setSettings(data.data);
         setSuccessMessage('✅ Toda la configuración guardada exitosamente - Validación completa aprobada');
-        setTimeout(() => setSuccessMessage(null), 4000);
+        setTimeout(() => { setSuccessMessage(null); }, 4000);
       } else {
         setError(data.error || 'Error al guardar configuración completa');
       }
@@ -570,7 +570,7 @@ export default function PayrollSettingsPage() {
         <div className="max-w-6xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center h-64">
             <div className="text-center w-full max-w-md">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
               <p className="mt-4 text-gray-600 mb-4">Cargando configuración previsional...</p>
               
               {/* Barra de progreso */}
@@ -578,7 +578,7 @@ export default function PayrollSettingsPage() {
                 <div 
                   className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full transition-all duration-300 ease-out"
                   style={{ width: `${loadingProgress}%` }}
-                ></div>
+                 />
               </div>
               <p className="text-xs text-gray-500">
                 {loadingProgress < 30 && "Conectando con servidor..."}
@@ -609,7 +609,7 @@ export default function PayrollSettingsPage() {
               className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
             >
               {saving ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2" />
               ) : (
                 <Globe className="h-4 w-4 mr-2" />
               )}
@@ -627,7 +627,7 @@ export default function PayrollSettingsPage() {
               } text-white`}
             >
               {saving ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
               ) : (
                 <Save className="h-4 w-4 mr-2" />
               )}
@@ -682,7 +682,7 @@ export default function PayrollSettingsPage() {
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20 p-2">
             <nav className="flex flex-wrap gap-2">
               <button
-                onClick={() => setActiveTab('afp')}
+                onClick={() => { setActiveTab('afp'); }}
                 className={`flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
                   activeTab === 'afp'
                     ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg transform scale-105'
@@ -693,7 +693,7 @@ export default function PayrollSettingsPage() {
                 AFP
               </button>
               <button
-                onClick={() => setActiveTab('health')}
+                onClick={() => { setActiveTab('health'); }}
                 className={`flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
                   activeTab === 'health'
                     ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg transform scale-105'
@@ -704,7 +704,7 @@ export default function PayrollSettingsPage() {
                 Salud
               </button>
               <button
-                onClick={() => setActiveTab('limits')}
+                onClick={() => { setActiveTab('limits'); }}
                 className={`flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
                   activeTab === 'limits'
                     ? 'bg-gradient-to-r from-orange-600 to-orange-700 text-white shadow-lg transform scale-105'
@@ -715,7 +715,7 @@ export default function PayrollSettingsPage() {
                 Topes e Imponibles
               </button>
               <button
-                onClick={() => setActiveTab('family')}
+                onClick={() => { setActiveTab('family'); }}
                 className={`flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
                   activeTab === 'family'
                     ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg transform scale-105'
@@ -726,7 +726,7 @@ export default function PayrollSettingsPage() {
                 Asignaciones Familiares
               </button>
               <button
-                onClick={() => setActiveTab('company')}
+                onClick={() => { setActiveTab('company'); }}
                 className={`flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
                   activeTab === 'company'
                     ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg transform scale-105'
@@ -775,7 +775,7 @@ export default function PayrollSettingsPage() {
                                 type="number"
                                 step="0.01"
                                 value={afp.commission_percentage}
-                                onChange={(e) => handleAFPUpdate(index, 'commission_percentage', parseFloat(e.target.value))}
+                                onChange={(e) => { handleAFPUpdate(index, 'commission_percentage', parseFloat(e.target.value)); }}
                                 className="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                               />
                               <span className="ml-2 text-sm font-medium text-gray-600">%</span>
@@ -786,7 +786,7 @@ export default function PayrollSettingsPage() {
                               <input
                                 type="checkbox"
                                 checked={afp.active}
-                                onChange={(e) => handleAFPUpdate(index, 'active', e.target.checked)}
+                                onChange={(e) => { handleAFPUpdate(index, 'active', e.target.checked); }}
                                 className="sr-only"
                               />
                               <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
@@ -873,7 +873,7 @@ export default function PayrollSettingsPage() {
                                 type="number"
                                 step="0.01"
                                 value={health.plan_percentage}
-                                onChange={(e) => handleHealthUpdate(index, 'plan_percentage', parseFloat(e.target.value))}
+                                onChange={(e) => { handleHealthUpdate(index, 'plan_percentage', parseFloat(e.target.value)); }}
                                 className="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
                               />
                               <span className="ml-2 text-sm font-medium text-gray-600">%</span>
@@ -884,7 +884,7 @@ export default function PayrollSettingsPage() {
                               <input
                                 type="checkbox"
                                 checked={health.active}
-                                onChange={(e) => handleHealthUpdate(index, 'active', e.target.checked)}
+                                onChange={(e) => { handleHealthUpdate(index, 'active', e.target.checked); }}
                                 className="sr-only"
                               />
                               <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
@@ -991,7 +991,7 @@ export default function PayrollSettingsPage() {
                         type="number"
                         step="0.1"
                         value={settings.income_limits?.uf_limit || 83.4}
-                        onChange={(e) => handleIncomeLimit('uf_limit', parseFloat(e.target.value))}
+                        onChange={(e) => { handleIncomeLimit('uf_limit', parseFloat(e.target.value)); }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <span className="absolute right-3 top-2 text-sm text-gray-500">UF</span>
@@ -1009,7 +1009,7 @@ export default function PayrollSettingsPage() {
                       <input
                         type="number"
                         value={settings.income_limits?.minimum_wage || 500000}
-                        onChange={(e) => handleIncomeLimit('minimum_wage', parseInt(e.target.value))}
+                        onChange={(e) => { handleIncomeLimit('minimum_wage', parseInt(e.target.value)); }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <span className="absolute right-3 top-2 text-sm text-gray-500">CLP</span>
@@ -1027,7 +1027,7 @@ export default function PayrollSettingsPage() {
                       <input
                         type="number"
                         value={settings.income_limits?.family_allowance_limit || 1000000}
-                        onChange={(e) => handleIncomeLimit('family_allowance_limit', parseInt(e.target.value))}
+                        onChange={(e) => { handleIncomeLimit('family_allowance_limit', parseInt(e.target.value)); }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <span className="absolute right-3 top-2 text-sm text-gray-500">CLP</span>
@@ -1115,7 +1115,7 @@ export default function PayrollSettingsPage() {
                         min="0"
                         max="3"
                         value={settings.contributions?.sis_percentage || 1.88}
-                        onChange={(e) => handleSisPercentageUpdate(parseFloat(e.target.value))}
+                        onChange={(e) => { handleSisPercentageUpdate(parseFloat(e.target.value)); }}
                         className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors duration-200 ${
                           validationErrors.sis_percentage 
                             ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
@@ -1157,7 +1157,7 @@ export default function PayrollSettingsPage() {
                     type="number"
                     step="1"
                     value={settings.family_allowances?.tramo_a || 13596}
-                    onChange={(e) => handleFamilyAllowanceUpdate('tramo_a', parseInt(e.target.value))}
+                    onChange={(e) => { handleFamilyAllowanceUpdate('tramo_a', parseInt(e.target.value)); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <p className="mt-1 text-xs text-gray-500">
@@ -1173,7 +1173,7 @@ export default function PayrollSettingsPage() {
                     type="number"
                     step="1"
                     value={settings.family_allowances?.tramo_b || 8397}
-                    onChange={(e) => handleFamilyAllowanceUpdate('tramo_b', parseInt(e.target.value))}
+                    onChange={(e) => { handleFamilyAllowanceUpdate('tramo_b', parseInt(e.target.value)); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <p className="mt-1 text-xs text-gray-500">
@@ -1189,7 +1189,7 @@ export default function PayrollSettingsPage() {
                     type="number"
                     step="1"
                     value={settings.family_allowances?.tramo_c || 2798}
-                    onChange={(e) => handleFamilyAllowanceUpdate('tramo_c', parseInt(e.target.value))}
+                    onChange={(e) => { handleFamilyAllowanceUpdate('tramo_c', parseInt(e.target.value)); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <p className="mt-1 text-xs text-gray-500">

@@ -9,7 +9,8 @@
  * Principio SOLID: Single Responsibility - Una sola fuente de verdad
  */
 
-import { PayrollUnifiedCalculator, UnifiedLiquidationData, CalculationResult } from './PayrollUnifiedCalculator';
+import type { UnifiedLiquidationData } from './PayrollUnifiedCalculator';
+import { PayrollUnifiedCalculator } from './PayrollUnifiedCalculator';
 
 export interface PayrollDataSource {
   id: string;
@@ -83,7 +84,7 @@ export class PayrollDataCoherenceEngine {
     companyId: string,
     year: number,
     month: number,
-    dataSources: PayrollDataSource[]
+    dataSources: PayrollDataSource[],
   ): Promise<CoherenceValidation> {
 
     const discrepancies: CoherenceValidation['discrepancies'] = [];
@@ -114,7 +115,7 @@ export class PayrollDataCoherenceEngine {
             haberes_diff: sourceA.total_haberes - sourceB.total_haberes,
             descuentos_diff: sourceA.total_descuentos - sourceB.total_descuentos,
             liquido_diff: sourceA.total_liquido - sourceB.total_liquido,
-            severity
+            severity,
           });
         }
       }
@@ -150,7 +151,7 @@ export class PayrollDataCoherenceEngine {
       discrepancies,
       confidence_score: confidenceScore,
       recommended_action: recommendedAction,
-      auto_fixable: autoFixable
+      auto_fixable: autoFixable,
     };
   }
 
@@ -159,7 +160,7 @@ export class PayrollDataCoherenceEngine {
    */
   static async autoFixIncoherentData(
     liquidations: LiquidationData[],
-    targetSource: 'database' | 'interface' = 'database'
+    targetSource: 'database' | 'interface' = 'database',
   ): Promise<{
     success: boolean;
     fixed_liquidations: number;
@@ -198,7 +199,7 @@ export class PayrollDataCoherenceEngine {
           loan_deductions: liquidation.loan_deductions || 0,
           advance_payments: liquidation.advance_payments || 0,
           apv_amount: liquidation.apv_amount || 0,
-          other_deductions: liquidation.other_deductions || 0
+          other_deductions: liquidation.other_deductions || 0,
         };
 
         // Calcular valores correctos
@@ -236,9 +237,9 @@ export class PayrollDataCoherenceEngine {
       total_corrections: {
         haberes: Math.round(totalCorrections.haberes * 100) / 100,
         descuentos: Math.round(totalCorrections.descuentos * 100) / 100,
-        liquido: Math.round(totalCorrections.liquido * 100) / 100
+        liquido: Math.round(totalCorrections.liquido * 100) / 100,
       },
-      errors
+      errors,
     };
   }
 
@@ -250,7 +251,7 @@ export class PayrollDataCoherenceEngine {
     companyId: string,
     year: number,
     month: number,
-    sourceType: PayrollDataSource['source_type'] = 'calculation'
+    sourceType: PayrollDataSource['source_type'] = 'calculation',
   ): PayrollDataSource {
 
     let totalHaberes = 0;
@@ -279,7 +280,7 @@ export class PayrollDataCoherenceEngine {
         loan_deductions: liquidation.loan_deductions || 0,
         advance_payments: liquidation.advance_payments || 0,
         apv_amount: liquidation.apv_amount || 0,
-        other_deductions: liquidation.other_deductions || 0
+        other_deductions: liquidation.other_deductions || 0,
       };
 
       const result = PayrollUnifiedCalculator.calculateWithValidation(unifiedData);
@@ -298,7 +299,7 @@ export class PayrollDataCoherenceEngine {
       total_descuentos: Math.round(totalDescuentos * 100) / 100,
       total_liquido: Math.round(totalLiquido * 100) / 100,
       liquidations_count: liquidations.length,
-      last_updated: new Date().toISOString()
+      last_updated: new Date().toISOString(),
     };
   }
 
@@ -307,7 +308,7 @@ export class PayrollDataCoherenceEngine {
    */
   static generateCoherenceReport(
     validation: CoherenceValidation,
-    dataSources: PayrollDataSource[]
+    dataSources: PayrollDataSource[],
   ): {
     summary: string;
     details: string[];
@@ -328,7 +329,7 @@ export class PayrollDataCoherenceEngine {
       `Fuentes de datos analizadas: ${dataSources.length}`,
       `Score de confianza: ${validation.confidence_score}%`,
       `Discrepancias encontradas: ${validation.discrepancies.length}`,
-      `Auto-reparable: ${validation.auto_fixable ? 'Sí' : 'No'}`
+      `Auto-reparable: ${validation.auto_fixable ? 'Sí' : 'No'}`,
     ];
 
     if (validation.discrepancies.length > 0) {
@@ -349,14 +350,14 @@ export class PayrollDataCoherenceEngine {
           validation.recommended_action,
           'Ejecutar PayrollDataCoherenceEngine.autoFixIncoherentData()',
           'Regenerar cache de interface con datos corregidos',
-          'Verificar coherencia post-corrección'
+          'Verificar coherencia post-corrección',
         ];
 
     return {
       summary,
       details,
       action_plan: actionPlan,
-      confidence_level: confidenceLevel
+      confidence_level: confidenceLevel,
     };
   }
 
@@ -367,7 +368,7 @@ export class PayrollDataCoherenceEngine {
     testCompanyIds: string[],
     year: number,
     month: number,
-    supabaseClient: any
+    supabaseClient: any,
   ): Promise<{
     correct_company_id: string | null;
     liquidations_found: number;
@@ -385,14 +386,14 @@ export class PayrollDataCoherenceEngine {
 
         if (!error && liquidations && liquidations.length > 0) {
           const hasRealData = liquidations.some(liq =>
-            liq.total_gross_income && liq.total_gross_income > 0
+            liq.total_gross_income && liq.total_gross_income > 0,
           );
 
           if (hasRealData) {
             return {
               correct_company_id: companyId,
               liquidations_found: liquidations.length,
-              confidence: 95
+              confidence: 95,
             };
           }
         }
@@ -404,7 +405,7 @@ export class PayrollDataCoherenceEngine {
     return {
       correct_company_id: null,
       liquidations_found: 0,
-      confidence: 0
+      confidence: 0,
     };
   }
 }
@@ -414,13 +415,13 @@ export class PayrollDataCoherenceEngine {
  * Resuelve automáticamente el company_id correcto para evitar datos demo
  */
 export class SmartCompanyIdResolver {
-  private static cache = new Map<string, string>();
+  private static readonly cache = new Map<string, string>();
 
   static async resolveCompanyId(
     requestedCompanyId: string,
     year: number,
     month: number,
-    supabaseClient: any
+    supabaseClient: any,
   ): Promise<string> {
 
     const cacheKey = `${requestedCompanyId}-${year}-${month}`;
@@ -443,7 +444,7 @@ export class SmartCompanyIdResolver {
           testIds,
           year,
           month,
-          supabaseClient
+          supabaseClient,
         );
 
         if (detection.correct_company_id) {

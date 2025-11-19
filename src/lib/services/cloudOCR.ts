@@ -1,7 +1,5 @@
 // Integraciones con servicios cloud para OCR avanzado
 
-import { extractF29CodesFromText } from './pdfParser';
-
 // Tesseract.js - OCR gratuito que funciona en el navegador
 export async function parseWithTesseract(file: File): Promise<any> {
   try {
@@ -42,25 +40,25 @@ export function extractTextFromBinaryPDF(content: string): any {
     codigo538: [
       /538[\x00-\x20\x30-\x39\x2E\x2C]{10,50}([0-9]{4,10})/g,
       /Débito[\s\S]{0,100}?([0-9]{6,})/gi,
-      /Debito[\s\S]{0,100}?([0-9]{6,})/gi
+      /Debito[\s\S]{0,100}?([0-9]{6,})/gi,
     ],
     codigo511: [
       /511[\x00-\x20\x30-\x39\x2E\x2C]{10,50}([0-9]{4,10})/g,
       /Crédito[\s\S]{0,100}?([0-9]{6,})/gi,
-      /Credito[\s\S]{0,100}?([0-9]{6,})/gi
+      /Credito[\s\S]{0,100}?([0-9]{6,})/gi,
     ],
     codigo062: [
       /062[\x00-\x20\x30-\x39\x2E\x2C]{10,50}([0-9]{4,10})/g,
-      /PPM[\s\S]{0,100}?([0-9]{6,})/gi
+      /PPM[\s\S]{0,100}?([0-9]{6,})/gi,
     ],
     codigo077: [
       /077[\x00-\x20\x30-\x39\x2E\x2C]{10,50}([0-9]{4,10})/g,
-      /Remanente[\s\S]{0,100}?([0-9]{6,})/gi
+      /Remanente[\s\S]{0,100}?([0-9]{6,})/gi,
     ],
     codigo563: [
       /563[\x00-\x20\x30-\x39\x2E\x2C]{10,50}([0-9]{4,10})/g,
-      /Ventas[\s\S]{0,100}?([0-9]{6,})/gi
-    ]
+      /Ventas[\s\S]{0,100}?([0-9]{6,})/gi,
+    ],
   };
   
   // Buscar con patrones binarios
@@ -97,8 +95,8 @@ export async function parseWithAWSTextract(file: File) {
     region: 'us-east-1',
     credentials: {
       accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
-    }
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    },
   };
   
   // Código para usar AWS Textract
@@ -151,25 +149,25 @@ async function parseWithLocalChileanPatterns(file: File): Promise<any> {
     amounts: {
       codigo538: [
         /Código\s*538[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi,
-        /Débito\s*Fiscal[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi
+        /Débito\s*Fiscal[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi,
       ],
       codigo511: [
         /Código\s*511[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi,
-        /Crédito\s*Fiscal[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi
+        /Crédito\s*Fiscal[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi,
       ],
       codigo062: [
         /Código\s*062[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi,
-        /P\.?P\.?M\.?[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi
+        /P\.?P\.?M\.?[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi,
       ],
       codigo077: [
         /Código\s*077[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi,
-        /Remanente[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi
+        /Remanente[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi,
       ],
       codigo563: [
         /Código\s*563[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi,
-        /Ventas\s*Netas[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi
-      ]
-    }
+        /Ventas\s*Netas[\s\S]{0,50}?\$?\s*([0-9]{1,3}(?:\.[0-9]{3})*)/gi,
+      ],
+    },
   };
   
   // Verificar si es documento chileno

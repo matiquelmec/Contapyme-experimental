@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { supabase } from '@/lib/database/supabaseConfig';
 
 export const dynamic = 'force-dynamic';
@@ -12,7 +14,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json({ 
         success: false, 
-        error: 'company_id es requerido' 
+        error: 'company_id es requerido', 
       }, { status: 400 });
     }
 
@@ -35,21 +37,21 @@ export async function GET(request: NextRequest) {
               tax_name: 'IVA 19%',
               tax_rate: 19.0,
               is_active: true,
-              message: 'Configuración por defecto (tabla no creada aún)'
-            }
+              message: 'Configuración por defecto (tabla no creada aún)',
+            },
           ],
           stats: {
             total_configurations: 1,
             active_configurations: 1,
-            message: 'Datos por defecto - crear tabla para configuraciones reales'
+            message: 'Datos por defecto - crear tabla para configuraciones reales',
           },
-          count: 1
+          count: 1,
         });
       }
       
       return NextResponse.json({ 
         success: false, 
-        error: 'Error al obtener configuraciones: ' + error.message 
+        error: `Error al obtener configuraciones: ${  error.message}`, 
       }, { status: 500 });
     }
 
@@ -65,14 +67,14 @@ export async function GET(request: NextRequest) {
       success: true, 
       data: configurations || [],
       stats: stats || {},
-      count: configurations?.length || 0
+      count: configurations?.length || 0,
     });
 
   } catch (error) {
     console.error('Error in GET tax configurations:', error);
     return NextResponse.json({ 
       success: false, 
-      error: 'Error interno del servidor' 
+      error: 'Error interno del servidor', 
     }, { status: 500 });
   }
 }
@@ -90,14 +92,14 @@ export async function POST(request: NextRequest) {
       sales_account_code,
       sales_account_name,
       purchases_account_code,
-      purchases_account_name
+      purchases_account_name,
     } = body;
 
     // Validaciones básicas
     if (!company_id || !tax_type || !tax_name) {
       return NextResponse.json({ 
         success: false, 
-        error: 'company_id, tax_type y tax_name son requeridos' 
+        error: 'company_id, tax_type y tax_name son requeridos', 
       }, { status: 400 });
     }
 
@@ -112,7 +114,7 @@ export async function POST(request: NextRequest) {
     if (existing) {
       return NextResponse.json({ 
         success: false, 
-        error: `Ya existe una configuración para el impuesto ${tax_name}` 
+        error: `Ya existe una configuración para el impuesto ${tax_name}`, 
       }, { status: 409 });
     }
 
@@ -128,7 +130,7 @@ export async function POST(request: NextRequest) {
         sales_account_name,
         purchases_account_code,
         purchases_account_name,
-        is_active: true
+        is_active: true,
       })
       .select()
       .single();
@@ -137,21 +139,21 @@ export async function POST(request: NextRequest) {
       console.error('Error creating tax configuration:', error);
       return NextResponse.json({ 
         success: false, 
-        error: 'Error al crear configuración: ' + error.message 
+        error: `Error al crear configuración: ${  error.message}`, 
       }, { status: 500 });
     }
 
     return NextResponse.json({ 
       success: true, 
       data: newConfig,
-      message: `Configuración de ${tax_name} creada exitosamente` 
+      message: `Configuración de ${tax_name} creada exitosamente`, 
     });
 
   } catch (error) {
     console.error('Error in POST tax configurations:', error);
     return NextResponse.json({ 
       success: false, 
-      error: 'Error interno del servidor' 
+      error: 'Error interno del servidor', 
     }, { status: 500 });
   }
 }
@@ -169,13 +171,13 @@ export async function PUT(request: NextRequest) {
       sales_account_name,
       purchases_account_code,
       purchases_account_name,
-      is_active
+      is_active,
     } = body;
 
     if (!id) {
       return NextResponse.json({ 
         success: false, 
-        error: 'ID de configuración es requerido' 
+        error: 'ID de configuración es requerido', 
       }, { status: 400 });
     }
 
@@ -189,7 +191,7 @@ export async function PUT(request: NextRequest) {
         sales_account_name,
         purchases_account_code,
         purchases_account_name,
-        is_active: is_active !== undefined ? is_active : true
+        is_active: is_active !== undefined ? is_active : true,
       })
       .eq('id', id)
       .select()
@@ -199,28 +201,28 @@ export async function PUT(request: NextRequest) {
       console.error('Error updating tax configuration:', error);
       return NextResponse.json({ 
         success: false, 
-        error: 'Error al actualizar configuración: ' + error.message 
+        error: `Error al actualizar configuración: ${  error.message}`, 
       }, { status: 500 });
     }
 
     if (!updatedConfig) {
       return NextResponse.json({ 
         success: false, 
-        error: 'Configuración no encontrada' 
+        error: 'Configuración no encontrada', 
       }, { status: 404 });
     }
 
     return NextResponse.json({ 
       success: true, 
       data: updatedConfig,
-      message: `Configuración de ${tax_name} actualizada exitosamente` 
+      message: `Configuración de ${tax_name} actualizada exitosamente`, 
     });
 
   } catch (error) {
     console.error('Error in PUT tax configurations:', error);
     return NextResponse.json({ 
       success: false, 
-      error: 'Error interno del servidor' 
+      error: 'Error interno del servidor', 
     }, { status: 500 });
   }
 }
@@ -235,7 +237,7 @@ export async function DELETE(request: NextRequest) {
     if (!id) {
       return NextResponse.json({ 
         success: false, 
-        error: 'ID de configuración es requerido' 
+        error: 'ID de configuración es requerido', 
       }, { status: 400 });
     }
 
@@ -250,7 +252,7 @@ export async function DELETE(request: NextRequest) {
         console.error('Error deleting tax configuration:', error);
         return NextResponse.json({ 
           success: false, 
-          error: 'Error al eliminar configuración: ' + error.message 
+          error: `Error al eliminar configuración: ${  error.message}`, 
         }, { status: 500 });
       }
     } else {
@@ -264,21 +266,21 @@ export async function DELETE(request: NextRequest) {
         console.error('Error deactivating tax configuration:', error);
         return NextResponse.json({ 
           success: false, 
-          error: 'Error al desactivar configuración: ' + error.message 
+          error: `Error al desactivar configuración: ${  error.message}`, 
         }, { status: 500 });
       }
     }
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Configuración eliminada exitosamente' 
+      message: 'Configuración eliminada exitosamente', 
     });
 
   } catch (error) {
     console.error('Error in DELETE tax configurations:', error);
     return NextResponse.json({ 
       success: false, 
-      error: 'Error interno del servidor' 
+      error: 'Error interno del servidor', 
     }, { status: 500 });
   }
 }

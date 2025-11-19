@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection, isSupabaseConfigured } from '@/lib/database/databaseSimple';
 import { SettlementCalculator } from '@/lib/services/settlementCalculator';
 
@@ -11,7 +13,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -23,23 +25,23 @@ export async function GET(request: NextRequest) {
           {
             type: 'notice_letter',
             name: 'Carta de Aviso',
-            description: 'Carta de aviso previo según normativa laboral'
+            description: 'Carta de aviso previo según normativa laboral',
           },
           {
             type: 'settlement',
             name: 'Finiquito',
-            description: 'Documento de finiquito con cálculos completos'
-          }
+            description: 'Documento de finiquito con cálculos completos',
+          },
         ],
-        message: 'Documentos disponibles para generar'
-      }
+        message: 'Documentos disponibles para generar',
+      },
     });
 
   } catch (error) {
     console.error('Error in GET /api/payroll/terminations/documents:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -53,14 +55,14 @@ export async function POST(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!isSupabaseConfigured()) {
       return NextResponse.json(
         { success: false, error: 'Base de datos no configurada' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -68,7 +70,7 @@ export async function POST(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { success: false, error: 'Error de configuración de base de datos' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -87,7 +89,7 @@ export async function POST(request: NextRequest) {
       console.error('Error fetching termination:', terminationError);
       return NextResponse.json(
         { success: false, error: 'Finiquito no encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -102,7 +104,7 @@ export async function POST(request: NextRequest) {
       console.error('Error fetching employee:', employeeError);
       return NextResponse.json(
         { success: false, error: 'Empleado no encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -118,7 +120,7 @@ export async function POST(request: NextRequest) {
     if (!contract) {
       return NextResponse.json(
         { success: false, error: 'Contrato no encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -132,7 +134,7 @@ export async function POST(request: NextRequest) {
     if (companyError || !company) {
       return NextResponse.json(
         { success: false, error: 'Empresa no encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -150,7 +152,7 @@ export async function POST(request: NextRequest) {
         weekly_hours: contract.weekly_hours || 45,
         termination_date: new Date(termination.termination_date),
         termination_cause_code: termination.termination_cause_code,
-        last_work_date: new Date(termination.termination_date) // Asumimos mismo día si no se especifica
+        last_work_date: new Date(termination.termination_date), // Asumimos mismo día si no se especifica
       },
       termination_cause: {
         article_code: termination.termination_cause_code,
@@ -160,7 +162,7 @@ export async function POST(request: NextRequest) {
         requires_severance: termination.severance_amount > 0,
         severance_calculation_type: null,
         is_with_just_cause: false,
-        category: 'employer_initiative'
+        category: 'employer_initiative',
       },
       years_of_service: termination.severance_years_service || 0,
       months_of_service: 0,
@@ -186,7 +188,7 @@ export async function POST(request: NextRequest) {
       final_net_amount: termination.final_net_amount,
       calculation_warnings: [],
       legal_references: [],
-      calculation_date: new Date(termination.created_at)
+      calculation_date: new Date(termination.created_at),
     };
 
     // 4. Generar documento según tipo solicitado
@@ -217,7 +219,7 @@ export async function POST(request: NextRequest) {
     } else {
       return NextResponse.json(
         { success: false, error: 'Tipo de documento no válido. Use "notice_letter" o "settlement"' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -234,15 +236,15 @@ export async function POST(request: NextRequest) {
         employee_name: `${employee.first_name} ${employee.last_name}`,
         employee_rut: employee.rut,
         company_name: company.name,
-        termination_date: termination.termination_date
-      }
+        termination_date: termination.termination_date,
+      },
     });
 
   } catch (error) {
     console.error('Error in POST /api/payroll/terminations/documents:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -383,7 +385,7 @@ function generateDocumentHTML(content: string, title: string, company: any): str
         ${new Date().toLocaleDateString('es-CL', { 
           year: 'numeric', 
           month: 'long', 
-          day: 'numeric' 
+          day: 'numeric', 
         })}
     </div>
     

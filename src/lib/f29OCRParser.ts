@@ -68,7 +68,7 @@ function extractF29Codes(text: string): Partial<F29Data> {
     codigo547: 0,
     codigo562: 0,
     codigo563: 0,
-    codigo595: 0
+    codigo595: 0,
   };
 
   // Patrones simples para información básica
@@ -97,7 +97,7 @@ function extractF29Codes(text: string): Partial<F29Data> {
     codigo547: /547.*?TOTAL.*?DETERMINADO.*?(\d{1,3}(?:[.,]\d{3})*)/i,
     codigo562: /562.*?SIN.*?DERECHO.*?(\d{1,3}(?:[.,]\d{3})*)/i,
     codigo563: /563.*?VENTAS.*?NETAS.*?(\d{1,3}(?:[.,]\d{3})*)/i,
-    codigo595: /595.*?SUBTOTAL.*?(\d{1,3}(?:[.,]\d{3})*)/i
+    codigo595: /595.*?SUBTOTAL.*?(\d{1,3}(?:[.,]\d{3})*)/i,
   };
 
   // Extraer cada código
@@ -131,7 +131,7 @@ export async function parseF29WithOCR(pdfBuffer: Buffer): Promise<F29Data> {
 
     // Verificar que encontramos datos
     const codesFound = Object.values(extractedData).filter(v =>
-      typeof v === 'number' && v > 0
+      typeof v === 'number' && v > 0,
     ).length;
 
     if (codesFound === 0) {
@@ -143,7 +143,7 @@ export async function parseF29WithOCR(pdfBuffer: Buffer): Promise<F29Data> {
     return {
       ...extractedData,
       confidence: Math.min(90, codesFound * 10), // Más códigos = más confianza
-      method: 'PDF Text Extract'
+      method: 'PDF Text Extract',
     } as F29Data;
 
   } catch (error) {

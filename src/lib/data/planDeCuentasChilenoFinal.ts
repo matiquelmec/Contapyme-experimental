@@ -7,7 +7,7 @@
 // 4. Ingresos (4.1 Operacionales, 4.2 No Operacionales)
 // ==========================================
 
-import { Account } from '@/types';
+import type { Account } from '@/types';
 
 export const planDeCuentasChilenoFinal: Account[] = [
   {
@@ -47,7 +47,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.1.01.002',
@@ -57,7 +57,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.1.01.003',
@@ -67,7 +67,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.1.01.004',
@@ -77,7 +77,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.1.01.005',
@@ -87,9 +87,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '1.1.02',
@@ -109,9 +109,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.02',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '1.1.03',
@@ -131,9 +131,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.03',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '1.1.04',
@@ -153,7 +153,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.04',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.1.04.002',
@@ -163,7 +163,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.04',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.1.04.003',
@@ -173,9 +173,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.04',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '1.1.05',
@@ -185,7 +185,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '1.1',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '1.1.06',
@@ -205,7 +205,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.06',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.1.06.002',
@@ -215,7 +215,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.06',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.1.06.003',
@@ -225,7 +225,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.06',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.1.06.004',
@@ -235,7 +235,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.06',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.1.06.005',
@@ -245,9 +245,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.1.06',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '1.1.07',
@@ -257,7 +257,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '1.1',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '1.1.08',
@@ -267,9 +267,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '1.1',
             level: 3,
             is_active: true,
-            is_detail: true
-          }
-        ]
+            is_detail: true,
+          },
+        ],
       },
       {
         id: '1.2',
@@ -299,7 +299,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.2.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.2.01.002',
@@ -309,7 +309,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.2.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.2.01.003',
@@ -319,7 +319,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.2.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.2.01.004',
@@ -329,7 +329,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.2.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.2.01.005',
@@ -339,7 +339,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.2.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.2.01.101',
@@ -349,7 +349,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.2.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.2.01.102',
@@ -359,7 +359,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.2.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.2.01.103',
@@ -369,7 +369,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.2.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.2.01.104',
@@ -379,7 +379,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.2.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '1.2.01.105',
@@ -389,9 +389,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '1.2.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '1.2.02',
@@ -401,7 +401,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '1.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '1.2.03',
@@ -411,7 +411,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '1.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '1.2.04',
@@ -421,7 +421,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '1.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '1.2.05',
@@ -431,7 +431,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '1.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '1.2.06',
@@ -441,11 +441,11 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '1.2',
             level: 3,
             is_active: true,
-            is_detail: true
-          }
-        ]
-      }
-    ]
+            is_detail: true,
+          },
+        ],
+      },
+    ],
   },
   {
     id: '2',
@@ -474,7 +474,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.1',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.1.02',
@@ -484,7 +484,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.1',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.1.03',
@@ -504,7 +504,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.1.03',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '2.1.03.002',
@@ -514,7 +514,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.1.03',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '2.1.03.003',
@@ -524,9 +524,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.1.03',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '2.1.04',
@@ -546,9 +546,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.1.04',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '2.1.05',
@@ -558,7 +558,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.1',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.1.06',
@@ -568,7 +568,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.1',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.1.07',
@@ -588,7 +588,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.1.07',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '2.1.07.002',
@@ -598,7 +598,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.1.07',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '2.1.07.003',
@@ -608,7 +608,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.1.07',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '2.1.07.004',
@@ -618,7 +618,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.1.07',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '2.1.07.005',
@@ -628,7 +628,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.1.07',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '2.1.07.006',
@@ -638,7 +638,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.1.07',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '2.1.07.007',
@@ -648,9 +648,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.1.07',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '2.1.08',
@@ -660,7 +660,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.1',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.1.09',
@@ -670,7 +670,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.1',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.1.10',
@@ -680,7 +680,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.1',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.1.11',
@@ -690,7 +690,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.1',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.1.12',
@@ -700,9 +700,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.1',
             level: 3,
             is_active: true,
-            is_detail: true
-          }
-        ]
+            is_detail: true,
+          },
+        ],
       },
       {
         id: '2.2',
@@ -722,7 +722,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.2.02',
@@ -732,7 +732,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.2.03',
@@ -742,7 +742,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.2.04',
@@ -752,7 +752,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.2.05',
@@ -762,7 +762,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.2.06',
@@ -772,7 +772,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.2.07',
@@ -782,7 +782,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.2.08',
@@ -802,9 +802,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.2.08',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '2.2.09',
@@ -814,9 +814,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.2',
             level: 3,
             is_active: true,
-            is_detail: true
-          }
-        ]
+            is_detail: true,
+          },
+        ],
       },
       {
         id: '2.3',
@@ -846,7 +846,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.3.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '2.3.01.002',
@@ -856,9 +856,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.3.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '2.3.02',
@@ -868,7 +868,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.3',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.3.03',
@@ -888,9 +888,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.3.03',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '2.3.04',
@@ -900,7 +900,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.3',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.3.05',
@@ -910,7 +910,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '2.3',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '2.3.06',
@@ -930,9 +930,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.3.06',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '2.3.07',
@@ -952,13 +952,13 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '2.3.07',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
-          }
-        ]
-      }
-    ]
+                is_detail: true,
+              },
+            ],
+          },
+        ],
+      },
+    ],
   },
   {
     id: '3',
@@ -997,7 +997,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.1.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '3.1.01.002',
@@ -1007,7 +1007,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.1.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '3.1.01.003',
@@ -1017,9 +1017,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.1.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '3.1.02',
@@ -1039,7 +1039,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.1.02',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '3.1.02.002',
@@ -1049,7 +1049,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.1.02',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '3.1.02.003',
@@ -1059,7 +1059,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.1.02',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '3.1.02.004',
@@ -1069,7 +1069,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.1.02',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '3.1.02.005',
@@ -1079,7 +1079,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.1.02',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '3.1.02.006',
@@ -1089,7 +1089,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.1.02',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '3.1.02.007',
@@ -1099,7 +1099,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.1.02',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '3.1.02.008',
@@ -1109,9 +1109,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.1.02',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '3.1.03',
@@ -1121,9 +1121,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '3.1',
             level: 3,
             is_active: true,
-            is_detail: true
-          }
-        ]
+            is_detail: true,
+          },
+        ],
       },
       {
         id: '3.2',
@@ -1153,7 +1153,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.2.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '3.2.01.002',
@@ -1163,7 +1163,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.2.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
+                is_detail: true,
               },
               {
                 id: '3.2.01.003',
@@ -1173,9 +1173,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.2.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '3.2.02',
@@ -1195,9 +1195,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.2.02',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '3.2.03',
@@ -1207,7 +1207,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '3.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '3.2.04',
@@ -1217,7 +1217,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '3.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '3.2.05',
@@ -1237,13 +1237,13 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '3.2.05',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
-          }
-        ]
-      }
-    ]
+                is_detail: true,
+              },
+            ],
+          },
+        ],
+      },
+    ],
   },
   {
     id: '4',
@@ -1282,11 +1282,11 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '4.1.01',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
-          }
-        ]
+                is_detail: true,
+              },
+            ],
+          },
+        ],
       },
       {
         id: '4.2',
@@ -1306,7 +1306,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '4.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '4.2.02',
@@ -1316,7 +1316,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '4.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '4.2.03',
@@ -1326,7 +1326,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '4.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '4.2.04',
@@ -1336,7 +1336,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '4.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '4.2.05',
@@ -1356,9 +1356,9 @@ export const planDeCuentasChilenoFinal: Account[] = [
                 parent_id: '4.2.05',
                 level: 4,
                 is_active: true,
-                is_detail: true
-              }
-            ]
+                is_detail: true,
+              },
+            ],
           },
           {
             id: '4.2.06',
@@ -1368,7 +1368,7 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '4.2',
             level: 3,
             is_active: true,
-            is_detail: true
+            is_detail: true,
           },
           {
             id: '4.2.07',
@@ -1378,10 +1378,10 @@ export const planDeCuentasChilenoFinal: Account[] = [
             parent_id: '4.2',
             level: 3,
             is_active: true,
-            is_detail: true
-          }
-        ]
-      }
-    ]
-  }
+            is_detail: true,
+          },
+        ],
+      },
+    ],
+  },
 ];

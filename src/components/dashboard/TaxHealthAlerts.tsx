@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, Badge, Button } from '@/components/ui'
+
 import {
   Shield,
   AlertTriangle,
@@ -11,8 +11,10 @@ import {
   FileText,
   Users,
   ExternalLink,
-  RefreshCw
+  RefreshCw,
 } from 'lucide-react'
+
+import { Card, CardContent, Badge, Button } from '@/components/ui'
 
 interface TaxAlert {
   id: string
@@ -44,7 +46,7 @@ export function TaxHealthAlerts() {
 
     // Auto-refresh cada 30 minutos
     const interval = setInterval(loadTaxHealthData, 1800000)
-    return () => clearInterval(interval)
+    return () => { clearInterval(interval); }
   }, [])
 
   const loadTaxHealthData = async () => {
@@ -69,7 +71,7 @@ export function TaxHealthAlerts() {
               description: 'Los libros RCV coinciden con las declaraciones F29 del último período',
               actionRequired: false,
               lastChecked: currentTime,
-              details: ['Débito Fiscal: Concordancia 100%', 'Crédito Fiscal: Concordancia 100%']
+              details: ['Débito Fiscal: Concordancia 100%', 'Crédito Fiscal: Concordancia 100%'],
             },
             {
               id: '2',
@@ -79,7 +81,7 @@ export function TaxHealthAlerts() {
               description: 'Sin observaciones pendientes del Servicio de Impuestos Internos',
               actionRequired: false,
               lastChecked: currentTime,
-              details: ['Última declaración F29: Sin observaciones', 'Estado del contribuyente: Normal']
+              details: ['Última declaración F29: Sin observaciones', 'Estado del contribuyente: Normal'],
             },
             {
               id: '3',
@@ -94,8 +96,8 @@ export function TaxHealthAlerts() {
               details: [
                 'SERVICIOS TECNOLÓGICOS SPA (76.123.456-7)',
                 'COMERCIAL LOS ANDES LTDA (96.987.654-3)',
-                'TRANSPORTES RAPID S.A. (87.456.123-9)'
-              ]
+                'TRANSPORTES RAPID S.A. (87.456.123-9)',
+              ],
             },
             {
               id: '4',
@@ -107,11 +109,11 @@ export function TaxHealthAlerts() {
               actionUrl: '/accounting/f29-analysis',
               actionText: 'Ver Proyección IVA',
               lastChecked: currentTime,
-              details: ['Monto proyectado: $2.310.000', 'Fecha límite: 20 de diciembre']
-            }
+              details: ['Monto proyectado: $2.310.000', 'Fecha límite: 20 de diciembre'],
+            },
           ],
           lastFullCheck: currentTime,
-          nextAutoCheck: new Date(Date.now() + 1800000).toISOString() // 30 min
+          nextAutoCheck: new Date(Date.now() + 1800000).toISOString(), // 30 min
         })
       }
     } catch (error) {
@@ -126,10 +128,10 @@ export function TaxHealthAlerts() {
           title: 'Sistema Conectado',
           description: 'Monitoreo de salud tributaria activo',
           actionRequired: false,
-          lastChecked: new Date().toISOString()
+          lastChecked: new Date().toISOString(),
         }],
         lastFullCheck: new Date().toISOString(),
-        nextAutoCheck: new Date(Date.now() + 1800000).toISOString()
+        nextAutoCheck: new Date(Date.now() + 1800000).toISOString(),
       })
     } finally {
       setIsLoading(false)
@@ -201,11 +203,11 @@ export function TaxHealthAlerts() {
       <Card className="bg-gradient-to-br from-blue-50 to-indigo-100 border-blue-200">
         <CardContent className="p-6">
           <div className="animate-pulse">
-            <div className="h-6 bg-blue-200 rounded mb-4"></div>
+            <div className="h-6 bg-blue-200 rounded mb-4" />
             <div className="space-y-3">
-              <div className="h-16 bg-blue-200 rounded"></div>
-              <div className="h-16 bg-blue-200 rounded"></div>
-              <div className="h-16 bg-blue-200 rounded"></div>
+              <div className="h-16 bg-blue-200 rounded" />
+              <div className="h-16 bg-blue-200 rounded" />
+              <div className="h-16 bg-blue-200 rounded" />
             </div>
           </div>
         </CardContent>
@@ -300,7 +302,7 @@ export function TaxHealthAlerts() {
                           hour: '2-digit',
                           minute: '2-digit',
                           day: '2-digit',
-                          month: 'short'
+                          month: 'short',
                         })}
                       </p>
 
@@ -337,7 +339,7 @@ export function TaxHealthAlerts() {
               <p className="font-medium text-gray-700">Próxima verificación:</p>
               <p>{new Date(healthData.nextAutoCheck).toLocaleString('es-CL', {
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
               })}</p>
             </div>
           </div>

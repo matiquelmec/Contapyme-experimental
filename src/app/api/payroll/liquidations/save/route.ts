@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection, isSupabaseConfigured } from '@/lib/database/databaseSimple';
 
 export async function POST(request: NextRequest) {
@@ -15,9 +17,9 @@ export async function POST(request: NextRequest) {
         { 
           success: false, 
           error: 'Base de datos no configurada. Verifica SUPABASE_SERVICE_ROLE_KEY en variables de entorno.',
-          code: 'SUPABASE_NOT_CONFIGURED'
+          code: 'SUPABASE_NOT_CONFIGURED',
         },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -25,14 +27,14 @@ export async function POST(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { success: false, error: 'Error de configuración de base de datos', code: 'DB_CONNECTION_ERROR' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -55,9 +57,9 @@ export async function POST(request: NextRequest) {
         { 
           success: false, 
           error: 'Tabla payroll_liquidations no existe en la base de datos',
-          details: tableError.message 
+          details: tableError.message, 
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -75,9 +77,9 @@ export async function POST(request: NextRequest) {
         { 
           success: false, 
           error: 'Empleado no encontrado',
-          details: employeeError?.message || 'Employee not found'
+          details: employeeError?.message || 'Employee not found',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -99,9 +101,9 @@ export async function POST(request: NextRequest) {
         { 
           success: false, 
           error: 'Error verificando liquidación existente',
-          details: existingError.message 
+          details: existingError.message, 
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -111,7 +113,7 @@ export async function POST(request: NextRequest) {
       console.log('🔄 Liquidación existente encontrada, actualizando...', {
         existingId: existing.id,
         employeeId: liquidationData.employee_id,
-        period: `${liquidationData.period_year}-${liquidationData.period_month}`
+        period: `${liquidationData.period_year}-${liquidationData.period_month}`,
       });
       
       console.log('🔍 API SAVE - Data to be updated:', JSON.stringify({ ...liquidationData, updated_at: new Date().toISOString() }, null, 2));
@@ -121,7 +123,7 @@ export async function POST(request: NextRequest) {
         .from('payroll_liquidations')
         .update({
           ...liquidationData,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', existing.id)
         .select()
@@ -134,9 +136,9 @@ export async function POST(request: NextRequest) {
             success: false, 
             error: 'Error al actualizar liquidación',
             details: updateError.message,
-            code: updateError.code 
+            code: updateError.code, 
           },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -144,7 +146,7 @@ export async function POST(request: NextRequest) {
     } else {
       console.log('🆕 Creando nueva liquidación...', {
         employeeId: liquidationData.employee_id,
-        period: `${liquidationData.period_year}-${liquidationData.period_month}`
+        period: `${liquidationData.period_year}-${liquidationData.period_month}`,
       });
       
       // Crear nueva liquidación
@@ -156,7 +158,7 @@ export async function POST(request: NextRequest) {
           status: 'draft', // SIEMPRE DRAFT - Aprobación manual requerida
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-          generated_by: null // ✅ CORREGIDO: NULL en lugar de company_id que no existe en users
+          generated_by: null, // ✅ CORREGIDO: NULL en lugar de company_id que no existe en users
         })
         .select()
         .single();
@@ -168,9 +170,9 @@ export async function POST(request: NextRequest) {
             success: false, 
             error: 'Error al crear liquidación',
             details: createError.message,
-            code: createError.code
+            code: createError.code,
           },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -191,14 +193,14 @@ export async function POST(request: NextRequest) {
       data: savedLiquidation,
       message: existing 
         ? 'Liquidación actualizada exitosamente'
-        : 'Liquidación guardada exitosamente'
+        : 'Liquidación guardada exitosamente',
     });
 
   } catch (error) {
     console.error('Error in POST /api/payroll/liquidations/save:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -276,7 +278,7 @@ async function updatePayrollBook(companyId: string, year: number, month: number)
           total_haberes: totalHaberes,
           total_descuentos: totalDescuentos,
           total_liquido: totalLiquido,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', existingBook.id);
 
@@ -302,7 +304,7 @@ async function updatePayrollBook(companyId: string, year: number, month: number)
         .order('book_number', { ascending: false })
         .limit(1);
 
-      const bookNumber = (lastBook && lastBook[0]?.book_number || 0) + 1;
+      const bookNumber = (lastBook?.[0]?.book_number || 0) + 1;
 
       const { data: newBook, error: bookError } = await supabase
         .from('payroll_books')
@@ -317,7 +319,7 @@ async function updatePayrollBook(companyId: string, year: number, month: number)
           total_employees: totalEmployees,
           total_haberes: totalHaberes,
           total_descuentos: totalDescuentos,
-          total_liquido: totalLiquido
+          total_liquido: totalLiquido,
         })
         .select('id')
         .single();
@@ -360,7 +362,7 @@ async function updatePayrollBook(companyId: string, year: number, month: number)
         cesantia: liquidation.unemployment_amount || 0,
         impuesto_unico: liquidation.income_tax_amount || 0,
         total_descuentos: liquidation.total_deductions || 0,
-        sueldo_liquido: liquidation.net_salary || 0
+        sueldo_liquido: liquidation.net_salary || 0,
       };
     });
 
@@ -393,7 +395,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -401,7 +403,7 @@ export async function GET(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { success: false, error: 'Error de configuración de base de datos' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -438,20 +440,20 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching liquidations:', error);
       return NextResponse.json(
         { success: false, error: 'Error al obtener liquidaciones' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     return NextResponse.json({
       success: true,
-      data: liquidations || []
+      data: liquidations || [],
     });
 
   } catch (error) {
     console.error('Error in GET /api/payroll/liquidations/save:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

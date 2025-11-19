@@ -1,9 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
 import Link from 'next/link'
-import { Card, CardContent, Button } from '@/components/ui'
-import { TrendingUp, ChevronRight, DollarSign, Users, FileText, BarChart3, Activity, AlertCircle } from 'lucide-react'
+
+import { TrendingUp, ChevronRight, DollarSign, Users, FileText, BarChart3, Activity } from 'lucide-react'
+
+import { Card, CardContent } from '@/components/ui'
 
 interface ModuleMetrics {
   totalF29: number
@@ -45,7 +48,7 @@ export function InteractiveModulePreview({ type, className = '' }: ModulePreview
               avgSalary: 0,
               totalFixedAssets: data.data.modules.fixedAssets.totalAssets,
               totalAssetsValue: data.data.modules.fixedAssets.totalValue,
-              depreciation: data.data.modules.fixedAssets.monthlyDepreciation
+              depreciation: data.data.modules.fixedAssets.monthlyDepreciation,
             })
           } else {
             setMetrics({
@@ -57,7 +60,7 @@ export function InteractiveModulePreview({ type, className = '' }: ModulePreview
               avgSalary: data.data.modules.payroll.avgSalary,
               totalFixedAssets: 0,
               totalAssetsValue: 0,
-              depreciation: 0
+              depreciation: 0,
             })
           }
         } else {
@@ -72,7 +75,7 @@ export function InteractiveModulePreview({ type, className = '' }: ModulePreview
               avgSalary: 0,
               totalFixedAssets: 12,
               totalAssetsValue: 8500000,
-              depreciation: 125000
+              depreciation: 125000,
             })
           } else {
             setMetrics({
@@ -84,7 +87,7 @@ export function InteractiveModulePreview({ type, className = '' }: ModulePreview
               avgSalary: 720000,
               totalFixedAssets: 0,
               totalAssetsValue: 0,
-              depreciation: 0
+              depreciation: 0,
             })
           }
         }
@@ -101,7 +104,7 @@ export function InteractiveModulePreview({ type, className = '' }: ModulePreview
             avgSalary: 0,
             totalFixedAssets: 12,
             totalAssetsValue: 8500000,
-            depreciation: 125000
+            depreciation: 125000,
           })
         } else {
           setMetrics({
@@ -113,7 +116,7 @@ export function InteractiveModulePreview({ type, className = '' }: ModulePreview
             avgSalary: 720000,
             totalFixedAssets: 0,
             totalAssetsValue: 0,
-            depreciation: 0
+            depreciation: 0,
           })
         }
       } finally {
@@ -129,21 +132,17 @@ export function InteractiveModulePreview({ type, className = '' }: ModulePreview
       setLastUpdated(new Date())
     }, 30000)
 
-    return () => clearInterval(interval)
+    return () => { clearInterval(interval); }
   }, [type])
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount)
-  }
 
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('es-CL').format(num)
-  }
+  const formatNumber = (num: number) => new Intl.NumberFormat('es-CL').format(num)
 
   if (isLoading) {
     return (
@@ -161,7 +160,7 @@ export function InteractiveModulePreview({ type, className = '' }: ModulePreview
         <Card className={`${className} group hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 border-blue-200 hover:border-blue-400 bg-gradient-to-br from-blue-50 to-indigo-50 h-full relative overflow-hidden`}>
           {/* Live indicator */}
           <div className="absolute top-4 right-4 flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             <span className="text-xs text-gray-500">En vivo</span>
           </div>
 
@@ -228,7 +227,7 @@ export function InteractiveModulePreview({ type, className = '' }: ModulePreview
       <Card className={`${className} group hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 border-green-200 hover:border-green-400 bg-gradient-to-br from-green-50 to-emerald-50 h-full relative overflow-hidden`}>
         {/* Live indicator */}
         <div className="absolute top-4 right-4 flex items-center gap-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
           <span className="text-xs text-gray-500">En vivo</span>
         </div>
 

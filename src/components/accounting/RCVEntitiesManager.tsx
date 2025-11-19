@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import {
   Plus,
   Edit2,
@@ -9,8 +10,9 @@ import {
   Save,
   X,
   User,
-  FileText
+  FileText,
 } from 'lucide-react';
+
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
 
 // Interface para entidad RCV
@@ -81,7 +83,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
     default_tax_rate: 19.0,
     is_tax_exempt: false,
     notes: '',
-    is_active: true
+    is_active: true,
   });
 
   // Cargar cuentas del plan de cuentas
@@ -160,15 +162,15 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
       const requestData = {
         ...entityFormData,
         company_id: companyId,
-        ...(editingEntity && { id: editingEntity.id })
+        ...(editingEntity && { id: editingEntity.id }),
       };
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestData)
+        body: JSON.stringify(requestData),
       });
 
       const result = await response.json();
@@ -197,7 +199,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
 
     try {
       const response = await fetch(`/api/accounting/rcv-entities/${entityId}?company_id=${companyId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       const result = await response.json();
@@ -223,13 +225,13 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
       const response = await fetch('/api/accounting/rcv-entities', {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           id: entityId,
           company_id: companyId,
-          ...updatedData
-        })
+          ...updatedData,
+        }),
       });
 
       const result = await response.json();
@@ -266,7 +268,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
       default_tax_rate: 19.0,
       is_tax_exempt: false,
       notes: '',
-      is_active: true
+      is_active: true,
     });
   };
 
@@ -295,7 +297,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
           </div>
           <div className="flex gap-2">
             <Button 
-              onClick={() => setShowDiagnostics(!showDiagnostics)}
+              onClick={() => { setShowDiagnostics(!showDiagnostics); }}
               variant="outline"
               size="sm"
               className="border-yellow-200 hover:bg-yellow-50 text-yellow-700"
@@ -384,7 +386,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                 type="text"
                 placeholder="Buscar por nombre, RUT o razón social..."
                 value={entitySearchTerm}
-                onChange={(e) => setEntitySearchTerm(e.target.value)}
+                onChange={(e) => { setEntitySearchTerm(e.target.value); }}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               />
             </div>
@@ -392,7 +394,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
           <div className="flex gap-2">
             <select
               value={entityTypeFilter}
-              onChange={(e) => setEntityTypeFilter(e.target.value)}
+              onChange={(e) => { setEntityTypeFilter(e.target.value); }}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
             >
               <option value="all">Todos los tipos</option>
@@ -406,7 +408,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
         {/* Lista de entidades */}
         {loadingEntities ? (
           <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600" />
             <span className="ml-2 text-gray-600">Cargando entidades RCV...</span>
           </div>
         ) : (
@@ -463,7 +465,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                               default_tax_rate: entity.default_tax_rate,
                               is_tax_exempt: entity.is_tax_exempt,
                               notes: entity.notes || '',
-                              is_active: entity.is_active
+                              is_active: entity.is_active,
                             });
                             setShowEntityForm(true);
                           }}
@@ -562,7 +564,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                   <input
                     type="text"
                     value={entityFormData.entity_name}
-                    onChange={(e) => setEntityFormData({...entityFormData, entity_name: e.target.value})}
+                    onChange={(e) => { setEntityFormData({ ...entityFormData, entity_name: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     placeholder="Ej: Ferretería Central Ltda."
                   />
@@ -575,7 +577,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                   <input
                     type="text"
                     value={entityFormData.entity_rut}
-                    onChange={(e) => setEntityFormData({...entityFormData, entity_rut: e.target.value})}
+                    onChange={(e) => { setEntityFormData({ ...entityFormData, entity_rut: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     placeholder="12.345.678-9"
                   />
@@ -587,7 +589,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                   </label>
                   <select
                     value={entityFormData.entity_type}
-                    onChange={(e) => setEntityFormData({...entityFormData, entity_type: e.target.value as 'supplier' | 'customer' | 'both'})}
+                    onChange={(e) => { setEntityFormData({ ...entityFormData, entity_type: e.target.value as 'supplier' | 'customer' | 'both' }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                   >
                     <option value="supplier">Proveedor</option>
@@ -603,7 +605,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                   <input
                     type="text"
                     value={entityFormData.legal_name}
-                    onChange={(e) => setEntityFormData({...entityFormData, legal_name: e.target.value})}
+                    onChange={(e) => { setEntityFormData({ ...entityFormData, legal_name: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     placeholder="Nombre legal completo"
                   />
@@ -619,7 +621,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                   <input
                     type="email"
                     value={entityFormData.email}
-                    onChange={(e) => setEntityFormData({...entityFormData, email: e.target.value})}
+                    onChange={(e) => { setEntityFormData({ ...entityFormData, email: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     placeholder="contacto@empresa.cl"
                   />
@@ -632,7 +634,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                   <input
                     type="tel"
                     value={entityFormData.phone}
-                    onChange={(e) => setEntityFormData({...entityFormData, phone: e.target.value})}
+                    onChange={(e) => { setEntityFormData({ ...entityFormData, phone: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     placeholder="+56 9 1234 5678"
                   />
@@ -646,7 +648,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                 <input
                   type="text"
                   value={entityFormData.address}
-                  onChange={(e) => setEntityFormData({...entityFormData, address: e.target.value})}
+                  onChange={(e) => { setEntityFormData({ ...entityFormData, address: e.target.value }); }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                   placeholder="Dirección completa"
                 />
@@ -668,7 +670,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                         setEntityFormData({
                           ...entityFormData, 
                           account_code: e.target.value,
-                          account_name: selectedAccount ? selectedAccount.name : ''
+                          account_name: selectedAccount ? selectedAccount.name : '',
                         });
                       }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
@@ -692,7 +694,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                       min="0"
                       max="100"
                       value={entityFormData.default_tax_rate}
-                      onChange={(e) => setEntityFormData({...entityFormData, default_tax_rate: parseFloat(e.target.value) || 0})}
+                      onChange={(e) => { setEntityFormData({ ...entityFormData, default_tax_rate: parseFloat(e.target.value) || 0 }); }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     />
                   </div>
@@ -703,7 +705,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                     type="checkbox"
                     id="is_tax_exempt"
                     checked={entityFormData.is_tax_exempt}
-                    onChange={(e) => setEntityFormData({...entityFormData, is_tax_exempt: e.target.checked})}
+                    onChange={(e) => { setEntityFormData({ ...entityFormData, is_tax_exempt: e.target.checked }); }}
                     className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
                   />
                   <label htmlFor="is_tax_exempt" className="ml-2 text-sm text-gray-700">
@@ -720,7 +722,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                 <textarea
                   rows={3}
                   value={entityFormData.notes}
-                  onChange={(e) => setEntityFormData({...entityFormData, notes: e.target.value})}
+                  onChange={(e) => { setEntityFormData({ ...entityFormData, notes: e.target.value }); }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
                   placeholder="Información adicional sobre la entidad..."
                 />
@@ -731,7 +733,7 @@ export default function RCVEntitiesManager({ companyId }: RCVEntitiesManagerProp
                   type="checkbox"
                   id="is_active"
                   checked={entityFormData.is_active}
-                  onChange={(e) => setEntityFormData({...entityFormData, is_active: e.target.checked})}
+                  onChange={(e) => { setEntityFormData({ ...entityFormData, is_active: e.target.checked }); }}
                   className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
                 />
                 <label htmlFor="is_active" className="ml-2 text-sm text-gray-700">

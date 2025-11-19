@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Card } from '@/components/ui';
+
 import { FileSpreadsheet, Download } from 'lucide-react';
+
+import { Button, Card } from '@/components/ui';
 
 export default function LibroRemuneracionesSimplePage() {
   const [downloading, setDownloading] = useState(false);
@@ -13,7 +15,7 @@ export default function LibroRemuneracionesSimplePage() {
     setDownloading(true);
     try {
       const response = await fetch(
-        `/api/payroll/libro-remuneraciones/excel?company_id=${companyId}&year=2025&month=08`
+        `/api/payroll/libro-remuneraciones/excel?company_id=${companyId}&year=2025&month=08`,
       );
       
       if (response.ok) {
@@ -79,7 +81,7 @@ export default function LibroRemuneracionesSimplePage() {
             >
               {downloading ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                   Descargando Excel...
                 </>
               ) : (

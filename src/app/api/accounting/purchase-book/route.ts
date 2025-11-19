@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -48,7 +50,7 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching purchase documents:', error);
       return NextResponse.json(
         { success: false, error: 'Error al obtener documentos de compra' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -58,9 +60,9 @@ export async function GET(request: NextRequest) {
         total_net: acc.total_net + (doc.net_amount || 0),
         total_iva: acc.total_iva + (doc.iva_amount || 0),
         total_amount: acc.total_amount + (doc.total_amount || 0),
-        document_count: acc.document_count + 1
+        document_count: acc.document_count + 1,
       }),
-      { total_net: 0, total_iva: 0, total_amount: 0, document_count: 0 }
+      { total_net: 0, total_iva: 0, total_amount: 0, document_count: 0 },
     ) || { total_net: 0, total_iva: 0, total_amount: 0, document_count: 0 };
 
     console.log(`✅ Libro de compras: ${documents?.length || 0} documentos`);
@@ -74,16 +76,16 @@ export async function GET(request: NextRequest) {
           limit,
           offset,
           total: count || 0,
-          has_more: (count || 0) > offset + limit
-        }
-      }
+          has_more: (count || 0) > offset + limit,
+        },
+      },
     });
 
   } catch (error) {
     console.error('Error in GET /api/accounting/purchase-book:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -102,21 +104,21 @@ export async function POST(request: NextRequest) {
       document_type = 'FACTURA',
       net_amount,
       iva_rate = 19.0,
-      description = null
+      description = null,
     } = body;
 
     // Validaciones
     if (!date || !folio || !supplier_name || !net_amount) {
       return NextResponse.json(
         { success: false, error: 'date, folio, supplier_name y net_amount son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (net_amount <= 0) {
       return NextResponse.json(
         { success: false, error: 'net_amount debe ser mayor a 0' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -143,7 +145,7 @@ export async function POST(request: NextRequest) {
         net_amount,
         iva_amount,
         total_amount,
-        iva_rate
+        iva_rate,
       })
       .select()
       .single();
@@ -152,7 +154,7 @@ export async function POST(request: NextRequest) {
       console.error('Error creating purchase document:', docError);
       return NextResponse.json(
         { success: false, error: 'Error al crear documento de compra' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -170,7 +172,7 @@ export async function POST(request: NextRequest) {
         description: journal_description,
         document_number: folio,
         reference_type: 'COMPRA',
-        reference_id: document.id
+        reference_id: document.id,
       })
       .select()
       .single();
@@ -185,7 +187,7 @@ export async function POST(request: NextRequest) {
       
       return NextResponse.json(
         { success: false, error: 'Error al crear asiento contable' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -201,7 +203,7 @@ export async function POST(request: NextRequest) {
         total_net: net_amount,
         total_iva: iva_amount,
         total_amount,
-        accounting_entry: jbid
+        accounting_entry: jbid,
       })
       .select()
       .single();
@@ -210,7 +212,7 @@ export async function POST(request: NextRequest) {
       console.error('Error creating purchase ledger entry:', ledgerError);
       return NextResponse.json(
         { success: false, error: 'Error al crear entrada en libro de compras' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -226,17 +228,17 @@ export async function POST(request: NextRequest) {
           net_amount,
           iva_amount,
           total_amount,
-          iva_rate
-        }
+          iva_rate,
+        },
       },
-      message: `Documento de compra ${folio} registrado exitosamente`
+      message: `Documento de compra ${folio} registrado exitosamente`,
     });
 
   } catch (error) {
     console.error('Error in POST /api/accounting/purchase-book:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -252,7 +254,7 @@ export async function PUT(request: NextRequest) {
     if (!pdid) {
       return NextResponse.json(
         { success: false, error: 'pdid es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -276,7 +278,7 @@ export async function PUT(request: NextRequest) {
       console.error('Error updating purchase document:', error);
       return NextResponse.json(
         { success: false, error: 'Error al actualizar documento' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -285,14 +287,14 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: updatedDocument,
-      message: 'Documento actualizado exitosamente'
+      message: 'Documento actualizado exitosamente',
     });
 
   } catch (error) {
     console.error('Error in PUT /api/accounting/purchase-book:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

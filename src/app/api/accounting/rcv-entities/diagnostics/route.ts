@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -26,19 +28,19 @@ export async function GET(request: NextRequest) {
         customers: 0,
         both: 0,
         with_accounts: 0,
-        without_accounts: 0
+        without_accounts: 0,
       },
       account_validation: {
         valid_accounts: 0,
         invalid_accounts: 0,
-        missing_accounts: 0
+        missing_accounts: 0,
       },
       integration_readiness: {
         ready_for_rcv_integration: false,
         automation_percentage: 0,
-        issues: []
+        issues: [],
       },
-      recommendations: []
+      recommendations: [],
     };
 
     try {
@@ -81,7 +83,7 @@ export async function GET(request: NextRequest) {
             } else {
               invalidAccounts++;
               diagnostics.integration_readiness.issues.push(
-                `Entidad "${entity.entity_name}" usa cuenta inválida: ${entity.account_code}`
+                `Entidad "${entity.entity_name}" usa cuenta inválida: ${entity.account_code}`,
               );
             }
           }
@@ -98,7 +100,7 @@ export async function GET(request: NextRequest) {
       
       if (totalEntities > 0) {
         diagnostics.integration_readiness.automation_percentage = Math.round(
-          (entitiesWithValidAccounts / totalEntities) * 100
+          (entitiesWithValidAccounts / totalEntities) * 100,
         );
         diagnostics.integration_readiness.ready_for_rcv_integration = 
           diagnostics.integration_readiness.automation_percentage >= 50;
@@ -110,7 +112,7 @@ export async function GET(request: NextRequest) {
           priority: 'high',
           title: 'Sin entidades configuradas',
           description: 'Agrega proveedores y clientes con sus cuentas contables específicas para automatizar asientos RCV',
-          action: 'Crear entidades RCV'
+          action: 'Crear entidades RCV',
         });
       } else {
         if (diagnostics.entities_summary.without_accounts > 0) {
@@ -118,7 +120,7 @@ export async function GET(request: NextRequest) {
             priority: 'medium',
             title: `${diagnostics.entities_summary.without_accounts} entidades sin cuenta contable`,
             description: 'Configura cuentas contables para estas entidades para automatizar completamente los asientos',
-            action: 'Configurar cuentas faltantes'
+            action: 'Configurar cuentas faltantes',
           });
         }
 
@@ -127,7 +129,7 @@ export async function GET(request: NextRequest) {
             priority: 'high',
             title: `${diagnostics.account_validation.invalid_accounts} cuentas inválidas detectadas`,
             description: 'Algunas entidades tienen códigos de cuenta que no existen en el plan de cuentas',
-            action: 'Corregir cuentas inválidas'
+            action: 'Corregir cuentas inválidas',
           });
         }
 
@@ -136,7 +138,7 @@ export async function GET(request: NextRequest) {
             priority: 'low',
             title: 'Mejorar nivel de automatización',
             description: `Actualmente ${diagnostics.integration_readiness.automation_percentage}% de entidades están listas para automatización`,
-            action: 'Configurar más entidades con cuentas específicas'
+            action: 'Configurar más entidades con cuentas específicas',
           });
         }
       }
@@ -146,7 +148,7 @@ export async function GET(request: NextRequest) {
           priority: 'info',
           title: '¡Sistema listo para automatización!',
           description: 'Tu sistema está configurado para automatizar la mayoría de los asientos RCV',
-          action: 'Procesar RCV con automatización activada'
+          action: 'Procesar RCV con automatización activada',
         });
       }
 
@@ -160,14 +162,14 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: diagnostics
+      data: diagnostics,
     });
 
   } catch (error) {
     console.error('❌ Error in diagnostics endpoint:', error);
     return NextResponse.json(
       { success: false, error: 'Error ejecutando diagnósticos' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

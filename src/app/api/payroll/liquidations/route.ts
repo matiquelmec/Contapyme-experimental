@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -20,7 +22,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -66,7 +68,7 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching liquidations:', error);
       return NextResponse.json(
         { success: false, error: 'Error al obtener liquidaciones' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -100,7 +102,7 @@ export async function GET(request: NextRequest) {
       
       status: liquidation.status || 'draft',
       created_at: liquidation.created_at,
-      updated_at: liquidation.updated_at || liquidation.created_at
+      updated_at: liquidation.updated_at || liquidation.created_at,
     })) || [];
 
     return NextResponse.json({
@@ -111,15 +113,15 @@ export async function GET(request: NextRequest) {
       pagination: {
         limit,
         offset,
-        has_more: (count || 0) > offset + limit
-      }
+        has_more: (count || 0) > offset + limit,
+      },
     });
 
   } catch (error) {
     console.error('Error in GET /api/payroll/liquidations:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -132,7 +134,7 @@ export async function POST(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -142,14 +144,14 @@ export async function POST(request: NextRequest) {
     if (!employee_ids || !Array.isArray(employee_ids) || employee_ids.length === 0) {
       return NextResponse.json(
         { success: false, error: 'employee_ids debe ser un array no vacío' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!period_year || !period_month) {
       return NextResponse.json(
         { success: false, error: 'period_year y period_month son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -159,13 +161,13 @@ export async function POST(request: NextRequest) {
       .insert({
         company_id: companyId,
         batch_name: batch_name || `Lote ${period_month}/${period_year}`,
-        period_year: period_year,
-        period_month: period_month,
+        period_year,
+        period_month,
         total_employees: employee_ids.length,
         total_amount: 0, // Se actualizará después
         status: 'processing',
         created_by: companyId, // TODO: user ID real
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -174,7 +176,7 @@ export async function POST(request: NextRequest) {
       console.error('Error creating batch:', batchError);
       return NextResponse.json(
         { success: false, error: 'Error al crear lote de liquidaciones' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -189,7 +191,7 @@ export async function POST(request: NextRequest) {
       console.error('Error fetching settings:', settingsError);
       return NextResponse.json(
         { success: false, error: 'Configuración previsional no encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -227,7 +229,7 @@ export async function POST(request: NextRequest) {
           results.push({
             employee_id: employeeId,
             success: false,
-            error: 'Empleado no encontrado o sin contrato activo'
+            error: 'Empleado no encontrado o sin contrato activo',
           });
           errorCount++;
           continue;
@@ -241,12 +243,12 @@ export async function POST(request: NextRequest) {
           },
           body: JSON.stringify({
             employee_id: employeeId,
-            period_year: period_year,
-            period_month: period_month,
+            period_year,
+            period_month,
             days_worked: 30,
             additional_income: {},
             additional_deductions: {},
-            save_liquidation: true
+            save_liquidation: true,
           }),
         });
 
@@ -269,13 +271,13 @@ export async function POST(request: NextRequest) {
             employee_name: `${employee.first_name} ${employee.last_name}`,
             net_salary: calculateData.data.liquidation.net_salary,
             success: true,
-            warnings: calculateData.data.warnings
+            warnings: calculateData.data.warnings,
           });
         } else {
           results.push({
             employee_id: employeeId,
             success: false,
-            error: calculateData.error || 'Error en cálculo'
+            error: calculateData.error || 'Error en cálculo',
           });
           errorCount++;
         }
@@ -285,7 +287,7 @@ export async function POST(request: NextRequest) {
         results.push({
           employee_id: employeeId,
           success: false,
-          error: 'Error interno al procesar empleado'
+          error: 'Error interno al procesar empleado',
         });
         errorCount++;
       }
@@ -300,7 +302,7 @@ export async function POST(request: NextRequest) {
         total_amount: totalBatchAmount,
         status: finalStatus,
         completed_at: new Date().toISOString(),
-        error_message: errorCount > 0 ? `${errorCount} empleados con errores` : null
+        error_message: errorCount > 0 ? `${errorCount} empleados con errores` : null,
       })
       .eq('id', batch.id);
 
@@ -313,16 +315,16 @@ export async function POST(request: NextRequest) {
         processed_count: processedCount,
         error_count: errorCount,
         total_amount: totalBatchAmount,
-        results: results
+        results,
       },
-      message: `Lote procesado: ${processedCount} éxitos, ${errorCount} errores`
+      message: `Lote procesado: ${processedCount} éxitos, ${errorCount} errores`,
     });
 
   } catch (error) {
     console.error('Error in POST /api/payroll/liquidations:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -337,7 +339,7 @@ export async function PUT(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -350,14 +352,14 @@ export async function PUT(request: NextRequest) {
     if (!liquidation_ids || !Array.isArray(liquidation_ids) || liquidation_ids.length === 0) {
       return NextResponse.json(
         { success: false, error: 'liquidation_ids debe ser un array no vacío' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!['draft', 'approved', 'paid'].includes(status)) {
       return NextResponse.json(
         { success: false, error: 'status debe ser draft, approved o paid' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -369,7 +371,7 @@ export async function PUT(request: NextRequest) {
       console.error('Invalid UUIDs detected:', invalidIds);
       return NextResponse.json(
         { success: false, error: `IDs inválidos detectados: ${invalidIds.join(', ')}` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -384,7 +386,7 @@ export async function PUT(request: NextRequest) {
       console.error('Error checking existing liquidations:', checkError);
       return NextResponse.json(
         { success: false, error: 'Error verificando liquidaciones existentes' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -393,7 +395,7 @@ export async function PUT(request: NextRequest) {
     if (!existingLiquidations || existingLiquidations.length === 0) {
       return NextResponse.json(
         { success: false, error: 'No se encontraron liquidaciones válidas para actualizar' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -404,15 +406,15 @@ export async function PUT(request: NextRequest) {
       if (paidLiquidations.length > 0) {
         return NextResponse.json(
           { success: false, error: 'No se pueden revertir liquidaciones que ya han sido pagadas' },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
 
     // Actualizar estado de liquidaciones
     const updateData: any = {
-      status: status,
-      updated_at: new Date().toISOString()
+      status,
+      updated_at: new Date().toISOString(),
     };
 
     if (status === 'approved') {
@@ -433,7 +435,7 @@ export async function PUT(request: NextRequest) {
       console.error('Error updating liquidations:', updateError);
       return NextResponse.json(
         { success: false, error: `Error actualizando liquidaciones: ${updateError.message}` },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -442,14 +444,14 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: updated,
-      message: `${updated?.length || 0} liquidación(es) validada(s) exitosamente`
+      message: `${updated?.length || 0} liquidación(es) validada(s) exitosamente`,
     });
 
   } catch (error) {
     console.error('Error in PUT /api/payroll/liquidations:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -464,7 +466,7 @@ export async function DELETE(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -476,7 +478,7 @@ export async function DELETE(request: NextRequest) {
     if (!liquidation_ids || !Array.isArray(liquidation_ids) || liquidation_ids.length === 0) {
       return NextResponse.json(
         { success: false, error: 'liquidation_ids debe ser un array no vacío' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -488,7 +490,7 @@ export async function DELETE(request: NextRequest) {
       console.error('Invalid UUIDs detected:', invalidIds);
       return NextResponse.json(
         { success: false, error: `IDs inválidos detectados: ${invalidIds.join(', ')}` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -503,7 +505,7 @@ export async function DELETE(request: NextRequest) {
       console.error('Error checking existing liquidations:', checkError);
       return NextResponse.json(
         { success: false, error: 'Error verificando liquidaciones existentes' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -512,7 +514,7 @@ export async function DELETE(request: NextRequest) {
     if (!existingLiquidations || existingLiquidations.length === 0) {
       return NextResponse.json(
         { success: false, error: 'No se encontraron liquidaciones válidas para eliminar' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -528,7 +530,7 @@ export async function DELETE(request: NextRequest) {
       console.error('Error deleting liquidations:', deleteError);
       return NextResponse.json(
         { success: false, error: `Error eliminando liquidaciones: ${deleteError.message}` },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -537,14 +539,14 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: deleted,
-      message: `${deleted?.length || 0} liquidación(es) eliminada(s) exitosamente`
+      message: `${deleted?.length || 0} liquidación(es) eliminada(s) exitosamente`,
     });
 
   } catch (error) {
     console.error('Error in DELETE /api/payroll/liquidations:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

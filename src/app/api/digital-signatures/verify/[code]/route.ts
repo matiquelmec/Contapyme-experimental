@@ -1,10 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createSupabaseServerClient } from '@/lib/database/databaseSimple';
 import { DigitalSignatureService } from '@/lib/services/digitalSignatureService';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { code: string } }
+  { params }: { params: { code: string } },
 ) {
   try {
     const { code } = params;
@@ -12,7 +14,7 @@ export async function POST(
     if (!code) {
       return NextResponse.json(
         { success: false, error: 'Código de verificación requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -28,7 +30,7 @@ export async function POST(
     if (findError || !signature) {
       return NextResponse.json(
         { success: false, error: 'Código de verificación no encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -52,7 +54,7 @@ export async function POST(
         signature_hash: signature.signature_hash,
         document_integrity: documentIntegrityValid,
         signature_payload_valid: !!signaturePayload,
-        company_name: signaturePayload?.companyName || 'No especificada'
+        company_name: signaturePayload?.companyName || 'No especificada',
       };
     }
 
@@ -75,10 +77,10 @@ export async function POST(
           revoked: isRevoked,
           verified_at: new Date().toISOString(),
           client_ip: request.ip || 'unknown',
-          user_agent: request.headers.get('user-agent') || 'unknown'
+          user_agent: request.headers.get('user-agent') || 'unknown',
         },
         verifier_ip: request.ip || null,
-        verifier_agent: request.headers.get('user-agent')
+        verifier_agent: request.headers.get('user-agent'),
       });
 
     if (logError) {
@@ -107,8 +109,8 @@ export async function POST(
         ...verificationDetails,
         verification_count: (verificationCount || 0) + 1,
         expired: isExpired,
-        reasons: []
-      }
+        reasons: [],
+      },
     };
 
     // Agregar razones de invalidez
@@ -125,7 +127,7 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      data: responseData
+      data: responseData,
     });
 
   } catch (error) {
@@ -134,9 +136,9 @@ export async function POST(
       { 
         success: false, 
         error: 'Error interno del servidor',
-        details: error instanceof Error ? error.message : 'Error desconocido'
+        details: error instanceof Error ? error.message : 'Error desconocido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -144,7 +146,7 @@ export async function POST(
 // GET para verificación simple (solo lectura)
 export async function GET(
   request: NextRequest,
-  { params }: { params: { code: string } }
+  { params }: { params: { code: string } },
 ) {
   try {
     const { code } = params;
@@ -152,7 +154,7 @@ export async function GET(
     if (!code) {
       return NextResponse.json(
         { success: false, error: 'Código de verificación requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -166,14 +168,14 @@ export async function GET(
       console.error('Error en función de verificación:', verifyError);
       return NextResponse.json(
         { success: false, error: 'Error al verificar la firma' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (!verificationResult || verificationResult.length === 0) {
       return NextResponse.json(
         { success: false, error: 'Código de verificación no encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -191,15 +193,15 @@ export async function GET(
         signed_at: result.signed_at,
         valid_until: result.valid_until,
         revoked: result.revoked,
-        revocation_reason: result.revocation_reason
-      }
+        revocation_reason: result.revocation_reason,
+      },
     });
 
   } catch (error) {
     console.error('Error en verificación GET:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

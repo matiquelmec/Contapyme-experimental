@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
+
 import {
   FileText,
   Download,
@@ -12,14 +12,14 @@ import {
   Search,
   Save,
   X,
-  User
+  User,
 } from 'lucide-react';
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { Header } from '@/components/layout';
-import RCVTaxConfigModal from '@/components/accounting/RCVTaxConfigModal';
+
 import CentralizedConfigTable from '@/components/accounting/CentralizedConfigTable';
 import RCVEntitiesManager from '@/components/accounting/RCVEntitiesManager';
-
+import RCVTaxConfigModal from '@/components/accounting/RCVTaxConfigModal';
+import { Header } from '@/components/layout';
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
 
 // Interfaces para configuración centralizada
 interface CentralizedAccountConfig {
@@ -38,55 +38,8 @@ interface CentralizedAccountConfig {
   updated_at?: string;
 }
 
-// Interface para configuración de empresa
-interface CompanySettings {
-  company_name: string;
-  company_rut: string;
-  email: string;
-  payroll_configs: Array<{
-    id: string;
-    minimum_wage: number;
-    uf_value: number;
-    utm_value: number;
-    family_allowance_limit: number;
-    tramo_a: number;
-    tramo_b: number;
-    tramo_c: number;
-    sis_percentage: number;
-    unemployment_insurance_fixed: number;
-    unemployment_insurance_indefinite: number;
-    active: boolean;
-  }>;
-  afp_configs: Array<{
-    id: string;
-    name: string;
-    commission_percentage: number;
-    sis_percentage: number;
-    active: boolean;
-  }>;
-  health_configs: Array<{
-    id: string;
-    name: string;
-    code: string;
-    plan_percentage: number;
-    active: boolean;
-  }>;
-  income_limits: {
-    uf_limit: number;
-    minimum_wage: number;
-    family_allowance_limit: number;
-  };
-  family_allowances: {
-    tramo_a: number;
-    tramo_b: number;
-    tramo_c: number;
-  };
-  contributions: {
-    unemployment_insurance_fixed: number;
-    unemployment_insurance_indefinite: number;
-    social_security_percentage: number;
-  };
-}
+// Import CompanySettings from global types
+import type { CompanySettings } from '@/types/global';
 
 interface ChartAccount {
   id: string;
@@ -113,7 +66,7 @@ export default function ConfigurationPage() {
     level_type: '1er Nivel',
     account_type: 'ACTIVO',
     parent_code: '',
-    is_active: true
+    is_active: true,
   });
 
   // Función para formatear automáticamente el código de cuenta (formato compatible con BD existente)
@@ -196,6 +149,7 @@ export default function ConfigurationPage() {
   const [loadingConfigs, setLoadingConfigs] = useState(true);
   const [selectedModule, setSelectedModule] = useState<string>(''); // Estado para el módulo seleccionado
   const [showRCVTaxModal, setShowRCVTaxModal] = useState(false); // Modal específico para RCV
+  const [rcvTaxModalAccounts, setRcvTaxModalAccounts] = useState<ChartAccount[]>([]); // Accounts for RCV modal
 
   // Estados para configuración de empresa
   const [companySettings, setCompanySettings] = useState<CompanySettings | null>(null);
@@ -262,9 +216,9 @@ export default function ConfigurationPage() {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestData)
+        body: JSON.stringify(requestData),
       });
 
       const result = await response.json();
@@ -279,7 +233,7 @@ export default function ConfigurationPage() {
           level_type: '1er Nivel',
           account_type: 'ACTIVO',
           parent_code: '',
-          is_active: true
+          is_active: true,
         });
         
         // Recargar las cuentas después de guardar
@@ -306,20 +260,20 @@ export default function ConfigurationPage() {
       }
 
       let response = await fetch(`/api/chart-of-accounts?id=${account.id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       let result = await response.json();
       
       // Si hay error por cuentas hijas, ofrecer eliminación forzada
-      if (!result.success && result.error && result.error.includes('cuentas hijas')) {
+      if (!result.success && result.error?.includes('cuentas hijas')) {
         const forceDelete = confirm(
-          `${result.error}\n\n¿Desea eliminar la cuenta de todas formas?`
+          `${result.error}\n\n¿Desea eliminar la cuenta de todas formas?`,
         );
         
         if (forceDelete) {
           response = await fetch(`/api/chart-of-accounts?id=${account.id}&force=true`, {
-            method: 'DELETE'
+            method: 'DELETE',
           });
           result = await response.json();
         } else {
@@ -348,7 +302,7 @@ export default function ConfigurationPage() {
   const exportChartOfAccounts = async () => {
     try {
       const params = new URLSearchParams({
-        format: 'csv'
+        format: 'csv',
       });
 
       const response = await fetch(`/api/chart-of-accounts/export?${params.toString()}`);
@@ -381,7 +335,7 @@ export default function ConfigurationPage() {
 
       const response = await fetch('/api/chart-of-accounts/import', {
         method: 'POST',
-        body: formData
+        body: formData,
       });
 
       const result = await response.json();
@@ -453,7 +407,7 @@ export default function ConfigurationPage() {
       account.name.toLowerCase().includes(searchTermLower) ||
       account.level_type.toLowerCase().includes(searchTermLower) ||
       account.account_type.toLowerCase().includes(searchTermLower) ||
-      (account.parent_code && account.parent_code.toLowerCase().includes(searchTermLower))
+      (account.parent_code && account.parent_code.toLowerCase().includes(searchTermLower)),
     );
     setFilteredAccounts(filtered);
   }, [accounts, searchTerm]);
@@ -476,14 +430,14 @@ export default function ConfigurationPage() {
       'PASIVO': 'text-red-600 bg-red-50',
       'PATRIMONIO': 'text-purple-600 bg-purple-50',
       'INGRESO': 'text-green-600 bg-green-50',
-      'GASTO': 'text-orange-600 bg-orange-50'
+      'GASTO': 'text-orange-600 bg-orange-50',
     };
 
     const levelColors = {
       '1er Nivel': 'text-gray-800 bg-gray-100',
       '2do Nivel': 'text-amber-800 bg-amber-100',
       '3er Nivel': 'text-purple-800 bg-purple-100',
-      'Imputable': 'text-blue-800 bg-blue-100'
+      'Imputable': 'text-blue-800 bg-blue-100',
     };
 
     return (
@@ -532,7 +486,7 @@ export default function ConfigurationPage() {
                   level_type: account.level_type,
                   account_type: account.account_type,
                   parent_code: account.parent_code || '',
-                  is_active: account.is_active
+                  is_active: account.is_active,
                 });
               }}
               className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
@@ -563,7 +517,7 @@ export default function ConfigurationPage() {
       <Header 
         title="Configuración del Sistema"
         subtitle="Gestión del plan de cuentas IFRS y configuraciones avanzadas"
-        showBackButton={true}
+        showBackButton
         backHref="/accounting"
       />
 
@@ -608,7 +562,6 @@ export default function ConfigurationPage() {
                     size="sm"
                     leftIcon={<Upload className="w-4 h-4" />}
                     className="border-orange-200 hover:bg-orange-50 text-orange-700"
-                    as="span"
                   >
                     Importar CSV
                   </Button>
@@ -625,7 +578,7 @@ export default function ConfigurationPage() {
                       level_type: '1er Nivel',
                       account_type: 'ACTIVO',
                       parent_code: '',
-                      is_active: true
+                      is_active: true,
                     });
                     setShowAddForm(true);
                   }}
@@ -648,7 +601,7 @@ export default function ConfigurationPage() {
                   type="text"
                   placeholder="Buscar por código, nombre, tipo..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => { setSearchTerm(e.target.value); }}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -662,7 +615,7 @@ export default function ConfigurationPage() {
             {/* Tabla de cuentas */}
             {loadingAccounts ? (
               <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
                 <span className="ml-2 text-gray-600">Cargando plan de cuentas...</span>
               </div>
             ) : (
@@ -745,7 +698,7 @@ export default function ConfigurationPage() {
           <CardContent>
             {loadingConfigs ? (
               <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600" />
                 <span className="ml-2 text-gray-600">Cargando configuraciones...</span>
               </div>
             ) : (
@@ -784,7 +737,7 @@ export default function ConfigurationPage() {
                 variant="outline"
                 size="sm"
                 leftIcon={<Edit2 className="w-4 h-4" />}
-                onClick={() => setShowCompanyForm(true)}
+                onClick={() => { setShowCompanyForm(true); }}
               >
                 Editar
               </Button>
@@ -793,7 +746,7 @@ export default function ConfigurationPage() {
           <CardContent>
             {loadingCompanySettings ? (
               <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600" />
                 <span className="ml-2 text-gray-600">Cargando configuración de empresa...</span>
               </div>
             ) : companySettings ? (
@@ -845,7 +798,7 @@ export default function ConfigurationPage() {
                 <p className="text-sm mb-4">Configure los datos de su empresa para el módulo de remuneraciones</p>
                 <Button
                   variant="primary"
-                  onClick={() => setShowCompanyForm(true)}
+                  onClick={() => { setShowCompanyForm(true); }}
                   leftIcon={<Plus className="w-4 h-4" />}
                 >
                   Configurar Empresa
@@ -881,10 +834,10 @@ export default function ConfigurationPage() {
                     value={accountFormData.code}
                     onChange={(e) => {
                       const formatted = formatAccountCode(e.target.value, isManualEditing);
-                      setAccountFormData({...accountFormData, code: formatted});
+                      setAccountFormData({ ...accountFormData, code: formatted });
                     }}
-                    onFocus={() => setIsManualEditing(true)}
-                    onBlur={() => setIsManualEditing(false)}
+                    onFocus={() => { setIsManualEditing(true); }}
+                    onBlur={() => { setIsManualEditing(false); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono"
                     placeholder="1.1.1.001"
                   />
@@ -900,7 +853,7 @@ export default function ConfigurationPage() {
                   <input
                     type="text"
                     value={accountFormData.name}
-                    onChange={(e) => setAccountFormData({...accountFormData, name: e.target.value})}
+                    onChange={(e) => { setAccountFormData({ ...accountFormData, name: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Ej: Caja y Bancos"
                   />
@@ -915,7 +868,7 @@ export default function ConfigurationPage() {
                   </label>
                   <select
                     value={accountFormData.level_type}
-                    onChange={(e) => setAccountFormData({...accountFormData, level_type: e.target.value})}
+                    onChange={(e) => { setAccountFormData({ ...accountFormData, level_type: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="1er Nivel">1er Nivel</option>
@@ -931,7 +884,7 @@ export default function ConfigurationPage() {
                   </label>
                   <select
                     value={accountFormData.account_type}
-                    onChange={(e) => setAccountFormData({...accountFormData, account_type: e.target.value})}
+                    onChange={(e) => { setAccountFormData({ ...accountFormData, account_type: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="ACTIVO">Activo</option>
@@ -950,7 +903,7 @@ export default function ConfigurationPage() {
                 </label>
                 <select
                   value={accountFormData.parent_code}
-                  onChange={(e) => setAccountFormData({...accountFormData, parent_code: e.target.value})}
+                  onChange={(e) => { setAccountFormData({ ...accountFormData, parent_code: e.target.value }); }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Sin cuenta padre</option>
@@ -971,7 +924,7 @@ export default function ConfigurationPage() {
                   type="checkbox"
                   id="is_active"
                   checked={accountFormData.is_active}
-                  onChange={(e) => setAccountFormData({...accountFormData, is_active: e.target.checked})}
+                  onChange={(e) => { setAccountFormData({ ...accountFormData, is_active: e.target.checked }); }}
                   className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <label htmlFor="is_active" className="ml-2 text-sm text-gray-700">
@@ -992,7 +945,7 @@ export default function ConfigurationPage() {
                     level_type: '1er Nivel',
                     account_type: 'ACTIVO',
                     parent_code: '',
-                    is_active: true
+                    is_active: true,
                   });
                 }}
               >
@@ -1016,6 +969,7 @@ export default function ConfigurationPage() {
       {showRCVTaxModal && (
         <RCVTaxConfigModal
           isOpen={showRCVTaxModal}
+          accounts={accounts}
           onClose={() => {
             setShowRCVTaxModal(false);
             setSelectedModule('');

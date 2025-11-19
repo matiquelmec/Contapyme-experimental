@@ -1,5 +1,5 @@
-import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 export interface PDFExportOptions {
   filename?: string;
@@ -18,7 +18,7 @@ export const exportToPDF = async (options: PDFExportOptions): Promise<boolean> =
       filename = `liquidacion-${options.employeeName.replace(/\s+/g, '-')}-${options.period.replace(/\s+/g, '-')}.pdf`,
       elementId,
       employeeName,
-      period
+      period,
     } = options;
 
     console.log('🔄 Iniciando exportación PDF...');
@@ -39,7 +39,7 @@ export const exportToPDF = async (options: PDFExportOptions): Promise<boolean> =
       width: 794, // A4 width
       height: element.scrollHeight,
       scrollX: 0,
-      scrollY: 0
+      scrollY: 0,
     });
 
     // Calcular dimensiones para PDF (A4)
@@ -68,7 +68,7 @@ export const exportToPDF = async (options: PDFExportOptions): Promise<boolean> =
           0, 
           yOffset, 
           imgWidth, 
-          imgHeight
+          imgHeight,
         );
       }
     }

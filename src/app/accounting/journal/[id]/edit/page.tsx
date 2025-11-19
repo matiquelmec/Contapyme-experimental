@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { useParams } from 'next/navigation';
+
 import { AccountSelect } from '@/components/ui/AccountSelect';
 
 interface JournalEntry {
@@ -37,7 +39,7 @@ export default function EditJournalEntryPage() {
     entry_date: '',
     description: '',
     reference: '',
-    entry_type: 'manual'
+    entry_type: 'manual',
   });
   const [lines, setLines] = useState<JournalLine[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,7 +65,7 @@ export default function EditJournalEntryPage() {
           entry_date: entryData.entry_date.split('T')[0],
           description: entryData.description,
           reference: entryData.reference || '',
-          entry_type: entryData.entry_type
+          entry_type: entryData.entry_type,
         });
         setLines(entryData.lines || []);
       } else {
@@ -86,7 +88,7 @@ export default function EditJournalEntryPage() {
       account_name: '',
       description: '',
       debit_amount: 0,
-      credit_amount: 0
+      credit_amount: 0,
     };
     setLines([...lines, newLine]);
   };
@@ -106,17 +108,11 @@ export default function EditJournalEntryPage() {
     setLines(newLines);
   };
 
-  const getTotalDebit = () => {
-    return lines.reduce((sum, line) => sum + (line.debit_amount || 0), 0);
-  };
+  const getTotalDebit = () => lines.reduce((sum, line) => sum + (line.debit_amount || 0), 0);
 
-  const getTotalCredit = () => {
-    return lines.reduce((sum, line) => sum + (line.credit_amount || 0), 0);
-  };
+  const getTotalCredit = () => lines.reduce((sum, line) => sum + (line.credit_amount || 0), 0);
 
-  const isBalanced = () => {
-    return Math.abs(getTotalDebit() - getTotalCredit()) < 0.01;
-  };
+  const isBalanced = () => Math.abs(getTotalDebit() - getTotalCredit()) < 0.01;
 
   const saveEntry = async () => {
     if (!entry.description.trim()) {
@@ -158,7 +154,7 @@ export default function EditJournalEntryPage() {
         body: JSON.stringify({
           company_id: COMPANY_ID,
           ...entry,
-          lines: lines
+          lines,
         }),
       });
 
@@ -242,7 +238,7 @@ export default function EditJournalEntryPage() {
               <input
                 type="date"
                 value={entry.entry_date}
-                onChange={(e) => setEntry({ ...entry, entry_date: e.target.value })}
+                onChange={(e) => { setEntry({ ...entry, entry_date: e.target.value }); }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
@@ -254,7 +250,7 @@ export default function EditJournalEntryPage() {
               <input
                 type="text"
                 value={entry.reference}
-                onChange={(e) => setEntry({ ...entry, reference: e.target.value })}
+                onChange={(e) => { setEntry({ ...entry, reference: e.target.value }); }}
                 placeholder="Ej: FAC-001"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -265,7 +261,7 @@ export default function EditJournalEntryPage() {
               </label>
               <select
                 value={entry.entry_type}
-                onChange={(e) => setEntry({ ...entry, entry_type: e.target.value })}
+                onChange={(e) => { setEntry({ ...entry, entry_type: e.target.value }); }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="manual">Manual</option>
@@ -283,7 +279,7 @@ export default function EditJournalEntryPage() {
             </label>
             <textarea
               value={entry.description}
-              onChange={(e) => setEntry({ ...entry, description: e.target.value })}
+              onChange={(e) => { setEntry({ ...entry, description: e.target.value }); }}
               placeholder="Descripción del asiento contable..."
               rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -331,8 +327,8 @@ export default function EditJournalEntryPage() {
                         <AccountSelect
                           value={line.account_code}
                           name={line.account_name}
-                          onCodeChange={(code) => updateLine(index, 'account_code', code)}
-                          onNameChange={(name) => updateLine(index, 'account_name', name)}
+                          onCodeChange={(code) => { updateLine(index, 'account_code', code); }}
+                          onNameChange={(name) => { updateLine(index, 'account_name', name); }}
                           required
                         />
                       </td>
@@ -340,7 +336,7 @@ export default function EditJournalEntryPage() {
                         <input
                           type="text"
                           value={line.description}
-                          onChange={(e) => updateLine(index, 'description', e.target.value)}
+                          onChange={(e) => { updateLine(index, 'description', e.target.value); }}
                           placeholder="Descripción de la línea"
                           className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
@@ -349,7 +345,7 @@ export default function EditJournalEntryPage() {
                         <input
                           type="number"
                           value={line.debit_amount || ''}
-                          onChange={(e) => updateLine(index, 'debit_amount', parseFloat(e.target.value) || 0)}
+                          onChange={(e) => { updateLine(index, 'debit_amount', parseFloat(e.target.value) || 0); }}
                           placeholder="0"
                           className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-right font-mono"
                           min="0"
@@ -360,7 +356,7 @@ export default function EditJournalEntryPage() {
                         <input
                           type="number"
                           value={line.credit_amount || ''}
-                          onChange={(e) => updateLine(index, 'credit_amount', parseFloat(e.target.value) || 0)}
+                          onChange={(e) => { updateLine(index, 'credit_amount', parseFloat(e.target.value) || 0); }}
                           placeholder="0"
                           className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-right font-mono"
                           min="0"
@@ -370,7 +366,7 @@ export default function EditJournalEntryPage() {
                       <td className="px-4 py-4 text-center">
                         {lines.length > 2 && (
                           <button
-                            onClick={() => removeLine(index)}
+                            onClick={() => { removeLine(index); }}
                             className="text-red-600 hover:text-red-800 text-sm"
                           >
                             Eliminar

@@ -1,16 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Header } from '@/components/layout';
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  Badge
-} from '@/components/ui';
+
 import {
   Building2,
   Plus,
@@ -19,16 +10,21 @@ import {
   Save,
   X,
   Search,
-  Upload,
-  Download,
   AlertTriangle,
   CheckCircle,
-  Filter,
   RefreshCw,
   Users,
-  FileText,
-  Clock
 } from 'lucide-react';
+
+import { Header } from '@/components/layout';
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Badge,
+} from '@/components/ui';
 
 interface RCVEntity {
   id: string;
@@ -69,7 +65,7 @@ export default function RCVEntitiesPage() {
     account_code: '',
     account_name: '',
     default_tax_rate: 19.0,
-    is_tax_exempt: false
+    is_tax_exempt: false,
   });
 
   // Get company ID from localStorage
@@ -135,7 +131,7 @@ export default function RCVEntitiesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          company_id: companyId
+          company_id: companyId,
         }),
       });
 
@@ -151,7 +147,7 @@ export default function RCVEntitiesPage() {
           account_code: '',
           account_name: '',
           default_tax_rate: 19.0,
-          is_tax_exempt: false
+          is_tax_exempt: false,
         });
       }
     } catch (error) {
@@ -169,7 +165,7 @@ export default function RCVEntitiesPage() {
       account_code: entity.account_code || '',
       account_name: entity.account_name || '',
       default_tax_rate: entity.default_tax_rate,
-      is_tax_exempt: entity.is_tax_exempt
+      is_tax_exempt: entity.is_tax_exempt,
     });
     setShowModal(true);
   };
@@ -203,7 +199,7 @@ export default function RCVEntitiesPage() {
       setFormData(prev => ({
         ...prev,
         account_code: account.code,
-        account_name: account.name
+        account_name: account.name,
       }));
     }
   };
@@ -225,14 +221,14 @@ export default function RCVEntitiesPage() {
               type="text"
               placeholder="Buscar por nombre o RUT..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => { setSearchTerm(e.target.value); }}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           
           <select
             value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
+            onChange={(e) => { setFilterType(e.target.value); }}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="all">Todos los tipos</option>
@@ -241,7 +237,7 @@ export default function RCVEntitiesPage() {
             <option value="both">Ambos</option>
           </select>
           
-          <Button onClick={() => setShowModal(true)}>
+          <Button onClick={() => { setShowModal(true); }}>
             <Plus className="h-4 w-4 mr-2" />
             Nueva Entidad
           </Button>
@@ -312,7 +308,7 @@ export default function RCVEntitiesPage() {
                     <div className="flex space-x-2">
                       <Button 
                         variant="ghost" 
-                        onClick={() => handleEdit(entity)}
+                        onClick={() => { handleEdit(entity); }}
                         className="h-8 w-8 p-0"
                       >
                         <Edit className="h-4 w-4" />
@@ -375,7 +371,7 @@ export default function RCVEntitiesPage() {
               }
             </p>
             {(!searchTerm && filterType === 'all') && (
-              <Button onClick={() => setShowModal(true)}>
+              <Button onClick={() => { setShowModal(true); }}>
                 <Plus className="h-4 w-4 mr-2" />
                 Agregar Primera Entidad
               </Button>
@@ -395,7 +391,7 @@ export default function RCVEntitiesPage() {
                 </h2>
                 <Button 
                   variant="ghost" 
-                  onClick={() => setShowModal(false)}
+                  onClick={() => { setShowModal(false); }}
                   className="h-8 w-8 p-0"
                 >
                   <X className="h-4 w-4" />
@@ -411,7 +407,7 @@ export default function RCVEntitiesPage() {
                     type="text"
                     required
                     value={formData.entity_name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, entity_name: e.target.value }))}
+                    onChange={(e) => { setFormData(prev => ({ ...prev, entity_name: e.target.value })); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Ej: Empresa ABC S.A."
                   />
@@ -425,7 +421,7 @@ export default function RCVEntitiesPage() {
                     type="text"
                     required
                     value={formData.entity_rut}
-                    onChange={(e) => setFormData(prev => ({ ...prev, entity_rut: e.target.value }))}
+                    onChange={(e) => { setFormData(prev => ({ ...prev, entity_rut: e.target.value })); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="12.345.678-9"
                   />
@@ -437,10 +433,10 @@ export default function RCVEntitiesPage() {
                   </label>
                   <select
                     value={formData.entity_type}
-                    onChange={(e) => setFormData(prev => ({ 
+                    onChange={(e) => { setFormData(prev => ({ 
                       ...prev, 
-                      entity_type: e.target.value as 'supplier' | 'customer' | 'both' 
-                    }))}
+                      entity_type: e.target.value as 'supplier' | 'customer' | 'both', 
+                    })); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="supplier">Proveedor</option>
@@ -456,7 +452,7 @@ export default function RCVEntitiesPage() {
                   <input
                     type="text"
                     value={formData.legal_name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, legal_name: e.target.value }))}
+                    onChange={(e) => { setFormData(prev => ({ ...prev, legal_name: e.target.value })); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Razón social completa"
                   />
@@ -468,7 +464,7 @@ export default function RCVEntitiesPage() {
                   </label>
                   <select
                     value={formData.account_code}
-                    onChange={(e) => handleAccountSelect(e.target.value)}
+                    onChange={(e) => { handleAccountSelect(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Seleccionar cuenta...</option>
@@ -491,10 +487,10 @@ export default function RCVEntitiesPage() {
                       min="0"
                       max="100"
                       value={formData.default_tax_rate}
-                      onChange={(e) => setFormData(prev => ({ 
+                      onChange={(e) => { setFormData(prev => ({ 
                         ...prev, 
-                        default_tax_rate: parseFloat(e.target.value) || 0 
-                      }))}
+                        default_tax_rate: parseFloat(e.target.value) || 0, 
+                      })); }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
@@ -504,10 +500,10 @@ export default function RCVEntitiesPage() {
                       <input
                         type="checkbox"
                         checked={formData.is_tax_exempt}
-                        onChange={(e) => setFormData(prev => ({ 
+                        onChange={(e) => { setFormData(prev => ({ 
                           ...prev, 
-                          is_tax_exempt: e.target.checked 
-                        }))}
+                          is_tax_exempt: e.target.checked, 
+                        })); }}
                         className="mr-2"
                       />
                       <span className="text-sm font-medium text-gray-700">
@@ -521,7 +517,7 @@ export default function RCVEntitiesPage() {
                   <Button 
                     type="button" 
                     variant="ghost" 
-                    onClick={() => setShowModal(false)}
+                    onClick={() => { setShowModal(false); }}
                   >
                     Cancelar
                   </Button>

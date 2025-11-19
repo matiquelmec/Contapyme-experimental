@@ -3,6 +3,9 @@
  * Optimiza performance cachéando resultados de APIs pesadas
  */
 
+// Hook para usar cache en componentes React
+import { useCallback } from 'react';
+
 interface CacheEntry<T> {
   data: T;
   timestamp: number;
@@ -10,8 +13,8 @@ interface CacheEntry<T> {
 }
 
 class QueryCache {
-  private cache = new Map<string, CacheEntry<any>>();
-  private defaultTTL = 5 * 60 * 1000; // 5 minutos default
+  private readonly cache = new Map<string, CacheEntry<any>>();
+  private readonly defaultTTL = 5 * 60 * 1000; // 5 minutos default
 
   /**
    * Obtener datos del cache o ejecutar query si no existe/expiró
@@ -19,7 +22,7 @@ class QueryCache {
   async get<T>(
     key: string, 
     queryFn: () => Promise<T>, 
-    ttl: number = this.defaultTTL
+    ttl: number = this.defaultTTL,
   ): Promise<T> {
     const cached = this.cache.get(key);
     const now = Date.now();
@@ -53,7 +56,7 @@ class QueryCache {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     });
     console.log(`✅ CACHED: ${key} (TTL: ${ttl/1000}s)`);
   }
@@ -122,7 +125,7 @@ class QueryCache {
     return {
       total: this.cache.size,
       expired,
-      active: this.cache.size - expired
+      active: this.cache.size - expired,
     };
   }
 
@@ -138,31 +141,22 @@ class QueryCache {
 // Singleton global
 export const queryCache = new QueryCache();
 
-// Hook para usar cache en componentes React
-import { useCallback } from 'react';
-
 export function useQueryCache() {
   const getCached = useCallback(async <T>(
     key: string,
     queryFn: () => Promise<T>,
-    ttl?: number
-  ): Promise<T> => {
-    return queryCache.get(key, queryFn, ttl);
-  }, []);
+    ttl?: number,
+  ): Promise<T> => queryCache.get(key, queryFn, ttl), []);
 
-  const invalidateCache = useCallback((key: string) => {
-    return queryCache.invalidate(key);
-  }, []);
+  const invalidateCache = useCallback((key: string) => queryCache.invalidate(key), []);
 
-  const invalidatePattern = useCallback((pattern: string) => {
-    return queryCache.invalidatePattern(pattern);
-  }, []);
+  const invalidatePattern = useCallback((pattern: string) => queryCache.invalidatePattern(pattern), []);
 
   return {
     getCached,
     invalidateCache,
     invalidatePattern,
-    cacheStats: queryCache.getStats()
+    cacheStats: queryCache.getStats(),
   };
 }
 
@@ -173,8 +167,8 @@ export const CACHE_CONFIGS = {
     ttl: 10 * 60 * 1000, // 10 minutos
     keys: {
       list: (companyId: string) => `employees:${companyId}`,
-      detail: (employeeId: string) => `employee:${employeeId}`
-    }
+      detail: (employeeId: string) => `employee:${employeeId}`,
+    },
   },
   
   // Configuraciones de nómina - muy estable
@@ -182,8 +176,8 @@ export const CACHE_CONFIGS = {
     ttl: 30 * 60 * 1000, // 30 minutos
     keys: {
       settings: (companyId: string) => `payroll-config:${companyId}`,
-      indicators: () => 'economic-indicators'
-    }
+      indicators: () => 'economic-indicators',
+    },
   },
   
   // Liquidaciones - se actualiza frecuentemente
@@ -192,8 +186,8 @@ export const CACHE_CONFIGS = {
     keys: {
       list: (companyId: string, period?: string) => 
         `liquidations:${companyId}${period ? `:${period}` : ''}`,
-      detail: (liquidationId: string) => `liquidation:${liquidationId}`
-    }
+      detail: (liquidationId: string) => `liquidation:${liquidationId}`,
+    },
   },
 
   // Indicadores económicos - actualizados mensualmente
@@ -201,9 +195,9 @@ export const CACHE_CONFIGS = {
     ttl: 60 * 60 * 1000, // 1 hora
     keys: {
       current: () => 'indicators:current',
-      period: (year: number, month: number) => `indicators:${year}-${month}`
-    }
-  }
+      period: (year: number, month: number) => `indicators:${year}-${month}`,
+    },
+  },
 } as const;
 
 // Funciones helper para invalidación específica
@@ -227,7 +221,7 @@ export const cacheHelpers = {
   // Invalidar configuraciones cuando se actualizan
   invalidateConfigs: (companyId: string) => {
     queryCache.invalidate(`payroll-config:${companyId}`);
-  }
+  },
 };
 
 // Auto-cleanup cada 5 minutos

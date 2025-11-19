@@ -1,7 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
+
+import { useRouter } from 'next/navigation'
 
 export type UserIntention = 
   | 'analyze_f29'
@@ -24,10 +25,10 @@ export function useUserIntention() {
     sessionStorage.setItem('userIntention', JSON.stringify(action))
     
     // Analytics tracking (para futuras optimizaciones)
-    if (typeof window !== 'undefined' && window.gtag) {
+    if (window?.gtag) {
       window.gtag('event', 'user_intention_captured', {
         intention: action.intention,
-        context: action.context
+        context: action.context,
       })
     }
   }, [])
@@ -89,7 +90,7 @@ export function useUserIntention() {
       return {
         intention: action.intention,
         context: action.context,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       }
     } catch {
       return null
@@ -105,20 +106,20 @@ export function useUserIntention() {
         title: "¡Perfecto! Vamos a analizar tu F29",
         description: "Sube tu formulario y obtén insights automáticos en segundos",
         action: "Comenzar Análisis",
-        priority: "high"
+        priority: "high",
       },
       manage_company: {
         title: "Bienvenido a tu centro de control financiero",
         description: "Gestiona todos los aspectos contables de tu empresa desde aquí",
         action: "Explorar Módulos",
-        priority: "medium"  
+        priority: "medium",  
       },
       explore_features: {
         title: "Explora todas las funcionalidades",
         description: "Cada módulo está diseñado para simplificar tu gestión contable",
         action: "Ver Demo",
-        priority: "low"
-      }
+        priority: "low",
+      },
     }
 
     return messages[context.intention] || null
@@ -131,43 +132,43 @@ export function useUserIntention() {
         description: 'Sube tu formulario y obtén análisis automático',
         icon: '📄',
         color: 'blue',
-        urgency: 'high'
+        urgency: 'high',
       },
       manage_company: {
         title: 'Gestionar Empresa',
         description: 'Acceso completo al módulo contable',
         icon: '🏢',
         color: 'green', 
-        urgency: 'medium'
+        urgency: 'medium',
       },
       explore_features: {
         title: 'Explorar Funcionalidades',
         description: 'Descubre todo lo que puedes hacer',
         icon: '🚀',
         color: 'purple',
-        urgency: 'low'
+        urgency: 'low',
       },
       view_indicators: {
         title: 'Ver Indicadores',
         description: 'UF, UTM, divisas en tiempo real',
         icon: '📊',
         color: 'orange',
-        urgency: 'medium'
+        urgency: 'medium',
       },
       manage_assets: {
         title: 'Activos Fijos',
         description: 'Gestiona y deprecia tus activos',
         icon: '🏭',
         color: 'indigo',
-        urgency: 'medium'
+        urgency: 'medium',
       },
       configure_system: {
         title: 'Configuración',
         description: 'Plan de cuentas y ajustes',
         icon: '⚙️',
         color: 'gray',
-        urgency: 'low'
-      }
+        urgency: 'low',
+      },
     }
 
     return configs[intention]
@@ -178,6 +179,6 @@ export function useUserIntention() {
     executeIntention,
     getIntentionConfig,
     getNavigationContext,
-    getWelcomeMessage
+    getWelcomeMessage,
   }
 }

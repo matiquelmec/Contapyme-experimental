@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+
 import { Header } from '@/components/layout/Header';
 import { AccountSelect } from '@/components/ui/AccountSelect';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 const COMPANY_ID = '8033ee69-b420-4d91-ba0e-482f46cd6fce';
@@ -48,8 +49,8 @@ export default function SimpleJournalBook() {
     reference: '',
     lines: [
       { account_code: '', account_name: '', debit_amount: '', credit_amount: '', description: '' },
-      { account_code: '', account_name: '', debit_amount: '', credit_amount: '', description: '' }
-    ] as NewEntryLine[]
+      { account_code: '', account_name: '', debit_amount: '', credit_amount: '', description: '' },
+    ] as NewEntryLine[],
   });
 
   // Cargar asientos - función simple
@@ -63,17 +64,17 @@ export default function SimpleJournalBook() {
       const response = await fetch(`/api/accounting/journal?company_id=${COMPANY_ID}&limit=50&_t=${timestamp}`, {
         cache: 'no-store',
         headers: {
-          'Cache-Control': 'no-cache'
-        }
+          'Cache-Control': 'no-cache',
+        },
       });
       const data = await response.json();
       
-      if (data.success && data.data && data.data.entries) {
+      if (data.success && data.data?.entries) {
         setEntries(data.data.entries);
         console.log('✅ Asientos cargados:', data.data.entries.length);
       } else {
         console.error('❌ Error:', data.error);
-        setMessage('Error cargando asientos: ' + (data.error || 'Desconocido'));
+        setMessage(`Error cargando asientos: ${  data.error || 'Desconocido'}`);
       }
     } catch (error) {
       console.error('❌ Error:', error);
@@ -102,7 +103,7 @@ export default function SimpleJournalBook() {
     // Filtrar líneas válidas
     const validLines = formData.lines.filter(line => 
       line.account_code && 
-      (parseFloat(line.debit_amount || '0') > 0 || parseFloat(line.credit_amount || '0') > 0)
+      (parseFloat(line.debit_amount || '0') > 0 || parseFloat(line.credit_amount || '0') > 0),
     );
 
     if (validLines.length < 2) {
@@ -136,9 +137,9 @@ export default function SimpleJournalBook() {
             line_number: index + 1,
             debit_amount: parseFloat(line.debit_amount || '0'),
             credit_amount: parseFloat(line.credit_amount || '0'),
-            line_description: line.description || formData.description
-          }))
-        })
+            line_description: line.description || formData.description,
+          })),
+        }),
       });
 
       const data = await response.json();
@@ -150,7 +151,7 @@ export default function SimpleJournalBook() {
         // Recargar inmediatamente para mostrar el nuevo asiento
         await loadEntries();
       } else {
-        setMessage('❌ Error: ' + (data.error || 'Desconocido'));
+        setMessage(`❌ Error: ${  data.error || 'Desconocido'}`);
       }
     } catch (error) {
       console.error('❌ Error:', error);
@@ -168,14 +169,14 @@ export default function SimpleJournalBook() {
       const response = await fetch(`/api/accounting/journal/${entry.id}?include_lines=true`);
       const data = await response.json();
       
-      if (data.success && data.data && data.data.lines) {
+      if (data.success && data.data?.lines) {
         // Convertir las líneas para el formulario
         const formattedLines = data.data.lines.map((line: any) => ({
           account_code: line.account_code || '',
           account_name: line.account_name || '',
           debit_amount: line.debit_amount ? line.debit_amount.toString() : '',
           credit_amount: line.credit_amount ? line.credit_amount.toString() : '',
-          description: line.description || ''
+          description: line.description || '',
         }));
         setEditingLines(formattedLines);
         setShowEditModal(true);
@@ -213,13 +214,13 @@ export default function SimpleJournalBook() {
           entry_date: editingEntry.entry_date,
           description: editingEntry.description,
           lines: editingLines.filter(line => 
-            line.account_code && (line.debit_amount || line.credit_amount)
+            line.account_code && (line.debit_amount || line.credit_amount),
           ).map(line => ({
             ...line,
             debit_amount: parseFloat(line.debit_amount || '0'),
-            credit_amount: parseFloat(line.credit_amount || '0')
-          }))
-        })
+            credit_amount: parseFloat(line.credit_amount || '0'),
+          })),
+        }),
       });
       
       const data = await response.json();
@@ -249,7 +250,7 @@ export default function SimpleJournalBook() {
     
     try {
       const response = await fetch(`/api/accounting/journal?id=${entry.id}&company_id=${COMPANY_ID}&company_demo=${COMPANY_DEMO}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       const data = await response.json();
@@ -261,7 +262,7 @@ export default function SimpleJournalBook() {
         // Recargar para asegurar sincronización
         setTimeout(() => loadEntries(), 500);
       } else {
-        setMessage('❌ Error eliminando: ' + (data.error || 'Desconocido'));
+        setMessage(`❌ Error eliminando: ${  data.error || 'Desconocido'}`);
       }
     } catch (error) {
       console.error('❌ Error:', error);
@@ -277,8 +278,8 @@ export default function SimpleJournalBook() {
       reference: '',
       lines: [
         { account_code: '', account_name: '', debit_amount: '', credit_amount: '', description: '' },
-        { account_code: '', account_name: '', debit_amount: '', credit_amount: '', description: '' }
-      ]
+        { account_code: '', account_name: '', debit_amount: '', credit_amount: '', description: '' },
+      ],
     });
   };
 
@@ -286,7 +287,7 @@ export default function SimpleJournalBook() {
   const addLine = () => {
     setFormData(prev => ({
       ...prev,
-      lines: [...prev.lines, { account_code: '', account_name: '', debit_amount: '', credit_amount: '', description: '' }]
+      lines: [...prev.lines, { account_code: '', account_name: '', debit_amount: '', credit_amount: '', description: '' }],
     }));
   };
 
@@ -295,7 +296,7 @@ export default function SimpleJournalBook() {
     if (formData.lines.length > 2) {
       setFormData(prev => ({
         ...prev,
-        lines: prev.lines.filter((_, i) => i !== index)
+        lines: prev.lines.filter((_, i) => i !== index),
       }));
     }
   };
@@ -305,8 +306,8 @@ export default function SimpleJournalBook() {
     setFormData(prev => ({
       ...prev,
       lines: prev.lines.map((line, i) => 
-        i === index ? { ...line, [field]: value } : line
-      )
+        i === index ? { ...line, [field]: value } : line,
+      ),
     }));
   };
 
@@ -327,7 +328,7 @@ export default function SimpleJournalBook() {
           }`}>
             {message}
             <button 
-              onClick={() => setMessage('')}
+              onClick={() => { setMessage(''); }}
               className="float-right text-lg leading-none"
             >
               ×
@@ -338,7 +339,7 @@ export default function SimpleJournalBook() {
         {/* Botones de acción */}
         <div className="mb-6 flex flex-wrap gap-3">
           <Button 
-            onClick={() => setShowAddModal(true)}
+            onClick={() => { setShowAddModal(true); }}
             className="bg-blue-600 hover:bg-blue-700 text-white"
           >
             + Nuevo Asiento Simple
@@ -388,7 +389,7 @@ export default function SimpleJournalBook() {
           <CardContent>
             {loading ? (
               <div className="text-center py-8">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
                 <p className="mt-2 text-gray-600">Cargando...</p>
               </div>
             ) : entries.length === 0 ? (
@@ -488,7 +489,7 @@ export default function SimpleJournalBook() {
                   <input
                     type="date"
                     value={formData.date}
-                    onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                    onChange={(e) => { setFormData(prev => ({ ...prev, date: e.target.value })); }}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -499,7 +500,7 @@ export default function SimpleJournalBook() {
                   <input
                     type="text"
                     value={formData.reference}
-                    onChange={(e) => setFormData(prev => ({ ...prev, reference: e.target.value }))}
+                    onChange={(e) => { setFormData(prev => ({ ...prev, reference: e.target.value })); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -509,7 +510,7 @@ export default function SimpleJournalBook() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Descripción *</label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, description: e.target.value })); }}
                   required
                   rows={2}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -538,7 +539,7 @@ export default function SimpleJournalBook() {
                         {formData.lines.length > 2 && (
                           <button
                             type="button"
-                            onClick={() => removeLine(index)}
+                            onClick={() => { removeLine(index); }}
                             className="text-red-600 hover:text-red-800 text-sm"
                           >
                             Eliminar
@@ -552,10 +553,10 @@ export default function SimpleJournalBook() {
                           <AccountSelect
                             value={line.account_code}
                             name={line.account_name}
-                            onCodeChange={(code) => updateLine(index, 'account_code', code)}
-                            onNameChange={(name) => updateLine(index, 'account_name', name)}
+                            onCodeChange={(code) => { updateLine(index, 'account_code', code); }}
+                            onNameChange={(name) => { updateLine(index, 'account_name', name); }}
                             placeholder="Buscar por código o nombre..."
-                            required={true}
+                            required
                           />
                           <div className="text-xs text-gray-500 mt-1">
                             {line.account_name && `✓ ${line.account_name}`}
@@ -569,7 +570,7 @@ export default function SimpleJournalBook() {
                             step="0.01"
                             min="0"
                             value={line.debit_amount}
-                            onChange={(e) => updateLine(index, 'debit_amount', e.target.value)}
+                            onChange={(e) => { updateLine(index, 'debit_amount', e.target.value); }}
                             className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                           />
                         </div>
@@ -581,7 +582,7 @@ export default function SimpleJournalBook() {
                             step="0.01"
                             min="0"
                             value={line.credit_amount}
-                            onChange={(e) => updateLine(index, 'credit_amount', e.target.value)}
+                            onChange={(e) => { updateLine(index, 'credit_amount', e.target.value); }}
                             className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                           />
                         </div>
@@ -591,7 +592,7 @@ export default function SimpleJournalBook() {
                           <input
                             type="text"
                             value={line.description}
-                            onChange={(e) => updateLine(index, 'description', e.target.value)}
+                            onChange={(e) => { updateLine(index, 'description', e.target.value); }}
                             placeholder="Opcional"
                             className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                           />
@@ -656,7 +657,7 @@ export default function SimpleJournalBook() {
                     <input
                       type="date"
                       value={editingEntry.entry_date}
-                      onChange={(e) => setEditingEntry({ ...editingEntry, entry_date: e.target.value })}
+                      onChange={(e) => { setEditingEntry({ ...editingEntry, entry_date: e.target.value }); }}
                       className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     />
@@ -677,7 +678,7 @@ export default function SimpleJournalBook() {
                   <input
                     type="text"
                     value={editingEntry.description}
-                    onChange={(e) => setEditingEntry({ ...editingEntry, description: e.target.value })}
+                    onChange={(e) => { setEditingEntry({ ...editingEntry, description: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
@@ -696,7 +697,7 @@ export default function SimpleJournalBook() {
                         account_name: '', 
                         debit_amount: '', 
                         credit_amount: '', 
-                        description: '' 
+                        description: '', 
                       }]);
                     }}
                     className="text-blue-600 hover:text-blue-800 text-sm font-medium"
@@ -740,7 +741,7 @@ export default function SimpleJournalBook() {
                               setEditingLines(newLines);
                             }}
                             placeholder="Buscar por código o nombre..."
-                            required={true}
+                            required
                           />
                         </div>
 
@@ -822,12 +823,12 @@ export default function SimpleJournalBook() {
                     <p className={`text-lg font-semibold ${
                       Math.abs(
                         editingLines.reduce((sum, line) => sum + parseFloat(line.debit_amount || '0'), 0) -
-                        editingLines.reduce((sum, line) => sum + parseFloat(line.credit_amount || '0'), 0)
+                        editingLines.reduce((sum, line) => sum + parseFloat(line.credit_amount || '0'), 0),
                       ) > 0.01 ? 'text-red-600' : 'text-green-600'
                     }`}>
                       {formatCurrency(
                         editingLines.reduce((sum, line) => sum + parseFloat(line.debit_amount || '0'), 0) -
-                        editingLines.reduce((sum, line) => sum + parseFloat(line.credit_amount || '0'), 0)
+                        editingLines.reduce((sum, line) => sum + parseFloat(line.credit_amount || '0'), 0),
                       )}
                     </p>
                   </div>
@@ -852,7 +853,7 @@ export default function SimpleJournalBook() {
                   className="bg-blue-600 hover:bg-blue-700 text-white"
                   disabled={Math.abs(
                     editingLines.reduce((sum, line) => sum + parseFloat(line.debit_amount || '0'), 0) -
-                    editingLines.reduce((sum, line) => sum + parseFloat(line.credit_amount || '0'), 0)
+                    editingLines.reduce((sum, line) => sum + parseFloat(line.credit_amount || '0'), 0),
                   ) > 0.01}
                 >
                   Actualizar Asiento

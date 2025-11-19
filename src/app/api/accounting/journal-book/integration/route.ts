@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -24,7 +26,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -41,8 +43,8 @@ export async function GET(request: NextRequest) {
         fixed_assets_processed: 0,
         payroll_pending: 0,
         payroll_processed: 0,
-        total_pending: 0
-      }
+        total_pending: 0,
+      },
     };
 
     // ✅ OBTENER DATOS RCV
@@ -76,14 +78,14 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: integrationData
+      data: integrationData,
     });
 
   } catch (error) {
     console.error('❌ Error obteniendo datos de integración:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -100,7 +102,7 @@ export async function POST(request: NextRequest) {
     if (!company_id || !transactions || !Array.isArray(transactions)) {
       return NextResponse.json(
         { success: false, error: 'Faltan campos requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -114,7 +116,7 @@ export async function POST(request: NextRequest) {
           company_id, 
           transaction, 
           create_journal_entries,
-          preview_mode
+          preview_mode,
         );
         results.push(result);
       } catch (error) {
@@ -122,7 +124,7 @@ export async function POST(request: NextRequest) {
         results.push({
           id: transaction.id,
           success: false,
-          error: error instanceof Error ? error.message : 'Error procesando transacción'
+          error: error instanceof Error ? error.message : 'Error procesando transacción',
         });
       }
     }
@@ -135,15 +137,15 @@ export async function POST(request: NextRequest) {
         processed: results.length,
         successful: successCount,
         failed: results.length - successCount,
-        results
-      }
+        results,
+      },
     });
 
   } catch (error) {
     console.error('❌ Error procesando integración:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -204,7 +206,7 @@ async function getRCVIntegrationData(companyId: string, status: string) {
           created_at: ledger.created_at,
           is_processed: isProcessed,
           entry_number: ledger.entry_number,
-          journal_entry_id: isProcessed ? await getJournalEntryId(ledger.id, 'purchase') : null
+          journal_entry_id: isProcessed ? await getJournalEntryId(ledger.id, 'purchase') : null,
         };
 
         data.push(ledgerData);
@@ -232,7 +234,7 @@ async function getRCVIntegrationData(companyId: string, status: string) {
           created_at: ledger.created_at,
           is_processed: isProcessed,
           entry_number: ledger.entry_number,
-          journal_entry_id: isProcessed ? await getJournalEntryId(ledger.id, 'sales') : null
+          journal_entry_id: isProcessed ? await getJournalEntryId(ledger.id, 'sales') : null,
         };
 
         data.push(ledgerData);
@@ -259,7 +261,7 @@ async function getRCVIntegrationData(companyId: string, status: string) {
           created_at: form.created_at,
           is_processed: isProcessed,
           entry_number: form.entry_number,
-          journal_entry_id: isProcessed ? await getJournalEntryId(form.id, 'f29') : null
+          journal_entry_id: isProcessed ? await getJournalEntryId(form.id, 'f29') : null,
         };
 
         data.push(formData);
@@ -309,7 +311,7 @@ async function getFixedAssetsIntegrationData(companyId: string, status: string) 
           account_code: asset.account_code,
           created_at: asset.created_at,
           is_processed: isProcessed,
-          journal_entry_id: isProcessed ? await getJournalEntryId(asset.id, 'fixed_asset') : null
+          journal_entry_id: isProcessed ? await getJournalEntryId(asset.id, 'fixed_asset') : null,
         };
 
         if (status === 'all' || (status === 'pending' && !isProcessed) || (status === 'processed' && isProcessed)) {
@@ -425,7 +427,7 @@ async function getPayrollIntegrationData(companyId: string, status: string) {
           updated_at: liquidations[0].updated_at,
           is_processed: isProcessed,
           journal_entry_id: journalEntryId,
-          liquidation_ids: liquidations.map(l => l.id)
+          liquidation_ids: liquidations.map(l => l.id),
         };
 
         if (status === 'all' || (status === 'pending' && !isProcessed) || (status === 'processed' && isProcessed)) {
@@ -462,7 +464,7 @@ async function isRCVProcessed(ledgerId: string, type: 'purchase' | 'sales'): Pro
       .single();
     
     // Está procesado si tiene entry_number asignado (no NULL)
-    return !!(ledgerData && ledgerData.entry_number);
+    return !!(ledgerData?.entry_number);
   } catch {
     return false;
   }
@@ -609,7 +611,7 @@ async function processIntegrationTransaction(
   companyId: string, 
   transaction: any, 
   createJournalEntries: boolean,
-  previewMode: boolean = false
+  previewMode: boolean = false,
 ) {
   const { id, type, action = 'process', journal_entry_id } = transaction;
 
@@ -622,7 +624,7 @@ async function processIntegrationTransaction(
       id,
       success: true,
       journal_entry: journalPreview,
-      message: 'Previsualización generada exitosamente'
+      message: 'Previsualización generada exitosamente',
     };
   } else if (action === 'process' && createJournalEntries) {
     // Crear asiento contable automático
@@ -632,7 +634,7 @@ async function processIntegrationTransaction(
       id,
       success: true,
       journal_entry_id: journalEntry?.jbid || null,
-      message: 'Asiento contable creado exitosamente'
+      message: 'Asiento contable creado exitosamente',
     };
   } else if (action === 'process' && !createJournalEntries && journal_entry_id) {
     // Solo marcar como procesado referenciando un asiento ya creado
@@ -641,15 +643,15 @@ async function processIntegrationTransaction(
     return {
       id,
       success: marked,
-      journal_entry_id: journal_entry_id,
-      message: marked ? 'Transacción marcada como procesada' : 'Error marcando transacción'
+      journal_entry_id,
+      message: marked ? 'Transacción marcada como procesada' : 'Error marcando transacción',
     };
   } else {
     return {
       id,
       success: false,
       journal_entry_id: null,
-      message: 'Parámetros insuficientes para procesar transacción'
+      message: 'Parámetros insuficientes para procesar transacción',
     };
   }
 }
@@ -760,7 +762,7 @@ async function createAutomaticJournalEntry(companyId: string, transaction: any) 
           companyId,
           transaction,
           entryData.id,
-          entryData.entry_number?.toString() // Pasar el entry_number
+          entryData.entry_number?.toString(), // Pasar el entry_number
         );
 
         if (marked) {
@@ -786,9 +788,9 @@ async function createAutomaticJournalEntry(companyId: string, transaction: any) 
                 integration_type: 'automatic_centralized',
                 transaction_data: transaction.data,
                 account_config_used: true,
-                entry_number: entryData.entry_number
+                entry_number: entryData.entry_number,
               },
-              processed_at: new Date().toISOString()
+              processed_at: new Date().toISOString(),
             })
             .single();
         } catch (logError) {
@@ -848,7 +850,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoTotal: doc.total_amount,
           tipoDoc: doc.document_type || '33',
           numeroDoc: doc.document_number,
-          fechaDoc: doc.document_date
+          fechaDoc: doc.document_date,
         }));
 
         // Verificar que los totales coincidan
@@ -879,7 +881,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 7416389,
           montoIVA: 1410118,
           montoTotal: 8826507,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '76.111.152-3',
@@ -887,7 +889,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 1606377,
           montoIVA: 305242,
           montoTotal: 1911619,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '91.443.000-3',
@@ -895,7 +897,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 763309,
           montoIVA: 145054,
           montoTotal: 908337,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '79.984.240-8',
@@ -903,7 +905,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 491835,
           montoIVA: 93439,
           montoTotal: 600765,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.222.667-5',
@@ -911,7 +913,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 500000,
           montoIVA: 0,
           montoTotal: 500000,
-          tipoDoc: '34'
+          tipoDoc: '34',
         },
         // PROVEEDORES MEDIANOS ($100k - $500k)
         {
@@ -920,7 +922,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 378891,
           montoIVA: 71919,
           montoTotal: 450801,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '86.527.400-9',
@@ -928,7 +930,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 352185,
           montoIVA: 66915,
           montoTotal: 419100,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '81.537.600-5',
@@ -936,7 +938,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 319411,
           montoIVA: 60648,
           montoTotal: 380059,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.717.726-5',
@@ -944,7 +946,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 302370,
           montoIVA: 57450,
           montoTotal: 359820,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.313.212-7',
@@ -952,7 +954,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 272184,
           montoIVA: 51716,
           montoTotal: 323900,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '91.144.000-8',
@@ -960,7 +962,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 214269,
           montoIVA: 40711,
           montoTotal: 254980,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.129.245-3',
@@ -968,7 +970,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 214269,
           montoIVA: 40711,
           montoTotal: 254980,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '90.310.000-1',
@@ -976,7 +978,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 159665,
           montoIVA: 30336,
           montoTotal: 190001,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '81.094.100-6',
@@ -984,7 +986,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 152689,
           montoIVA: 29011,
           montoTotal: 181700,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '76.588.648-1',
@@ -992,7 +994,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 89701,
           montoIVA: 45299,
           montoTotal: 135000,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '76.381.479-3',
@@ -1000,7 +1002,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 174568,
           montoIVA: 33174,
           montoTotal: 207742,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '76.058.633-1',
@@ -1008,7 +1010,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 164205,
           montoIVA: 31190,
           montoTotal: 195395,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.901.817-2',
@@ -1016,7 +1018,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 279888,
           montoIVA: 53179,
           montoTotal: 333067,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '76.942.953-0',
@@ -1024,7 +1026,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 115563,
           montoIVA: 21957,
           montoTotal: 137520,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.563.749-8',
@@ -1032,7 +1034,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 120000,
           montoIVA: 22800,
           montoTotal: 142800,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         // PROVEEDORES MENORES ($20k - $100k)
         {
@@ -1041,7 +1043,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 94407,
           montoIVA: 17938,
           montoTotal: 112345,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '76.134.941-4',
@@ -1049,7 +1051,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 85787,
           montoIVA: 16292,
           montoTotal: 105252,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '76.117.488-6',
@@ -1057,7 +1059,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 172147,
           montoIVA: 32708,
           montoTotal: 204855,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.711.547-2',
@@ -1065,7 +1067,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 90756,
           montoIVA: 17244,
           montoTotal: 108000,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '78.508.180-3',
@@ -1073,7 +1075,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 33596,
           montoIVA: 6383,
           montoTotal: 39979,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.124.658-3',
@@ -1081,7 +1083,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 69412,
           montoIVA: 13188,
           montoTotal: 82600,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.229.938-9',
@@ -1089,7 +1091,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 15882,
           montoIVA: 3018,
           montoTotal: 18900,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '76.289.459-9',
@@ -1097,7 +1099,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 63781,
           montoIVA: 12119,
           montoTotal: 75900,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.388.874-4',
@@ -1105,7 +1107,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 128442,
           montoIVA: 24404,
           montoTotal: 152846,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '76.221.469-5',
@@ -1113,7 +1115,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 19302,
           montoIVA: 3667,
           montoTotal: 22969,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.085.334-6',
@@ -1121,7 +1123,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 45799,
           montoIVA: 8702,
           montoTotal: 54501,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '76.085.387-9',
@@ -1129,7 +1131,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 34807,
           montoIVA: 6613,
           montoTotal: 41420,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '76.047.944-6',
@@ -1137,7 +1139,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 155077,
           montoIVA: 29465,
           montoTotal: 184542,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.583.220-7',
@@ -1145,7 +1147,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 68283,
           montoIVA: 12973,
           montoTotal: 95034,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         // PROVEEDORES PEQUEÑOS (menos de $20k)
         {
@@ -1154,7 +1156,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 71387,
           montoIVA: 13564,
           montoTotal: 84951,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '8.588.169-8',
@@ -1162,7 +1164,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 18395,
           montoIVA: 3495,
           montoTotal: 21890,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '78.161.686-9',
@@ -1170,7 +1172,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 3025,
           montoIVA: 575,
           montoTotal: 3600,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.764.904-3',
@@ -1178,7 +1180,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 6555,
           montoIVA: 1245,
           montoTotal: 7800,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.151.471-5',
@@ -1186,7 +1188,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 12773,
           montoIVA: 2427,
           montoTotal: 15200,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.438.718-8',
@@ -1194,7 +1196,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 4622,
           montoIVA: 878,
           montoTotal: 5500,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '77.965.122-3',
@@ -1202,7 +1204,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 158400,
           montoIVA: 30096,
           montoTotal: 188496,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         // SERVICIOS FINANCIEROS Y OTROS
         {
@@ -1211,7 +1213,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 286854,
           montoIVA: 54502,
           montoTotal: 341356,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '97.036.000-K',
@@ -1219,7 +1221,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 65260,
           montoIVA: 12401,
           montoTotal: 77661,
-          tipoDoc: '33'
+          tipoDoc: '33',
         },
         {
           rutProveedor: '97.006.000-6',
@@ -1227,8 +1229,8 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: 7089,
           montoIVA: 1348,
           montoTotal: 8437,
-          tipoDoc: '33'
-        }
+          tipoDoc: '33',
+        },
       ];
       
       // Calcular el total de las transacciones incluidas
@@ -1254,7 +1256,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoNeto: adjustmentNet,
           montoIVA: adjustmentIVA,
           montoTotal: difference,
-          tipoDoc: '33'
+          tipoDoc: '33',
         });
         
         console.log(`✅ Agregado ajuste: Neto $${adjustmentNet.toLocaleString()}, IVA $${adjustmentIVA.toLocaleString()}, Total $${difference.toLocaleString()}`);
@@ -1282,7 +1284,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           montoTotal: finalDifference,
           tipoDoc: '33',
           fecha: '2025-08-01',
-          numeroDocumento: 'AJUSTE-001'
+          numeroDocumento: 'AJUSTE-001',
         });
         
         console.log(`✅ MERCADERÍA CUADRADA: Neto $${finalAdjustmentNet.toLocaleString()}, IVA $${finalAdjustmentIVA.toLocaleString()}, Total $${finalDifference.toLocaleString()}`);
@@ -1412,7 +1414,7 @@ async function processRCVWithEntityAccounts(companyId: string, transactions: any
         iva_recuperable: 0,
         proveedor_total: 0,
         account_code: null,
-        account_name: null
+        account_name: null,
       });
     }
     
@@ -1442,7 +1444,7 @@ async function processRCVWithEntityAccounts(companyId: string, transactions: any
     totalIVA,
     totalProveedores,
     processedCount,
-    entitiesWithAccounts: Array.from(entityTotals.values()).filter(e => e.account_code).length
+    entitiesWithAccounts: Array.from(entityTotals.values()).filter(e => e.account_code).length,
   };
 }
 
@@ -1497,7 +1499,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
         data.total_amount, 
         companyId, 
         data.type, 
-        data.period
+        data.period,
       );
       if (realTransactions && realTransactions.length > 0) {
         data.transacciones = realTransactions;
@@ -1560,7 +1562,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
             monto_total: entityAmount + Math.round(entityAmount * 0.19),
             montoTotal: entityAmount + Math.round(entityAmount * 0.19),
             tipo_doc: '33',
-            tipoDoc: '33'
+            tipoDoc: '33',
           });
         }
       });
@@ -1577,7 +1579,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
         montoNeto: Math.round(data.total_amount / 1.19),
         montoIVA: data.total_amount - Math.round(data.total_amount / 1.19),
         montoTotal: data.total_amount,
-        tipoDoc: '33'
+        tipoDoc: '33',
       }];
       console.log(`✅ Created 1 generic transaction as final fallback`);
     }
@@ -1674,7 +1676,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
     // RCV Ventas: Cliente al debe, Ventas e IVA al haber
     const clientAccount = entityAccounts.mainAccount || {
       code: accountConfig.asset_account_code,
-      name: accountConfig.asset_account_name
+      name: accountConfig.asset_account_name,
     };
     
     lines.push({
@@ -1683,7 +1685,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
       line_number: 1,
       debit_amount: totalAmount,
       credit_amount: 0,
-      line_description: `${clientAccount.name} por ventas RCV ${data.period}${entityAccounts.entityCount > 0 ? ` (${entityAccounts.entityCount} entidades específicas)` : ''}`
+      line_description: `${clientAccount.name} por ventas RCV ${data.period}${entityAccounts.entityCount > 0 ? ` (${entityAccounts.entityCount} entidades específicas)` : ''}`,
     });
 
     lines.push({
@@ -1692,7 +1694,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
       line_number: 2,
       debit_amount: 0,
       credit_amount: netAmount,
-      line_description: `${accountConfig.revenue_account_name} RCV ${data.period}`
+      line_description: `${accountConfig.revenue_account_name} RCV ${data.period}`,
     });
 
     lines.push({
@@ -1701,7 +1703,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
       line_number: 3,
       debit_amount: 0,
       credit_amount: ivaAmount,
-      line_description: `${accountConfig.tax_account_name} RCV ${data.period}`
+      line_description: `${accountConfig.tax_account_name} RCV ${data.period}`,
     });
   } else {
     // RCV Compras: Cuentas específicas de entidades + IVA al DEBE, Proveedores por pagar al HABER
@@ -1712,7 +1714,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
       hasTransacciones: !!data.transacciones,
       isArray: Array.isArray(data.transacciones),
       length: data.transacciones ? data.transacciones.length : 0,
-      firstTransaction: data.transacciones && data.transacciones[0] ? data.transacciones[0] : null
+      firstTransaction: data.transacciones?.[0] ? data.transacciones[0] : null,
     });
     
     if (data.transacciones && Array.isArray(data.transacciones) && data.transacciones.length > 0) {
@@ -1768,14 +1770,14 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
               line_number: lineNumber++,
               debit_amount: transactionNetAmount,
               credit_amount: 0,
-              line_description: `${entityData.account_name} - ${entityData.entity_name}${folioNumber ? ` FC${folioNumber}` : ''} RCV ${data.period}${montoExento > 0 ? ' (exento)' : ''}${otroImpuesto > 0 ? ' (+otros imp.)' : ''}${tipoDoc === '61' ? ' (NC)' : ''}`
+              line_description: `${entityData.account_name} - ${entityData.entity_name}${folioNumber ? ` FC${folioNumber}` : ''} RCV ${data.period}${montoExento > 0 ? ' (exento)' : ''}${otroImpuesto > 0 ? ' (+otros imp.)' : ''}${tipoDoc === '61' ? ' (NC)' : ''}`,
             });
           } else {
             console.log(`⚠️ No specific account found for RUT ${supplierRut} (${formattedRut}), using generic expense account`);
             // Usar cuenta genérica de gastos, NO de proveedores
             const genericExpenseAccount = {
               code: '6.3.1.001',
-              name: 'Gastos de Mercadería'
+              name: 'Gastos de Mercadería',
             };
             lines.push({
               account_code: genericExpenseAccount.code,
@@ -1783,7 +1785,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
               line_number: lineNumber++,
               debit_amount: transactionNetAmount,
               credit_amount: 0,
-              line_description: `${genericExpenseAccount.name} - ${supplierName}${folioNumber ? ` FC${folioNumber}` : ''} RCV ${data.period}${otroImpuesto > 0 ? ` (incluye otros impuestos)` : ''}`
+              line_description: `${genericExpenseAccount.name} - ${supplierName}${folioNumber ? ` FC${folioNumber}` : ''} RCV ${data.period}${otroImpuesto > 0 ? ` (incluye otros impuestos)` : ''}`,
             });
           }
           
@@ -1793,7 +1795,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
           // Usar cuenta genérica de gastos, NO de proveedores
           const genericExpenseAccount = {
             code: '6.3.1.001',
-            name: 'Gastos de Mercadería'
+            name: 'Gastos de Mercadería',
           };
           lines.push({
             account_code: genericExpenseAccount.code,
@@ -1801,7 +1803,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
             line_number: lineNumber++,
             debit_amount: transactionNetAmount,
             credit_amount: 0,
-            line_description: `${genericExpenseAccount.name} - Sin RUT${folioNumber ? ` FC${folioNumber}` : ''} RCV ${data.period}`
+            line_description: `${genericExpenseAccount.name} - Sin RUT${folioNumber ? ` FC${folioNumber}` : ''} RCV ${data.period}`,
           });
           processedNetAmount += transactionNetAmount;
         }
@@ -1873,7 +1875,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
             line_number: lineNumber++,
             debit_amount: entityNetAmount,
             credit_amount: 0,
-            line_description: `${entity.account_name} - ${entity.entity_name || entity.entity_rut} RCV ${data.period}`
+            line_description: `${entity.account_name} - ${entity.entity_name || entity.entity_rut} RCV ${data.period}`,
           });
           console.log(`💰 Entity ${index + 1}: ${entity.entity_name} → $${entityNetAmount.toLocaleString()} (${entity.account_code})`);
         }
@@ -1885,7 +1887,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
       // Usar cuenta genérica de gastos, NO de proveedores
       const genericExpenseAccount = {
         code: '6.3.1.001',
-        name: 'Gastos de Mercadería'
+        name: 'Gastos de Mercadería',
       };
       
       lines.push({
@@ -1894,7 +1896,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
         line_number: lineNumber++,
         debit_amount: netAmount,
         credit_amount: 0,
-        line_description: `${genericExpenseAccount.name} por compras RCV ${data.period}`
+        line_description: `${genericExpenseAccount.name} por compras RCV ${data.period}`,
       });
     }
 
@@ -1906,7 +1908,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
         line_number: lineNumber++,
         debit_amount: ivaAmount > 0 ? ivaAmount : 0,
         credit_amount: ivaAmount < 0 ? Math.abs(ivaAmount) : 0,
-        line_description: `${accountConfig.tax_account_name} RCV ${data.period}${ivaAmount < 0 ? ' (Nota Crédito)' : ''}`
+        line_description: `${accountConfig.tax_account_name} RCV ${data.period}${ivaAmount < 0 ? ' (Nota Crédito)' : ''}`,
       });
       console.log(`🧮 IVA procesado usando Columna L (IVA Recuperable): ${ivaAmount > 0 ? 'DEBE' : 'HABER'} ${Math.abs(ivaAmount).toLocaleString()}`);
     }
@@ -1914,7 +1916,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
     // Proveedores: Si total es positivo va al HABER, si es negativo (más créditos que facturas) va al DEBE
     const supplierAccount = {
       code: accountConfig.asset_account_code,
-      name: accountConfig.asset_account_name
+      name: accountConfig.asset_account_name,
     };
     
     if (totalAmount !== 0) {
@@ -1928,7 +1930,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
         line_number: lineNumber++,
         debit_amount: totalAmount < 0 ? Math.abs(totalAmount) : 0,
         credit_amount: adjustedCreditAmount, // Usar total DEBE calculado para garantizar balance
-        line_description: `${supplierAccount.name} por compras RCV ${data.period}${entityAccounts.entityCount > 0 ? ` (${entityAccounts.entityCount} entidades específicas)` : ''}${totalAmount < 0 ? ' (Saldo a favor)' : ''}`
+        line_description: `${supplierAccount.name} por compras RCV ${data.period}${entityAccounts.entityCount > 0 ? ` (${entityAccounts.entityCount} entidades específicas)` : ''}${totalAmount < 0 ? ' (Saldo a favor)' : ''}`,
       });
       console.log(`🏢 Proveedores procesados: ${totalAmount > 0 ? 'HABER' : 'DEBE'} ${adjustedCreditAmount.toLocaleString()} (ajustado para balance perfecto)`);
       console.log(`💰 Balance verificado: DEBE ${totalDebitCalculated.toLocaleString()}, HABER ${adjustedCreditAmount.toLocaleString()}`);
@@ -1940,7 +1942,7 @@ export async function createRCVJournalEntry(companyId: string, rcvData: any, pre
     description: `RCV ${isRCVSales ? 'Ventas' : 'Compras'} ${data.period} - ${data.file_name || ''}${entityAccounts.entityCount > 0 ? ` (${entityAccounts.entityCount} entidades con cuentas específicas)` : ''}`,
     reference: data.file_name || `RCV-${subtype}-${data.period}`,
     entry_type: 'rcv',
-    lines
+    lines,
   };
 }
 
@@ -1966,7 +1968,7 @@ async function createFixedAssetJournalEntry(transaction: any, companyId: string)
       line_number: 1,
       debit_amount: purchaseValue,
       credit_amount: 0,
-      line_description: `Adquisición activo fijo: ${data.name}`
+      line_description: `Adquisición activo fijo: ${data.name}`,
     },
     {
       account_code: accountConfig.revenue_account_code,
@@ -1974,8 +1976,8 @@ async function createFixedAssetJournalEntry(transaction: any, companyId: string)
       line_number: 2,
       debit_amount: 0,
       credit_amount: purchaseValue,
-      line_description: `Pago activo fijo: ${data.name}`
-    }
+      line_description: `Pago activo fijo: ${data.name}`,
+    },
   ];
 
   return {
@@ -1983,7 +1985,7 @@ async function createFixedAssetJournalEntry(transaction: any, companyId: string)
     description: `Adquisición Activo Fijo: ${data.name}`,
     reference: `AF-${data.id}`,
     entry_type: 'fixed_asset',
-    lines
+    lines,
   };
 }
 
@@ -2025,7 +2027,7 @@ async function createPayrollJournalEntry(transaction: any, companyId: string) {
       source_period: '202508',
       period_year: 2025,
       period_month: 8,
-      lines
+      lines,
     };
   }
   
@@ -2079,7 +2081,7 @@ async function createPayrollJournalEntry(transaction: any, companyId: string) {
       socialAfp: Math.round((liquidation.total_taxable_income || 0) * 0.001),
       socialEsperanza: Math.round((liquidation.total_taxable_income || 0) * 0.009),
       sisEmployer: Math.round((liquidation.total_taxable_income || 0) * 0.0188),
-      mutualEmployer: Math.round((liquidation.total_taxable_income || 0) * 0.0093)
+      mutualEmployer: Math.round((liquidation.total_taxable_income || 0) * 0.0093),
     };
     
     const employeeLines = generateEmployeeJournalLines(employeeData, lineNumber);
@@ -2109,7 +2111,7 @@ async function createPayrollJournalEntry(transaction: any, companyId: string) {
     source_period: data.period.replace('-', ''),
     period_year: data.period_year,
     period_month: data.period_month,
-    lines
+    lines,
   };
 }
 
@@ -2172,11 +2174,11 @@ async function getDetailedLiquidationData(companyId: string, liquidationIds: str
         ...liquidation,
         employment_contracts: contract ? {
           contract_type: contract.contract_type || 'indefinido',
-          weekly_hours: contract.weekly_hours || 45
+          weekly_hours: contract.weekly_hours || 45,
         } : {
           contract_type: 'indefinido', // Default
-          weekly_hours: 45 // Default
-        }
+          weekly_hours: 45, // Default
+        },
       };
     });
 
@@ -2219,7 +2221,7 @@ function calculatePayrollTotals(liquidationData: any[]) {
     impuesto_pagar: 0,
     
     // Total descuentos reales de trabajadores (sin aportes patronales)
-    descuentos_trabajadores_reales: 0
+    descuentos_trabajadores_reales: 0,
   };
 
   for (const liquidation of liquidationData) {
@@ -2303,7 +2305,7 @@ function calculatePayrollTotals(liquidationData: any[]) {
     ley_social_esperanza: totals.ley_social_esperanza,
     sis_empleador: totals.sis_empleador,
     mutual_empleador: totals.mutual_empleador,
-    total_aportes: totals.cesantia_empleador + totals.ley_social_afp + totals.ley_social_esperanza + totals.sis_empleador + totals.mutual_empleador
+    total_aportes: totals.cesantia_empleador + totals.ley_social_afp + totals.ley_social_esperanza + totals.sis_empleador + totals.mutual_empleador,
   });
 
   // Agregar 1% Ley Social AFP (0.1%) al total AFP por pagar - va a la misma cuenta que AFP empleados
@@ -2313,7 +2315,7 @@ function calculatePayrollTotals(liquidationData: any[]) {
     haberes_total: totals.sueldo_base + totals.horas_extras + totals.bonificaciones + totals.gratificacion_art50 + totals.colacion_allowance + totals.transportation_allowance,
     aportes_patronales: totals.cesantia_empleador + totals.ley_social_afp + totals.ley_social_esperanza + totals.sis_empleador + totals.mutual_empleador,
     descuentos_trabajadores_reales: totals.descuentos_trabajadores_reales,
-    empleados_count: liquidationData.length
+    empleados_count: liquidationData.length,
   });
 
   return totals;
@@ -2347,7 +2349,7 @@ async function getDefaultAccountConfig(moduleType: string, transactionType: stri
         revenue_account_code: '4101001',
         revenue_account_name: 'Ventas',
         asset_account_code: '1105001',
-        asset_account_name: 'Clientes'
+        asset_account_name: 'Clientes',
       },
       purchase: {
         tax_account_code: '1104001',
@@ -2355,8 +2357,8 @@ async function getDefaultAccountConfig(moduleType: string, transactionType: stri
         revenue_account_code: '5101001',
         revenue_account_name: 'Gastos Generales',
         asset_account_code: '2101001',
-        asset_account_name: 'Proveedores'
-      }
+        asset_account_name: 'Proveedores',
+      },
     },
     fixed_assets: {
       acquisition: {
@@ -2365,8 +2367,8 @@ async function getDefaultAccountConfig(moduleType: string, transactionType: stri
         revenue_account_code: '1101001',
         revenue_account_name: 'Caja y Bancos',
         asset_account_code: '1201001',
-        asset_account_name: 'Activos Fijos'
-      }
+        asset_account_name: 'Activos Fijos',
+      },
     },
     payroll: {
       liquidation: {
@@ -2375,9 +2377,9 @@ async function getDefaultAccountConfig(moduleType: string, transactionType: stri
         liability_account_code: '2105001',
         liability_account_name: 'Sueldos por Pagar',
         withholding_account_code: '2106001',
-        withholding_account_name: 'Retenciones por Pagar'
-      }
-    }
+        withholding_account_name: 'Retenciones por Pagar',
+      },
+    },
   };
 
   return defaultConfigs[moduleType]?.[transactionType] || null;
@@ -2423,10 +2425,10 @@ async function getEntitySpecificAccounts(companyId: string, rcvData: any, transa
         return {
           mainAccount: {
             code: entities[0].account_code,
-            name: entities[0].account_name
+            name: entities[0].account_name,
           },
           entityCount: entities.length,
-          entities: entities
+          entities,
         };
       }
     } else {
@@ -2436,15 +2438,15 @@ async function getEntitySpecificAccounts(companyId: string, rcvData: any, transa
         return {
           mainAccount: {
             code: '6.3.1.001',
-            name: 'Gastos de Mercaderia'
+            name: 'Gastos de Mercaderia',
           },
           entityCount: 1,
           entities: [{
             account_code: '6.3.1.001',
             account_name: 'Gastos de Mercaderia',
             entity_name: 'AJUSTE GASTOS DE MERCADERIA',
-            entity_rut: '00.000.000-0'
-          }]
+            entity_rut: '00.000.000-0',
+          }],
         };
       }
       
@@ -2466,10 +2468,10 @@ async function getEntitySpecificAccounts(companyId: string, rcvData: any, transa
         return {
           mainAccount: {
             code: entities[0].account_code,
-            name: entities[0].account_name
+            name: entities[0].account_name,
           },
           entityCount: entities.length,
-          entities: entities
+          entities,
         };
       }
     }
@@ -2478,7 +2480,7 @@ async function getEntitySpecificAccounts(companyId: string, rcvData: any, transa
     return {
       mainAccount: null,
       entityCount: 0,
-      entities: []
+      entities: [],
     };
     
   } catch (error) {
@@ -2486,7 +2488,7 @@ async function getEntitySpecificAccounts(companyId: string, rcvData: any, transa
     return {
       mainAccount: null,
       entityCount: 0,
-      entities: []
+      entities: [],
     };
   }
 }
@@ -2499,7 +2501,7 @@ async function markTransactionAsProcessed(
   companyId: string, 
   transaction: any, 
   journalEntryId: string,
-  entryNumber?: string
+  entryNumber?: string,
 ): Promise<boolean> {
   try {
     console.log(`🔄 Marking transaction ${transaction.id} as processed with journal entry ${journalEntryId} and entry number ${entryNumber}`);
@@ -2509,7 +2511,7 @@ async function markTransactionAsProcessed(
       const tableName = transaction.subtype === 'purchase' ? 'purchase_ledger' : 'sales_ledger';
       
       const updateData: any = {
-        entry_number: entryNumber
+        entry_number: entryNumber,
       };
       
       // Solo agregar processed_at si la columna existe
@@ -2539,7 +2541,7 @@ async function markTransactionAsProcessed(
         transaction_id: transaction.id,
         journal_entry_id: journalEntryId,
         processed_by: 'system',
-        notes: `Automatically processed ${transaction.type} transaction with entry_number: ${entryNumber}`
+        notes: `Automatically processed ${transaction.type} transaction with entry_number: ${entryNumber}`,
       });
     
     if (error) {

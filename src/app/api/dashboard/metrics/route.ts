@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server'
 
 const DEMO_COMPANY_ID = "123e4567-e89b-12d3-a456-426614174000"
 
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
       totalAssetsValue: 12750000, // Valor total de activos en CLP
       depreciation: 185000, // Depreciación mensual calculada
       chartOfAccountsEntries: 127, // Entradas en plan de cuentas IFRS
-      journalEntries: 456 // Asientos de diario acumulados
+      journalEntries: 456, // Asientos de diario acumulados
     }
 
     // Métricas de remuneraciones realistas
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
       totalPayrollCost: 10200000, // Costo total mensual de planilla
       lastLiquidationDate: '2024-11-10', // Última liquidación procesada
       activeContracts: 12, // Contratos activos
-      pendingLiquidations: 0 // Liquidaciones pendientes (actualizadas)
+      pendingLiquidations: 0, // Liquidaciones pendientes (actualizadas)
     }
 
     // Métricas generales del sistema
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest) {
       totalUsers: 3, // Usuarios del sistema demo
       lastUpdated: new Date().toISOString(),
       dataQuality: 95.5, // Calidad de datos procesados
-      processingSpeed: 2.1 // Velocidad promedio de procesamiento
+      processingSpeed: 2.1, // Velocidad promedio de procesamiento
     }
 
     // Métricas específicas por módulo
@@ -47,28 +48,28 @@ export async function GET(request: NextRequest) {
         successRate: 97.8,
         avgProcessingTime: accountingMetrics.avgProcessingTime,
         lastProcessed: accountingMetrics.lastProcessed,
-        confidenceScore: 94.2
+        confidenceScore: 94.2,
       },
       fixedAssets: {
         totalAssets: accountingMetrics.totalFixedAssets,
         totalValue: accountingMetrics.totalAssetsValue,
         monthlyDepreciation: accountingMetrics.depreciation,
         activeAssets: 14,
-        retiredAssets: 1
+        retiredAssets: 1,
       },
       payroll: {
         totalEmployees: payrollMetrics.totalEmployees,
         totalLiquidations: payrollMetrics.totalLiquidations,
         avgSalary: payrollMetrics.avgSalary,
         totalMonthlyCost: payrollMetrics.totalPayrollCost,
-        complianceRate: 100
+        complianceRate: 100,
       },
       accounting: {
         chartEntries: accountingMetrics.chartOfAccountsEntries,
         journalEntries: accountingMetrics.journalEntries,
         balanceAccuracy: 99.1,
-        lastBalanceGenerated: '2024-11-15T10:30:00Z'
-      }
+        lastBalanceGenerated: '2024-11-15T10:30:00Z',
+      },
     }
 
     // Datos en tiempo real simulados
@@ -78,7 +79,7 @@ export async function GET(request: NextRequest) {
       memoryUsage: 45.2,
       responseTime: 185,
       transactionsPerMinute: 12,
-      errorRate: 0.02
+      errorRate: 0.02,
     }
 
     return NextResponse.json({
@@ -92,8 +93,8 @@ export async function GET(request: NextRequest) {
         modules: moduleMetrics,
         live: liveMetrics,
         timestamp: new Date().toISOString(),
-        refreshInterval: 30000 // 30 segundos
-      }
+        refreshInterval: 30000, // 30 segundos
+      },
     })
 
   } catch (error) {
@@ -101,7 +102,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error al obtener métricas del dashboard',
-      details: error instanceof Error ? error.message : 'Error desconocido'
+      details: error instanceof Error ? error.message : 'Error desconocido',
     }, { status: 500 })
   }
 }

@@ -1,9 +1,11 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+
+import { Building, TrendingUp, DollarSign, FileText, BarChart3 } from 'lucide-react';
+
 import { Header } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { Building, TrendingUp, DollarSign, FileText, BarChart3 } from 'lucide-react';
 
 export default function CompanyDetailPage() {
   const params = useParams();
@@ -15,21 +17,21 @@ export default function CompanyDetailPage() {
       name: 'Empresa Demo S.A.',
       rut: '12.345.678-9',
       giro: 'Comercio al por menor',
-      address: 'Av. Principal 123, Santiago'
+      address: 'Av. Principal 123, Santiago',
     },
     'demo-2': {
       name: 'Mi Pyme Ltda.',
       rut: '98.765.432-1',
       giro: 'Servicios profesionales',
-      address: 'Calle Comercio 456, Valparaíso'
-    }
+      address: 'Calle Comercio 456, Valparaíso',
+    },
   };
 
   const company = companyData[companyId as keyof typeof companyData] || {
     name: 'Empresa No Encontrada',
     rut: 'N/A',
     giro: 'N/A',
-    address: 'N/A'
+    address: 'N/A',
   };
 
   return (
@@ -37,7 +39,7 @@ export default function CompanyDetailPage() {
       <Header 
         title={company.name}
         subtitle="Dashboard Contable"
-        showBackButton={true}
+        showBackButton
         backHref="/accounting"
         actions={
           <Button variant="primary" size="sm">

@@ -11,7 +11,7 @@ export {
   isDemoMode,
   getCompanyConfig,
   DEMO_COMPANY,
-  DEMO_MODE
+  DEMO_MODE,
 } from '@/contexts/CompanyContext';
 
 // Types

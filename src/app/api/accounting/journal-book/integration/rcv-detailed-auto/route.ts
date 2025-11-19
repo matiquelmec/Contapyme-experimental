@@ -1,9 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 export const dynamic = 'force-dynamic';
@@ -41,9 +43,9 @@ export async function POST(request: NextRequest) {
             options: {
               save_to_database: true,
               allow_default_accounts: true,
-              include_export_format: false
-            }
-          })
+              include_export_format: false,
+            },
+          }),
         });
 
         const result = await detailedResponse.json();
@@ -56,14 +58,14 @@ export async function POST(request: NextRequest) {
             journal_entries_created: result.data.summary.total_entries_generated,
             total_lines_generated: result.data.summary.total_lines_generated,
             entities_with_specific_accounts: result.data.summary.entities_with_accounts,
-            message: `${result.data.summary.total_entries_generated} asientos creados con ${result.data.summary.total_lines_generated} líneas detalladas`
+            message: `${result.data.summary.total_entries_generated} asientos creados con ${result.data.summary.total_lines_generated} líneas detalladas`,
           });
         } else {
           console.error('❌ Error creando asientos detallados:', result.error);
           results.push({
             id: transaction.id,
             success: false,
-            error: result.error
+            error: result.error,
           });
         }
       } else {
@@ -76,8 +78,8 @@ export async function POST(request: NextRequest) {
           body: JSON.stringify({
             company_id,
             transactions: [transaction],
-            create_journal_entries: true
-          })
+            create_journal_entries: true,
+          }),
         });
 
         const result = await originalResponse.json();
@@ -91,8 +93,8 @@ export async function POST(request: NextRequest) {
         processed: results.length,
         successful: results.filter(r => r.success).length,
         failed: results.filter(r => !r.success).length,
-        results
-      }
+        results,
+      },
     });
 
   } catch (error) {
@@ -100,7 +102,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Error desconocido'
+      details: error instanceof Error ? error.message : 'Error desconocido',
     }, { status: 500 });
   }
 }
@@ -117,7 +119,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json({
         success: false,
-        error: 'company_id es requerido'
+        error: 'company_id es requerido',
       }, { status: 400 });
     }
 
@@ -134,7 +136,7 @@ export async function GET(request: NextRequest) {
       suppliers: entities?.filter(e => e.entity_type === 'supplier' || e.entity_type === 'both').length || 0,
       customers: entities?.filter(e => e.entity_type === 'customer' || e.entity_type === 'both').length || 0,
       coverage_percentage: entities?.length > 0 ? 
-        ((entities?.filter(e => e.account_code).length || 0) / entities.length) * 100 : 0
+        ((entities?.filter(e => e.account_code).length || 0) / entities.length) * 100 : 0,
     };
 
     return NextResponse.json({
@@ -143,7 +145,7 @@ export async function GET(request: NextRequest) {
         system_status: {
           enabled: true,
           type: 'detailed_with_entity_accounts',
-          description: 'Sistema automático de asientos detallados con cuentas específicas por entidad'
+          description: 'Sistema automático de asientos detallados con cuentas específicas por entidad',
         },
         entity_configuration: stats,
         benefits: [
@@ -151,24 +153,24 @@ export async function GET(request: NextRequest) {
           'Uso automático de cuentas contables específicas por entidad',
           'Fallback a cuentas genéricas para entidades sin configurar',
           'Validación automática de balance de asientos',
-          'Procesamiento por lotes para archivos grandes'
+          'Procesamiento por lotes para archivos grandes',
         ],
         recommendations: stats.coverage_percentage < 100 ? [
           `Configure cuentas contables para ${stats.total_entities - stats.entities_with_accounts} entidades restantes`,
           'Vaya a /accounting/configuration → Entidades RCV para configurar',
-          'Mayor cobertura = mayor automatización de asientos'
+          'Mayor cobertura = mayor automatización de asientos',
         ] : [
           '¡Sistema completamente configurado!',
-          'Todas las entidades tienen cuentas específicas asignadas'
-        ]
-      }
+          'Todas las entidades tienen cuentas específicas asignadas',
+        ],
+      },
     });
 
   } catch (error) {
     console.error('❌ Error obteniendo información del sistema:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }

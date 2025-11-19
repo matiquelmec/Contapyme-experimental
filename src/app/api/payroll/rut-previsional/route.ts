@@ -1,15 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 // API para obtener información previsional real de un RUT chileno
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const rut = searchParams.get('rut');
     
     if (!rut) {
       return NextResponse.json(
         { error: 'RUT es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: true,
         data: previsionalData,
-        source: previsionalData.source
+        source: previsionalData.source,
       });
     } else {
       // FALLBACK: Datos predeterminados más comunes en Chile
@@ -46,9 +47,9 @@ export async function GET(request: NextRequest) {
         data: {
           afp: 'PROVIDA', // AFP más común en Chile
           health: 'FONASA', // Sistema más común
-          source: 'default'
+          source: 'default',
         },
-        message: 'Datos predeterminados - verificar manualmente'
+        message: 'Datos predeterminados - verificar manualmente',
       });
     }
 
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest) {
     console.error('Error consultando información previsional:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -89,8 +90,8 @@ async function consultarSII(rut: string) {
     // consultar si el RUT existe y está activo
     const response = await fetch(`https://zeus.sii.cl/cvc_cgi/stc/stc.cgi?RUT=${rut}&PRV=1`, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      }
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      },
     });
     
     if (response.ok) {
@@ -100,7 +101,7 @@ async function consultarSII(rut: string) {
         return {
           afp: 'PROVIDA', // Estadísticamente más común
           health: 'FONASA',
-          source: 'sii_validated'
+          source: 'sii_validated',
         };
       }
     }
@@ -125,7 +126,7 @@ async function consultarServiciosPublicos(rut: string) {
         afp: afpData.afp,
         health: afpData.health || 'FONASA',
         source: 'statistical_analysis',
-        confidence: afpData.confidence
+        confidence: afpData.confidence,
       };
     }
     
@@ -153,7 +154,7 @@ async function determinarAFPPorRUT(rut: string) {
       'CUPRUM': { digitos: ['3', '9'], participacion: 18 },
       'PLANVITAL': { digitos: ['4', '0'], participacion: 16 },
       'CAPITAL': { digitos: ['5'], participacion: 12 },
-      'MODELO': { digitos: ['6'], participacion: 9 }
+      'MODELO': { digitos: ['6'], participacion: 9 },
     };
     
     // Método 1: Basado en dígito verificador
@@ -161,9 +162,9 @@ async function determinarAFPPorRUT(rut: string) {
       if (datos.digitos.includes(dv)) {
         console.log(`✅ AFP determinada por DV: ${afp} (DV: ${dv}, Participación: ${datos.participacion}%)`);
         return {
-          afp: afp,
+          afp,
           health: determinarSaludPorRUT(rutNumerico),
-          confidence: 'high'
+          confidence: 'high',
         };
       }
     }
@@ -175,7 +176,7 @@ async function determinarAFPPorRUT(rut: string) {
       return {
         afp: rangoAfp,
         health: determinarSaludPorRUT(rutNumerico),
-        confidence: 'medium'
+        confidence: 'medium',
       };
     }
     
@@ -183,7 +184,7 @@ async function determinarAFPPorRUT(rut: string) {
     return {
       afp: 'PROVIDA',
       health: 'FONASA',
-      confidence: 'low'
+      confidence: 'low',
     };
     
   } catch (error) {

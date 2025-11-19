@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Definición de tipos
 export interface Company {
@@ -34,7 +35,7 @@ export const DEMO_COMPANIES_MAP = {
     logo: '/logo-demo-company.png',
     created_at: '2024-01-15T10:00:00Z',
     plan_tipo: 'demo' as const,
-    estado: 'activo' as const
+    estado: 'activo' as const,
   },
   'demo-2': {
     id: '9144ff7a-c530-5e82-cb1f-593f57de7fde', // Mi Pyme Ltda.
@@ -49,8 +50,8 @@ export const DEMO_COMPANIES_MAP = {
     logo: '/logo-demo-company-2.png',
     created_at: '2024-01-15T10:00:00Z',
     plan_tipo: 'demo' as const,
-    estado: 'activo' as const
-  }
+    estado: 'activo' as const,
+  },
 };
 
 // Empresa demo predeterminada (mantener compatibilidad)
@@ -82,7 +83,7 @@ export function getCompanyByPortalId(portalId: string): Company {
 export function CompanyProvider({
   children,
   company,
-  demoMode = true
+  demoMode = true,
 }: CompanyProviderProps) {
   const [currentCompany, setCurrentCompany] = useState<Company>(company || DEMO_COMPANY);
   const [isLoading, setIsLoading] = useState(true);
@@ -115,7 +116,7 @@ export function CompanyProvider({
     company: currentCompany,
     isDemoMode: demoMode,
     isLoading,
-    switchCompany
+    switchCompany,
   };
 
   return (
@@ -163,7 +164,7 @@ export function useCompanyData() {
     // Formatters
     formatRut: () => company.rut,
     formatAddress: () => company.direccion,
-    formatPhone: () => company.telefono
+    formatPhone: () => company.telefono,
   };
 }
 
@@ -209,17 +210,17 @@ export function getCompanyConfig() {
       fixedAssets: company.plan_tipo !== 'demo' ? true : true, // En demo también disponible
       payroll: company.plan_tipo !== 'demo' ? true : true,
       reports: company.plan_tipo !== 'demo' ? true : true,
-      configuration: true
+      configuration: true,
     },
     limits: {
       employees: company.plan_tipo === 'demo' ? 10 : company.plan_tipo === 'basico' ? 25 : 100,
       f29Documents: company.plan_tipo === 'demo' ? 24 : 1000,
-      storage: company.plan_tipo === 'demo' ? '100MB' : '10GB'
+      storage: company.plan_tipo === 'demo' ? '100MB' : '10GB',
     },
     support: {
-      email: company.plan_tipo === 'demo' ? false : true,
+      email: company.plan_tipo !== 'demo',
       phone: ['profesional', 'empresarial'].includes(company.plan_tipo),
-      whatsapp: company.plan_tipo !== 'demo'
-    }
+      whatsapp: company.plan_tipo !== 'demo',
+    },
   };
 }

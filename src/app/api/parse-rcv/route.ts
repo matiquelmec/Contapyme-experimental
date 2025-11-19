@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { parseRCV } from '@/lib/parsers/rcvParser';
 
 export async function POST(request: NextRequest) {
@@ -15,7 +17,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ No se recibió archivo');
       return NextResponse.json({
         success: false,
-        error: 'No se recibió ningún archivo'
+        error: 'No se recibió ningún archivo',
       }, { status: 400 });
     }
     
@@ -24,7 +26,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ Archivo no es CSV:', file.name);
       return NextResponse.json({
         success: false,
-        error: 'El archivo debe ser un CSV (.csv)'
+        error: 'El archivo debe ser un CSV (.csv)',
       }, { status: 400 });
     }
     
@@ -33,7 +35,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ Archivo muy grande:', file.size);
       return NextResponse.json({
         success: false,
-        error: 'El archivo es muy grande. Máximo 10MB.'
+        error: 'El archivo es muy grande. Máximo 10MB.',
       }, { status: 400 });
     }
     
@@ -62,10 +64,10 @@ export async function POST(request: NextRequest) {
             rcv_data: result,
             file_metadata: {
               file_name: file.name,
-              file_size: file.size
+              file_size: file.size,
             },
-            rcv_type: rcvType
-          })
+            rcv_type: rcvType,
+          }),
         });
 
         if (storeResponse.ok) {
@@ -84,7 +86,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: result,
       storage: storeResult,
-      message: `RCV procesado: ${result.totalTransacciones} transacciones de ${result.proveedoresPrincipales.length} ${rcvType === 'purchase' ? 'proveedores' : 'clientes'}${storeResult ? ' (almacenado en BD)' : ''}`
+      message: `RCV procesado: ${result.totalTransacciones} transacciones de ${result.proveedoresPrincipales.length} ${rcvType === 'purchase' ? 'proveedores' : 'clientes'}${storeResult ? ' (almacenado en BD)' : ''}`,
     });
     
   } catch (error) {
@@ -92,7 +94,7 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : 'Error procesando archivo RCV'
+      error: error instanceof Error ? error.message : 'Error procesando archivo RCV',
     }, { status: 500 });
   }
 }

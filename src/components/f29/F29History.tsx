@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+
 import { FileText, Calendar, TrendingUp, Database, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
+
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
 interface F29Record {
   id: string;
@@ -31,7 +33,7 @@ export default function F29History({
   companyId = '550e8400-e29b-41d4-a716-446655440001',
   userId,
   onF29Select,
-  maxRecords = 24 
+  maxRecords = 24, 
 }: F29HistoryProps) {
   const [f29Records, setF29Records] = useState<F29Record[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,20 +41,16 @@ export default function F29History({
   const [groupedRecords, setGroupedRecords] = useState<Record<string, F29Record[]>>({});
 
   // Formatters memoizados
-  const formatCurrency = useMemo(() => {
-    return (amount: number) => {
-      return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = useMemo(() => (amount: number) => new Intl.NumberFormat('es-CL', {
         style: 'currency',
         currency: 'CLP',
-        minimumFractionDigits: 0
-      }).format(amount || 0);
-    };
-  }, []);
+        minimumFractionDigits: 0,
+      }).format(amount || 0), []);
 
   const formatPeriod = useMemo(() => {
     const monthNames = [
       '', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
     ];
     
     return (period: string) => {
@@ -70,7 +68,7 @@ export default function F29History({
       
       const params = new URLSearchParams({
         company_id: companyId,
-        limit: maxRecords.toString()
+        limit: maxRecords.toString(),
       });
       
       if (userId) {
@@ -220,7 +218,7 @@ export default function F29History({
                   key={year}
                   variant="outline"
                   size="sm"
-                  onClick={() => selectAllYear(year)}
+                  onClick={() => { selectAllYear(year); }}
                   className="text-xs"
                 >
                   Todo {year} ({groupedRecords[year].length})
@@ -259,7 +257,7 @@ export default function F29History({
                         ? 'border-green-400 bg-green-50'
                         : 'border-gray-200 bg-white hover:border-blue-300'
                     }`}
-                    onClick={() => toggleSelection(record.id)}
+                    onClick={() => { toggleSelection(record.id); }}
                   >
                     <div className="flex justify-between items-start mb-3">
                       <h4 className="font-semibold text-gray-900">

@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -8,7 +10,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -48,14 +50,14 @@ export async function GET(
       console.error('Error fetching employee:', error);
       return NextResponse.json(
         { success: false, error: 'Error al obtener empleado' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (!employee) {
       return NextResponse.json(
         { success: false, error: 'Empleado no encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -68,22 +70,22 @@ export async function GET(
       data: {
         ...employee,
         employment_contracts: employee.employment_contracts || [],
-        payroll_config: employee.payroll_config?.[0] || null
-      }
+        payroll_config: employee.payroll_config?.[0] || null,
+      },
     });
 
   } catch (error) {
     console.error('Error in GET /api/payroll/employees/[id]:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const body = await request.json();
@@ -97,7 +99,7 @@ export async function PUT(
         bank_name: body.bank_name,
         bank_account_type: body.bank_account_type,
         bank_account_number: body.bank_account_number,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', employeeId);
 
@@ -105,7 +107,7 @@ export async function PUT(
       console.error('Error updating employee:', employeeError);
       return NextResponse.json(
         { success: false, error: 'Error al actualizar empleado' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -126,7 +128,7 @@ export async function PUT(
           .update({
             base_salary: body.base_salary,
             contract_type: body.contract_type,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', existingContract.id);
 
@@ -148,7 +150,7 @@ export async function PUT(
       if (existingConfig) {
         // Actualizar configuración existente
         const updateData: any = {
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         };
         
         if (body.afp_code) updateData.afp_code = body.afp_code;
@@ -173,7 +175,7 @@ export async function PUT(
             health_institution_code: body.health_institution_code || 'FONASA',
             legal_gratification_type: body.legal_gratification_type || 'none',
             created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           });
 
         if (payrollError) {
@@ -184,21 +186,21 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      message: 'Empleado actualizado exitosamente'
+      message: 'Empleado actualizado exitosamente',
     });
 
   } catch (error) {
     console.error('Error in PUT /api/payroll/employees/[id]:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -207,7 +209,7 @@ export async function DELETE(
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -216,7 +218,7 @@ export async function DELETE(
       .from('employees')
       .update({
         status: 'inactive',
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', params.id)
       .eq('company_id', companyId)
@@ -227,7 +229,7 @@ export async function DELETE(
       console.error('Error deactivating employee:', error);
       return NextResponse.json(
         { success: false, error: 'Error al dar de baja empleado' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -237,7 +239,7 @@ export async function DELETE(
       .update({
         status: 'terminated',
         end_date: new Date().toISOString().split('T')[0],
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('employee_id', params.id)
       .eq('status', 'active');
@@ -245,14 +247,14 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       data: employee,
-      message: 'Empleado dado de baja exitosamente'
+      message: 'Empleado dado de baja exitosamente',
     });
 
   } catch (error) {
     console.error('Error in DELETE /api/payroll/employees/[id]:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,11 +1,15 @@
 'use client'
 
 import React from 'react'
+
 import Link from 'next/link'
+
 import { ArrowLeft } from 'lucide-react'
-import { MinimalHeader } from './MinimalHeader'
+
 import { Button } from '@/components/ui'
 import { cn } from '@/lib/utils'
+
+import { MinimalHeader } from './MinimalHeader'
 
 interface PayrollHeaderProps {
   title: string
@@ -22,12 +26,11 @@ const PayrollHeader: React.FC<PayrollHeaderProps> = ({
   showBackButton = false,
   backUrl = '/payroll',
   actions,
-  className
-}) => {
-  return (
+  className,
+}) => (
     <>
       {/* MinimalHeader con logo prominente */}
-      <MinimalHeader variant="premium" showNavigation={true} />
+      <MinimalHeader variant="premium" showNavigation />
       
       {/* Context Header con información de la página */}
       <div className={cn("bg-white border-b border-gray-200", className)}>
@@ -65,6 +68,5 @@ const PayrollHeader: React.FC<PayrollHeaderProps> = ({
       </div>
     </>
   )
-}
 
 export { PayrollHeader }

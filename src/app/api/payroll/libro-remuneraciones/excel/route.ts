@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 import * as ExcelJS from 'exceljs';
 
@@ -56,9 +58,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { 
           success: false, 
-          error: 'Parámetros requeridos: company_id, year, month' 
+          error: 'Parámetros requeridos: company_id, year, month', 
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -84,9 +86,9 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: `No existe libro de remuneraciones para ${period}`,
-          details: 'Debe generar el libro de remuneraciones primero desde la interfaz web'
+          details: 'Debe generar el libro de remuneraciones primero desde la interfaz web',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -113,7 +115,7 @@ export async function GET(request: NextRequest) {
       haberes: payrollBook.total_haberes,
       descuentos: payrollBook.total_descuentos,
       liquido: payrollBook.total_liquido,
-      details: payrollBook.payroll_book_details?.length || 0
+      details: payrollBook.payroll_book_details?.length || 0,
     });
 
     if (liquidationsError) {
@@ -126,9 +128,9 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: 'No se encontraron liquidaciones para el período especificado',
-          details: 'Las liquidaciones son necesarias para generar un Excel preciso'
+          details: 'Las liquidaciones son necesarias para generar un Excel preciso',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -136,12 +138,12 @@ export async function GET(request: NextRequest) {
     const excelBuffer = await generatePayrollExcelHybrid(payrollBook, liquidations, {
       companyId,
       year: parseInt(year),
-      month: parseInt(month)
+      month: parseInt(month),
     });
 
     const monthNames = [
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
     ];
 
     const fileName = `Libro_Remuneraciones_${monthNames[parseInt(month) - 1]}_${year}.xlsx`;
@@ -151,15 +153,15 @@ export async function GET(request: NextRequest) {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition': `attachment; filename="${fileName}"`,
-        'Content-Length': excelBuffer.byteLength.toString()
-      }
+        'Content-Length': excelBuffer.byteLength.toString(),
+      },
     });
 
   } catch (error) {
     console.error('❌ Error in Excel export:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -172,7 +174,7 @@ export async function GET(request: NextRequest) {
 async function generatePayrollExcelHybrid(
   payrollBook: any,
   liquidations: any[],
-  params: { companyId: string; year: number; month: number }
+  params: { companyId: string; year: number; month: number },
 ): Promise<Buffer> {
 
   const workbook = new ExcelJS.Workbook();
@@ -188,7 +190,7 @@ async function generatePayrollExcelHybrid(
     orientation: 'landscape',
     fitToPage: true,
     fitToWidth: 1,
-    margins: { left: 0.7, right: 0.7, top: 0.75, bottom: 0.75, header: 0.3, footer: 0.3 }
+    margins: { left: 0.7, right: 0.7, top: 0.75, bottom: 0.75, header: 0.3, footer: 0.3 },
   };
 
   const { data: company } = await supabase.from('companies').select('name, rut').eq('id', params.companyId).single();
@@ -223,7 +225,7 @@ async function generatePayrollExcelHybrid(
     { width: 12 }, { width: 15 }, { width: 15 }, { width: 20 }, { width: 18 }, { width: 12 }, { width: 8 }, { width: 12 },
     { width: 10 }, { width: 12 }, { width: 10 }, { width: 10 }, { width: 12 }, { width: 10 }, { width: 10 }, { width: 10 },
     { width: 10 }, { width: 12 }, { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 }, { width: 12 }, { width: 10 },
-    { width: 10 }, { width: 10 }, { width: 10 }, { width: 12 }, { width: 14 }
+    { width: 10 }, { width: 10 }, { width: 10 }, { width: 12 }, { width: 14 },
   ];
 
   // ✅ ACUMULADORES PARA TOTALES
@@ -300,7 +302,7 @@ async function generatePayrollExcelHybrid(
       bookDetail.dias_trabajados || 30, sueldoBase, horasExtras, montoHE, bonos, comisiones,
       gratificacionTotal, colacion, movilizacion, asigFamiliar, 0, haberesReales,
       afp10, afpComision, saludReal, cesantiaReal, impuestoReal, apv, prestamos, anticipos, otrosDescuentos,
-      totalDescuentosCorreto, liquidoCalculado
+      totalDescuentosCorreto, liquidoCalculado,
     ]);
 
     // ✅ FORMATO
@@ -351,7 +353,7 @@ async function generatePayrollExcelHybrid(
 async function generatePayrollExcelFromLiquidations(
   liquidations: any[],
   payrollBook: any,
-  params: { companyId: string; year: number; month: number }
+  params: { companyId: string; year: number; month: number },
 ): Promise<Buffer> {
 
   const workbook = new ExcelJS.Workbook();
@@ -367,7 +369,7 @@ async function generatePayrollExcelFromLiquidations(
     orientation: 'landscape',
     fitToPage: true,
     fitToWidth: 1,
-    margins: { left: 0.7, right: 0.7, top: 0.75, bottom: 0.75, header: 0.3, footer: 0.3 }
+    margins: { left: 0.7, right: 0.7, top: 0.75, bottom: 0.75, header: 0.3, footer: 0.3 },
   };
 
   const { data: company } = await supabase.from('companies').select('name, rut').eq('id', params.companyId).single();
@@ -402,7 +404,7 @@ async function generatePayrollExcelFromLiquidations(
     { width: 12 }, { width: 15 }, { width: 15 }, { width: 20 }, { width: 18 }, { width: 12 }, { width: 8 }, { width: 12 },
     { width: 10 }, { width: 12 }, { width: 10 }, { width: 10 }, { width: 12 }, { width: 10 }, { width: 10 }, { width: 10 },
     { width: 10 }, { width: 12 }, { width: 10 }, { width: 10 }, { width: 10 }, { width: 10 }, { width: 12 }, { width: 10 },
-    { width: 10 }, { width: 10 }, { width: 10 }, { width: 12 }, { width: 14 }
+    { width: 10 }, { width: 10 }, { width: 10 }, { width: 12 }, { width: 14 },
   ];
 
   // ✅ ACUMULADORES PARA TOTALES
@@ -468,7 +470,7 @@ async function generatePayrollExcelFromLiquidations(
       gratificacionTotal, liquidation.food_allowance || 0, liquidation.transport_allowance || 0, liquidation.family_allowance || 0,
       otrosHaberes, haberesReales, afp10, afpComision, saludReal, cesantiaReal, impuestoReal,
       liquidation.apv_amount || 0, liquidation.loan_deductions || 0, liquidation.advance_payments || 0, otrosDescuentos,
-      totalDescuentosCalculado, liquidoCalculado
+      totalDescuentosCalculado, liquidoCalculado,
     ]);
 
     // ✅ FORMATO
@@ -519,7 +521,7 @@ async function generatePayrollExcelFromLiquidations(
 async function generatePayrollExcelFromBook(
   payrollBook: any,
   liquidationsExtra: any[],
-  params: { companyId: string; year: number; month: number }
+  params: { companyId: string; year: number; month: number },
 ): Promise<Buffer> {
   
   const workbook = new ExcelJS.Workbook();
@@ -533,8 +535,8 @@ async function generatePayrollExcelFromBook(
     margins: {
       left: 0.7, right: 0.7,
       top: 0.75, bottom: 0.75,
-      header: 0.3, footer: 0.3
-    }
+      header: 0.3, footer: 0.3,
+    },
   };
 
   // ✅ OBTENER INFORMACIÓN DE LA EMPRESA
@@ -549,7 +551,7 @@ async function generatePayrollExcelFromBook(
 
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
   ];
 
   const periodName = `${monthNames[params.month - 1]} ${params.year}`;
@@ -557,7 +559,7 @@ async function generatePayrollExcelFromBook(
   // ✅ ENCABEZADO PRINCIPAL
   const titleRow = worksheet.addRow([
     `LIBRO DE REMUNERACIONES - ${periodName}`,
-    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   ]);
   titleRow.font = { bold: true, size: 16 };
   titleRow.alignment = { horizontal: 'center' };
@@ -565,7 +567,7 @@ async function generatePayrollExcelFromBook(
 
   const companyRow = worksheet.addRow([
     `${companyName} - RUT: ${companyRut}`,
-    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   ]);
   companyRow.font = { bold: true, size: 12 };
   companyRow.alignment = { horizontal: 'center' };
@@ -603,7 +605,7 @@ async function generatePayrollExcelFromBook(
     'ANTICIPOS',        // NUEVA
     'OTROS DESC.',
     'TOTAL DESC.',
-    'LÍQUIDO A PAGAR'
+    'LÍQUIDO A PAGAR',
   ]);
 
   // ✅ ESTILO DE ENCABEZADOS
@@ -612,14 +614,14 @@ async function generatePayrollExcelFromBook(
     cell.fill = {
       type: 'pattern',
       pattern: 'solid',
-      fgColor: { argb: '1f4e79' } // Azul profesional
+      fgColor: { argb: '1f4e79' }, // Azul profesional
     };
     cell.alignment = { horizontal: 'center', vertical: 'middle' };
     cell.border = {
       top: { style: 'thin' },
       left: { style: 'thin' },
       bottom: { style: 'thin' },
-      right: { style: 'thin' }
+      right: { style: 'thin' },
     };
   });
 
@@ -653,7 +655,7 @@ async function generatePayrollExcelFromBook(
     { width: 10 }, // ANTICIPOS
     { width: 10 }, // OTROS DESC
     { width: 12 }, // TOTAL DESC
-    { width: 14 }  // LÍQUIDO
+    { width: 14 },  // LÍQUIDO
   ];
 
   // ✅ USAR TOTALES DEL LIBRO DE REMUNERACIONES (FUENTE DE VERDAD)
@@ -686,7 +688,7 @@ async function generatePayrollExcelFromBook(
   (payrollBook.payroll_book_details || []).forEach((bookDetail: any) => {
     // ✅ BUSCAR LIQUIDACIÓN COMPLEMENTARIA PARA DATOS ADICIONALES
     const liquidationExtra = liquidationsExtra.find(liq =>
-      liq.employees?.rut === bookDetail.employee_rut
+      liq.employees?.rut === bookDetail.employee_rut,
     );
 
     // Limpiar nombres (función del sistema existente)
@@ -784,7 +786,7 @@ async function generatePayrollExcelFromBook(
       anticipos, // Anticipos de liquidación complementaria
       otrosDescuentos, // Otros descuentos de liquidación complementaria
       descuentosReales, // Total descuentos del libro (FUENTE DE VERDAD)
-      liquidoReal // Líquido del libro (FUENTE DE VERDAD)
+      liquidoReal, // Líquido del libro (FUENTE DE VERDAD)
     ]);
 
     // ✅ FORMATO DE DATOS
@@ -809,7 +811,7 @@ async function generatePayrollExcelFromBook(
         top: { style: 'thin' },
         left: { style: 'thin' },
         bottom: { style: 'thin' },
-        right: { style: 'thin' }
+        right: { style: 'thin' },
       };
 
       // Alineación
@@ -848,7 +850,7 @@ async function generatePayrollExcelFromBook(
     totalAnticipos,
     totalOtrosDesc,
     totalDescuentosLibro, // ✅ USAR TOTAL DEL LIBRO (FUENTE DE VERDAD)
-    totalLiquidoLibro // ✅ USAR TOTAL DEL LIBRO (FUENTE DE VERDAD)
+    totalLiquidoLibro, // ✅ USAR TOTAL DEL LIBRO (FUENTE DE VERDAD)
   ]);
 
   totalRow.eachCell((cell, colNumber) => {
@@ -859,7 +861,7 @@ async function generatePayrollExcelFromBook(
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'E7E6E6' } // Gris claro
+        fgColor: { argb: 'E7E6E6' }, // Gris claro
       };
     }
     // Formato para horas extras
@@ -868,7 +870,7 @@ async function generatePayrollExcelFromBook(
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'E7E6E6' } // Gris claro
+        fgColor: { argb: 'E7E6E6' }, // Gris claro
       };
     }
     // Formato para la columna "TOTALES:"
@@ -884,19 +886,19 @@ async function generatePayrollExcelFromBook(
 
   const footerInfoRow = worksheet.addRow([
     `Total Empleados: ${payrollBook.total_employees || 0}`,
-    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   ]);
   footerInfoRow.font = { bold: true };
 
   const dateRow = worksheet.addRow([
     `Generado el: ${new Date().toLocaleDateString('es-CL')} a las ${new Date().toLocaleTimeString('es-CL')}`,
-    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   ]);
   dateRow.font = { italic: true };
 
   // ✅ CONGELAR PANELES (encabezados siempre visibles)
   worksheet.views = [
-    { state: 'frozen', xSplit: 0, ySplit: 4 }
+    { state: 'frozen', xSplit: 0, ySplit: 4 },
   ];
 
   // ✅ GENERAR BUFFER

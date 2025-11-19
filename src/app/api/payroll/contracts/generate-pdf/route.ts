@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -61,7 +63,7 @@ function formatDate(dateString: string): string {
   
   const months = [
     'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
   ];
   
   const day = date.getDate();
@@ -78,7 +80,7 @@ function formatCurrency(amount: number): string {
     style: 'currency',
     currency: 'CLP',
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0
+    maximumFractionDigits: 0,
   }).format(amount);
 }
 
@@ -86,7 +88,7 @@ function formatCurrency(amount: number): string {
 function formatContractCurrency(amount: number): string {
   return `$ ${new Intl.NumberFormat('es-CL', {
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0
+    maximumFractionDigits: 0,
   }).format(amount)}.-`;
 }
 
@@ -128,7 +130,7 @@ function generateContractHTML(contractData: any): string {
     obligations = [],
     prohibitions = [],
     resignation_notice_days = 30,
-    weekly_hours = 45
+    weekly_hours = 45,
   } = contractData;
 
   // Calcular totales
@@ -587,7 +589,7 @@ function generateContractHTML(contractData: any): string {
 // GET: Generar PDF del contrato (para abrir en navegador)
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const contract_id = searchParams.get('contract_id');
 
     if (!contract_id) {
@@ -633,7 +635,7 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching contract:', fetchError);
       return NextResponse.json({ 
         error: 'Contrato no encontrado',
-        details: fetchError.message 
+        details: fetchError.message, 
       }, { status: 404 });
     }
 
@@ -706,7 +708,7 @@ export async function GET(request: NextRequest) {
       
       // Previsión (valores por defecto)
       afp_name: 'AFP Modelo',
-      health_insurance_name: 'Fonasa'
+      health_insurance_name: 'Fonasa',
     };
 
     // Generar el HTML del contrato
@@ -721,15 +723,15 @@ export async function GET(request: NextRequest) {
     return new NextResponse(html, {
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
-        'Content-Disposition': `inline; filename="contrato_${formatRut(contractData.employees?.rut || 'empleado')}.html"`
-      }
+        'Content-Disposition': `inline; filename="contrato_${formatRut(contractData.employees?.rut || 'empleado')}.html"`,
+      },
     });
 
   } catch (error) {
     console.error('Error in GET /api/payroll/contracts/generate-pdf:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }
@@ -801,7 +803,7 @@ export async function POST(request: NextRequest) {
       console.error('Error fetching contract:', fetchError);
       return NextResponse.json({ 
         error: 'Contrato no encontrado',
-        details: fetchError.message 
+        details: fetchError.message, 
       }, { status: 404 });
     }
 
@@ -856,7 +858,7 @@ export async function POST(request: NextRequest) {
       
       // Previsión (valores por defecto)
       afp_name: 'AFP Modelo',
-      health_insurance_name: 'Fonasa'
+      health_insurance_name: 'Fonasa',
     };
 
     // Generar el HTML del contrato
@@ -889,8 +891,8 @@ export async function POST(request: NextRequest) {
       return new NextResponse(html, {
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
-          'Content-Disposition': `inline; filename="contrato_${formatRut(contractData.employees?.rut || 'empleado')}.html"`
-        }
+          'Content-Disposition': `inline; filename="contrato_${formatRut(contractData.employees?.rut || 'empleado')}.html"`,
+        },
       });
     }
 
@@ -901,14 +903,14 @@ export async function POST(request: NextRequest) {
       message: 'HTML del contrato generado exitosamente',
       html,
       document_saved: save_to_contracts,
-      instructions: 'Para generar PDF, abra el HTML en el navegador y use Imprimir > Guardar como PDF'
+      instructions: 'Para generar PDF, abra el HTML en el navegador y use Imprimir > Guardar como PDF',
     });
 
   } catch (error) {
     console.error('Error in POST /api/payroll/contracts/generate-pdf:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }

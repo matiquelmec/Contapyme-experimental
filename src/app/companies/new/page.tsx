@@ -1,8 +1,9 @@
 'use client';
 
+import { Building, ArrowLeft } from 'lucide-react';
+
 import { Header } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { Building, ArrowLeft } from 'lucide-react';
 
 export default function NewCompanyPage() {
   return (
@@ -10,7 +11,7 @@ export default function NewCompanyPage() {
       <Header 
         title="Nueva Empresa"
         subtitle="Registra una nueva empresa en el sistema"
-        showBackButton={true}
+        showBackButton
         backHref="/accounting"
       />
 
@@ -81,7 +82,7 @@ export default function NewCompanyPage() {
               </div>
 
               <div className="flex space-x-3">
-                <Button variant="outline" fullWidth onClick={() => window.history.back()}>
+                <Button variant="outline" fullWidth onClick={() => { window.history.back(); }}>
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Cancelar
                 </Button>

@@ -1,34 +1,34 @@
 'use client'
 
 import { useState } from 'react'
-import { WidgetConfig } from '@/types/dashboard'
-import { useDashboard } from '@/contexts/DashboardContext'
-import { Card, CardContent, Badge, Button } from '@/components/ui'
+
 import {
   RefreshCw,
-  MoreVertical,
   X,
-  Settings,
   Eye,
   EyeOff,
   AlertCircle,
-  Loader2
+  Loader2,
 } from 'lucide-react'
 
+import { Card, CardContent, Badge, Button } from '@/components/ui'
+import { useDashboard } from '@/contexts/DashboardContext'
+import type { WidgetConfig } from '@/types/dashboard'
+
 // Import existing widgets
-import { IVAMeter } from './IVAMeter'
 import { CashFlowProjection } from './CashFlowProjection'
+import { IVAMeter } from './IVAMeter'
 import { TaxHealthAlerts } from './TaxHealthAlerts'
 
 // Import new widgets (will create these next)
-import { IncomeVsExpenses } from './widgets/IncomeVsExpenses'
-import { BankingPosition } from './widgets/BankingPosition'
-import { TopClients } from './widgets/TopClients'
-import { PayrollCostWidget } from './widgets/PayrollCostWidget'
-import { ContractAlerts } from './widgets/ContractAlerts'
 import { AIsuggestionWidget } from './widgets/AIsuggestionWidget'
+import { BankingPosition } from './widgets/BankingPosition'
+import { ContractAlerts } from './widgets/ContractAlerts'
 import { F29ComparativeAnalysis } from './widgets/F29ComparativeAnalysis'
 import { HeadcountMetrics } from './widgets/HeadcountMetrics'
+import { IncomeVsExpenses } from './widgets/IncomeVsExpenses'
+import { PayrollCostWidget } from './widgets/PayrollCostWidget'
+import { TopClients } from './widgets/TopClients'
 
 interface WidgetRendererProps {
   widget: WidgetConfig
@@ -157,8 +157,8 @@ export function WidgetRenderer({ widget, isCustomizing }: WidgetRendererProps) {
   return (
     <div
       className={`relative group ${isCustomizing ? 'cursor-move' : ''}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => { setIsHovered(true); }}
+      onMouseLeave={() => { setIsHovered(false); }}
     >
       <Card
         className={`h-full transition-all duration-200 ${
@@ -284,7 +284,7 @@ export function WidgetRenderer({ widget, isCustomizing }: WidgetRendererProps) {
           <div className="absolute bottom-1 left-2 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded">
             {new Date(widget.lastUpdated).toLocaleTimeString('es-CL', {
               hour: '2-digit',
-              minute: '2-digit'
+              minute: '2-digit',
             })}
           </div>
         )}

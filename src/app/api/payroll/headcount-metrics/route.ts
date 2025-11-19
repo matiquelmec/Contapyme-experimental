@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server'
 
 const COMPANY_ID = '8033ee69-b420-4d91-ba0e-482f46cd6fce'
 
@@ -30,26 +31,26 @@ export async function GET(request: NextRequest) {
           name: 'Operaciones',
           count: 14,
           percentage: 50,
-          growth: 2 // Crecimiento respecto al mes anterior
+          growth: 2, // Crecimiento respecto al mes anterior
         },
         {
           name: 'Ventas & Marketing',
           count: 7,
           percentage: 25,
-          growth: 1
+          growth: 1,
         },
         {
           name: 'Administración',
           count: 4,
           percentage: 14,
-          growth: 0
+          growth: 0,
         },
         {
           name: 'TI & Soporte',
           count: 3,
           percentage: 11,
-          growth: 0
-        }
+          growth: 0,
+        },
       ],
 
       // Tendencia de los últimos meses
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest) {
         { month: 'Ago', headcount: 24, cost: 22800000 },
         { month: 'Sep', headcount: 26, cost: 24700000 },
         { month: 'Oct', headcount: 27, cost: 25650000 },
-        { month: 'Nov', headcount: 28, cost: 26600000 }
+        { month: 'Nov', headcount: 28, cost: 26600000 },
       ],
 
       // Métricas adicionales
@@ -67,17 +68,17 @@ export async function GET(request: NextRequest) {
         averageTenure: 2.3, // años
         satisfactionScore: 8.2, // de 10
         trainingHours: 24, // horas por empleado este año
-        absenceRate: 3.2 // porcentaje mensual
+        absenceRate: 3.2, // porcentaje mensual
       },
 
-      lastUpdate: currentDate.toISOString()
+      lastUpdate: currentDate.toISOString(),
     }
 
     return NextResponse.json({
       success: true,
       data: headcountData,
       message: 'Métricas de capital humano obtenidas exitosamente',
-      timestamp: currentDate.toISOString()
+      timestamp: currentDate.toISOString(),
     })
 
   } catch (error) {
@@ -86,9 +87,9 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         error: 'Error interno del servidor',
-        message: 'No se pudieron obtener las métricas de capital humano'
+        message: 'No se pudieron obtener las métricas de capital humano',
       },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }
@@ -106,7 +107,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Métricas de capital humano actualizadas exitosamente',
       data: metrics,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     })
 
   } catch (error) {
@@ -115,9 +116,9 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: 'Error interno del servidor',
-        message: 'No se pudieron actualizar las métricas'
+        message: 'No se pudieron actualizar las métricas',
       },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }

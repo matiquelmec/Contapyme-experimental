@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -22,7 +24,7 @@ export async function POST(request: NextRequest) {
       { id: '05514355-4ef0-4ed6-8444-6b6002a7bc15', rut: '18.209.442-0', net_salary: 6941085 },
       { id: 'd11b02a0-88b0-4eb6-9b52-e3219b711c0a', rut: '16.353.500-9', net_salary: 700115 },
       { id: 'a1982bcc-44e0-4ae0-a663-fd64609a26de', rut: '18.282.415-1', net_salary: 541034 },
-      { id: '8253f5a9-80bf-40df-a8f9-0858f104ec0b', rut: '17.111.230-3', net_salary: 757233 }
+      { id: '8253f5a9-80bf-40df-a8f9-0858f104ec0b', rut: '17.111.230-3', net_salary: 757233 },
     ];
 
     console.log('💰 Updating liquids to match Excel values');
@@ -45,7 +47,7 @@ export async function POST(request: NextRequest) {
         updates.push({
           rut: liquid.rut,
           success: false,
-          error: fetchError?.message || 'No data found'
+          error: fetchError?.message || 'No data found',
         });
         continue;
       }
@@ -59,7 +61,7 @@ export async function POST(request: NextRequest) {
         .from('payroll_liquidations')
         .update({ 
           total_deductions: newTotalDeductions,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', liquid.id)
         .eq('company_id', company_id)
@@ -71,7 +73,7 @@ export async function POST(request: NextRequest) {
         updates.push({
           rut: liquid.rut,
           success: false,
-          error: updateError.message
+          error: updateError.message,
         });
       } else if (updated) {
         console.log(`✅ Updated ${liquid.rut}: $${updated.net_salary}`);
@@ -80,14 +82,14 @@ export async function POST(request: NextRequest) {
           success: true,
           old_value: null,
           new_value: updated.net_salary,
-          updated_at: updated.updated_at
+          updated_at: updated.updated_at,
         });
       } else {
         console.log(`⚠️ No matching record found for ${liquid.rut}`);
         updates.push({
           rut: liquid.rut,
           success: false,
-          error: 'No matching record found'
+          error: 'No matching record found',
         });
       }
     }
@@ -103,15 +105,15 @@ export async function POST(request: NextRequest) {
         failed_updates: failed,
         details: updates,
         company_id,
-        period: '2025-08'
-      }
+        period: '2025-08',
+      },
     });
 
   } catch (error) {
     console.error('❌ Error in forced liquid update:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

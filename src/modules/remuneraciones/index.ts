@@ -37,5 +37,5 @@ export const REMUNERACIONES_MODULE = {
   name: 'remuneraciones',
   version: '1.0.0',
   description: 'Módulo de gestión de remuneraciones y liquidaciones',
-  author: 'ContaPymePuq'
+  author: 'ContaPymePuq',
 } as const

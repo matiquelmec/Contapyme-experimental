@@ -1,23 +1,20 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Header } from '@/components/layout/Header';
+
 import { 
   Upload, 
   FileText, 
   Users, 
-  TrendingUp, 
-  AlertCircle, 
   CheckCircle,
-  Download,
-  Filter,
-  Search,
   Calendar,
   DollarSign,
-  Building2
+  Building2,
 } from 'lucide-react';
+
+import { Header } from '@/components/layout/Header';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
 interface RCVRecord {
   id: string;
@@ -87,7 +84,7 @@ export default function RCVHistoryPage() {
     status: '',
     search: '',
     start_date: '',
-    end_date: ''
+    end_date: '',
   });
 
   // ID de compañía demo - en producción vendría del contexto/auth
@@ -103,7 +100,7 @@ export default function RCVHistoryPage() {
       await Promise.all([
         loadRecords(),
         loadEntities(),
-        loadImportBatches()
+        loadImportBatches(),
       ]);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -117,7 +114,7 @@ export default function RCVHistoryPage() {
       const params = new URLSearchParams({
         company_id: companyId,
         limit: '50',
-        ...filters
+        ...filters,
       });
 
       const response = await fetch(`/api/accounting/rcv/records?${params}`);
@@ -172,7 +169,7 @@ export default function RCVHistoryPage() {
     try {
       const response = await fetch('/api/accounting/rcv/import', {
         method: 'POST',
-        body: formData
+        body: formData,
       });
 
       const result = await response.json();
@@ -205,12 +202,12 @@ export default function RCVHistoryPage() {
       const response = await fetch('/api/accounting/rcv/entities-summary', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           company_id: companyId,
-          entity_ruts: entityRuts
-        })
+          entity_ruts: entityRuts,
+        }),
       });
 
       const result = await response.json();
@@ -229,16 +226,12 @@ export default function RCVHistoryPage() {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
-      currency: 'CLP'
+      currency: 'CLP',
     }).format(amount);
-  };
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('es-CL');
-  };
+  const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString('es-CL');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -309,7 +302,7 @@ export default function RCVHistoryPage() {
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6">
               <button
-                onClick={() => setActiveTab('records')}
+                onClick={() => { setActiveTab('records'); }}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'records'
                     ? 'border-blue-500 text-blue-600'
@@ -319,7 +312,7 @@ export default function RCVHistoryPage() {
                 Registros RCV
               </button>
               <button
-                onClick={() => setActiveTab('entities')}
+                onClick={() => { setActiveTab('entities'); }}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'entities'
                     ? 'border-blue-500 text-blue-600'
@@ -329,7 +322,7 @@ export default function RCVHistoryPage() {
                 Entidades Detectadas
               </button>
               <button
-                onClick={() => setActiveTab('import')}
+                onClick={() => { setActiveTab('import'); }}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'import'
                     ? 'border-blue-500 text-blue-600'

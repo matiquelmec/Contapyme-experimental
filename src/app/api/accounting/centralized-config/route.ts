@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { databaseSimple } from '@/lib/database/databaseSimple';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,12 +17,12 @@ export async function GET(request: NextRequest) {
       require_references: true,
       auto_numbering: true,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     return NextResponse.json({
       success: true,
-      data: defaultConfig
+      data: defaultConfig,
     });
 
   } catch (error: any) {
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error al cargar configuración centralizada',
-      details: error.message
+      details: error.message,
     }, { status: 500 });
   }
 }
@@ -48,8 +48,8 @@ export async function POST(request: NextRequest) {
       message: 'Configuración guardada exitosamente',
       data: {
         ...body,
-        updated_at: new Date().toISOString()
-      }
+        updated_at: new Date().toISOString(),
+      },
     });
 
   } catch (error: any) {
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error al guardar configuración',
-      details: error.message
+      details: error.message,
     }, { status: 500 });
   }
 }

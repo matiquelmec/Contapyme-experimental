@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+
 import type { PayrollSettings } from '@/lib/services/payrollCalculator';
 
 interface UsePayrollCalculatorSettingsReturn {
@@ -46,20 +47,20 @@ export function usePayrollCalculatorSettings(companyId: string): UsePayrollCalcu
           afp_configs: rawSettings.afp_configs?.map((afp: any) => ({
             code: afp.code,
             commission_percentage: afp.commission_percentage,
-            sis_percentage: afp.sis_percentage || 1.15
+            sis_percentage: afp.sis_percentage || 1.15,
           })) || [],
           
           family_allowances: {
             tramo_a: rawSettings.family_allowances?.tramo_a || 13596,
             tramo_b: rawSettings.family_allowances?.tramo_b || 8397,
-            tramo_c: rawSettings.family_allowances?.tramo_c || 2798
+            tramo_c: rawSettings.family_allowances?.tramo_c || 2798,
           },
           
           income_limits: {
             uf_limit: rawSettings.income_limits?.uf_limit || 83.4,
             minimum_wage: rawSettings.income_limits?.minimum_wage || 529000,
-            family_allowance_limit: rawSettings.income_limits?.family_allowance_limit || 1000000
-          }
+            family_allowance_limit: rawSettings.income_limits?.family_allowance_limit || 1000000,
+          },
         };
         
         setSettings(calculatorSettings);
@@ -82,18 +83,18 @@ export function usePayrollCalculatorSettings(companyId: string): UsePayrollCalcu
           { code: 'PLANVITAL', commission_percentage: 1.16, sis_percentage: 1.15 },
           { code: 'PROVIDA', commission_percentage: 1.69, sis_percentage: 1.15 },
           { code: 'MODELO', commission_percentage: 0.58, sis_percentage: 1.15 },
-          { code: 'UNO', commission_percentage: 0.69, sis_percentage: 1.15 }
+          { code: 'UNO', commission_percentage: 0.69, sis_percentage: 1.15 },
         ],
         family_allowances: {
           tramo_a: 13596,
           tramo_b: 8397,
-          tramo_c: 2798
+          tramo_c: 2798,
         },
         income_limits: {
           uf_limit: 83.4,
           minimum_wage: 529000,
-          family_allowance_limit: 1000000
-        }
+          family_allowance_limit: 1000000,
+        },
       };
       
       setSettings(defaultSettings);
@@ -110,6 +111,6 @@ export function usePayrollCalculatorSettings(companyId: string): UsePayrollCalcu
     settings,
     loading,
     error,
-    refetch: fetchSettings
+    refetch: fetchSettings,
   };
 }

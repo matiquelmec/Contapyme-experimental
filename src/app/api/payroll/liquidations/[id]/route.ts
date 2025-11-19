@@ -1,5 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
+
 import { PayrollUnifiedCalculator } from '@/services/PayrollUnifiedCalculator';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -9,7 +12,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -21,14 +24,14 @@ export async function GET(
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!liquidationId) {
       return NextResponse.json(
         { success: false, error: 'liquidation_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -53,20 +56,20 @@ export async function GET(
       if (error.code === 'PGRST116') {
         return NextResponse.json(
           { success: false, error: 'Liquidación no encontrada' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       
       return NextResponse.json(
         { success: false, error: 'Error al obtener liquidación' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (!liquidation) {
       return NextResponse.json(
         { success: false, error: 'Liquidación no encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -76,7 +79,7 @@ export async function GET(
       total_gross_income: liquidation.total_gross_income,
       total_taxable_income: liquidation.total_taxable_income,
       base_salary: liquidation.base_salary,
-      employee: liquidation.employees
+      employee: liquidation.employees,
     });
 
     // ✅ USAR VALORES DE DB TAL COMO VIENEN (sin corrección duplicada)
@@ -84,7 +87,7 @@ export async function GET(
       legal_gratification_art50: liquidation.legal_gratification_art50,
       total_gross_income: liquidation.total_gross_income,
       total_taxable_income: liquidation.total_taxable_income,
-      base_salary: liquidation.base_salary
+      base_salary: liquidation.base_salary,
     });
 
     // 🎯 APLICAR CALCULADORA UNIFICADA - SINGLE SOURCE OF TRUTH
@@ -108,7 +111,7 @@ export async function GET(
       loan_deductions: liquidation.loan_deductions || 0,
       advance_payments: liquidation.advance_payments || 0,
       apv_amount: liquidation.apv_amount || 0,
-      other_deductions: liquidation.other_deductions || 0
+      other_deductions: liquidation.other_deductions || 0,
     };
 
     // ✅ CALCULAR TOTALES USANDO CALCULADORA UNIFICADA
@@ -121,7 +124,7 @@ export async function GET(
       stored_descuentos: liquidation.total_deductions,
       calculated_liquido: calculatedResult.total_liquido,
       stored_liquido: liquidation.net_salary,
-      validation: calculatedResult.validation
+      validation: calculatedResult.validation,
     });
 
     // Formatear datos para respuesta con cálculos unificados
@@ -130,7 +133,7 @@ export async function GET(
       employee: {
         rut: liquidation.employees?.rut || '',
         first_name: liquidation.employees?.first_name || '',
-        last_name: liquidation.employees?.last_name || ''
+        last_name: liquidation.employees?.last_name || '',
       },
       period_year: liquidation.period_year,
       period_month: liquidation.period_month,
@@ -174,30 +177,30 @@ export async function GET(
       
       status: liquidation.status || 'draft',
       created_at: liquidation.created_at,
-      updated_at: liquidation.updated_at
+      updated_at: liquidation.updated_at,
     };
 
     return NextResponse.json({
       success: true,
-      data: formattedLiquidation
+      data: formattedLiquidation,
     }, {
       headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-      }
+        'Content-Type': 'application/json; charset=utf-8',
+      },
     });
 
   } catch (error) {
     console.error('❌ Error in GET /api/payroll/liquidations/[id]:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -210,14 +213,14 @@ export async function PUT(
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!liquidationId) {
       return NextResponse.json(
         { success: false, error: 'liquidation_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -226,7 +229,7 @@ export async function PUT(
       .from('payroll_liquidations')
       .update({
         ...updateData,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', liquidationId)
       .eq('company_id', companyId)
@@ -246,7 +249,7 @@ export async function PUT(
       if (updateError.code === 'PGRST116') {
         return NextResponse.json(
           { success: false, error: 'Liquidación no encontrada' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       
@@ -254,9 +257,9 @@ export async function PUT(
         { 
           success: false, 
           error: 'Error al actualizar liquidación',
-          details: updateError.message 
+          details: updateError.message, 
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -265,21 +268,21 @@ export async function PUT(
     return NextResponse.json({
       success: true,
       data: updated,
-      message: 'Liquidación actualizada exitosamente'
+      message: 'Liquidación actualizada exitosamente',
     });
 
   } catch (error) {
     console.error('❌ Error in PUT /api/payroll/liquidations/[id]:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -291,14 +294,14 @@ export async function DELETE(
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!liquidationId) {
       return NextResponse.json(
         { success: false, error: 'liquidation_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -317,7 +320,7 @@ export async function DELETE(
       if (deleteError.code === 'PGRST116') {
         return NextResponse.json(
           { success: false, error: 'Liquidación no encontrada' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       
@@ -325,9 +328,9 @@ export async function DELETE(
         { 
           success: false, 
           error: 'Error al eliminar liquidación',
-          details: deleteError.message 
+          details: deleteError.message, 
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -336,14 +339,14 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       data: deleted,
-      message: 'Liquidación eliminada exitosamente'
+      message: 'Liquidación eliminada exitosamente',
     });
 
   } catch (error) {
     console.error('❌ Error in DELETE /api/payroll/liquidations/[id]:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

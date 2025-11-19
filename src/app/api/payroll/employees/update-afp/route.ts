@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -17,7 +19,7 @@ export async function POST(request: NextRequest) {
       // Actualizar en payroll_liquidations
       const { error: liquidationError } = await supabase
         .from('payroll_liquidations')
-        .update({ afp_name: afp_name })
+        .update({ afp_name })
         .eq('employee_rut', rut);
         
       if (liquidationError) {
@@ -29,7 +31,7 @@ export async function POST(request: NextRequest) {
       // También actualizar en payroll_config si existe
       const { error: configError } = await supabase
         .from('payroll_config')
-        .update({ afp_name: afp_name })
+        .update({ afp_name })
         .eq('employee_rut', rut);
         
       if (configError) {
@@ -39,14 +41,14 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({ 
       success: true, 
-      message: `AFP actualizada para ${updates.length} empleados` 
+      message: `AFP actualizada para ${updates.length} empleados`, 
     });
     
   } catch (error) {
     console.error('Error actualizando AFP:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -71,7 +71,7 @@ async function getEconomicIndicatorsDirectly(): Promise<EconomicIndicators | nul
       tpm: 5.75,
       usd: 950,
       eur: 1000,
-      last_updated: new Date().toISOString()
+      last_updated: new Date().toISOString(),
     };
 
     // Mapear los valores obtenidos (solo el más reciente de cada tipo)
@@ -216,7 +216,7 @@ function getDefaultIndicators(): EconomicIndicators {
     tpm: 5.75, // Tasa política monetaria aproximada
     usd: 950, // Aproximado
     eur: 1000, // Aproximado
-    last_updated: new Date().toISOString()
+    last_updated: new Date().toISOString(),
   };
 }
 

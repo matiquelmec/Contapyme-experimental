@@ -1,8 +1,9 @@
 'use client';
 
+import { FileText, Plus, Filter, Download } from 'lucide-react';
+
 import { Header } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { FileText, Plus, Filter, Download } from 'lucide-react';
 
 export default function TransactionsPage() {
   return (
@@ -17,7 +18,7 @@ export default function TransactionsPage() {
       <Header 
         title="Transacciones Contables"
         subtitle="Registro de asientos contables, libro diario y control de movimientos"
-        showBackButton={true}
+        showBackButton
         backHref="/accounting"
         variant="premium"
         actions={
@@ -162,23 +163,23 @@ export default function TransactionsPage() {
                 </h4>
                 <div className="text-left space-y-2 text-sm text-blue-800">
                   <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full" />
                     <span>Registro de asientos contables</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full" />
                     <span>Libro diario automatizado</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full" />
                     <span>Conciliación bancaria</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full" />
                     <span>Importación desde bancos</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full" />
                     <span>Validación automática</span>
                   </div>
                 </div>

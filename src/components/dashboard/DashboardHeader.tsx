@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import { Badge, Button } from '@/components/ui'
+
 import Link from 'next/link'
+
 import {
   User,
   LogOut,
@@ -13,8 +13,11 @@ import {
   Settings,
   ChevronDown,
   Building2,
-  Home
+  Home,
 } from 'lucide-react'
+
+import { Badge, Button } from '@/components/ui'
+import { useAuth } from '@/contexts/AuthContext'
 
 export function DashboardHeader() {
   const { user, signOut } = useAuth()
@@ -27,7 +30,7 @@ export function DashboardHeader() {
       setCurrentTime(new Date())
     }, 60000)
 
-    return () => clearInterval(timer)
+    return () => { clearInterval(timer); }
   }, [])
 
   const handleSignOut = async () => {
@@ -84,14 +87,14 @@ export function DashboardHeader() {
               <div className="font-medium">
                 {currentTime.toLocaleTimeString('es-CL', {
                   hour: '2-digit',
-                  minute: '2-digit'
+                  minute: '2-digit',
                 })}
               </div>
               <div className="text-xs text-gray-400">
                 {currentTime.toLocaleDateString('es-CL', {
                   weekday: 'short',
                   month: 'short',
-                  day: 'numeric'
+                  day: 'numeric',
                 })}
               </div>
             </div>
@@ -178,7 +181,7 @@ export function DashboardHeader() {
           <div className="flex items-center justify-between py-1">
             <div className="flex items-center space-x-4 text-xs">
               <div className="flex items-center space-x-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-green-500 rounded-full" />
                 <span className="text-green-700">Sistema Operativo</span>
               </div>
               <span className="text-gray-500">|</span>

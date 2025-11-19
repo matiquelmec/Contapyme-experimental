@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { useParams } from 'next/navigation';
 
 interface JournalEntry {
@@ -68,7 +69,7 @@ export default function JournalEntryDetailPage() {
 
     try {
       const response = await fetch(`/api/accounting/journal/${entry.id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
       
       const data = await response.json();
@@ -77,7 +78,7 @@ export default function JournalEntryDetailPage() {
         alert('Asiento eliminado exitosamente');
         window.location.href = '/accounting/journal';
       } else {
-        alert('Error al eliminar el asiento: ' + data.error);
+        alert(`Error al eliminar el asiento: ${  data.error}`);
       }
     } catch (err) {
       alert('Error al eliminar el asiento');

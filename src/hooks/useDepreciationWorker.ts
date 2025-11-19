@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { FixedAsset } from '@/types';
+
+import type { FixedAsset } from '@/types';
 
 interface WorkerTask {
   taskId: string;
@@ -102,8 +103,7 @@ export function useDepreciationWorker() {
   }, []);
 
   // Función genérica para enviar tareas al Worker con mejor manejo de errores
-  const sendTask = useCallback((type: string, data: any): Promise<any> => {
-    return new Promise((resolve, reject) => {
+  const sendTask = useCallback((type: string, data: any): Promise<any> => new Promise((resolve, reject) => {
       // Verificar que el Worker esté disponible
       if (!workerRef.current || !isWorkerReady) {
         reject(new Error('Web Worker no está disponible'));
@@ -124,7 +124,7 @@ export function useDepreciationWorker() {
         type,
         resolve,
         reject,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       try {
@@ -132,7 +132,7 @@ export function useDepreciationWorker() {
         workerRef.current.postMessage({
           type,
           data,
-          taskId
+          taskId,
         });
 
         // Timeout de seguridad (10 segundos - más conservador)
@@ -146,13 +146,12 @@ export function useDepreciationWorker() {
         tasksRef.current.delete(taskId);
         reject(new Error(`Error enviando mensaje al Worker: ${error}`));
       }
-    });
-  }, [isWorkerReady]);
+    }), [isWorkerReady]);
 
   // Calcular depreciación de un solo activo
   const calculateSingleDepreciation = useCallback(async (
     asset: FixedAsset, 
-    currentDate?: Date
+    currentDate?: Date,
   ): Promise<DepreciationCalculation> => {
     if (!isWorkerReady) {
       // Fallback local si Worker no está disponible
@@ -162,7 +161,7 @@ export function useDepreciationWorker() {
     try {
       return await sendTask('CALCULATE_SINGLE_DEPRECIATION', {
         asset,
-        currentDate: currentDate?.toISOString()
+        currentDate: currentDate?.toISOString(),
       });
     } catch (error) {
       console.warn('Worker falló, usando cálculo local:', error);
@@ -173,7 +172,7 @@ export function useDepreciationWorker() {
   // Calcular reporte completo de activos
   const calculateAssetsReport = useCallback(async (
     assets: FixedAsset[],
-    currentDate?: Date
+    currentDate?: Date,
   ): Promise<AssetsReport> => {
     if (!isWorkerReady || assets.length === 0) {
       return calculateReportLocal(assets, currentDate);
@@ -185,7 +184,7 @@ export function useDepreciationWorker() {
       
       const result = await sendTask('CALCULATE_ASSETS_REPORT', {
         assets,
-        currentDate: currentDate?.toISOString()
+        currentDate: currentDate?.toISOString(),
       });
       
       const duration = performance.now() - startTime;
@@ -201,7 +200,7 @@ export function useDepreciationWorker() {
   // Calcular proyecciones de depreciación
   const calculateProjections = useCallback(async (
     assets: FixedAsset[],
-    monthsAhead: number = 12
+    monthsAhead: number = 12,
   ): Promise<any[]> => {
     if (!isWorkerReady) {
       return []; // Fallback vacío
@@ -210,7 +209,7 @@ export function useDepreciationWorker() {
     try {
       return await sendTask('CALCULATE_DEPRECIATION_PROJECTION', {
         assets,
-        monthsAhead
+        monthsAhead,
       });
     } catch (error) {
       console.warn('Error calculando proyecciones:', error);
@@ -220,7 +219,7 @@ export function useDepreciationWorker() {
 
   // Analizar rentabilidad de activos
   const analyzeAssetProfitability = useCallback(async (
-    assets: FixedAsset[]
+    assets: FixedAsset[],
   ): Promise<any[]> => {
     if (!isWorkerReady) {
       return []; // Fallback vacío
@@ -228,7 +227,7 @@ export function useDepreciationWorker() {
 
     try {
       return await sendTask('ANALYZE_ASSET_PROFITABILITY', {
-        assets
+        assets,
       });
     } catch (error) {
       console.warn('Error analizando rentabilidad:', error);
@@ -242,7 +241,7 @@ export function useDepreciationWorker() {
     calculateSingleDepreciation,
     calculateAssetsReport,
     calculateProjections,
-    analyzeAssetProfitability
+    analyzeAssetProfitability,
   };
 }
 
@@ -250,7 +249,7 @@ export function useDepreciationWorker() {
 function calculateDepreciationLocal(asset: FixedAsset, currentDate = new Date()): DepreciationCalculation {
   try {
     const monthsSinceDepreciation = Math.max(0, Math.floor(
-      (currentDate.getTime() - new Date(asset.start_depreciation_date).getTime()) / (1000 * 60 * 60 * 24 * 30)
+      (currentDate.getTime() - new Date(asset.start_depreciation_date).getTime()) / (1000 * 60 * 60 * 24 * 30),
     ));
     
     const depreciableValue = asset.purchase_value - (asset.residual_value || 0);
@@ -259,12 +258,12 @@ function calculateDepreciationLocal(asset: FixedAsset, currentDate = new Date())
     
     const accumulatedDepreciation = Math.min(
       monthsSinceDepreciation * monthlyDepreciation,
-      depreciableValue
+      depreciableValue,
     );
     
     const bookValue = Math.max(
       asset.purchase_value - accumulatedDepreciation,
-      asset.residual_value || 0
+      asset.residual_value || 0,
     );
     
     return {
@@ -275,7 +274,7 @@ function calculateDepreciationLocal(asset: FixedAsset, currentDate = new Date())
       depreciationPercentage: Math.round(((accumulatedDepreciation / depreciableValue) * 100) * 100) / 100,
       remainingMonths: Math.max(0, totalMonths - monthsSinceDepreciation),
       isFullyDepreciated: accumulatedDepreciation >= depreciableValue,
-      monthsSinceStart: monthsSinceDepreciation
+      monthsSinceStart: monthsSinceDepreciation,
     };
   } catch (error: any) {
     return {
@@ -287,7 +286,7 @@ function calculateDepreciationLocal(asset: FixedAsset, currentDate = new Date())
       remainingMonths: asset.useful_life_years * 12,
       isFullyDepreciated: false,
       monthsSinceStart: 0,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -299,7 +298,7 @@ function calculateReportLocal(assets: FixedAsset[], currentDate = new Date()): A
   const assetsNearFullDepreciation = assets
     .map((asset, index) => ({
       ...asset,
-      calculation: calculations[index]
+      calculation: calculations[index],
     }))
     .filter(item => item.calculation.depreciationPercentage >= 90)
     .map(item => ({
@@ -309,7 +308,7 @@ function calculateReportLocal(assets: FixedAsset[], currentDate = new Date()): A
       bookValue: item.calculation.bookValue,
       purchase_value: item.purchase_value,
       status: item.status,
-      category: item.category
+      category: item.category,
     }));
 
   return {
@@ -323,6 +322,6 @@ function calculateReportLocal(assets: FixedAsset[], currentDate = new Date()): A
     active_assets: assets.filter(a => a.status === 'active').length,
     disposed_assets: assets.filter(a => a.status === 'disposed').length,
     average_age_months: calculations.length > 0 ? Math.round(calculations.reduce((sum, c) => sum + c.monthsSinceStart, 0) / calculations.length) : 0,
-    calculations
+    calculations,
   };
 }

@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -7,7 +9,7 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 // GET: Obtener un contrato específico
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const contractId = params.id;
@@ -79,7 +81,7 @@ export async function GET(
         legal_representative_profession: legalRep.profession || 'INGENIERO COMERCIAL',
         legal_representative_nationality: legalRep.nationality || 'CHILENA',
         legal_representative_civil_status: legalRep.civil_status || 'SOLTERO',
-        legal_representative_address: legalRep.address || data.companies?.fiscal_address
+        legal_representative_address: legalRep.address || data.companies?.fiscal_address,
       };
       
       // Log para debug
@@ -90,14 +92,14 @@ export async function GET(
 
     return NextResponse.json({ 
       success: true, 
-      data 
+      data, 
     });
 
   } catch (error) {
     console.error('Error in GET /api/payroll/contracts/[id]:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }
@@ -105,7 +107,7 @@ export async function GET(
 // PATCH: Actualizar parcialmente un contrato
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const contractId = params.id;
@@ -136,14 +138,14 @@ export async function PATCH(
     return NextResponse.json({ 
       success: true, 
       data,
-      message: 'Contrato actualizado exitosamente'
+      message: 'Contrato actualizado exitosamente',
     });
 
   } catch (error) {
     console.error('Error in PATCH /api/payroll/contracts/[id]:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }
@@ -151,7 +153,7 @@ export async function PATCH(
 // DELETE: Eliminar un contrato
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const contractId = params.id;
@@ -189,7 +191,7 @@ export async function DELETE(
         .from('employment_contracts')
         .update({ 
           status: 'terminated',
-          termination_date: new Date().toISOString().split('T')[0]
+          termination_date: new Date().toISOString().split('T')[0],
         })
         .eq('id', contractId)
         .select()
@@ -214,14 +216,14 @@ export async function DELETE(
     return NextResponse.json({ 
       success: true, 
       data,
-      message
+      message,
     });
 
   } catch (error) {
     console.error('Error in DELETE /api/payroll/contracts/[id]:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }

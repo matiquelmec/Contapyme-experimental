@@ -1,6 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getDatabaseConnection } from '@/lib/database/databaseSimple';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { v4 as uuidv4 } from 'uuid';
+
+import { getDatabaseConnection } from '@/lib/database/databaseSimple';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +17,7 @@ export async function POST(request: NextRequest) {
       period_year,
       period_month,
       company_id = 'demo-company',
-      auto_integrate = false
+      auto_integrate = false,
     } = body;
 
     const supabase = getDatabaseConnection();
@@ -23,7 +26,7 @@ export async function POST(request: NextRequest) {
     if (!period_year || !period_month) {
       return NextResponse.json(
         { success: false, error: 'period_year y period_month son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -60,7 +63,7 @@ export async function POST(request: NextRequest) {
       if (liquidationsError || !liquidations || liquidations.length === 0) {
         return NextResponse.json(
           { success: false, error: 'No se encontraron liquidaciones aprobadas o pagadas para el período especificado' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -76,10 +79,10 @@ export async function POST(request: NextRequest) {
             total_employees: acc.total_employees + 1,
             total_haberes: acc.total_haberes + (liq.total_gross_income || 0),
             total_descuentos: acc.total_descuentos + (liq.total_deductions || 0),
-            total_liquido: acc.total_liquido + liquidoReal
+            total_liquido: acc.total_liquido + liquidoReal,
           };
         },
-        { total_employees: 0, total_haberes: 0, total_descuentos: 0, total_liquido: 0 }
+        { total_employees: 0, total_haberes: 0, total_descuentos: 0, total_liquido: 0 },
       );
 
       // Crear libro automáticamente
@@ -93,7 +96,7 @@ export async function POST(request: NextRequest) {
           company_rut: '78.223.873-6',
           generation_date: new Date().toISOString(),
           status: 'draft',
-          ...totals
+          ...totals,
         })
         .select()
         .single();
@@ -102,7 +105,7 @@ export async function POST(request: NextRequest) {
         console.error('Error creando libro automático:', createBookError);
         return NextResponse.json(
           { success: false, error: 'Error al crear libro de remuneraciones automático' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -131,7 +134,7 @@ export async function POST(request: NextRequest) {
     if (liquidationsError || !liquidations || liquidations.length === 0) {
       return NextResponse.json(
         { success: false, error: 'No se encontraron liquidaciones aprobadas o pagadas para el período' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -150,16 +153,16 @@ export async function POST(request: NextRequest) {
     // Configuración SIS desde settings
     let sisPercentage = 1.88; // Default value
     
-    if (payrollSettings && payrollSettings.settings?.company_info) {
+    if (payrollSettings?.settings?.company_info) {
       mutualPercentage = payrollSettings.settings.company_info.mutual_percentage || 0.95;
       mutualCode = payrollSettings.settings.company_info.mutual_code || 'ACHS';
     }
     
-    if (payrollSettings && payrollSettings.settings?.contributions) {
+    if (payrollSettings?.settings?.contributions) {
       sisPercentage = payrollSettings.settings.contributions.sis_percentage || 1.88;
     }
 
-    if (payrollSettings && payrollSettings.settings?.income_limits) {
+    if (payrollSettings?.settings?.income_limits) {
       ufLimit = payrollSettings.settings.income_limits.uf_limit || 87.8;
       ufValue = payrollSettings.settings.income_limits.uf_value || 39383.07;
     }
@@ -200,7 +203,7 @@ export async function POST(request: NextRequest) {
           unemployment_amount: acc.unemployment_amount + (liq.unemployment_amount || 0),
           income_tax: acc.income_tax + (liq.income_tax_amount || 0),
           // Conteo
-          employee_count: acc.employee_count + 1
+          employee_count: acc.employee_count + 1,
         };
       },
       {
@@ -218,8 +221,8 @@ export async function POST(request: NextRequest) {
         health_amount: 0,
         unemployment_amount: 0,
         income_tax: 0,
-        employee_count: 0
-      }
+        employee_count: 0,
+      },
     );
 
     console.log('💰 Totales calculados:', totals);
@@ -242,7 +245,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: `Ya existen asientos contables para el período ${period_description}`,
-        data: { existing_entries: existingEntries }
+        data: { existing_entries: existingEntries },
       }, { status: 409 });
     }
 
@@ -271,7 +274,7 @@ export async function POST(request: NextRequest) {
         account_name: line.account_name,
         debit_amount: line.debit_amount,
         credit_amount: line.credit_amount,
-        line_description: line.line_description
+        line_description: line.line_description,
       }));
       
       // Validar cuadratura de las líneas específicas
@@ -282,7 +285,7 @@ export async function POST(request: NextRequest) {
         totalDebit: totalDebit.toLocaleString('es-CL'),
         totalCredit: totalCredit.toLocaleString('es-CL'),
         diferencia: totalDebit - totalCredit,
-        lineas: journalLines.length
+        lineas: journalLines.length,
       });
       
       if (Math.abs(totalDebit - totalCredit) > 1) {
@@ -291,9 +294,9 @@ export async function POST(request: NextRequest) {
           { 
             success: false, 
             error: 'Las líneas específicas de Agosto 2025 no cuadran matemáticamente',
-            debug: { totalDebit, totalCredit, difference: totalDebit - totalCredit }
+            debug: { totalDebit, totalCredit, difference: totalDebit - totalCredit },
           },
-          { status: 500 }
+          { status: 500 },
         );
       }
       
@@ -309,7 +312,7 @@ export async function POST(request: NextRequest) {
           .insert({
             id: mainEntryId,
             user_id: 'demo-user',
-            company_id: company_id,
+            company_id,
             entry_number: entryNumber,
             entry_date: '2025-08-31',
             description: `Provisión Remuneraciones 08/2025 - 6 empleados - Asiento específico línea por línea`,
@@ -322,7 +325,7 @@ export async function POST(request: NextRequest) {
             total_credit: totalCredit,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
-            created_by: 'system'
+            created_by: 'system',
           })
           .select()
           .single();
@@ -344,7 +347,7 @@ export async function POST(request: NextRequest) {
             account_name: line.account_name,
             debit_amount: line.debit_amount,
             credit_amount: line.credit_amount,
-            line_description: line.line_description
+            line_description: line.line_description,
           })));
 
         if (linesError) {
@@ -363,13 +366,13 @@ export async function POST(request: NextRequest) {
               entry_number: entryNumber,
               date: '2025-08-31',
               description: `Provisión Remuneraciones 08/2025 - 6 empleados - Asiento específico línea por línea`,
-              url: `/accounting/journal/${mainEntryId}`
+              url: `/accounting/journal/${mainEntryId}`,
             },
             cuadratura: {
               debe: totalDebit,
               haber: totalCredit,
               diferencia: totalDebit - totalCredit,
-              cuadrado: Math.abs(totalDebit - totalCredit) <= 1
+              cuadrado: Math.abs(totalDebit - totalCredit) <= 1,
             },
             summary: {
               employee_count: 6,
@@ -378,7 +381,7 @@ export async function POST(request: NextRequest) {
               total_haberes: 11589446,
               total_descuentos: 1464046,
               total_liquido: 10125400,
-              asiento_especifico: true
+              asiento_especifico: true,
             },
             lines_sample: journalLines.slice(0, 10).map(line => ({
               line_number: line.line_number,
@@ -386,9 +389,9 @@ export async function POST(request: NextRequest) {
               name: line.account_name,
               debe: line.debit_amount,
               haber: line.credit_amount,
-              description: line.line_description.substring(0, 60) + '...'
-            }))
-          }
+              description: `${line.line_description.substring(0, 60)  }...`,
+            })),
+          },
         }, { status: 200 });
 
       } catch (saveError: any) {
@@ -396,7 +399,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: false,
           error: 'Error guardando el asiento específico en base de datos',
-          message: saveError.message || 'Error desconocido al guardar asiento específico'
+          message: saveError.message || 'Error desconocido al guardar asiento específico',
         }, { status: 500 });
       }
     }
@@ -432,7 +435,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Sueldo Base',
           debit_amount: liquidation.base_salary,
           credit_amount: 0,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Sueldo Base`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Sueldo Base`,
         });
       }
 
@@ -446,7 +449,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Gratificaciones',
           debit_amount: liquidation.gratification,
           credit_amount: 0,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Gratificación`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Gratificación`,
         });
       }
 
@@ -460,7 +463,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Horas Extras',
           debit_amount: liquidation.overtime_amount,
           credit_amount: 0,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Horas Extras`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Horas Extras`,
         });
       }
 
@@ -474,7 +477,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Bonificaciones',
           debit_amount: liquidation.bonuses,
           credit_amount: 0,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Bonificaciones`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Bonificaciones`,
         });
       }
 
@@ -488,7 +491,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Asignación Colación',
           debit_amount: liquidation.food_allowance,
           credit_amount: 0,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Asignación Colación`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Asignación Colación`,
         });
       }
 
@@ -502,7 +505,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Asignación Movilización',
           debit_amount: liquidation.transport_allowance,
           credit_amount: 0,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Asignación Movilización`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Asignación Movilización`,
         });
       }
 
@@ -516,7 +519,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Gratificación Legal Art. 50',
           debit_amount: liquidation.legal_gratification_art50,
           credit_amount: 0,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Gratificación Legal Art. 50`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Gratificación Legal Art. 50`,
         });
       }
 
@@ -527,8 +530,6 @@ export async function POST(request: NextRequest) {
 
       // Pre-calcular valores de costos patronales para usar en DEBE y HABER
       const sisEmpleador = Math.round(baseImponibleEmpleador * (sisPercentage / 100));
-
-
 
       // 1% Social - AFP Adicional (0.1%) - OFICIAL PREVIRED 2025
       const socialAfpEmpleador = Math.round(baseImponibleEmpleador * 0.001);
@@ -541,7 +542,7 @@ export async function POST(request: NextRequest) {
           account_name: '1% Social AFP (0.1%)',
           debit_amount: socialAfpEmpleador,
           credit_amount: 0,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | 1% Social AFP 0.1%`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | 1% Social AFP 0.1%`,
         });
       }
 
@@ -556,7 +557,7 @@ export async function POST(request: NextRequest) {
           account_name: '1% Social Esperanza Vida',
           debit_amount: esperanzaVidaEmpleador,
           credit_amount: 0,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | 1% Social Esperanza Vida 0.9%`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | 1% Social Esperanza Vida 0.9%`,
         });
       }
 
@@ -570,7 +571,7 @@ export async function POST(request: NextRequest) {
           account_name: 'SIS Empleador',
           debit_amount: sisEmpleador,
           credit_amount: 0,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | SIS Empleador ${sisPercentage}%`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | SIS Empleador ${sisPercentage}%`,
         });
       }
 
@@ -586,7 +587,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Mutual Empleador',
           debit_amount: mutualEmpleador,
           credit_amount: 0,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | ${mutualCode} Empleador ${mutualPercentage}% (Base: $${baseImponibleMutual.toLocaleString('es-CL')})`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | ${mutualCode} Empleador ${mutualPercentage}% (Base: $${baseImponibleMutual.toLocaleString('es-CL')})`,
         });
       }
 
@@ -605,7 +606,7 @@ export async function POST(request: NextRequest) {
             account_name: 'Cesantía Empleador',
             debit_amount: cesantiaEmpleadorPlazoFijo,
             credit_amount: 0,
-            line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Cesantía Empleador 3% (Plazo Fijo)`
+            line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Cesantía Empleador 3% (Plazo Fijo)`,
           });
         }
       } else {
@@ -620,7 +621,7 @@ export async function POST(request: NextRequest) {
             account_name: 'Cesantía Empleador',
             debit_amount: cesantiaEmpleador,
             credit_amount: 0,
-            line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Cesantía Empleador 2.4% (Indefinido)`
+            line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Cesantía Empleador 2.4% (Indefinido)`,
           });
         }
       }
@@ -637,7 +638,7 @@ export async function POST(request: NextRequest) {
           account_name: 'AFP por Pagar',
           debit_amount: 0,
           credit_amount: liquidation.afp_amount,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Previsión AFP`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Previsión AFP`,
         });
       }
 
@@ -651,7 +652,7 @@ export async function POST(request: NextRequest) {
           account_name: 'AFP por Pagar',
           debit_amount: 0,
           credit_amount: liquidation.afp_commission_amount,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Comisión AFP`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Comisión AFP`,
         });
       }
 
@@ -665,7 +666,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Salud por Pagar',
           debit_amount: 0,
           credit_amount: liquidation.health_amount,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Cotización Salud`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Cotización Salud`,
         });
       }
 
@@ -679,7 +680,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Cesantía por Pagar',
           debit_amount: 0,
           credit_amount: liquidation.unemployment_amount,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Cesantía Trabajador 0.6% (Indefinido)`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Cesantía Trabajador 0.6% (Indefinido)`,
         });
       }
 
@@ -693,7 +694,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Impuesto 2da Categoría por Pagar',
           debit_amount: 0,
           credit_amount: liquidation.income_tax_amount,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Impuesto Único`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Impuesto Único`,
         });
       }
 
@@ -705,7 +706,7 @@ export async function POST(request: NextRequest) {
         '18.209.442-0': 6941085,
         '16.353.500-9': 700115,
         '18.282.415-1': 541034,
-        '17.111.230-3': 757233
+        '17.111.230-3': 757233,
       };
       
       // ⚠️ TEMPORAL: Si el RUT no está en excelLiquids pero esperamos que esté, log warning
@@ -724,7 +725,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Líquidos por Pagar',
           debit_amount: 0,
           credit_amount: liquidoReal,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Líquido a Recibir`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Líquido a Recibir`,
         });
       }
 
@@ -740,7 +741,7 @@ export async function POST(request: NextRequest) {
           account_name: 'AFP por Pagar',
           debit_amount: 0,
           credit_amount: socialAfpEmpleador,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | 1% Social AFP por Pagar`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | 1% Social AFP por Pagar`,
         });
       }
 
@@ -754,7 +755,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Esperanza Vida por Pagar',
           debit_amount: 0,
           credit_amount: esperanzaVidaEmpleador,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Esperanza Vida por Pagar`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Esperanza Vida por Pagar`,
         });
       }
 
@@ -768,7 +769,7 @@ export async function POST(request: NextRequest) {
           account_name: 'SIS por Pagar',
           debit_amount: 0,
           credit_amount: sisEmpleador,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | SIS por Pagar ${sisPercentage}%`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | SIS por Pagar ${sisPercentage}%`,
         });
       }
 
@@ -782,7 +783,7 @@ export async function POST(request: NextRequest) {
           account_name: 'Mutual por Pagar',
           debit_amount: 0,
           credit_amount: mutualEmpleador,
-          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | ${mutualCode} por Pagar ${mutualPercentage}%`
+          line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | ${mutualCode} por Pagar ${mutualPercentage}%`,
         });
       }
 
@@ -799,7 +800,7 @@ export async function POST(request: NextRequest) {
             account_name: 'Cesantía por Pagar',
             debit_amount: 0,
             credit_amount: cesantiaEmpleadorPlazoFijoHaber,
-            line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Cesantía Empleador 3% por Pagar (Plazo Fijo)`
+            line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Cesantía Empleador 3% por Pagar (Plazo Fijo)`,
           });
         }
       } else {
@@ -814,7 +815,7 @@ export async function POST(request: NextRequest) {
             account_name: 'Cesantía por Pagar',
             debit_amount: 0,
             credit_amount: cesantiaEmpleadorIndefinido,
-            line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Cesantía Empleador 2.4% por Pagar (Indefinido)`
+            line_description: `${rut} | ${apellidos} ${nombres} | ${cargo} | GENERAL | Cesantía Empleador 2.4% por Pagar (Indefinido)`,
           });
         }
       }
@@ -830,7 +831,7 @@ export async function POST(request: NextRequest) {
     console.log('🧮 Totales antes del ajuste ISL:', {
       preliminaryDebit,
       preliminaryCredit,
-      diferenciaPreliminar: preliminaryDebit - preliminaryCredit
+      diferenciaPreliminar: preliminaryDebit - preliminaryCredit,
     });
     
     // Calcular ISL necesario para cuadrar (usando datos reales del usuario)
@@ -840,9 +841,7 @@ export async function POST(request: NextRequest) {
       console.log('📋 Aplicando ajuste ISL para cuadrar diferencia:', diferencia);
       
       // Base imponible total para ISL (suma de todas las liquidaciones)
-      const totalBaseImponible = liquidations.reduce((sum, liq) => {
-        return sum + liq.base_salary + (liq.gratification || 0) + (liq.legal_gratification_art50 || 0) + (liq.overtime_amount || 0);
-      }, 0);
+      const totalBaseImponible = liquidations.reduce((sum, liq) => sum + liq.base_salary + (liq.gratification || 0) + (liq.legal_gratification_art50 || 0) + (liq.overtime_amount || 0), 0);
       
       // ISL = diferencia exacta para cuadrar
       const islAjuste = Math.abs(diferencia);
@@ -858,7 +857,7 @@ export async function POST(request: NextRequest) {
           account_name: 'ISL - Seguro Trabajo',
           debit_amount: islAjuste,
           credit_amount: 0,
-          line_description: `AJUSTE | ISL Gasto para cuadratura | Base: $${totalBaseImponible.toLocaleString()}`
+          line_description: `AJUSTE | ISL Gasto para cuadratura | Base: $${totalBaseImponible.toLocaleString()}`,
         });
       } else {
         // Si DEBE > HABER, agregar ISL por pagar (HABER)
@@ -870,7 +869,7 @@ export async function POST(request: NextRequest) {
           account_name: 'ISL por Pagar - Ajuste Cuadratura',
           debit_amount: 0,
           credit_amount: islAjuste,
-          line_description: `AJUSTE | ISL por Pagar para cuadratura | Base: $${totalBaseImponible.toLocaleString()}`
+          line_description: `AJUSTE | ISL por Pagar para cuadratura | Base: $${totalBaseImponible.toLocaleString()}`,
         });
       }
       
@@ -886,14 +885,14 @@ export async function POST(request: NextRequest) {
       totalCredit,
       diferencia: totalDebit - totalCredit,
       linesDebit: journalLines.filter(l => l.debit_amount > 0).map(l => ({ account: l.account_code, amount: l.debit_amount })),
-      linesCredit: journalLines.filter(l => l.credit_amount > 0).map(l => ({ account: l.account_code, amount: l.credit_amount }))
+      linesCredit: journalLines.filter(l => l.credit_amount > 0).map(l => ({ account: l.account_code, amount: l.credit_amount })),
     });
 
     if (Math.abs(totalDebit - totalCredit) > 1) {
       console.error('❌ Asiento no cuadra:', { 
         totalDebit, 
         totalCredit, 
-        difference: totalDebit - totalCredit
+        difference: totalDebit - totalCredit,
       });
       return NextResponse.json(
         { 
@@ -902,10 +901,10 @@ export async function POST(request: NextRequest) {
           debug: { 
             totalDebit, 
             totalCredit, 
-            difference: totalDebit - totalCredit
-          }
+            difference: totalDebit - totalCredit,
+          },
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -915,7 +914,7 @@ export async function POST(request: NextRequest) {
       totalCredit,
       diferencia: totalDebit - totalCredit,
       islAplicado: Math.abs(preliminaryDebit - preliminaryCredit),
-      lineasGeneradas: journalLines.length
+      lineasGeneradas: journalLines.length,
     });
 
     // ✅ AHORA SÍ INSERTAR EN BASE DE DATOS
@@ -928,7 +927,7 @@ export async function POST(request: NextRequest) {
         .insert({
           id: mainEntryId,
           user_id: 'demo-user',
-          company_id: company_id,
+          company_id,
           entry_number: entryNumber,
           entry_date: date,
           description: `Provisión Remuneraciones ${period_description} - ${liquidations.length} empleados`,
@@ -941,7 +940,7 @@ export async function POST(request: NextRequest) {
           total_credit: totalCredit,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-          created_by: 'system'
+          created_by: 'system',
         })
         .select()
         .single();
@@ -963,7 +962,7 @@ export async function POST(request: NextRequest) {
           account_name: line.account_name,
           debit_amount: line.debit_amount,
           credit_amount: line.credit_amount,
-          line_description: line.line_description
+          line_description: line.line_description,
         })));
 
       if (linesError) {
@@ -981,16 +980,16 @@ export async function POST(request: NextRequest) {
           journal_entry: {
             id: mainEntryId,
             entry_number: entryNumber,
-            date: date,
+            date,
             description: `Provisión Remuneraciones ${period_description} - ${liquidations.length} empleados`,
-            url: `/accounting/journal/${mainEntryId}`
+            url: `/accounting/journal/${mainEntryId}`,
           },
           cuadratura: {
             debe: totalDebit,
             haber: totalCredit,
             diferencia: totalDebit - totalCredit,
             cuadrado: Math.abs(totalDebit - totalCredit) <= 1,
-            islAjuste: Math.abs(preliminaryDebit - preliminaryCredit)
+            islAjuste: Math.abs(preliminaryDebit - preliminaryCredit),
           },
           summary: {
             employee_count: liquidations.length,
@@ -1005,16 +1004,16 @@ export async function POST(request: NextRequest) {
                                   (liq.unemployment_amount || 0) + 
                                   (liq.income_tax_amount || 0));
               return sum + liquidoReal;
-            }, 0)
+            }, 0),
           },
           lines_sample: journalLines.slice(0, 5).map(line => ({
             account: line.account_code,
             name: line.account_name,
             debe: line.debit_amount,
             haber: line.credit_amount,
-            description: line.line_description.substring(0, 50) + '...'
-          }))
-        }
+            description: `${line.line_description.substring(0, 50)  }...`,
+          })),
+        },
       }, { status: 200 });
 
     } catch (saveError: any) {
@@ -1027,8 +1026,8 @@ export async function POST(request: NextRequest) {
           totalDebit,
           totalCredit,
           diferencia: totalDebit - totalCredit,
-          lines_count: journalLines.length
-        }
+          lines_count: journalLines.length,
+        },
       }, { status: 500 });
     }
 
@@ -1038,9 +1037,9 @@ export async function POST(request: NextRequest) {
       { 
         success: false, 
         error: 'Error interno del servidor',
-        message: error.message || 'Error desconocido'
+        message: error.message || 'Error desconocido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -1063,7 +1062,7 @@ async function savePayrollJournalEntry(companyId: string, entryData: any) {
     status: 'approved',
     total_debit: entryData.total_debit,
     total_credit: entryData.total_credit,
-    created_by: 'system'
+    created_by: 'system',
   };
 
   const { data: journalEntry, error: entryError } = await supabase

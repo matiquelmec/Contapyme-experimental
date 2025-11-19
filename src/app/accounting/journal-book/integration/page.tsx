@@ -1,24 +1,24 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Header } from '@/components/layout/Header';
-import { formatCurrency, formatDate } from '@/lib/utils';
+
 import { 
   FileText, 
   Building2, 
   CheckCircle, 
   Clock, 
   AlertCircle, 
-  Settings, 
-  Download,
+  Settings,
   Upload,
   Zap,
   Eye,
-  Plus,
-  Filter
+  Filter,
 } from 'lucide-react';
+
+import { Header } from '@/components/layout/Header';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
 interface IntegrationData {
   rcv_data: RCVIntegrationItem[];
@@ -118,7 +118,7 @@ export default function JournalBookIntegrationPage() {
 
       const params = new URLSearchParams({
         company_id: companyId,
-        status: statusFilter
+        status: statusFilter,
       });
 
       const response = await fetch(`/api/accounting/journal-book/integration?${params}`);
@@ -166,13 +166,13 @@ export default function JournalBookIntegrationPage() {
             id: rcvItem.id,
             type: 'rcv',
             subtype: rcvItem.type,
-            data: rcvItem
+            data: rcvItem,
           };
         } else if (assetItem) {
           return {
             id: assetItem.id,
             type: 'fixed_asset',
-            data: assetItem
+            data: assetItem,
           };
         }
         return null;
@@ -186,7 +186,7 @@ export default function JournalBookIntegrationPage() {
         body: JSON.stringify({
           company_id: companyId,
           transactions,
-          create_journal_entries: true
+          create_journal_entries: true,
         }),
       });
 
@@ -211,7 +211,7 @@ export default function JournalBookIntegrationPage() {
     setSelectedItems(prev => 
       prev.includes(id) 
         ? prev.filter(item => item !== id)
-        : [...prev, id]
+        : [...prev, id],
     );
   };
 
@@ -230,13 +230,13 @@ export default function JournalBookIntegrationPage() {
     const rcv = integrationData.rcv_data.filter(item => 
       statusFilter === 'all' || 
       (statusFilter === 'pending' && !item.is_processed) ||
-      (statusFilter === 'processed' && item.is_processed)
+      (statusFilter === 'processed' && item.is_processed),
     );
     
     const fixedAssets = integrationData.fixed_assets_data.filter(item => 
       statusFilter === 'all' || 
       (statusFilter === 'pending' && !item.is_processed) ||
-      (statusFilter === 'processed' && item.is_processed)
+      (statusFilter === 'processed' && item.is_processed),
     );
     
     return { rcv, fixedAssets };
@@ -246,7 +246,7 @@ export default function JournalBookIntegrationPage() {
     const [year, month] = period.split('-');
     const months = [
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
     ];
     return `${months[parseInt(month) - 1]} ${year}`;
   };
@@ -258,14 +258,14 @@ export default function JournalBookIntegrationPage() {
       <Header 
         title="Integración Libro Diario"
         subtitle="Importa transacciones de RCV y Activos Fijos automáticamente"
-        showBackButton={true}
+        showBackButton
         backHref="/accounting/journal-book"
         actions={
           <div className="flex space-x-2">
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={() => setShowConfig(!showConfig)}
+              onClick={() => { setShowConfig(!showConfig); }}
             >
               <Settings className="w-4 h-4 mr-1" />
               Configuración
@@ -377,7 +377,7 @@ export default function JournalBookIntegrationPage() {
                   <Filter className="w-4 h-4 text-gray-500" />
                   <select
                     value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value as any)}
+                    onChange={(e) => { setStatusFilter(e.target.value as any); }}
                     className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="pending">Pendientes</option>
@@ -404,7 +404,7 @@ export default function JournalBookIntegrationPage() {
           <CardContent>
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
                 <span className="ml-3 text-gray-600">Cargando datos de integración...</span>
               </div>
             ) : error ? (
@@ -428,7 +428,7 @@ export default function JournalBookIntegrationPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleSelectAll(filteredData.rcv)}
+                        onClick={() => { handleSelectAll(filteredData.rcv); }}
                       >
                         {selectedItems.filter(id => filteredData.rcv.some(item => item.id === id)).length === filteredData.rcv.filter(item => !item.is_processed).length
                           ? 'Deseleccionar Todos'
@@ -453,7 +453,7 @@ export default function JournalBookIntegrationPage() {
                             <div className="flex items-center space-x-2">
                               <div className={`w-3 h-3 rounded-full ${
                                 item.is_processed ? 'bg-green-500' : 'bg-yellow-500'
-                              }`}></div>
+                              }`} />
                               <span className="text-sm font-medium">
                                 {item.type === 'purchase' ? '📈 Compras' : '💰 Ventas'}
                               </span>
@@ -462,7 +462,7 @@ export default function JournalBookIntegrationPage() {
                               <input
                                 type="checkbox"
                                 checked={selectedItems.includes(item.id)}
-                                onChange={() => handleSelectItem(item.id)}
+                                onChange={() => { handleSelectItem(item.id); }}
                                 className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                               />
                             )}
@@ -536,7 +536,7 @@ export default function JournalBookIntegrationPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleSelectAll(filteredData.fixedAssets)}
+                        onClick={() => { handleSelectAll(filteredData.fixedAssets); }}
                       >
                         {selectedItems.filter(id => filteredData.fixedAssets.some(item => item.id === id)).length === filteredData.fixedAssets.filter(item => !item.is_processed).length
                           ? 'Deseleccionar Todos'
@@ -561,14 +561,14 @@ export default function JournalBookIntegrationPage() {
                             <div className="flex items-center space-x-2">
                               <div className={`w-3 h-3 rounded-full ${
                                 item.is_processed ? 'bg-green-500' : 'bg-orange-500'
-                              }`}></div>
+                              }`} />
                               <span className="text-sm font-medium">🏢 Activo Fijo</span>
                             </div>
                             {!item.is_processed && (
                               <input
                                 type="checkbox"
                                 checked={selectedItems.includes(item.id)}
-                                onChange={() => handleSelectItem(item.id)}
+                                onChange={() => { handleSelectItem(item.id); }}
                                 className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                               />
                             )}

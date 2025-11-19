@@ -23,8 +23,8 @@ interface FetchOptions {
  * Cliente API base con manejo de errores y timeouts
  */
 class BackendApiClient {
-  private baseUrl: string;
-  private defaultTimeout: number = 30000; // 30 segundos
+  private readonly baseUrl: string;
+  private readonly defaultTimeout: number = 30000; // 30 segundos
 
   constructor(baseUrl: string = API_BASE_URL) {
     this.baseUrl = baseUrl;
@@ -35,13 +35,13 @@ class BackendApiClient {
    */
   private async request<T>(
     endpoint: string,
-    options: FetchOptions = {}
+    options: FetchOptions = {},
   ): Promise<ApiResponse<T>> {
     const {
       method = 'GET',
       headers = {},
       body,
-      timeout = this.defaultTimeout
+      timeout = this.defaultTimeout,
     } = options;
 
     const url = `${this.baseUrl}${endpoint}`;
@@ -51,8 +51,8 @@ class BackendApiClient {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        ...headers
-      }
+        ...headers,
+      },
     };
 
     if (body && method !== 'GET') {
@@ -62,7 +62,7 @@ class BackendApiClient {
     try {
       // Implementar timeout manual
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      const timeoutId = setTimeout(() => { controller.abort(); }, timeout);
       config.signal = controller.signal;
 
       console.log(`🔗 API Request: ${method} ${url}`);
@@ -85,13 +85,13 @@ class BackendApiClient {
       if (error instanceof Error && error.name === 'AbortError') {
         return {
           success: false,
-          error: 'Request timeout - backend may be unavailable'
+          error: 'Request timeout - backend may be unavailable',
         };
       }
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -121,7 +121,7 @@ class BackendApiClient {
   async healthCheck(): Promise<boolean> {
     try {
       const response = await this.get('/health');
-      return response.success === true;
+      return response.success;
     } catch {
       return false;
     }
@@ -134,7 +134,7 @@ class BackendApiClient {
     return {
       baseUrl: this.baseUrl,
       timeout: this.defaultTimeout,
-      available: this.baseUrl !== undefined
+      available: this.baseUrl !== undefined,
     };
   }
 }
@@ -191,9 +191,9 @@ export const accountingApi = {
     return backendApi.post('/api/accounting/indicators', {
       code,
       value,
-      date
+      date,
     });
-  }
+  },
 };
 
 export const payrollApi = {
@@ -235,14 +235,14 @@ export const payrollApi = {
    */
   async getEmployee(id: string, companyId: string) {
     return backendApi.get(`/api/payroll/employees/${id}?company_id=${companyId}`);
-  }
+  },
 };
 
 // Feature flags para migración gradual
 export const BACKEND_FEATURES = {
   USE_NEW_INDICATORS_API: process.env.NEXT_PUBLIC_USE_NEW_INDICATORS === 'true',
   USE_NEW_EMPLOYEES_API: process.env.NEXT_PUBLIC_USE_NEW_EMPLOYEES === 'true',
-  USE_NEW_BACKEND: process.env.NEXT_PUBLIC_USE_NEW_BACKEND === 'true'
+  USE_NEW_BACKEND: process.env.NEXT_PUBLIC_USE_NEW_BACKEND === 'true',
 };
 
 export default backendApi;

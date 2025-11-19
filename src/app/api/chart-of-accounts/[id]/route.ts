@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { databaseSimple } from '@/lib/database/databaseSimple';
 
 export const dynamic = 'force-dynamic';
@@ -6,7 +8,7 @@ export const dynamic = 'force-dynamic';
 // GET /api/chart-of-accounts/[id] - Obtener cuenta específica
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -14,7 +16,7 @@ export async function GET(
     if (!id) {
       return NextResponse.json({
         success: false,
-        error: 'ID de cuenta es requerido'
+        error: 'ID de cuenta es requerido',
       }, { status: 400 });
     }
 
@@ -29,27 +31,27 @@ export async function GET(
       console.error('Error fetching account:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error al obtener cuenta: ' + error.message
+        error: `Error al obtener cuenta: ${  error.message}`,
       }, { status: 500 });
     }
 
     if (!data || data.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'Cuenta no encontrada'
+        error: 'Cuenta no encontrada',
       }, { status: 404 });
     }
 
     return NextResponse.json({
       success: true,
-      data: data[0]
+      data: data[0],
     });
 
   } catch (error: any) {
     console.error('Error in GET account:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -57,7 +59,7 @@ export async function GET(
 // PUT /api/chart-of-accounts/[id] - Actualizar cuenta específica
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -66,7 +68,7 @@ export async function PUT(
     if (!id) {
       return NextResponse.json({
         success: false,
-        error: 'ID de cuenta es requerido'
+        error: 'ID de cuenta es requerido',
       }, { status: 400 });
     }
 
@@ -78,7 +80,7 @@ export async function PUT(
       if (existing && existing.length > 0) {
         return NextResponse.json({
           success: false,
-          error: `Ya existe otra cuenta con el código ${body.code}`
+          error: `Ya existe otra cuenta con el código ${body.code}`,
         }, { status: 409 });
       }
     }
@@ -116,7 +118,7 @@ export async function PUT(
     if (updateFields.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'No hay campos para actualizar'
+        error: 'No hay campos para actualizar',
       }, { status: 400 });
     }
 
@@ -135,28 +137,28 @@ export async function PUT(
       console.error('Error updating account:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error al actualizar cuenta: ' + error.message
+        error: `Error al actualizar cuenta: ${  error.message}`,
       }, { status: 500 });
     }
 
     if (!data || data.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'Cuenta no encontrada'
+        error: 'Cuenta no encontrada',
       }, { status: 404 });
     }
 
     return NextResponse.json({
       success: true,
       data: data[0],
-      message: `Cuenta ${data[0].code} - ${data[0].name} actualizada exitosamente`
+      message: `Cuenta ${data[0].code} - ${data[0].name} actualizada exitosamente`,
     });
 
   } catch (error: any) {
     console.error('Error in PUT account:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -164,7 +166,7 @@ export async function PUT(
 // DELETE /api/chart-of-accounts/[id] - Eliminar cuenta específica
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -174,7 +176,7 @@ export async function DELETE(
     if (!id) {
       return NextResponse.json({
         success: false,
-        error: 'ID de cuenta es requerido'
+        error: 'ID de cuenta es requerido',
       }, { status: 400 });
     }
 
@@ -185,7 +187,7 @@ export async function DELETE(
     if (children && children.length > 0 && !force) {
       return NextResponse.json({
         success: false,
-        error: `No se puede eliminar la cuenta porque tiene ${children.length} cuentas hijas. Use force=true para eliminar todas.`
+        error: `No se puede eliminar la cuenta porque tiene ${children.length} cuentas hijas. Use force=true para eliminar todas.`,
       }, { status: 400 });
     }
 
@@ -206,14 +208,14 @@ export async function DELETE(
       console.error('Error deleting/deactivating account:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error al eliminar cuenta: ' + error.message
+        error: `Error al eliminar cuenta: ${  error.message}`,
       }, { status: 500 });
     }
 
     if (!data || data.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'Cuenta no encontrada'
+        error: 'Cuenta no encontrada',
       }, { status: 404 });
     }
 
@@ -221,14 +223,14 @@ export async function DELETE(
       success: true,
       message: force 
         ? `Cuenta ${data[0].code} - ${data[0].name} eliminada definitivamente`
-        : `Cuenta ${data[0].code} - ${data[0].name} desactivada exitosamente`
+        : `Cuenta ${data[0].code} - ${data[0].name} desactivada exitosamente`,
     });
 
   } catch (error: any) {
     console.error('Error in DELETE account:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }

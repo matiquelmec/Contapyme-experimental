@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -9,14 +11,14 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 // Generar archivo PREVIRED TXT con formato 105 campos por separador
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const companyId = searchParams.get('company_id');
     const period = searchParams.get('period');
     
     if (!companyId || !period) {
       return NextResponse.json(
         { error: 'company_id y period son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,7 +38,7 @@ export async function GET(request: NextRequest) {
     if (bookError || !book) {
       return NextResponse.json(
         { error: 'No se encontró libro de remuneraciones para el período especificado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -66,15 +68,15 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
-        'Content-Disposition': `attachment; filename="${fileName}"`
-      }
+        'Content-Disposition': `attachment; filename="${fileName}"`,
+      },
     });
 
   } catch (error) {
     console.error('Error generando archivo PREVIRED:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRCVEntityLookup } from '@/hooks/useRCVEntityLookup';
+
 import { Building2, Users, AlertCircle, CheckCircle, ExternalLink } from 'lucide-react';
+
+import { useRCVEntityLookup } from '@/hooks/useRCVEntityLookup';
 
 interface RCVEntitySuggestion {
   id: string;
@@ -29,7 +31,7 @@ export function RUTEntityDetector({
   documentNumber, 
   onEntityFound, 
   onSuggestionApplied,
-  className = '' 
+  className = '', 
 }: Props) {
   const [foundEntities, setFoundEntities] = useState<RCVEntitySuggestion[]>([]);
   const [notFoundRUTs, setNotFoundRUTs] = useState<string[]>([]);
@@ -39,7 +41,7 @@ export function RUTEntityDetector({
     loading, 
     debouncedAutoLookup, 
     extractRUTsFromText,
-    generateAccountSuggestions 
+    generateAccountSuggestions, 
   } = useRCVEntityLookup();
 
   // Auto-detectar RUTs cuando cambie la descripción o número de documento
@@ -86,7 +88,7 @@ export function RUTEntityDetector({
           return [...prev, rut];
         });
       },
-      800 // Delay de 800ms
+      800, // Delay de 800ms
     );
   }, [description, documentNumber, debouncedAutoLookup, extractRUTsFromText, onEntityFound]);
 
@@ -125,7 +127,7 @@ export function RUTEntityDetector({
     return (
       <div className={`bg-blue-50 border border-blue-200 rounded-lg p-3 ${className}`}>
         <div className="flex items-center space-x-2 text-sm text-blue-700">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600" />
           <span>🔍 Buscando entidades RCV...</span>
         </div>
       </div>
@@ -143,7 +145,7 @@ export function RUTEntityDetector({
     return (
       <div className={`bg-gray-50 border border-gray-200 rounded-lg p-2 ${className}`}>
         <button 
-          onClick={() => setShowSuggestions(true)}
+          onClick={() => { setShowSuggestions(true); }}
           className="text-sm text-gray-600 hover:text-gray-800 flex items-center space-x-1"
         >
           <ExternalLink className="w-3 h-3" />
@@ -164,7 +166,7 @@ export function RUTEntityDetector({
               <span>🎯 Entidades RCV Detectadas ({foundEntities.length})</span>
             </div>
             <button 
-              onClick={() => setShowSuggestions(false)}
+              onClick={() => { setShowSuggestions(false); }}
               className="text-emerald-600 hover:text-emerald-800 text-xs"
             >
               Ocultar
@@ -207,7 +209,7 @@ export function RUTEntityDetector({
                         <span className="text-gray-600 text-xs ml-2">{entity.account_name}</span>
                       </div>
                       <button
-                        onClick={() => applySuggestion(entity)}
+                        onClick={() => { applySuggestion(entity); }}
                         className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded-lg transition-colors"
                       >
                         ✨ Usar Cuenta

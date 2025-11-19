@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
+import DigitalSignatureModal from '@/components/accounting/DigitalSignatureModal';
+import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Header } from '@/components/layout/Header';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import DigitalSignatureModal from '@/components/accounting/DigitalSignatureModal';
+import { formatCurrency } from '@/lib/utils';
 
 interface BalanceAccount {
   account_code: string;
@@ -59,7 +60,7 @@ export default function Balance8ColumnsPage() {
   const [signingPdf, setSigningPdf] = useState(false);
   const [filters, setFilters] = useState({
     date_from: '',
-    date_to: ''
+    date_to: '',
   });
 
   useEffect(() => {
@@ -74,7 +75,7 @@ export default function Balance8ColumnsPage() {
       const params = new URLSearchParams({
         company_id: COMPANY_ID,
         ...(filters.date_from && { date_from: filters.date_from }),
-        ...(filters.date_to && { date_to: filters.date_to })
+        ...(filters.date_to && { date_to: filters.date_to }),
       });
 
       const response = await fetch(`/api/accounting/balance-8-columns?${params}`);
@@ -105,7 +106,7 @@ export default function Balance8ColumnsPage() {
         company_id: COMPANY_ID,
         format: 'excel',
         ...(filters.date_from && { date_from: filters.date_from }),
-        ...(filters.date_to && { date_to: filters.date_to })
+        ...(filters.date_to && { date_to: filters.date_to }),
       });
 
       const response = await fetch(`/api/accounting/balance-8-columns?${params}`);
@@ -133,7 +134,7 @@ export default function Balance8ColumnsPage() {
       document.body.removeChild(a);
       
     } catch (err: any) {
-      setError('Error al exportar a Excel: ' + err.message);
+      setError(`Error al exportar a Excel: ${  err.message}`);
     } finally {
       setLoading(false);
     }
@@ -175,7 +176,7 @@ export default function Balance8ColumnsPage() {
       <Header 
         title="Balance de 8 Columnas"
         subtitle="Hoja de trabajo para preparación de estados financieros"
-        showBackButton={true}
+        showBackButton
       />
       
       <div className="container mx-auto px-4 py-8">
@@ -192,7 +193,7 @@ export default function Balance8ColumnsPage() {
                 <input
                   type="date"
                   value={filters.date_from}
-                  onChange={(e) => setFilters({...filters, date_from: e.target.value})}
+                  onChange={(e) => { setFilters({ ...filters, date_from: e.target.value }); }}
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -202,7 +203,7 @@ export default function Balance8ColumnsPage() {
                 <input
                   type="date"
                   value={filters.date_to}
-                  onChange={(e) => setFilters({...filters, date_to: e.target.value})}
+                  onChange={(e) => { setFilters({ ...filters, date_to: e.target.value }); }}
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -225,7 +226,7 @@ export default function Balance8ColumnsPage() {
                 </Button>
                 
                 <Button 
-                  onClick={() => setShowSignatureModal(true)}
+                  onClick={() => { setShowSignatureModal(true); }}
                   disabled={loading || !balanceData || signingPdf}
                   variant="primary"
                   className="bg-purple-600 hover:bg-purple-700"
@@ -344,7 +345,6 @@ export default function Balance8ColumnsPage() {
                         {formatCurrency(balanceData.totals.income_statement_credit)}
                       </td>
                     </tr>
-                    
 
                     {/* Resultado Acumulado - Mostrar utilidad */}
                     {balanceData.totals.net_income !== 0 && (
@@ -354,13 +354,13 @@ export default function Balance8ColumnsPage() {
                           {balanceData.totals.net_income > 0 ? 'Resultado Acumulado (Utilidad)' : 'Resultado Acumulado (Pérdida)'}
                         </td>
                         {/* Debe */}
-                        <td className="border p-2 text-right font-mono text-xs"></td>
+                        <td className="border p-2 text-right font-mono text-xs" />
                         {/* Haber */}
-                        <td className="border p-2 text-right font-mono text-xs"></td>
+                        <td className="border p-2 text-right font-mono text-xs" />
                         {/* Saldo Deudor - NO VA NADA */}
-                        <td className="border p-2 text-right font-mono text-xs"></td>
+                        <td className="border p-2 text-right font-mono text-xs" />
                         {/* Saldo Acreedor - NO VA NADA */}
-                        <td className="border p-2 text-right font-mono text-xs"></td>
+                        <td className="border p-2 text-right font-mono text-xs" />
                         {/* Activo */}
                         <td className="border p-2 text-right font-mono text-xs">
                           {balanceData.totals.net_income < 0 ? formatCurrency(Math.abs(balanceData.totals.net_income)) : ''}
@@ -374,7 +374,7 @@ export default function Balance8ColumnsPage() {
                           {balanceData.totals.net_income > 0 ? formatCurrency(balanceData.totals.net_income) : ''}
                         </td>
                         {/* Ganancia */}
-                        <td className="border p-2 text-right font-mono text-xs"></td>
+                        <td className="border p-2 text-right font-mono text-xs" />
                       </tr>
                     )}
 
@@ -468,7 +468,7 @@ export default function Balance8ColumnsPage() {
         {/* Modal de Firma Digital */}
         <DigitalSignatureModal
           isOpen={showSignatureModal}
-          onClose={() => setShowSignatureModal(false)}
+          onClose={() => { setShowSignatureModal(false); }}
           onSign={handleDigitalSignature}
           isLoading={signingPdf}
           balanceData={balanceData}

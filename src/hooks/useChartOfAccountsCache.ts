@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Account } from '@/types';
+
+import type { Account } from '@/types';
 
 interface CachedAccountsData {
   accounts: Account[];
@@ -54,7 +55,7 @@ export function useChartOfAccountsCache() {
       const data: CachedAccountsData = {
         accounts,
         timestamp: Date.now(),
-        version: CACHE_VERSION
+        version: CACHE_VERSION,
       };
 
       localStorage.setItem(CACHE_KEY, JSON.stringify(data));
@@ -106,7 +107,7 @@ export function useChartOfAccountsCache() {
                acc.level_type === '2do Nivel' ? 2 : 1,
         account_type: acc.account_type.toLowerCase(),
         is_detail: acc.level_type === 'Imputable',
-        is_active: acc.is_active !== false
+        is_active: acc.is_active !== false,
       }));
 
       // 3. Guardar en caché para próximas consultas
@@ -136,7 +137,7 @@ export function useChartOfAccountsCache() {
         'Imputable': '4',
         '3er Nivel': '3', 
         '2do Nivel': '2',
-        '1er Nivel': '1'
+        '1er Nivel': '1',
       };
       const targetLevel = levelMap[filters.level] || filters.level;
       filtered = filtered.filter(acc => acc.level.toString() === targetLevel);
@@ -144,7 +145,7 @@ export function useChartOfAccountsCache() {
 
     if (filters.type) {
       filtered = filtered.filter(acc => 
-        acc.account_type.toLowerCase() === filters.type.toLowerCase()
+        acc.account_type.toLowerCase() === filters.type.toLowerCase(),
       );
     }
 
@@ -171,7 +172,7 @@ export function useChartOfAccountsCache() {
         accounts: data.accounts.length,
         age: Math.floor(age / 1000 / 60), // minutos
         remainingTime: Math.floor(remainingTime / 1000 / 60), // minutos
-        version: data.version
+        version: data.version,
       };
     } catch {
       return null;
@@ -193,6 +194,6 @@ export function useChartOfAccountsCache() {
     refreshCache: () => {
       invalidateCache();
       return loadAccounts();
-    }
+    },
   };
 }

@@ -30,12 +30,12 @@ export async function extractTextFromPDF(file: File): Promise<PDFExtractedData> 
       useSystemFonts: true, // Usar fuentes del sistema
       standardFontDataUrl: null, // No cargar fuentes externas
       cMapUrl: null, // No cargar mapas de caracteres externos
-      cMapPacked: false
+      cMapPacked: false,
     });
     
     // Agregar timeout para evitar que se cuelgue
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('PDF processing timeout')), 10000); // 10 segundos
+      setTimeout(() => { reject(new Error('PDF processing timeout')); }, 10000); // 10 segundos
     });
     
     const pdf = await Promise.race([loadingTask.promise, timeoutPromise]) as any;
@@ -59,7 +59,7 @@ export async function extractTextFromPDF(file: File): Promise<PDFExtractedData> 
         .join(' ');
       
       pages.push(pageText);
-      fullText += pageText + '\n';
+      fullText += `${pageText  }\n`;
       
       console.log(`Página ${pageNum} procesada: ${pageText.length} caracteres`);
     }
@@ -70,7 +70,7 @@ export async function extractTextFromPDF(file: File): Promise<PDFExtractedData> 
     return {
       text: fullText,
       pages,
-      metadata: metadata.info
+      metadata: metadata.info,
     };
   } catch (error) {
     console.error('Error extrayendo texto del PDF:', error);
@@ -96,36 +96,36 @@ export function extractF29CodesFromText(text: string): any {
       // Formato tabla: código en una columna, valor en otra
       /538[\s\t]*\|?[\s\t]*([0-9]{1,3}(?:[.,\s]*[0-9]{3})*)/g,
       // Línea completa con código 538
-      /.*538.*?([0-9]{4,})/g
+      /.*538.*?([0-9]{4,})/g,
     ],
     codigo511: [
       /(?:código\s*511|cod\.?\s*511)[\s\S]{0,100}?([0-9]{1,3}(?:[.,\s]*[0-9]{3})*(?:[.,][0-9]{1,2})?)/gi,
       /(?:crédito\s*fiscal|credito\s*fiscal)[\s\S]{0,100}?([0-9]{1,3}(?:[.,\s]*[0-9]{3})*(?:[.,][0-9]{1,2})?)/gi,
       /511[\s\-\|\.:]{1,20}([0-9]{1,3}(?:[.,\s]*[0-9]{3})*(?:[.,][0-9]{1,2})?)/g,
       /511[\s\t]*\|?[\s\t]*([0-9]{1,3}(?:[.,\s]*[0-9]{3})*)/g,
-      /.*511.*?([0-9]{4,})/g
+      /.*511.*?([0-9]{4,})/g,
     ],
     codigo062: [
       /(?:código\s*062|cod\.?\s*062)[\s\S]{0,100}?([0-9]{1,3}(?:[.,\s]*[0-9]{3})*(?:[.,][0-9]{1,2})?)/gi,
       /(?:ppm|p\.p\.m\.?|pago\s*provisional\s*mensual)[\s\S]{0,100}?([0-9]{1,3}(?:[.,\s]*[0-9]{3})*(?:[.,][0-9]{1,2})?)/gi,
       /062[\s\-\|\.:]{1,20}([0-9]{1,3}(?:[.,\s]*[0-9]{3})*(?:[.,][0-9]{1,2})?)/g,
       /062[\s\t]*\|?[\s\t]*([0-9]{1,3}(?:[.,\s]*[0-9]{3})*)/g,
-      /.*062.*?([0-9]{4,})/g
+      /.*062.*?([0-9]{4,})/g,
     ],
     codigo077: [
       /(?:código\s*077|cod\.?\s*077)[\s\S]{0,100}?([0-9]{1,3}(?:[.,\s]*[0-9]{3})*(?:[.,][0-9]{1,2})?)/gi,
       /(?:remanente|remanente\s*período\s*anterior)[\s\S]{0,100}?([0-9]{1,3}(?:[.,\s]*[0-9]{3})*(?:[.,][0-9]{1,2})?)/gi,
       /077[\s\-\|\.:]{1,20}([0-9]{1,3}(?:[.,\s]*[0-9]{3})*(?:[.,][0-9]{1,2})?)/g,
       /077[\s\t]*\|?[\s\t]*([0-9]{1,3}(?:[.,\s]*[0-9]{3})*)/g,
-      /.*077.*?([0-9]{4,})/g
+      /.*077.*?([0-9]{4,})/g,
     ],
     codigo563: [
       /(?:código\s*563|cod\.?\s*563)[\s\S]{0,100}?([0-9]{1,3}(?:[.,\s]*[0-9]{3})*(?:[.,][0-9]{1,2})?)/gi,
       /(?:ventas?\s*netas?|monto\s*ventas?)[\s\S]{0,100}?([0-9]{1,3}(?:[.,\s]*[0-9]{3})*(?:[.,][0-9]{1,2})?)/gi,
       /563[\s\-\|\.:]{1,20}([0-9]{1,3}(?:[.,\s]*[0-9]{3})*(?:[.,][0-9]{1,2})?)/g,
       /563[\s\t]*\|?[\s\t]*([0-9]{1,3}(?:[.,\s]*[0-9]{3})*)/g,
-      /.*563.*?([0-9]{4,})/g
-    ]
+      /.*563.*?([0-9]{4,})/g,
+    ],
   };
   
   // Buscar con cada patrón
@@ -168,7 +168,7 @@ export function extractF29CodesFromText(text: string): any {
       { code: '511', key: 'codigo511', keywords: ['511', 'crédito', 'credito'] },
       { code: '062', key: 'codigo062', keywords: ['062', 'ppm', 'provisional'] },
       { code: '077', key: 'codigo077', keywords: ['077', 'remanente'] },
-      { code: '563', key: 'codigo563', keywords: ['563', 'ventas', 'netas'] }
+      { code: '563', key: 'codigo563', keywords: ['563', 'ventas', 'netas'] },
     ];
     
     for (const { code, key, keywords } of codeChecks) {

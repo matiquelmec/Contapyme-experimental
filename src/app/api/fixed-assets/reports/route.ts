@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getFixedAssetsReport, databaseSimple } from '@/lib/database/databaseSimple';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { DEMO_USER_ID } from '@/lib/constants';
+import { getFixedAssetsReport } from '@/lib/database/databaseSimple';
 
 // Hacer la ruta dinámica explícitamente
 export const dynamic = 'force-dynamic';
@@ -23,7 +25,7 @@ export async function GET(request: NextRequest) {
         console.error('Error fetching report:', error);
         return NextResponse.json(
           { error: 'Error al generar reporte de activos fijos' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -37,19 +39,19 @@ export async function GET(request: NextRequest) {
         console.error('Error fetching depreciation report:', error);
         return NextResponse.json(
           { error: 'Error al generar reporte de depreciación' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
       return NextResponse.json({ 
         depreciation_details: report?.assets_near_full_depreciation || [],
-        year: parseInt(year)
+        year: parseInt(year),
       });
 
     } else {
       return NextResponse.json(
         { error: 'Tipo de reporte no válido. Use: summary, depreciation' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -57,7 +59,7 @@ export async function GET(request: NextRequest) {
     console.error('Unexpected error:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

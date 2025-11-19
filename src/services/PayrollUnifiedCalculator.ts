@@ -64,15 +64,11 @@ export class PayrollUnifiedCalculator {
       data.bonos || 0,
       data.comisiones || 0,
       data.horas_extras || 0,
-      data.other_income || 0
+      data.other_income || 0,
     ];
 
     // Suma con precisión decimal exacta
-    const total = components.reduce((sum, amount) => {
-      return Math.round((sum + amount) * 100) / 100;
-    }, 0);
-
-    return total;
+    return components.reduce((sum, amount) => Math.round((sum + amount) * 100) / 100, 0);
   }
 
   /**
@@ -89,15 +85,11 @@ export class PayrollUnifiedCalculator {
       data.loan_deductions || 0,        // ✅ Incluir préstamos
       data.advance_payments || 0,       // ✅ Incluir anticipos
       data.apv_amount || 0,            // ✅ Incluir APV
-      data.other_deductions || 0
+      data.other_deductions || 0,
     ];
 
     // Suma con precisión decimal exacta
-    const total = components.reduce((sum, amount) => {
-      return Math.round((sum + amount) * 100) / 100;
-    }, 0);
-
-    return total;
+    return components.reduce((sum, amount) => Math.round((sum + amount) * 100) / 100, 0);
   }
 
   /**
@@ -129,8 +121,8 @@ export class PayrollUnifiedCalculator {
         components_sum_correct: true, // Siempre true porque calculamos desde componentes
         difference_haberes: 0,
         difference_descuentos: 0,
-        difference_liquido: 0
-      }
+        difference_liquido: 0,
+      },
     };
   }
 
@@ -147,7 +139,7 @@ export class PayrollUnifiedCalculator {
 
     return {
       total_fixed: 0,
-      errors: []
+      errors: [],
     };
   }
 
@@ -161,7 +153,7 @@ export class PayrollUnifiedCalculator {
       total_haberes: number;
       total_descuentos: number;
       total_liquido: number;
-    }
+    },
   ): {
     is_consistent: boolean;
     differences: {
@@ -202,9 +194,9 @@ export class PayrollUnifiedCalculator {
       differences: {
         haberes: diff_haberes,
         descuentos: diff_descuentos,
-        liquido: diff_liquido
+        liquido: diff_liquido,
       },
-      recommendations
+      recommendations,
     };
   }
 
@@ -233,7 +225,7 @@ export class PayrollUnifiedCalculator {
       consistent_liquidations: 0,
       inconsistent_liquidations: 0,
       major_discrepancies: [],
-      recommendations: []
+      recommendations: [],
     };
   }
 }

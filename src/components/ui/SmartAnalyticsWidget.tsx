@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, Badge } from '@/components/ui'
+
 import { Brain, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, BarChart3, Zap, Target } from 'lucide-react'
+
+import { Card, CardContent, Badge } from '@/components/ui'
 
 interface AnalyticsInsight {
   id: string
@@ -41,7 +43,7 @@ export function SmartAnalyticsWidget() {
             value: `${modules.f29Analysis.avgProcessingTime}s`,
             trend: modules.f29Analysis.avgProcessingTime < 2 ? 'up' : 'stable',
             confidence: Math.round(modules.f29Analysis.confidenceScore || 94),
-            actionable: false
+            actionable: false,
           })
 
           // Insight sobre empleados
@@ -54,7 +56,7 @@ export function SmartAnalyticsWidget() {
               value: `${modules.payroll.complianceRate}%`,
               trend: 'up',
               confidence: 100,
-              actionable: true
+              actionable: true,
             })
           }
 
@@ -69,7 +71,7 @@ export function SmartAnalyticsWidget() {
               value: `${utilizationRate.toFixed(0)}%`,
               trend: utilizationRate > 90 ? 'up' : 'stable',
               confidence: 92,
-              actionable: utilizationRate < 90
+              actionable: utilizationRate < 90,
             })
           }
 
@@ -81,7 +83,7 @@ export function SmartAnalyticsWidget() {
             description: `Sistema con ${system.systemUptime}% disponibilidad y calidad de datos ${system.dataQuality}%`,
             value: `${system.dataQuality}%`,
             confidence: 99,
-            actionable: false
+            actionable: false,
           })
 
           // Insight sobre rendimiento en tiempo real
@@ -94,7 +96,7 @@ export function SmartAnalyticsWidget() {
               value: `${live.responseTime}ms`,
               trend: 'up',
               confidence: 96,
-              actionable: false
+              actionable: false,
             })
           }
 
@@ -109,7 +111,7 @@ export function SmartAnalyticsWidget() {
               value: '99.8%',
               trend: 'up',
               confidence: 100,
-              actionable: false
+              actionable: false,
             },
             {
               id: '2',
@@ -117,8 +119,8 @@ export function SmartAnalyticsWidget() {
               title: 'Datos Demo Disponibles',
               description: '8 empleados y 12 activos fijos configurados para pruebas',
               confidence: 95,
-              actionable: true
-            }
+              actionable: true,
+            },
           ]
         }
 
@@ -133,8 +135,8 @@ export function SmartAnalyticsWidget() {
             title: 'Sistema en Modo Demo',
             description: 'Conectando con datos demo de la empresa',
             confidence: 85,
-            actionable: false
-          }
+            actionable: false,
+          },
         ])
       } finally {
         setIsLoading(false)
@@ -149,7 +151,7 @@ export function SmartAnalyticsWidget() {
       setLastUpdated(new Date())
     }, 300000)
 
-    return () => clearInterval(interval)
+    return () => { clearInterval(interval); }
   }, [])
 
   const getInsightIcon = (type: AnalyticsInsight['type']) => {
@@ -213,7 +215,7 @@ export function SmartAnalyticsWidget() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             <Badge variant="primary" size="sm" icon={<Zap className="h-3 w-3" />}>
               En vivo
             </Badge>

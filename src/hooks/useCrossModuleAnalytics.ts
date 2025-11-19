@@ -164,8 +164,7 @@ export function useCrossModuleAnalytics() {
   }, []);
 
   // Función genérica para enviar tareas al Worker
-  const sendTask = useCallback((type: string, data: any): Promise<any> => {
-    return new Promise((resolve, reject) => {
+  const sendTask = useCallback((type: string, data: any): Promise<any> => new Promise((resolve, reject) => {
       // Verificar que el Worker esté disponible
       if (!workerRef.current || !isWorkerReady) {
         reject(new Error('Cross-Module Analytics Worker no está disponible'));
@@ -186,7 +185,7 @@ export function useCrossModuleAnalytics() {
         type,
         resolve,
         reject,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       try {
@@ -194,7 +193,7 @@ export function useCrossModuleAnalytics() {
         workerRef.current.postMessage({
           type,
           data,
-          taskId
+          taskId,
         });
 
         // Timeout de seguridad (20 segundos para análisis complejos)
@@ -208,8 +207,7 @@ export function useCrossModuleAnalytics() {
         tasksRef.current.delete(taskId);
         reject(new Error(`Error enviando mensaje al Worker: ${error}`));
       }
-    });
-  }, [isWorkerReady]);
+    }), [isWorkerReady]);
 
   // Analizar ROI de activos fijos vs F29
   const analyzeAssetsROI = useCallback(async (f29Data: any[], fixedAssetsData: any[]): Promise<AssetsROIAnalysis> => {
@@ -222,8 +220,8 @@ export function useCrossModuleAnalytics() {
           totalAssetValue: 0,
           totalSales: 0,
           assetToSalesRatio: 0,
-          avgROI: 0
-        }
+          avgROI: 0,
+        },
       };
     }
 
@@ -239,8 +237,8 @@ export function useCrossModuleAnalytics() {
           totalAssetValue: 0,
           totalSales: 0,
           assetToSalesRatio: 0,
-          avgROI: 0
-        }
+          avgROI: 0,
+        },
       };
     }
   }, [isWorkerReady, sendTask]);
@@ -255,8 +253,8 @@ export function useCrossModuleAnalytics() {
         metrics: {
           salesVolatility: 0,
           strongCorrelations: 0,
-          totalPeriods: 0
-        }
+          totalPeriods: 0,
+        },
       };
     }
 
@@ -271,8 +269,8 @@ export function useCrossModuleAnalytics() {
         metrics: {
           salesVolatility: 0,
           strongCorrelations: 0,
-          totalPeriods: 0
-        }
+          totalPeriods: 0,
+        },
       };
     }
   }, [isWorkerReady, sendTask]);
@@ -281,7 +279,7 @@ export function useCrossModuleAnalytics() {
   const performIntegratedAnalysis = useCallback(async (
     f29Data: any[], 
     fixedAssetsData: any[], 
-    economicIndicators: any[]
+    economicIndicators: any[],
   ): Promise<IntegratedBusinessHealth> => {
     if (!isWorkerReady) {
       return {
@@ -290,10 +288,10 @@ export function useCrossModuleAnalytics() {
         components: {
           f29: { growth: 0, margin: 0, stability: 0, insights: [] },
           assets: { roi: 0, utilization: 0, age: 0, insights: [] },
-          economic: { volatility: 0, diversification: 0, insights: [] }
+          economic: { volatility: 0, diversification: 0, insights: [] },
         },
         integralInsights: ['Worker no disponible'],
-        strategicRecommendations: ['Sistema de análisis no operativo']
+        strategicRecommendations: ['Sistema de análisis no operativo'],
       };
     }
 
@@ -301,7 +299,7 @@ export function useCrossModuleAnalytics() {
       return await sendTask('PERFORM_INTEGRATED_ANALYSIS', { 
         f29Data, 
         fixedAssetsData, 
-        economicIndicators 
+        economicIndicators, 
       });
     } catch (error) {
       console.warn('Error en análisis integrado:', error);
@@ -313,7 +311,7 @@ export function useCrossModuleAnalytics() {
   const performFullCrossModuleAnalysis = useCallback(async (
     f29Data: any[], 
     fixedAssetsData: any[], 
-    economicIndicators: any[]
+    economicIndicators: any[],
   ): Promise<FullCrossModuleAnalysis> => {
     if (!isWorkerReady) {
       return {
@@ -321,13 +319,13 @@ export function useCrossModuleAnalytics() {
           insights: [],
           correlations: [],
           recommendations: [],
-          metrics: { totalAssetValue: 0, totalSales: 0, assetToSalesRatio: 0, avgROI: 0 }
+          metrics: { totalAssetValue: 0, totalSales: 0, assetToSalesRatio: 0, avgROI: 0 },
         },
         economicCorrelations: {
           correlations: [],
           insights: [],
           predictions: [],
-          metrics: { salesVolatility: 0, strongCorrelations: 0, totalPeriods: 0 }
+          metrics: { salesVolatility: 0, strongCorrelations: 0, totalPeriods: 0 },
         },
         integratedHealth: {
           overallScore: 0,
@@ -335,10 +333,10 @@ export function useCrossModuleAnalytics() {
           components: {
             f29: { growth: 0, margin: 0, stability: 0, insights: [] },
             assets: { roi: 0, utilization: 0, age: 0, insights: [] },
-            economic: { volatility: 0, diversification: 0, insights: [] }
+            economic: { volatility: 0, diversification: 0, insights: [] },
           },
           integralInsights: ['Worker no disponible'],
-          strategicRecommendations: []
+          strategicRecommendations: [],
         },
         executiveSummary: {
           overallAssessment: 'POOR',
@@ -346,8 +344,8 @@ export function useCrossModuleAnalytics() {
           keyStrengths: [],
           majorRisks: ['Sistema de análisis no operativo'],
           strategicPriorities: [],
-          businessIntelligence: []
-        }
+          businessIntelligence: [],
+        },
       };
     }
 
@@ -355,7 +353,7 @@ export function useCrossModuleAnalytics() {
       console.log(`🔗 Realizando análisis cross-module completo...`, {
         f29Periods: f29Data.length,
         assets: fixedAssetsData.length,
-        indicators: economicIndicators.length
+        indicators: economicIndicators.length,
       });
       
       const startTime = performance.now();
@@ -363,7 +361,7 @@ export function useCrossModuleAnalytics() {
       const result = await sendTask('FULL_CROSS_MODULE_ANALYSIS', { 
         f29Data, 
         fixedAssetsData, 
-        economicIndicators 
+        economicIndicators, 
       });
       
       const duration = performance.now() - startTime;
@@ -382,6 +380,6 @@ export function useCrossModuleAnalytics() {
     analyzeAssetsROI,
     analyzeEconomicCorrelations,
     performIntegratedAnalysis,
-    performFullCrossModuleAnalysis
+    performFullCrossModuleAnalysis,
   };
 }

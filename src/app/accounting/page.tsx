@@ -9,14 +9,14 @@ export default function AccountingPage() {
       {
         id: 'demo-1',
         name: 'Empresa Demo S.A.',
-        rut: '12.345.678-9'
+        rut: '12.345.678-9',
       },
       {
         id: 'demo-2',
         name: 'Mi Pyme Ltda.',
-        rut: '98.765.432-1'
-      }
-    ]
+        rut: '98.765.432-1',
+      },
+    ],
   }
 
   return (
@@ -49,7 +49,6 @@ export default function AccountingPage() {
               </div>
             </div>
           </div>
-
 
           {/* Primary Analysis Tools */}
           <div className="mb-10">
@@ -251,7 +250,6 @@ export default function AccountingPage() {
               </div>
             </div>
           </div>
-
 
           {/* Libros Contables System */}
           <div className="mb-10">

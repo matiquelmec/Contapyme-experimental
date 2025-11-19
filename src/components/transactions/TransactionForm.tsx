@@ -1,7 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
+
 import { createClient } from '@/lib/auth'
 
 interface TransactionEntry {
@@ -38,7 +40,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
   const [formData, setFormData] = useState({
     date: transaction?.date ? new Date(transaction.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
     description: transaction?.description || '',
-    reference: transaction?.reference || ''
+    reference: transaction?.reference || '',
   })
   
   const [entries, setEntries] = useState<TransactionEntry[]>(
@@ -46,11 +48,11 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
       accountId: entry.account_id,
       debit: Number(entry.debit),
       credit: Number(entry.credit),
-      description: entry.description || ''
+      description: entry.description || '',
     })) || [
       { accountId: '', debit: 0, credit: 0, description: '' },
-      { accountId: '', debit: 0, credit: 0, description: '' }
-    ]
+      { accountId: '', debit: 0, credit: 0, description: '' },
+    ],
   )
   
   const [loading, setLoading] = useState(false)
@@ -66,7 +68,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     })
   }
 
@@ -103,7 +105,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
     }
 
     const validEntries = entries.filter(entry => 
-      entry.accountId && (entry.debit > 0 || entry.credit > 0)
+      entry.accountId && (entry.debit > 0 || entry.credit > 0),
     )
 
     if (validEntries.length < 2) {
@@ -121,7 +123,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
             date: formData.date,
             description: formData.description,
             reference: formData.reference || null,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', transaction.id)
 
@@ -141,7 +143,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
           account_id: entry.accountId,
           debit: entry.debit,
           credit: entry.credit,
-          description: entry.description || null
+          description: entry.description || null,
         }))
 
         const { error: entriesError } = await supabase
@@ -158,7 +160,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
             company_id: companyId,
             date: formData.date,
             description: formData.description,
-            reference: formData.reference || null
+            reference: formData.reference || null,
           }])
           .select()
           .single()
@@ -171,7 +173,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
           account_id: entry.accountId,
           debit: entry.debit,
           credit: entry.credit,
-          description: entry.description || null
+          description: entry.description || null,
         }))
 
         const { error: entriesError } = await supabase
@@ -272,7 +274,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
             <div className="col-span-3">Descripción</div>
             <div className="col-span-2 text-right">Debe</div>
             <div className="col-span-2 text-right">Haber</div>
-            <div className="col-span-1"></div>
+            <div className="col-span-1" />
           </div>
 
           {entries.map((entry, index) => (
@@ -280,7 +282,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
               <div className="col-span-4">
                 <select
                   value={entry.accountId}
-                  onChange={(e) => handleEntryChange(index, 'accountId', e.target.value)}
+                  onChange={(e) => { handleEntryChange(index, 'accountId', e.target.value); }}
                   className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   required
                 >
@@ -297,7 +299,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
                 <input
                   type="text"
                   value={entry.description}
-                  onChange={(e) => handleEntryChange(index, 'description', e.target.value)}
+                  onChange={(e) => { handleEntryChange(index, 'description', e.target.value); }}
                   className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Detalle específico"
                 />
@@ -309,7 +311,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
                   step="0.01"
                   min="0"
                   value={entry.debit || ''}
-                  onChange={(e) => handleEntryChange(index, 'debit', e.target.value)}
+                  onChange={(e) => { handleEntryChange(index, 'debit', e.target.value); }}
                   className="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="0.00"
                 />
@@ -321,7 +323,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
                   step="0.01"
                   min="0"
                   value={entry.credit || ''}
-                  onChange={(e) => handleEntryChange(index, 'credit', e.target.value)}
+                  onChange={(e) => { handleEntryChange(index, 'credit', e.target.value); }}
                   className="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="0.00"
                 />
@@ -331,7 +333,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
                 {entries.length > 2 && (
                   <button
                     type="button"
-                    onClick={() => removeEntry(index)}
+                    onClick={() => { removeEntry(index); }}
                     className="text-red-600 hover:text-red-700 text-sm"
                   >
                     ✕
@@ -346,7 +348,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
             <div className="col-span-7 text-right">TOTALES:</div>
             <div className="col-span-2 text-right">${totalDebits.toLocaleString()}</div>
             <div className="col-span-2 text-right">${totalCredits.toLocaleString()}</div>
-            <div className="col-span-1"></div>
+            <div className="col-span-1" />
           </div>
         </div>
       </div>
@@ -360,7 +362,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
       <div className="flex justify-end space-x-3">
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={() => { router.back(); }}
           className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Cancelar

@@ -10,9 +10,8 @@ import {
   CHILEAN_OFFICIAL_VALUES,
   calculateUnemploymentInsurance,
   calculateFamilyAllowance,
-  calculateIncomeTax
+  calculateIncomeTax,
 } from '../constants/parametrosLegales';
-import { getCurrentMinimumWage, calculateGratificationCap } from '../utils/economicIndicators';
 
 // Re-exportar valores para compatibilidad
 export const CHILE_TAX_VALUES = CHILEAN_OFFICIAL_VALUES;
@@ -139,7 +138,7 @@ export interface LiquidationResult {
 }
 
 export class PayrollCalculator {
-  private settings: PayrollSettings;
+  private readonly settings: PayrollSettings;
   private warnings: string[] = [];
 
   constructor(settings: PayrollSettings) {
@@ -155,7 +154,7 @@ export class PayrollCalculator {
     employee: EmployeeData,
     period: PayrollPeriod,
     additionalIncome: AdditionalIncome = {},
-    additionalDeductions: AdditionalDeductions = {}
+    additionalDeductions: AdditionalDeductions = {},
   ): Promise<LiquidationResult> {
     this.warnings = [];
     console.log('🔍 calculateLiquidation - employee.legal_gratification_type:', employee.legal_gratification_type);
@@ -163,14 +162,14 @@ export class PayrollCalculator {
     // 1. Calcular sueldo base proporcional
     const proportionalBaseSalary = this.calculateProportionalSalary(
       employee.base_salary,
-      period.days_worked
+      period.days_worked,
     );
 
     // 2. Calcular haberes imponibles
     const { totalTaxableIncome, calculatedArticle50Gratification } = await this.calculateTaxableIncome(
       proportionalBaseSalary,
       additionalIncome,
-      employee
+      employee,
     );
     const taxableIncome = totalTaxableIncome; // Use this for further calculations
 
@@ -180,13 +179,13 @@ export class PayrollCalculator {
     // 4. Calcular asignación familiar
     const familyAllowance = this.calculateFamilyAllowance(
       employee.family_allowances,
-      employee.base_salary
+      employee.base_salary,
     );
 
     // 5. Calcular haberes no imponibles
     const nonTaxableIncome = this.calculateNonTaxableIncome(
       additionalIncome,
-      familyAllowance
+      familyAllowance,
     );
 
     // 6. Calcular descuentos previsionales
@@ -194,7 +193,7 @@ export class PayrollCalculator {
       adjustedTaxableIncome,
       employee.afp_code,
       employee.health_institution_code,
-      employee.contract_type
+      employee.contract_type,
     );
 
     // 7. Calcular impuesto único segunda categoría
@@ -204,7 +203,7 @@ export class PayrollCalculator {
     const employerCosts = this.calculateEmployerCosts(
       adjustedTaxableIncome,
       employee.afp_code,
-      employee.contract_type
+      employee.contract_type,
     );
 
     // 9. Calcular otros descuentos
@@ -295,7 +294,7 @@ export class PayrollCalculator {
       // Metadatos
       calculation_date: new Date().toISOString(),
       tope_imponible_exceeded: topeExceeded,
-      warnings: [...this.warnings]
+      warnings: [...this.warnings],
     };
   }
 
@@ -314,7 +313,7 @@ export class PayrollCalculator {
   private async calculateTaxableIncome(
     baseSalary: number,
     additional: AdditionalIncome,
-    employee: EmployeeData
+    employee: EmployeeData,
   ): Promise<{ totalTaxableIncome: number; calculatedArticle50Gratification: number }> {
     
     // Base para el cálculo de la gratificación.
@@ -430,7 +429,7 @@ export class PayrollCalculator {
    */
   private calculateNonTaxableIncome(
     additional: AdditionalIncome,
-    familyAllowance: number
+    familyAllowance: number,
   ): number {
     return (additional.food_allowance || 0) + 
            (additional.transport_allowance || 0) + 
@@ -446,13 +445,13 @@ export class PayrollCalculator {
     taxableIncome: number,
     afpCode: string,
     healthCode: string,
-    contractType: string
+    contractType: string,
   ) {
     // ✅ DEBUG: Verificar qué AFP llega y qué configuración encuentra
     console.log(`🔍 DEBUG AFP - Código recibido: "${afpCode}"`);
     console.log(`🔍 DEBUG AFP - Configuraciones disponibles:`, this.settings.afp_configs?.map(afp => ({
       code: afp.code,
-      commission: afp.commission_percentage
+      commission: afp.commission_percentage,
     })));
     
     // AFP - 10% obligatorio
@@ -473,7 +472,7 @@ export class PayrollCalculator {
     // ✅ CESANTÍA - Usa función centralizada corregida
     const unemploymentData = calculateUnemploymentInsurance(
       taxableIncome, 
-      contractType as 'indefinido' | 'plazo_fijo' | 'obra_faena'
+      contractType as 'indefinido' | 'plazo_fijo' | 'obra_faena',
     );
     
     return {
@@ -483,7 +482,7 @@ export class PayrollCalculator {
       health_amount: healthAmount,
       unemployment_percentage: unemploymentData.percentage,
       unemployment_amount: unemploymentData.amount,
-      total: afpAmount + afpCommissionAmount + healthAmount + unemploymentData.amount // SIS REMOVIDO
+      total: afpAmount + afpCommissionAmount + healthAmount + unemploymentData.amount, // SIS REMOVIDO
     };
   }
 
@@ -509,7 +508,7 @@ export class PayrollCalculator {
   private calculateEmployerCosts(
     taxableIncome: number,
     afpCode: string,
-    contractType: string
+    contractType: string,
   ) {
     // SIS - 1.88% sobre renta imponible (costo empleador)
     const sisAmount = Math.round(taxableIncome * (CHILE_TAX_VALUES.SIS_PERCENTAGE / 100));
@@ -525,7 +524,7 @@ export class PayrollCalculator {
       sis_amount: sisAmount,
       unemployment_employer: unemploymentEmployer,
       mutual_insurance: mutualInsurance,
-      total: sisAmount + unemploymentEmployer + mutualInsurance
+      total: sisAmount + unemploymentEmployer + mutualInsurance,
     };
   }
 
@@ -547,7 +546,7 @@ export class PayrollCalculator {
     
     if (deductionPercentage > CHILE_TAX_VALUES.MAX_DEDUCTION_PERCENTAGE) {
       this.warnings.push(
-        `Descuentos (${deductionPercentage.toFixed(1)}%) exceden límite legal del 45%`
+        `Descuentos (${deductionPercentage.toFixed(1)}%) exceden límite legal del 45%`,
       );
     }
   }
@@ -559,7 +558,7 @@ export class PayrollCalculator {
     return new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
   }
 
@@ -569,7 +568,7 @@ export class PayrollCalculator {
   static formatPeriod(year: number, month: number): string {
     const monthNames = [
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
     ];
     return `${monthNames[month - 1]} ${year}`;
   }

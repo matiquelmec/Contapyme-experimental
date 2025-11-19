@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
+import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Header } from '@/components/layout/Header';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 interface GeneralLedgerAccount {
@@ -53,7 +54,7 @@ export default function GeneralLedgerPage() {
   const [filters, setFilters] = useState({
     date_from: '',
     date_to: '',
-    account_code: ''
+    account_code: '',
   });
   const [expandedAccounts, setExpandedAccounts] = useState<Set<string>>(new Set());
   const [chartAccounts, setChartAccounts] = useState<ChartAccount[]>([]);
@@ -90,7 +91,7 @@ export default function GeneralLedgerPage() {
         company_id: COMPANY_ID,
         ...(filters.date_from && { date_from: filters.date_from }),
         ...(filters.date_to && { date_to: filters.date_to }),
-        ...(filters.account_code && { account_code: filters.account_code })
+        ...(filters.account_code && { account_code: filters.account_code }),
       });
 
       const response = await fetch(`/api/accounting/general-ledger?${params}`);
@@ -122,7 +123,7 @@ export default function GeneralLedgerPage() {
         format: 'excel',
         ...(filters.date_from && { date_from: filters.date_from }),
         ...(filters.date_to && { date_to: filters.date_to }),
-        ...(filters.account_code && { account_code: filters.account_code })
+        ...(filters.account_code && { account_code: filters.account_code }),
       });
 
       const response = await fetch(`/api/accounting/general-ledger?${params}`);
@@ -154,7 +155,7 @@ export default function GeneralLedgerPage() {
       console.log('✅ Archivo Excel descargado exitosamente');
     } catch (err: any) {
       console.error('Error exportando a Excel:', err);
-      setError('Error al exportar a Excel: ' + err.message);
+      setError(`Error al exportar a Excel: ${  err.message}`);
     } finally {
       setLoading(false);
     }
@@ -192,7 +193,7 @@ export default function GeneralLedgerPage() {
       <Header 
         title="Libro Mayor"
         subtitle="Resumen de movimientos por cuenta contable"
-        showBackButton={true}
+        showBackButton
       />
       
       <div className="container mx-auto px-4 py-8">
@@ -209,7 +210,7 @@ export default function GeneralLedgerPage() {
                 <input
                   type="date"
                   value={filters.date_from}
-                  onChange={(e) => setFilters({...filters, date_from: e.target.value})}
+                  onChange={(e) => { setFilters({ ...filters, date_from: e.target.value }); }}
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -219,7 +220,7 @@ export default function GeneralLedgerPage() {
                 <input
                   type="date"
                   value={filters.date_to}
-                  onChange={(e) => setFilters({...filters, date_to: e.target.value})}
+                  onChange={(e) => { setFilters({ ...filters, date_to: e.target.value }); }}
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -228,7 +229,7 @@ export default function GeneralLedgerPage() {
                 <label className="block text-sm font-medium mb-2">Cuenta Específica (Opcional)</label>
                 <select
                   value={filters.account_code}
-                  onChange={(e) => setFilters({...filters, account_code: e.target.value})}
+                  onChange={(e) => { setFilters({ ...filters, account_code: e.target.value }); }}
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   disabled={loadingAccounts}
                 >
@@ -314,7 +315,7 @@ export default function GeneralLedgerPage() {
                 <Card key={account.account_code} className="overflow-hidden">
                   <CardHeader 
                     className="cursor-pointer hover:bg-gray-50 transition-colors"
-                    onClick={() => toggleAccountExpansion(account.account_code)}
+                    onClick={() => { toggleAccountExpansion(account.account_code); }}
                   >
                     <div className="flex justify-between items-center">
                       <div>
@@ -418,7 +419,7 @@ export default function GeneralLedgerPage() {
         {loading && (
           <Card>
             <CardContent className="text-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
               <p className="text-gray-500">Generando libro mayor...</p>
             </CardContent>
           </Card>

@@ -1,18 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
+
 import {
   BarChart3,
   TrendingUp,
   TrendingDown,
   FileText,
-  Calendar,
   AlertTriangle,
   CheckCircle,
   Target,
-  Calculator
+  Calculator,
 } from 'lucide-react'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 
 interface F29Period {
   period: string // YYYYMM format
@@ -79,7 +80,7 @@ export function F29ComparativeAnalysis() {
             totalPagar: 340000,
             ventasNetas: 16842105,
             comprasNetas: 21578947,
-            status: 'filed'
+            status: 'filed',
           },
           {
             period: '202406',
@@ -93,7 +94,7 @@ export function F29ComparativeAnalysis() {
             totalPagar: 350000,
             ventasNetas: 18947368,
             comprasNetas: 20000000,
-            status: 'filed'
+            status: 'filed',
           },
           {
             period: '202407',
@@ -107,7 +108,7 @@ export function F29ComparativeAnalysis() {
             totalPagar: 1060000,
             ventasNetas: 22105263,
             comprasNetas: 18421052,
-            status: 'filed'
+            status: 'filed',
           },
           {
             period: '202408',
@@ -121,7 +122,7 @@ export function F29ComparativeAnalysis() {
             totalPagar: 1980000,
             ventasNetas: 25263157,
             comprasNetas: 16842105,
-            status: 'filed'
+            status: 'filed',
           },
           {
             period: '202409',
@@ -135,7 +136,7 @@ export function F29ComparativeAnalysis() {
             totalPagar: 2800000,
             ventasNetas: 27368421,
             comprasNetas: 14736842,
-            status: 'filed'
+            status: 'filed',
           },
           {
             period: '202410',
@@ -149,34 +150,34 @@ export function F29ComparativeAnalysis() {
             totalPagar: 3420000,
             ventasNetas: 29473684,
             comprasNetas: 13684210,
-            status: 'reviewed'
-          }
+            status: 'reviewed',
+          },
         ],
         insights: [
           {
             type: 'positive',
             title: 'Crecimiento sostenido en ventas',
             description: 'Las ventas netas han crecido consistentemente 75% en los últimos 6 meses',
-            impact: 'high'
+            impact: 'high',
           },
           {
             type: 'warning',
             title: 'Reducción en crédito fiscal',
             description: 'El crédito fiscal ha disminuido 37%, sugiriendo menor actividad de compras',
-            impact: 'medium'
+            impact: 'medium',
           },
           {
             type: 'info',
             title: 'Estabilización de PPM',
             description: 'Los pagos provisionales mensuales muestran crecimiento ordenado',
-            impact: 'low'
-          }
+            impact: 'low',
+          },
         ],
         recommendations: [
           'Considerar planificación de compras para optimizar crédito fiscal',
           'Evaluar incremento en PPM para evitar diferencias grandes en operación renta',
-          'Mantener registro detallado del crecimiento para proyecciones futuras'
-        ]
+          'Mantener registro detallado del crecimiento para proyecciones futuras',
+        ],
       }
 
       setData(mockData)
@@ -187,21 +188,19 @@ export function F29ComparativeAnalysis() {
     }
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(amount)
-  }
 
   const formatPeriod = (period: string) => {
     const year = period.substring(0, 4)
     const month = parseInt(period.substring(4, 6))
     const monthNames = [
       'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic',
     ]
     return `${monthNames[month - 1]} ${year}`
   }
@@ -224,7 +223,7 @@ export function F29ComparativeAnalysis() {
       filed: 'Presentado',
       reviewed: 'Revisado',
       processed: 'Procesado',
-      pending: 'Pendiente'
+      pending: 'Pendiente',
     }
     return labels[status as keyof typeof labels] || status
   }
@@ -279,10 +278,10 @@ export function F29ComparativeAnalysis() {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-16 bg-gray-200 rounded"></div>
+            <div className="h-16 bg-gray-200 rounded" />
             <div className="grid grid-cols-3 gap-4">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="h-20 bg-gray-200 rounded"></div>
+                <div key={i} className="h-20 bg-gray-200 rounded" />
               ))}
             </div>
           </div>
@@ -291,7 +290,7 @@ export function F29ComparativeAnalysis() {
     )
   }
 
-  if (!data || !data.periods.length) {
+  if (!data?.periods.length) {
     return (
       <Card className="h-full">
         <CardContent className="flex items-center justify-center h-full">
@@ -321,7 +320,7 @@ export function F29ComparativeAnalysis() {
           <div className="flex items-center space-x-2">
             <select
               value={selectedPeriods}
-              onChange={(e) => setSelectedPeriods(Number(e.target.value))}
+              onChange={(e) => { setSelectedPeriods(Number(e.target.value)); }}
               className="text-xs border rounded px-2 py-1"
             >
               <option value={3}>3 meses</option>
@@ -333,7 +332,7 @@ export function F29ComparativeAnalysis() {
               {['overview', 'detailed', 'insights'].map((mode) => (
                 <button
                   key={mode}
-                  onClick={() => setViewMode(mode as typeof viewMode)}
+                  onClick={() => { setViewMode(mode as typeof viewMode); }}
                   className={`px-2 py-1 text-xs rounded ${
                     viewMode === mode
                       ? 'bg-purple-100 text-purple-700'

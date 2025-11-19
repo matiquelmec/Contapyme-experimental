@@ -134,7 +134,7 @@ export class SettlementCalculator {
     
     return localDate.toLocaleDateString('es-CL', {
       ...options,
-      timeZone: 'America/Santiago'
+      timeZone: 'America/Santiago',
     });
   }
   private readonly UF_VALUE_2025 = 37000; // Aproximado UF 2025
@@ -151,7 +151,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: false,
-      category: 'mutual_agreement'
+      category: 'mutual_agreement',
     },
     '159-2': {
       article_code: '159-2',
@@ -161,7 +161,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: false,
-      category: 'employee_initiative'
+      category: 'employee_initiative',
     },
     '159-3': {
       article_code: '159-3',
@@ -171,7 +171,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: false,
-      category: 'force_majeure'
+      category: 'force_majeure',
     },
     '159-4': {
       article_code: '159-4',
@@ -181,7 +181,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: false,
-      category: 'force_majeure'
+      category: 'force_majeure',
     },
     '159-5': {
       article_code: '159-5',
@@ -191,7 +191,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: false,
-      category: 'force_majeure'
+      category: 'force_majeure',
     },
     '159-6': {
       article_code: '159-6',
@@ -201,7 +201,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: false,
-      category: 'force_majeure'
+      category: 'force_majeure',
     },
     
     // Art. 160 - Conductas indebidas del trabajador (con justa causa)
@@ -213,7 +213,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: true,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     '160-1-b': {
       article_code: '160-1-b',
@@ -223,7 +223,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: true,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     '160-1-c': {
       article_code: '160-1-c',
@@ -233,7 +233,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: true,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     '160-1-d': {
       article_code: '160-1-d',
@@ -243,7 +243,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: true,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     '160-1-e': {
       article_code: '160-1-e',
@@ -253,7 +253,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: true,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     '160-1-f': {
       article_code: '160-1-f',
@@ -263,7 +263,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: true,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     '160-2': {
       article_code: '160-2',
@@ -273,7 +273,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: true,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     '160-3': {
       article_code: '160-3',
@@ -283,7 +283,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: true,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     '160-4-a': {
       article_code: '160-4-a',
@@ -293,7 +293,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: true,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     '160-4-b': {
       article_code: '160-4-b',
@@ -303,7 +303,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: true,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     '160-5': {
       article_code: '160-5',
@@ -313,7 +313,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: true,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     '160-6': {
       article_code: '160-6',
@@ -323,7 +323,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: true,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     '160-7': {
       article_code: '160-7',
@@ -333,7 +333,7 @@ export class SettlementCalculator {
       requires_severance: false,
       severance_calculation_type: null,
       is_with_just_cause: true,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     
     // Art. 161 - Necesidades de la empresa (con indemnización)
@@ -345,7 +345,7 @@ export class SettlementCalculator {
       requires_severance: true,
       severance_calculation_type: 'years_service',
       is_with_just_cause: false,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     '161-2': {
       article_code: '161-2',
@@ -355,7 +355,7 @@ export class SettlementCalculator {
       requires_severance: true,
       severance_calculation_type: 'years_service',
       is_with_just_cause: false,
-      category: 'employer_initiative'
+      category: 'employer_initiative',
     },
     
     // Art. 163 bis - Procedimiento concursal
@@ -367,8 +367,8 @@ export class SettlementCalculator {
       requires_severance: true,
       severance_calculation_type: 'years_service',
       is_with_just_cause: false,
-      category: 'force_majeure'
-    }
+      category: 'force_majeure',
+    },
   };
   
   /**
@@ -391,14 +391,14 @@ export class SettlementCalculator {
     // 3. Calcular días trabajados en el último mes
     const daysWorkedLastMonth = this.calculateDaysWorkedInMonth(
       data.last_work_date, 
-      data.termination_date
+      data.termination_date,
     );
     
     // 4. Calcular sueldo pendiente
     const pendingSalary = this.calculatePendingSalary(
       data.monthly_salary,
       daysWorkedLastMonth,
-      data.termination_date
+      data.termination_date,
     );
     
     // 5. Calcular vacaciones pendientes
@@ -408,7 +408,7 @@ export class SettlementCalculator {
       data.monthly_salary,
       data.annual_vacation_days || 15,
       data.vacation_days_taken || 0,
-      data.vacation_periods || []
+      data.vacation_periods || [],
     );
     
     // 6. Calcular indemnizaciones
@@ -417,7 +417,7 @@ export class SettlementCalculator {
       serviceTime.years,
       data.monthly_salary,
       data.termination_date,
-      data.last_work_date
+      data.last_work_date,
     );
     
     // 7. Calcular bonos pendientes
@@ -426,7 +426,7 @@ export class SettlementCalculator {
       data.monthly_salary,
       data.christmas_bonus_pending || false,
       data.pending_overtime_amount || 0,
-      data.other_bonuses || 0
+      data.other_bonuses || 0,
     );
     
     // 8. Calcular totales
@@ -488,7 +488,7 @@ export class SettlementCalculator {
       
       calculation_warnings: warnings,
       legal_references: legalRefs,
-      calculation_date: new Date()
+      calculation_date: new Date(),
     };
   }
   
@@ -573,7 +573,7 @@ export class SettlementCalculator {
     return {
       days: daysWorked,
       daily_rate: dailyRate,
-      amount: pendingAmount
+      amount: pendingAmount,
     };
   }
   
@@ -583,7 +583,7 @@ export class SettlementCalculator {
     monthlySalary: number,
     annualVacationDays: number,
     daysTaken: number,
-    vacationPeriods: VacationPeriod[]
+    vacationPeriods: VacationPeriod[],
   ) {
     // Calcular días de vacaciones ganados por año completo de trabajo
     const yearsOfService = this.calculateServiceTime(startDate, endDate).years;
@@ -649,7 +649,7 @@ export class SettlementCalculator {
       proportional_days: proportionalDaysAdjusted,
       daily_rate: dailyVacationRate,
       pending_amount: pendingAmount,
-      proportional_amount: proportionalAmount
+      proportional_amount: proportionalAmount,
     };
   }
   
@@ -658,12 +658,12 @@ export class SettlementCalculator {
     yearsOfService: number, 
     monthlySalary: number,
     terminationDate: Date,
-    lastWorkDate: Date
+    lastWorkDate: Date,
   ) {
     let severanceAmount = 0;
     let noticeIndemnification = 0;
     let calculationBasis = 'No aplica indemnización';
-    let entitled = cause.requires_severance;
+    const entitled = cause.requires_severance;
     
     if (cause.requires_severance) {
       switch (cause.severance_calculation_type) {
@@ -699,7 +699,7 @@ export class SettlementCalculator {
     // Indemnización en lugar de aviso previo
     if (cause.requires_notice) {
       const daysDifference = Math.floor(
-        (terminationDate.getTime() - lastWorkDate.getTime()) / (1000 * 60 * 60 * 24)
+        (terminationDate.getTime() - lastWorkDate.getTime()) / (1000 * 60 * 60 * 24),
       );
       
       if (daysDifference < cause.notice_days) {
@@ -712,7 +712,7 @@ export class SettlementCalculator {
       entitled,
       basis: calculationBasis,
       severance_amount: severanceAmount,
-      notice_indemnification: noticeIndemnification
+      notice_indemnification: noticeIndemnification,
     };
   }
   
@@ -721,7 +721,7 @@ export class SettlementCalculator {
     monthlySalary: number,
     christmasBonusPending: boolean,
     overtimeAmount: number,
-    otherBonuses: number
+    otherBonuses: number,
   ) {
     let christmasBonusAmount = 0;
     
@@ -735,7 +735,7 @@ export class SettlementCalculator {
     return {
       christmas_bonus: christmasBonusAmount,
       overtime_amount: overtimeAmount,
-      other_bonuses: otherBonuses
+      other_bonuses: otherBonuses,
     };
   }
   
@@ -748,7 +748,7 @@ export class SettlementCalculator {
     const formattedDate = today.toLocaleDateString('es-CL', { 
       day: 'numeric', 
       month: 'long', 
-      year: 'numeric' 
+      year: 'numeric', 
     });
     
     // Determinar el tipo de carta según la causal
@@ -760,7 +760,7 @@ export class SettlementCalculator {
     const formattedTerminationDate = this.formatChileanDate(terminationDate, { 
       day: 'numeric', 
       month: 'long', 
-      year: 'numeric' 
+      year: 'numeric', 
     });
     
     if (isNonRenewal) {
@@ -860,7 +860,7 @@ Carpeta Funcionario`;
     const formattedDate = today.toLocaleDateString('es-CL', { 
       day: '2-digit', 
       month: 'long', 
-      year: 'numeric' 
+      year: 'numeric', 
     });
     
     const formatCurrency = (amount: number) => 
@@ -904,7 +904,7 @@ Carpeta Funcionario`;
     };
     
     // Crear lista de conceptos a pagar
-    let conceptos = [];
+    const conceptos = [];
     if (calculation.pending_vacation_amount > 0) {
       conceptos.push(`Feriado Proporcional (${calculation.pending_vacation_days.toFixed(2)} días)    $    ${formatNumber(calculation.pending_vacation_amount)}.-`);
     }
@@ -1005,7 +1005,7 @@ export function isChileanHoliday(date: Date): boolean {
     { month: 10, day: 31 }, // Día de las Iglesias Evangélicas
     { month: 11, day: 1 },  // Día de Todos los Santos
     { month: 12, day: 8 },  // Inmaculada Concepción
-    { month: 12, day: 25 }  // Navidad
+    { month: 12, day: 25 },  // Navidad
   ];
   
   // Verificar si la fecha coincide con algún feriado

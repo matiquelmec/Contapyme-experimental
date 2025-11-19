@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, Badge } from '@/components/ui'
+
 import { AlertCircle, TrendingUp, TrendingDown, Info, RefreshCw, Sparkles } from 'lucide-react'
+
+import { Card, CardContent, Badge } from '@/components/ui'
 
 interface IVAData {
   debitoFiscal: number      // IVA de ventas
@@ -38,7 +40,7 @@ export function IVAMeter() {
             ivaAPagar,
             porcentaje: Math.min(Math.abs(ivaAPagar) / 10000000 * 100, 100),
             estado: ivaAPagar > 0 ? 'pagar' : ivaAPagar < -50000 ? 'favor' : 'equilibrio',
-            fechaCalculo: new Date().toISOString()
+            fechaCalculo: new Date().toISOString(),
           })
         }
       } catch (error) {
@@ -50,7 +52,7 @@ export function IVAMeter() {
           ivaAPagar: 2310000,
           porcentaje: 23,
           estado: 'pagar',
-          fechaCalculo: new Date().toISOString()
+          fechaCalculo: new Date().toISOString(),
         })
       } finally {
         setIsLoading(false)
@@ -61,17 +63,15 @@ export function IVAMeter() {
 
     // Actualizar cada 5 minutos
     const interval = setInterval(loadIVAData, 300000)
-    return () => clearInterval(interval)
+    return () => { clearInterval(interval); }
   }, [])
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount)
-  }
 
   const getGaugeColor = (estado: string) => {
     switch (estado) {
@@ -112,7 +112,7 @@ export function IVAMeter() {
         <CardContent className="p-6">
           <div className="text-center">
             <div className="relative w-32 h-32 mx-auto mb-4">
-              <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 rounded-full animate-pulse"></div>
+              <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 rounded-full animate-pulse" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <RefreshCw className="w-8 h-8 text-blue-600 animate-spin" />
               </div>
@@ -215,7 +215,7 @@ export function IVAMeter() {
                   strokeDashoffset={`${2 * Math.PI * 100 - (ivaData.porcentaje / 100) * 2 * Math.PI * 100}`}
                   style={{
                     transition: 'stroke-dashoffset 1.5s ease-out',
-                    filter: 'drop-shadow(0 0 8px rgba(0, 0, 0, 0.1))'
+                    filter: 'drop-shadow(0 0 8px rgba(0, 0, 0, 0.1))',
                   }}
                 />
               </svg>
@@ -246,7 +246,7 @@ export function IVAMeter() {
                           ivaData.estado === 'pagar' ? 'bg-red-500' : 'bg-yellow-500'
                         }`}
                         style={{ width: `${Math.min(ivaData.porcentaje, 100)}%` }}
-                      ></div>
+                       />
                     </div>
                   </div>
                 </div>
@@ -258,7 +258,7 @@ export function IVAMeter() {
                   ivaData.estado === 'favor' ? 'bg-green-500' :
                   ivaData.estado === 'pagar' ? 'bg-red-500' : 'bg-yellow-500'
                 } shadow-lg flex items-center justify-center`}>
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                  <div className="w-2 h-2 bg-white rounded-full" />
                 </div>
               </div>
             </div>
@@ -321,7 +321,7 @@ export function IVAMeter() {
                   month: 'short',
                   year: 'numeric',
                   hour: '2-digit',
-                  minute: '2-digit'
+                  minute: '2-digit',
                 })}
               </p>
             </div>
@@ -352,7 +352,7 @@ export function IVAMeter() {
                   'bg-gradient-to-r from-yellow-400 to-yellow-600'
                 }`}
                 style={{ width: `${Math.min(ivaData.porcentaje, 100)}%` }}
-              ></div>
+               />
             </div>
           </div>
         </div>

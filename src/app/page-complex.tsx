@@ -1,12 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+
 import Link from 'next/link'
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, IndicatorsTicker, Badge } from '@/components/ui'
+
+import { TrendingUp, Shield, Zap, ChevronRight, Play } from 'lucide-react'
+
 import { MinimalHeader } from '@/components/layout'
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, IndicatorsTicker, Badge } from '@/components/ui'
 import Preloader from '@/components/ui/Preloader'
 import { useUserIntention, type UserIntention } from '@/hooks/useUserIntention'
-import { TrendingUp, Shield, Zap, ChevronRight, Play } from 'lucide-react'
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
@@ -17,7 +20,7 @@ export default function Home() {
   }
 
   if (isLoading) {
-    return <Preloader onComplete={() => setIsLoading(false)} />
+    return <Preloader onComplete={() => { setIsLoading(false); }} />
   }
 
   return (
@@ -66,7 +69,7 @@ export default function Home() {
               <Link href="/accounting">
                 <Card 
                   className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 border-blue-200 hover:border-blue-400 bg-gradient-to-br from-blue-50 to-indigo-50 h-full"
-                  onClick={() => handleIntentionClick('accounting_module', { source: 'hero_primary' })}
+                  onClick={() => { handleIntentionClick('accounting_module', { source: 'hero_primary' }); }}
                 >
                 <CardContent className="p-10 text-center h-full flex flex-col justify-between">
                   <div>
@@ -97,7 +100,7 @@ export default function Home() {
               <Link href="/payroll">
                 <Card 
                   className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 border-green-200 hover:border-green-400 bg-gradient-to-br from-green-50 to-emerald-50 h-full"
-                  onClick={() => handleIntentionClick('payroll_module', { source: 'hero_secondary' })}
+                  onClick={() => { handleIntentionClick('payroll_module', { source: 'hero_secondary' }); }}
                 >
                 <CardContent className="p-10 text-center h-full flex flex-col justify-between">
                   <div>
@@ -131,7 +134,7 @@ export default function Home() {
               <Link href="/accounting/f29-analysis">
                 <Card 
                   className="group hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-200 hover:border-blue-300 bg-white/80"
-                  onClick={() => handleIntentionClick('analyze_f29', { source: 'quick_actions' })}
+                  onClick={() => { handleIntentionClick('analyze_f29', { source: 'quick_actions' }); }}
                 >
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl mx-auto mb-4 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
@@ -151,7 +154,7 @@ export default function Home() {
               <Link href="/accounting/fixed-assets">
                 <Card 
                   className="group hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-200 hover:border-purple-300 bg-white/80"
-                  onClick={() => handleIntentionClick('fixed_assets', { source: 'quick_actions' })}
+                  onClick={() => { handleIntentionClick('fixed_assets', { source: 'quick_actions' }); }}
                 >
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-purple-100 rounded-xl mx-auto mb-4 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
@@ -170,7 +173,7 @@ export default function Home() {
               <Link href="/payroll/employees">
                 <Card 
                   className="group hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-200 hover:border-green-300 bg-white/80"
-                  onClick={() => handleIntentionClick('employees', { source: 'quick_actions' })}
+                  onClick={() => { handleIntentionClick('employees', { source: 'quick_actions' }); }}
                 >
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-green-100 rounded-xl mx-auto mb-4 flex items-center justify-center group-hover:bg-green-200 transition-colors">
@@ -321,7 +324,7 @@ export default function Home() {
                 <Button 
                   size="lg" 
                   className="bg-white text-blue-600 hover:bg-gray-100 font-semibold px-8 py-4"
-                  onClick={() => handleIntentionClick('analyze_f29', { source: 'cta_bottom' })}
+                  onClick={() => { handleIntentionClick('analyze_f29', { source: 'cta_bottom' }); }}
                 >
                   <Zap className="w-5 h-5 mr-2" />
                   Probar Análisis F29 Gratis
@@ -332,7 +335,7 @@ export default function Home() {
                   variant="outline" 
                   size="lg"
                   className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4"
-                  onClick={() => handleIntentionClick('explore_features', { source: 'cta_secondary' })}
+                  onClick={() => { handleIntentionClick('explore_features', { source: 'cta_secondary' }); }}
                 >
                   Ver Todas las Funcionalidades
                 </Button>

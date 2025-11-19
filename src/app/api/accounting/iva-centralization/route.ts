@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -17,13 +19,13 @@ export async function POST(request: NextRequest) {
       company_id,
       f29_data,
       periodo,
-      preview = false 
+      preview = false, 
     } = body;
 
     if (!company_id || !f29_data || !periodo) {
       return NextResponse.json(
         { success: false, error: 'company_id, f29_data y periodo son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -32,7 +34,7 @@ export async function POST(request: NextRequest) {
       iva_debito: f29_data.codigo538,
       iva_credito: f29_data.codigo537, // Crédito fiscal del F29
       impuesto_unico: f29_data.codigo048 || 0,
-      preview
+      preview,
     });
 
     // Obtener configuración de cuentas para centralización IVA
@@ -45,8 +47,8 @@ export async function POST(request: NextRequest) {
         missing_accounts: {
           iva_debito: !accountsConfig.iva_debito,
           impuesto_por_pagar: !accountsConfig.impuesto_por_pagar,
-          remanente_credito: !accountsConfig.remanente_credito
-        }
+          remanente_credito: !accountsConfig.remanente_credito,
+        },
       }, { status: 400 });
     }
 
@@ -62,7 +64,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: 'Asiento contable desbalanceado',
-        debug: { totalDebit, totalCredit, difference: totalDebit - totalCredit }
+        debug: { totalDebit, totalCredit, difference: totalDebit - totalCredit },
       }, { status: 400 });
     }
 
@@ -74,7 +76,7 @@ export async function POST(request: NextRequest) {
       totals: {
         debit_total: totalDebit,
         credit_total: totalCredit,
-        is_balanced: Math.abs(totalDebit - totalCredit) < 0.01
+        is_balanced: Math.abs(totalDebit - totalCredit) < 0.01,
       },
       iva_calculation: {
         iva_debito: f29_data.codigo538,
@@ -83,8 +85,8 @@ export async function POST(request: NextRequest) {
         impuesto_unico: f29_data.codigo048 || 0,
         ppm: f29_data.codigo062 || 0,
         total_a_pagar: f29_data.total_a_pagar || ((f29_data.codigo538 - (f29_data.codigo537 || 0)) + (f29_data.codigo048 || 0) + (f29_data.codigo062 || 0)),
-        tipo_resultado: f29_data.codigo538 > (f29_data.codigo537 || 0) ? 'por_pagar' : 'remanente'
-      }
+        tipo_resultado: f29_data.codigo538 > (f29_data.codigo537 || 0) ? 'por_pagar' : 'remanente',
+      },
     };
 
     // Si no es preview, guardar el asiento en el libro diario
@@ -101,7 +103,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: 'Error al guardar el asiento en el libro diario. El asiento se generó pero no se pudo guardar.',
           debug: error instanceof Error ? error.message : 'Error desconocido',
-          data: result // Incluir el resultado aunque no se haya guardado
+          data: result, // Incluir el resultado aunque no se haya guardado
         }, { status: 500 });
       }
     }
@@ -111,12 +113,12 @@ export async function POST(request: NextRequest) {
       total_debit: totalDebit,
       total_credit: totalCredit,
       is_balanced: result.totals.is_balanced,
-      tipo_resultado: result.iva_calculation.tipo_resultado
+      tipo_resultado: result.iva_calculation.tipo_resultado,
     });
 
     return NextResponse.json({
       success: true,
-      data: result
+      data: result,
     });
 
   } catch (error) {
@@ -124,7 +126,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Error desconocido'
+      details: error instanceof Error ? error.message : 'Error desconocido',
     }, { status: 500 });
   }
 }
@@ -149,11 +151,11 @@ async function getIVACentralizationAccountsConfig(companyId: string) {
     iva_debito: null,
     iva_credito: null, // Para futuras implementaciones
     impuesto_por_pagar: null,
-    remanente_credito: null
+    remanente_credito: null,
   };
 
   for (const account of accounts) {
-    const code = account.code;
+    const { code } = account;
     const name = account.name.toLowerCase();
     
     // Buscar cuenta IVA Débito Fiscal (2.1.3.002)
@@ -192,9 +194,9 @@ function createIVACentralizationJournalLines(f29Data: any, accountsConfig: any) 
     iva_credito: ivaCredito,
     iva_determinado: ivaDeterminado,
     impuesto_unico: impuestoUnico,
-    ppm: ppm,
+    ppm,
     total_a_pagar_calculado: ivaDeterminado + impuestoUnico + ppm,
-    total_a_pagar_formulario: f29Data.total_a_pagar
+    total_a_pagar_formulario: f29Data.total_a_pagar,
   });
 
   // CENTRALIZACIÓN COPIANDO LA ESTRUCTURA CORRECTA DEL USUARIO
@@ -207,7 +209,7 @@ function createIVACentralizationJournalLines(f29Data: any, accountsConfig: any) 
       account_name: accountsConfig.iva_debito.name,
       description: `Centralizar IVA Débito ${formatPeriod(f29Data.periodo)}`,
       debit_amount: ivaDebito,
-      credit_amount: 0
+      credit_amount: 0,
     });
   }
   
@@ -218,7 +220,7 @@ function createIVACentralizationJournalLines(f29Data: any, accountsConfig: any) 
       account_name: accountsConfig.remanente_credito.name,
       description: `PPM ${formatPeriod(f29Data.periodo)}`,
       debit_amount: ppm,
-      credit_amount: 0
+      credit_amount: 0,
     });
   }
   
@@ -229,7 +231,7 @@ function createIVACentralizationJournalLines(f29Data: any, accountsConfig: any) 
       account_name: accountsConfig.impuesto_por_pagar.name,
       description: `Impuesto Único ${formatPeriod(f29Data.periodo)}`,
       debit_amount: impuestoUnico,
-      credit_amount: 0
+      credit_amount: 0,
     });
   }
   
@@ -240,7 +242,7 @@ function createIVACentralizationJournalLines(f29Data: any, accountsConfig: any) 
       account_name: accountsConfig.remanente_credito.name,
       description: `Centralizar IVA Crédito ${formatPeriod(f29Data.periodo)}`,
       debit_amount: 0,
-      credit_amount: ivaCredito
+      credit_amount: ivaCredito,
     });
   }
   
@@ -252,7 +254,7 @@ function createIVACentralizationJournalLines(f29Data: any, accountsConfig: any) 
       account_name: accountsConfig.impuesto_por_pagar.name,
       description: `Impuesto por pagar ${formatPeriod(f29Data.periodo)}`,
       debit_amount: 0,
-      credit_amount: totalAPagar
+      credit_amount: totalAPagar,
     });
   }
 
@@ -268,7 +270,7 @@ function formatPeriod(periodo: string): string {
   
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
   ];
   
   const monthName = monthNames[parseInt(month) - 1];
@@ -291,7 +293,7 @@ async function saveIVACentralizationJournalEntry(companyId: string, entryData: a
     status: 'approved',
     total_debit: entryData.totals.debit_total,
     total_credit: entryData.totals.credit_total,
-    created_by: 'user'
+    created_by: 'user',
   };
 
   const { data: journalEntry, error: entryError } = await supabase

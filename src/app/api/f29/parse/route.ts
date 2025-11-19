@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { parseF29WithOCR } from '@/lib/f29OCRParser';
 
 /**
@@ -15,21 +17,21 @@ export async function POST(request: NextRequest) {
     if (!file) {
       return NextResponse.json({
         success: false,
-        error: 'No se proporcionó archivo'
+        error: 'No se proporcionó archivo',
       }, { status: 400 });
     }
 
     if (file.type !== 'application/pdf') {
       return NextResponse.json({
         success: false,
-        error: 'Solo se permiten archivos PDF'
+        error: 'Solo se permiten archivos PDF',
       }, { status: 400 });
     }
 
     if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json({
         success: false,
-        error: 'Archivo muy grande (máximo 10MB)'
+        error: 'Archivo muy grande (máximo 10MB)',
       }, { status: 400 });
     }
 
@@ -43,7 +45,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: result,
       message: 'F29 analizado exitosamente con OCR',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
   } catch (error) {
@@ -52,7 +54,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error procesando el archivo',
-      details: error instanceof Error ? error.message : 'Error desconocido'
+      details: error instanceof Error ? error.message : 'Error desconocido',
     }, { status: 500 });
   }
 }
@@ -68,7 +70,7 @@ export async function GET() {
       'OCR completo del formulario',
       'Extracción automática de todos los códigos',
       'Sin dependencias de APIs externas',
-      'Alta precisión en formularios SII estándar'
+      'Alta precisión en formularios SII estándar',
     ],
     supported_codes: [
       'PPM (062)',
@@ -77,7 +79,7 @@ export async function GET() {
       'Crédito Fiscal (511)',
       'Ventas Netas (563)',
       'Total Determinado (547)',
-      'Y más...'
-    ]
+      'Y más...',
+    ],
   });
 }

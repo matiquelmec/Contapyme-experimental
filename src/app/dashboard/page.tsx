@@ -1,14 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import { CompanyProvider } from '@/contexts/CompanyContext';
+
 import { CompanyHeader } from '@/components/company';
 import { MinimalHeader } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
+import { CompanyProvider } from '@/contexts/CompanyContext';
 
 export default function DashboardPage() {
   return (
-    <CompanyProvider demoMode={true}>
+    <CompanyProvider demoMode>
       <div className="min-h-screen bg-gray-50">
         <MinimalHeader variant="premium" />
 
@@ -85,7 +86,7 @@ export default function DashboardPage() {
                     <p className="text-2xl font-bold text-green-600">100%</p>
                   </div>
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
                   </div>
                 </div>
               </CardContent>

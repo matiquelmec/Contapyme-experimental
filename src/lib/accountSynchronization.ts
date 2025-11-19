@@ -38,7 +38,7 @@ export interface SynchronizedJournalLine extends JournalLine {
  */
 export async function synchronizeJournalLines(
   entryId: string,
-  companyId?: string
+  companyId?: string,
 ): Promise<SynchronizedJournalLine[]> {
   const supabase = createSupabaseServerClient();
   
@@ -76,7 +76,7 @@ export async function synchronizeJournalLines(
     const processedLines = (lines || []).map((line: any) => ({
       ...line,
       // Use updated name from chart of accounts if available
-      account_name: line.chart_of_accounts?.name || line.account_name || 'Cuenta no encontrada'
+      account_name: line.chart_of_accounts?.name || line.account_name || 'Cuenta no encontrada',
     }));
 
     console.log(`✅ Account synchronization completed for entry ${entryId}: ${processedLines.length} lines`);
@@ -94,7 +94,7 @@ export async function synchronizeJournalLines(
  */
 export async function synchronizeMultipleJournalEntries(
   entries: any[],
-  companyId?: string
+  companyId?: string,
 ): Promise<any[]> {
   const supabase = createSupabaseServerClient();
   
@@ -109,7 +109,7 @@ export async function synchronizeMultipleJournalEntries(
         // Add synchronized lines to the entry
         synchronizedEntries.push({
           ...entry,
-          lines: synchronizedLines
+          lines: synchronizedLines,
         });
         
         console.log(`✅ Entry ${entry.entry_number} synchronized with ${synchronizedLines.length} lines`);
@@ -119,7 +119,7 @@ export async function synchronizeMultipleJournalEntries(
         // Add entry without lines in case of error
         synchronizedEntries.push({
           ...entry,
-          lines: []
+          lines: [],
         });
       }
     }
@@ -138,7 +138,7 @@ export async function synchronizeMultipleJournalEntries(
 export async function checkAccountSynchronizationStatus(
   accountCode: string, 
   currentAccountName: string,
-  companyId?: string
+  companyId?: string,
 ): Promise<{ needsSync: boolean; updatedName?: string }> {
   const supabase = createSupabaseServerClient();
   
@@ -158,7 +158,7 @@ export async function checkAccountSynchronizationStatus(
     
     return {
       needsSync,
-      updatedName: needsSync ? account.name : undefined
+      updatedName: needsSync ? account.name : undefined,
     };
     
   } catch (error) {
@@ -173,7 +173,7 @@ export async function checkAccountSynchronizationStatus(
  */
 export async function getCurrentAccountName(
   accountCode: string,
-  companyId?: string
+  companyId?: string,
 ): Promise<string | null> {
   const supabase = createSupabaseServerClient();
   
@@ -204,7 +204,7 @@ export async function getCurrentAccountName(
  */
 export async function bulkSynchronizeAccountNames(
   accountCodes: string[],
-  companyId?: string
+  companyId?: string,
 ): Promise<Record<string, string>> {
   const supabase = createSupabaseServerClient();
   const accountNamesMap: Record<string, string> = {};

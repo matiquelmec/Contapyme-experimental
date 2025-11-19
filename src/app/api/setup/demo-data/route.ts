@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createSupabaseServerClient } from '@/lib/database/databaseSimple';
 
 /**
@@ -45,7 +47,7 @@ export async function POST(request: NextRequest) {
         total_credit: Math.round(entry.total_credit * 0.7),
         status: entry.status,
         created_by: 'demo-setup',
-        notes: `Demo data for Company 2 - ${index + 1}`
+        notes: `Demo data for Company 2 - ${index + 1}`,
       }));
 
       // Insert new entries
@@ -77,7 +79,7 @@ export async function POST(request: NextRequest) {
         phone: '+56 9 8765 4321',
         address: 'Valparaíso, Chile',
         hire_date: '2024-01-15',
-        birth_date: '1985-03-20'
+        birth_date: '1985-03-20',
       },
       {
         company_id: COMPANY2_ID,
@@ -90,7 +92,7 @@ export async function POST(request: NextRequest) {
         phone: '+56 9 7654 3210',
         address: 'Viña del Mar, Chile',
         hire_date: '2024-02-01',
-        birth_date: '1990-08-15'
+        birth_date: '1990-08-15',
       },
       {
         company_id: COMPANY2_ID,
@@ -103,8 +105,8 @@ export async function POST(request: NextRequest) {
         phone: '+56 9 6543 2109',
         address: 'Valparaíso, Chile',
         hire_date: '2024-03-01',
-        birth_date: '1992-12-10'
-      }
+        birth_date: '1992-12-10',
+      },
     ];
 
     const { data: insertedEmployees, error: employeeError } = await supabase
@@ -125,8 +127,8 @@ export async function POST(request: NextRequest) {
       data: {
         company2_id: COMPANY2_ID,
         journal_entries_created: insertedEntries?.length || 0,
-        employees_created: insertedEmployees?.length || 0
-      }
+        employees_created: insertedEmployees?.length || 0,
+      },
     });
 
   } catch (error) {
@@ -134,7 +136,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error occurred',
-      details: 'Failed to set up demo data for Company 2'
+      details: 'Failed to set up demo data for Company 2',
     }, { status: 500 });
   }
 }

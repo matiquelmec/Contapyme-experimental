@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -14,7 +16,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -22,27 +24,27 @@ export async function GET(request: NextRequest) {
 
     const { data: concepts, error } = await supabase
       .rpc('get_previred_concepts_by_company', { 
-        company_uuid: companyId 
+        company_uuid: companyId, 
       });
 
     if (error) {
       console.error('Error obteniendo conceptos Previred:', error);
       return NextResponse.json(
         { success: false, error: 'Error al obtener conceptos Previred' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     return NextResponse.json({
       success: true,
-      data: concepts || []
+      data: concepts || [],
     });
 
   } catch (error) {
     console.error('Error en GET /api/payroll/previred-concepts:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -55,7 +57,7 @@ export async function POST(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -70,13 +72,13 @@ export async function POST(request: NextRequest) {
       affects_unemployment = true,
       calculation_type = 'fixed',
       percentage_rate = 0,
-      fixed_amount = 0
+      fixed_amount = 0,
     } = body;
 
     if (!concept_code || !concept_name) {
       return NextResponse.json(
         { success: false, error: 'concept_code y concept_name son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -96,7 +98,7 @@ export async function POST(request: NextRequest) {
         calculation_type,
         percentage_rate,
         fixed_amount,
-        is_active: true
+        is_active: true,
       })
       .select()
       .single();
@@ -105,7 +107,7 @@ export async function POST(request: NextRequest) {
       console.error('Error creando concepto:', insertError);
       return NextResponse.json(
         { success: false, error: 'Error al crear concepto Previred' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -114,14 +116,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: newConcept,
-      message: 'Concepto Previred creado exitosamente'
+      message: 'Concepto Previred creado exitosamente',
     });
 
   } catch (error) {
     console.error('Error en POST /api/payroll/previred-concepts:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -135,7 +137,7 @@ export async function PUT(request: NextRequest) {
     if (!companyId || !conceptId) {
       return NextResponse.json(
         { success: false, error: 'company_id y concept_id son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -147,7 +149,7 @@ export async function PUT(request: NextRequest) {
       .from('previred_concepts')
       .update({
         ...body,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', conceptId)
       .eq('company_id', companyId)
@@ -158,7 +160,7 @@ export async function PUT(request: NextRequest) {
       console.error('Error actualizando concepto:', updateError);
       return NextResponse.json(
         { success: false, error: 'Error al actualizar concepto Previred' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -167,14 +169,14 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: updatedConcept,
-      message: 'Concepto Previred actualizado exitosamente'
+      message: 'Concepto Previred actualizado exitosamente',
     });
 
   } catch (error) {
     console.error('Error en PUT /api/payroll/previred-concepts:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -188,7 +190,7 @@ export async function DELETE(request: NextRequest) {
     if (!companyId || !conceptId) {
       return NextResponse.json(
         { success: false, error: 'company_id y concept_id son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -204,7 +206,7 @@ export async function DELETE(request: NextRequest) {
       console.error('Error eliminando concepto:', deleteError);
       return NextResponse.json(
         { success: false, error: 'Error al eliminar concepto Previred' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -212,14 +214,14 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Concepto Previred eliminado exitosamente'
+      message: 'Concepto Previred eliminado exitosamente',
     });
 
   } catch (error) {
     console.error('Error en DELETE /api/payroll/previred-concepts:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

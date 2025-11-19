@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { databaseSimple } from '@/lib/database/databaseSimple';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,12 +33,12 @@ export async function GET(request: NextRequest) {
       payment_day: 30,
       
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     return NextResponse.json({
       success: true,
-      data: defaultSettings
+      data: defaultSettings,
     });
 
   } catch (error: any) {
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error al cargar configuración de empresa',
-      details: error.message
+      details: error.message,
     }, { status: 500 });
   }
 }
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     if (!body.company_name || !body.company_rut) {
       return NextResponse.json({
         success: false,
-        error: 'Nombre de empresa y RUT son requeridos'
+        error: 'Nombre de empresa y RUT son requeridos',
       }, { status: 400 });
     }
 
@@ -72,8 +72,8 @@ export async function POST(request: NextRequest) {
       message: 'Configuración de empresa guardada exitosamente',
       data: {
         ...body,
-        updated_at: new Date().toISOString()
-      }
+        updated_at: new Date().toISOString(),
+      },
     });
 
   } catch (error: any) {
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error al guardar configuración de empresa',
-      details: error.message
+      details: error.message,
     }, { status: 500 });
   }
 }
@@ -99,7 +99,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error al actualizar configuración de empresa',
-      details: error.message
+      details: error.message,
     }, { status: 500 });
   }
 }

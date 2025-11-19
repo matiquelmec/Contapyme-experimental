@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 
 interface PreloaderProps {
   onComplete: () => void
@@ -25,7 +24,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
       })
     }, 100)
 
-    return () => clearInterval(timer)
+    return () => { clearInterval(timer); }
   }, [])
 
   useEffect(() => {

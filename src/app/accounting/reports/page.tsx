@@ -1,8 +1,9 @@
 'use client';
 
+import { BarChart3, FileText, Download, Calendar, TrendingUp } from 'lucide-react';
+
 import { Header } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { BarChart3, FileText, Download, Calendar, TrendingUp } from 'lucide-react';
 
 export default function ReportsPage() {
   return (
@@ -10,7 +11,7 @@ export default function ReportsPage() {
       <Header 
         title="Reportes"
         subtitle="Balance general, estado de resultados y más"
-        showBackButton={true}
+        showBackButton
         backHref="/accounting"
         actions={
           <Button variant="primary" size="sm" disabled>
@@ -88,20 +89,20 @@ export default function ReportsPage() {
               <div className="space-y-4">
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
                   <h4 className="text-sm font-semibold text-blue-900 mb-3 flex items-center">
-                    <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                    <span className="w-2 h-2 bg-blue-500 rounded-full mr-2" />
                     Incluye:
                   </h4>
                   <div className="text-sm text-blue-800 space-y-2">
                     <div className="flex items-center space-x-2">
-                      <span className="w-1 h-1 bg-blue-600 rounded-full"></span>
+                      <span className="w-1 h-1 bg-blue-600 rounded-full" />
                       <span>Activos Corrientes y No Corrientes</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="w-1 h-1 bg-blue-600 rounded-full"></span>
+                      <span className="w-1 h-1 bg-blue-600 rounded-full" />
                       <span>Pasivos y Patrimonio</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="w-1 h-1 bg-blue-600 rounded-full"></span>
+                      <span className="w-1 h-1 bg-blue-600 rounded-full" />
                       <span>Ecuación Contable</span>
                     </div>
                   </div>
@@ -139,20 +140,20 @@ export default function ReportsPage() {
               <div className="space-y-4">
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
                   <h4 className="text-sm font-semibold text-green-900 mb-3 flex items-center">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                    <span className="w-2 h-2 bg-green-500 rounded-full mr-2" />
                     Incluye:
                   </h4>
                   <div className="text-sm text-green-800 space-y-2">
                     <div className="flex items-center space-x-2">
-                      <span className="w-1 h-1 bg-green-600 rounded-full"></span>
+                      <span className="w-1 h-1 bg-green-600 rounded-full" />
                       <span>Ingresos Operacionales</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="w-1 h-1 bg-green-600 rounded-full"></span>
+                      <span className="w-1 h-1 bg-green-600 rounded-full" />
                       <span>Gastos de Operación</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="w-1 h-1 bg-green-600 rounded-full"></span>
+                      <span className="w-1 h-1 bg-green-600 rounded-full" />
                       <span>Resultado Neto</span>
                     </div>
                   </div>
@@ -190,20 +191,20 @@ export default function ReportsPage() {
               <div className="space-y-4">
                 <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-200">
                   <h4 className="text-sm font-semibold text-purple-900 mb-3 flex items-center">
-                    <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                    <span className="w-2 h-2 bg-purple-500 rounded-full mr-2" />
                     Incluye:
                   </h4>
                   <div className="text-sm text-purple-800 space-y-2">
                     <div className="flex items-center space-x-2">
-                      <span className="w-1 h-1 bg-purple-600 rounded-full"></span>
+                      <span className="w-1 h-1 bg-purple-600 rounded-full" />
                       <span>Flujo Operacional</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="w-1 h-1 bg-purple-600 rounded-full"></span>
+                      <span className="w-1 h-1 bg-purple-600 rounded-full" />
                       <span>Flujo de Inversión</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="w-1 h-1 bg-purple-600 rounded-full"></span>
+                      <span className="w-1 h-1 bg-purple-600 rounded-full" />
                       <span>Flujo de Financiamiento</span>
                     </div>
                   </div>
@@ -242,7 +243,7 @@ export default function ReportsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
                 <h4 className="font-semibold text-blue-900 mb-3 flex items-center">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-2" />
                   Análisis Individual
                 </h4>
                 <p className="text-sm text-blue-800 mb-4">
@@ -260,7 +261,7 @@ export default function ReportsPage() {
               
               <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200">
                 <h4 className="font-semibold text-purple-900 mb-3 flex items-center">
-                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-2" />
                   Análisis Comparativo
                 </h4>
                 <p className="text-sm text-purple-800 mb-4">

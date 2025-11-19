@@ -1,15 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useAuth } from '@/contexts/AuthContext'
-import { Badge, Button } from '@/components/ui'
+
 import {
-  User,
   LogOut,
-  Bell,
-  Search,
   HelpCircle,
   Settings,
   ChevronDown,
@@ -22,8 +19,9 @@ import {
   X,
   UserCircle,
   CreditCard,
-  Shield
 } from 'lucide-react'
+
+import { useAuth } from '@/contexts/AuthContext'
 
 /**
  * Global Header Unificado
@@ -50,7 +48,7 @@ export function GlobalHeader() {
       setCurrentTime(new Date())
     }, 60000)
 
-    return () => clearInterval(timer)
+    return () => { clearInterval(timer); }
   }, [])
 
   const handleSignOut = async () => {
@@ -105,26 +103,26 @@ export function GlobalHeader() {
       icon: Home,
       label: 'Portal',
       badge: 'HUB',
-      active: pathname.startsWith('/portal') || pathname === '/'
+      active: pathname.startsWith('/portal') || pathname === '/',
     },
     {
       href: '/accounting',
       icon: Calculator,
       label: 'Contabilidad',
-      active: pathname.startsWith('/accounting')
+      active: pathname.startsWith('/accounting'),
     },
     {
       href: '/payroll',
       icon: Users,
       label: 'Remuneraciones',
-      active: pathname.startsWith('/payroll')
+      active: pathname.startsWith('/payroll'),
     },
     {
       href: '/dashboard-new',
       icon: TrendingUp,
       label: 'Dashboard Ejecutivo',
-      active: pathname.startsWith('/dashboard-new')
-    }
+      active: pathname.startsWith('/dashboard-new'),
+    },
   ]
 
   return (
@@ -191,7 +189,7 @@ export function GlobalHeader() {
                   <>
                     <div
                       className="fixed inset-0 z-40"
-                      onClick={() => setIsUserMenuOpen(false)}
+                      onClick={() => { setIsUserMenuOpen(false); }}
                     />
                     <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 z-50 py-2">
                       {/* User Info Header */}
@@ -212,7 +210,7 @@ export function GlobalHeader() {
                         <Link
                           href="/profile"
                           className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                          onClick={() => setIsUserMenuOpen(false)}
+                          onClick={() => { setIsUserMenuOpen(false); }}
                         >
                           <UserCircle className="w-4 h-4" />
                           <span>Mi Perfil</span>
@@ -221,7 +219,7 @@ export function GlobalHeader() {
                         <Link
                           href="/company-settings"
                           className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                          onClick={() => setIsUserMenuOpen(false)}
+                          onClick={() => { setIsUserMenuOpen(false); }}
                         >
                           <Building2 className="w-4 h-4" />
                           <span>Mi Empresa</span>
@@ -230,7 +228,7 @@ export function GlobalHeader() {
                         <Link
                           href="/account-settings"
                           className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                          onClick={() => setIsUserMenuOpen(false)}
+                          onClick={() => { setIsUserMenuOpen(false); }}
                         >
                           <Settings className="w-4 h-4" />
                           <span>Configuración</span>
@@ -239,7 +237,7 @@ export function GlobalHeader() {
                         <Link
                           href="/billing"
                           className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                          onClick={() => setIsUserMenuOpen(false)}
+                          onClick={() => { setIsUserMenuOpen(false); }}
                         >
                           <CreditCard className="w-4 h-4" />
                           <span>Facturación</span>
@@ -248,7 +246,7 @@ export function GlobalHeader() {
                         <Link
                           href="/help"
                           className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                          onClick={() => setIsUserMenuOpen(false)}
+                          onClick={() => { setIsUserMenuOpen(false); }}
                         >
                           <HelpCircle className="w-4 h-4" />
                           <span>Ayuda y Soporte</span>
@@ -276,7 +274,7 @@ export function GlobalHeader() {
 
             {/* Mobile Menu Button */}
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={() => { setIsMobileMenuOpen(!isMobileMenuOpen); }}
               className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -294,7 +292,7 @@ export function GlobalHeader() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={() => { setIsMobileMenuOpen(false); }}
                     className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       item.active
                         ? 'bg-blue-50 text-blue-700'

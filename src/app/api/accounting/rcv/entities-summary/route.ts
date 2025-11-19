@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -15,7 +17,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json({
         success: false,
-        error: 'company_id es requerido'
+        error: 'company_id es requerido',
       }, { status: 400 });
     }
 
@@ -37,7 +39,7 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching entity summary:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error al obtener resumen de entidades'
+        error: 'Error al obtener resumen de entidades',
       }, { status: 500 });
     }
 
@@ -50,23 +52,23 @@ export async function GET(request: NextRequest) {
       customers: entities?.filter(e => e.suggested_entity_type === 'customer').length || 0,
       both: entities?.filter(e => e.suggested_entity_type === 'both').length || 0,
       total_purchase_amount: entities?.reduce((sum, e) => sum + (e.total_purchases || 0), 0) || 0,
-      total_sales_amount: entities?.reduce((sum, e) => sum + (e.total_sales || 0), 0) || 0
+      total_sales_amount: entities?.reduce((sum, e) => sum + (e.total_sales || 0), 0) || 0,
     };
 
     return NextResponse.json({
       success: true,
       data: {
         entities: entities || [],
-        statistics: stats
+        statistics: stats,
       },
-      message: `${entities?.length || 0} entidades encontradas en RCV`
+      message: `${entities?.length || 0} entidades encontradas en RCV`,
     });
 
   } catch (error) {
     console.error('Error in GET /api/accounting/rcv/entities-summary:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -80,7 +82,7 @@ export async function POST(request: NextRequest) {
     if (!company_id || !entity_ruts || !Array.isArray(entity_ruts)) {
       return NextResponse.json({
         success: false,
-        error: 'company_id y entity_ruts (array) son requeridos'
+        error: 'company_id y entity_ruts (array) son requeridos',
       }, { status: 400 });
     }
 
@@ -96,14 +98,14 @@ export async function POST(request: NextRequest) {
       console.error('Error fetching RCV entities:', fetchError);
       return NextResponse.json({
         success: false,
-        error: 'Error al obtener información de entidades'
+        error: 'Error al obtener información de entidades',
       }, { status: 500 });
     }
 
     if (!rcvEntities || rcvEntities.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'No se encontraron entidades para crear'
+        error: 'No se encontraron entidades para crear',
       }, { status: 404 });
     }
 
@@ -114,7 +116,7 @@ export async function POST(request: NextRequest) {
     for (const rcvEntity of rcvEntities) {
       try {
         // Determinar tipo de entidad y cuenta por defecto
-        let entityType = rcvEntity.suggested_entity_type;
+        const entityType = rcvEntity.suggested_entity_type;
         let accountCode = '1.1.1.001'; // Por defecto clientes
         let accountName = 'Clientes Nacionales';
 
@@ -143,7 +145,7 @@ export async function POST(request: NextRequest) {
             default_tax_rate: 19.0,
             is_tax_exempt: false,
             is_active: true,
-            notes: `Creada automáticamente desde RCV. Transacciones: ${rcvEntity.total_transactions} (Compras: ${rcvEntity.purchase_count}, Ventas: ${rcvEntity.sale_count})`
+            notes: `Creada automáticamente desde RCV. Transacciones: ${rcvEntity.total_transactions} (Compras: ${rcvEntity.purchase_count}, Ventas: ${rcvEntity.sale_count})`,
           })
           .select()
           .single();
@@ -153,7 +155,7 @@ export async function POST(request: NextRequest) {
           errors.push({
             rut: rcvEntity.entity_rut,
             name: rcvEntity.entity_name,
-            error: createError.message
+            error: createError.message,
           });
         } else {
           createdEntities.push(newEntity);
@@ -163,7 +165,7 @@ export async function POST(request: NextRequest) {
         errors.push({
           rut: rcvEntity.entity_rut,
           name: rcvEntity.entity_name,
-          error: 'Error al procesar entidad'
+          error: 'Error al procesar entidad',
         });
       }
     }
@@ -172,18 +174,18 @@ export async function POST(request: NextRequest) {
       success: errors.length === 0,
       data: {
         created: createdEntities,
-        errors: errors,
+        errors,
         total_created: createdEntities.length,
-        total_errors: errors.length
+        total_errors: errors.length,
       },
-      message: `${createdEntities.length} entidades creadas exitosamente${errors.length > 0 ? `, ${errors.length} con errores` : ''}`
+      message: `${createdEntities.length} entidades creadas exitosamente${errors.length > 0 ? `, ${errors.length} con errores` : ''}`,
     });
 
   } catch (error) {
     console.error('Error in POST /api/accounting/rcv/entities-summary:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }

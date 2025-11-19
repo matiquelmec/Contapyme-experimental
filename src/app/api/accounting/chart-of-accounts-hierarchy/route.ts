@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -39,7 +41,7 @@ export async function GET(request: NextRequest) {
         .from('specific_chart_of_accounts')
         .select('*')
         .eq('is_active', true)
-        .order('code')
+        .order('code'),
     ]);
 
     // Verificar errores
@@ -64,9 +66,9 @@ export async function GET(request: NextRequest) {
             .filter(sub => sub.mcoaid === major.mcoaid)
             .map(sub => ({
               ...sub,
-              specifics: specifics.filter(specific => specific.sucoaid === sub.sucoaid)
-            }))
-        }))
+              specifics: specifics.filter(specific => specific.sucoaid === sub.sucoaid),
+            })),
+        })),
     }));
 
     // También devolver listas planas para facilidad de uso
@@ -85,9 +87,9 @@ export async function GET(request: NextRequest) {
         parent_hierarchy: {
           title: titles.find(t => majors.find(m => m.tcoaid === t.tcoaid && subs.find(s => s.mcoaid === m.mcoaid && s.sucoaid === spec.sucoaid)))?.name,
           major: majors.find(m => subs.find(s => s.mcoaid === m.mcoaid && s.sucoaid === spec.sucoaid))?.name,
-          sub: subs.find(s => s.sucoaid === spec.sucoaid)?.name
-        }
-      }))
+          sub: subs.find(s => s.sucoaid === spec.sucoaid)?.name,
+        },
+      })),
     };
 
     console.log(`✅ Plan de cuentas cargado: ${titles.length} títulos, ${majors.length} mayores, ${subs.length} subs, ${specifics.length} específicas`);
@@ -102,16 +104,16 @@ export async function GET(request: NextRequest) {
           total_majors: majors.length,
           total_subs: subs.length,
           total_specifics: specifics.length,
-          total_fixed_asset_accounts: specifics.filter(s => s.is_fixed).length
-        }
-      }
+          total_fixed_asset_accounts: specifics.filter(s => s.is_fixed).length,
+        },
+      },
     });
 
   } catch (error) {
     console.error('Error in GET /api/accounting/chart-of-accounts-hierarchy:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -127,7 +129,7 @@ export async function POST(request: NextRequest) {
     if (!level || !code || !name) {
       return NextResponse.json(
         { success: false, error: 'level, code y name son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -144,7 +146,7 @@ export async function POST(request: NextRequest) {
           .insert({
             tcoaid: `T${Date.now()}`, // Generar ID único
             code,
-            name
+            name,
           })
           .select()
           .single();
@@ -154,7 +156,7 @@ export async function POST(request: NextRequest) {
         if (!parent_id) {
           return NextResponse.json(
             { success: false, error: 'parent_id requerido para cuentas mayores' },
-            { status: 400 }
+            { status: 400 },
           );
         }
         tableName = 'major_chart_of_accounts';
@@ -165,7 +167,7 @@ export async function POST(request: NextRequest) {
             mcoaid: `M${Date.now()}`,
             tcoaid: parent_id,
             code,
-            name
+            name,
           })
           .select()
           .single();
@@ -175,7 +177,7 @@ export async function POST(request: NextRequest) {
         if (!parent_id) {
           return NextResponse.json(
             { success: false, error: 'parent_id requerido para sub-cuentas' },
-            { status: 400 }
+            { status: 400 },
           );
         }
         tableName = 'sub_chart_of_accounts';
@@ -186,7 +188,7 @@ export async function POST(request: NextRequest) {
             sucoaid: `S${Date.now()}`,
             mcoaid: parent_id,
             code,
-            name
+            name,
           })
           .select()
           .single();
@@ -196,7 +198,7 @@ export async function POST(request: NextRequest) {
         if (!parent_id) {
           return NextResponse.json(
             { success: false, error: 'parent_id requerido para cuentas específicas' },
-            { status: 400 }
+            { status: 400 },
           );
         }
         tableName = 'specific_chart_of_accounts';
@@ -208,7 +210,7 @@ export async function POST(request: NextRequest) {
             sucoaid: parent_id,
             code,
             name,
-            is_fixed
+            is_fixed,
           })
           .select()
           .single();
@@ -217,7 +219,7 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { success: false, error: 'level debe ser: title, major, sub o specific' },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -225,7 +227,7 @@ export async function POST(request: NextRequest) {
       console.error(`Error creating ${level} account:`, result.error);
       return NextResponse.json(
         { success: false, error: `Error al crear cuenta ${level}` },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -234,14 +236,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: result.data,
-      message: `Cuenta ${level} creada exitosamente`
+      message: `Cuenta ${level} creada exitosamente`,
     });
 
   } catch (error) {
     console.error('Error in POST /api/accounting/chart-of-accounts-hierarchy:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

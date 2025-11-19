@@ -1,10 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useDashboard } from '@/contexts/DashboardContext'
-import { Button, Badge } from '@/components/ui'
-import { EconomicIndicatorsTicker } from './EconomicIndicatorsTicker'
-import { WidgetRenderer } from './WidgetRenderer'
+import { useState } from 'react'
+
+import Link from 'next/link'
+
 import {
   Settings,
   Layout,
@@ -19,17 +18,21 @@ import {
   Zap,
   Shield,
   Sparkles,
-  ChevronRight
 } from 'lucide-react'
-import Link from 'next/link'
-import { DashboardView } from '@/types/dashboard'
+
+import { Button, Badge } from '@/components/ui'
+import { useDashboard } from '@/contexts/DashboardContext'
+import type { DashboardView } from '@/types/dashboard'
+
+import { EconomicIndicatorsTicker } from './EconomicIndicatorsTicker'
+import { WidgetRenderer } from './WidgetRenderer'
 
 export function ModularDashboard() {
   const {
     state,
     switchView,
     toggleCustomization,
-    refreshAllWidgets
+    refreshAllWidgets,
   } = useDashboard()
 
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -55,22 +58,22 @@ export function ModularDashboard() {
       description: 'Dashboard ejecutivo para toma de decisiones estratégicas',
       icon: Grid3X3,
       color: 'blue',
-      role: 'Gerente General'
+      role: 'Gerente General',
     },
     compliance_cockpit: {
       title: 'Cockpit de Cumplimiento',
       description: 'Centro de control contable y tributario',
       icon: BarChart3,
       color: 'purple',
-      role: 'Contador'
+      role: 'Contador',
     },
     human_capital: {
       title: 'Gestión de Capital Humano',
       description: 'Control integral de recursos humanos',
       icon: Users,
       color: 'green',
-      role: 'RRHH'
-    }
+      role: 'RRHH',
+    },
   }
 
   const currentViewConfig = viewConfig[state.currentView]
@@ -156,7 +159,7 @@ export function ModularDashboard() {
                 return (
                   <button
                     key={viewKey}
-                    onClick={() => switchView(viewKey as DashboardView)}
+                    onClick={() => { switchView(viewKey as DashboardView); }}
                     className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all ${
                       isActive
                         ? 'bg-blue-100 text-blue-700 shadow-sm'
@@ -272,8 +275,8 @@ export function ModularDashboard() {
                       // Use CSS Grid for complex layouts in customization mode
                       ...(state.isCustomizing && {
                         gridColumn: `span ${widget.position.w}`,
-                        gridRow: `span ${widget.position.h}`
-                      })
+                        gridRow: `span ${widget.position.h}`,
+                      }),
                     }}
                   >
                     <div className="bg-white/60 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/20 h-full">
@@ -306,9 +309,9 @@ export function ModularDashboard() {
         ) : (
           <div className="text-center py-12">
             <div className="animate-pulse">
-              <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-48 mx-auto mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-32 mx-auto"></div>
+              <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4" />
+              <div className="h-4 bg-gray-200 rounded w-48 mx-auto mb-2" />
+              <div className="h-4 bg-gray-200 rounded w-32 mx-auto" />
             </div>
           </div>
         )}
@@ -331,15 +334,15 @@ export function ModularDashboard() {
               </p>
               <div className="flex flex-wrap gap-3">
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-green-500 rounded-full" />
                   <span className="text-sm font-medium text-indigo-800">Widgets en Tiempo Real</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full" />
                   <span className="text-sm font-medium text-indigo-800">Datos Integrados</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-purple-500 rounded-full" />
                   <span className="text-sm font-medium text-indigo-800">Vistas Especializadas</span>
                 </div>
               </div>

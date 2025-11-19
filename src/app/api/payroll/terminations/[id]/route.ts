@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -7,8 +9,8 @@ const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
   auth: {
     autoRefreshToken: false,
-    persistSession: false
-  }
+    persistSession: false,
+  },
 });
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
@@ -19,7 +21,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'ID de finiquito requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -33,7 +35,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     console.log('🔍 Termination lookup result:', { 
       existingTermination, 
       fetchError: fetchError?.message,
-      fetchErrorCode: fetchError?.code 
+      fetchErrorCode: fetchError?.code, 
     });
 
     if (fetchError || !existingTermination) {
@@ -45,10 +47,10 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
           debug: {
             id,
             fetchError: fetchError?.message,
-            fetchErrorCode: fetchError?.code
-          }
+            fetchErrorCode: fetchError?.code,
+          },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -57,9 +59,9 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return NextResponse.json(
         { 
           success: false, 
-          error: 'No se puede eliminar un finiquito que ya ha sido pagado' 
+          error: 'No se puede eliminar un finiquito que ya ha sido pagado', 
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -84,7 +86,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       console.error('Error al eliminar finiquito:', deleteError);
       return NextResponse.json(
         { success: false, error: 'Error al eliminar el finiquito' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -95,15 +97,15 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       message: `Finiquito eliminado exitosamente`,
       data: {
         id,
-        employee_name: employeeName
-      }
+        employee_name: employeeName,
+      },
     });
 
   } catch (error) {
     console.error('Error en DELETE termination:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -115,7 +117,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'ID de finiquito requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -129,20 +131,20 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     if (fetchError || !termination) {
       return NextResponse.json(
         { success: false, error: 'Finiquito no encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json({
       success: true,
-      data: termination
+      data: termination,
     });
 
   } catch (error) {
     console.error('Error en GET termination:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
+import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Header } from '@/components/layout/Header';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 interface SaleDocument {
@@ -46,7 +47,7 @@ export default function SalesBookPage() {
     total_net: 0,
     total_iva: 0,
     total_amount: 0,
-    document_count: 0
+    document_count: 0,
   });
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState('');
@@ -59,7 +60,7 @@ export default function SalesBookPage() {
     document_type: 'FACTURA',
     net_amount: 0,
     iva_rate: 19.0,
-    description: ''
+    description: '',
   });
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
@@ -120,7 +121,7 @@ export default function SalesBookPage() {
           document_type: 'FACTURA',
           net_amount: 0,
           iva_rate: 19.0,
-          description: ''
+          description: '',
         });
         await fetchDocuments(); // Recargar la lista
       } else {
@@ -150,10 +151,10 @@ export default function SalesBookPage() {
       <Header 
         title="Libro de Ventas"
         subtitle="Gestión de documentos de venta y IVA débito fiscal"
-        showBackButton={true}
+        showBackButton
         actions={
           <Button 
-            onClick={() => setShowAddModal(true)}
+            onClick={() => { setShowAddModal(true); }}
             leftIcon="+"
           >
             Nuevo Documento
@@ -183,7 +184,7 @@ export default function SalesBookPage() {
                   type="month"
                   id="period"
                   value={selectedPeriod}
-                  onChange={(e) => setSelectedPeriod(e.target.value)}
+                  onChange={(e) => { setSelectedPeriod(e.target.value); }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -249,7 +250,7 @@ export default function SalesBookPage() {
           <CardContent>
             {loading ? (
               <div className="text-center py-8">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
                 <p className="mt-2 text-gray-600">Cargando documentos...</p>
               </div>
             ) : documents.length === 0 ? (
@@ -318,7 +319,7 @@ export default function SalesBookPage() {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Nuevo Documento de Venta</h2>
                 <button
-                  onClick={() => setShowAddModal(false)}
+                  onClick={() => { setShowAddModal(false); }}
                   className="text-gray-400 hover:text-gray-600"
                   disabled={submitting}
                 >
@@ -336,7 +337,7 @@ export default function SalesBookPage() {
                   <input
                     type="date"
                     value={newDocument.date}
-                    onChange={(e) => setNewDocument(prev => ({ ...prev, date: e.target.value }))}
+                    onChange={(e) => { setNewDocument(prev => ({ ...prev, date: e.target.value })); }}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -349,7 +350,7 @@ export default function SalesBookPage() {
                   <input
                     type="text"
                     value={newDocument.folio}
-                    onChange={(e) => setNewDocument(prev => ({ ...prev, folio: e.target.value }))}
+                    onChange={(e) => { setNewDocument(prev => ({ ...prev, folio: e.target.value })); }}
                     required
                     placeholder="123456"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -363,7 +364,7 @@ export default function SalesBookPage() {
                   <input
                     type="text"
                     value={newDocument.client_name}
-                    onChange={(e) => setNewDocument(prev => ({ ...prev, client_name: e.target.value }))}
+                    onChange={(e) => { setNewDocument(prev => ({ ...prev, client_name: e.target.value })); }}
                     required
                     placeholder="Nombre del cliente"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -377,7 +378,7 @@ export default function SalesBookPage() {
                   <input
                     type="text"
                     value={newDocument.client_rut}
-                    onChange={(e) => setNewDocument(prev => ({ ...prev, client_rut: e.target.value }))}
+                    onChange={(e) => { setNewDocument(prev => ({ ...prev, client_rut: e.target.value })); }}
                     placeholder="12.345.678-9"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -389,7 +390,7 @@ export default function SalesBookPage() {
                   </label>
                   <select
                     value={newDocument.document_type}
-                    onChange={(e) => setNewDocument(prev => ({ ...prev, document_type: e.target.value }))}
+                    onChange={(e) => { setNewDocument(prev => ({ ...prev, document_type: e.target.value })); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="FACTURA">Factura</option>
@@ -462,7 +463,7 @@ export default function SalesBookPage() {
                   </label>
                   <textarea
                     value={newDocument.description}
-                    onChange={(e) => setNewDocument(prev => ({ ...prev, description: e.target.value }))}
+                    onChange={(e) => { setNewDocument(prev => ({ ...prev, description: e.target.value })); }}
                     rows={2}
                     placeholder="Descripción del documento (opcional)"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -473,7 +474,7 @@ export default function SalesBookPage() {
                   <Button 
                     type="button" 
                     variant="outline" 
-                    onClick={() => setShowAddModal(false)}
+                    onClick={() => { setShowAddModal(false); }}
                     disabled={submitting}
                     fullWidth
                   >

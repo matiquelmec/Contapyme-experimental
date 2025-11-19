@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
-import QRCode from 'qrcode';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import QRCode from 'qrcode';
 
 interface SignatureData {
   documentType: string;
@@ -24,7 +24,7 @@ interface SignatureResult {
 }
 
 export class DigitalSignatureService {
-  private static SECRET_KEY = process.env.SIGNATURE_SECRET_KEY || 'ContaPyme2025-SecureKey';
+  private static readonly SECRET_KEY = process.env.SIGNATURE_SECRET_KEY || 'ContaPyme2025-SecureKey';
 
   /**
    * Genera una firma digital para un documento
@@ -48,7 +48,7 @@ export class DigitalSignatureService {
       signerEmail: data.signerEmail,
       companyId: data.companyId,
       timestamp: new Date().toISOString(),
-      verificationCode
+      verificationCode,
     };
 
     // Generar firma digital encriptada
@@ -66,7 +66,7 @@ export class DigitalSignatureService {
       signatureData,
       verificationCode,
       qrCodeData: qrData,
-      signedAt: new Date()
+      signedAt: new Date(),
     };
   }
 
@@ -123,7 +123,7 @@ export class DigitalSignatureService {
       url: verificationUrl,
       code: verificationCode,
       hash: signatureHash.substring(0, 8),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     
     return JSON.stringify(qrData);
@@ -134,15 +134,14 @@ export class DigitalSignatureService {
    */
   static async generateQRCodeImage(qrData: string): Promise<string> {
     try {
-      const qrCodeDataUrl = await QRCode.toDataURL(qrData, {
+      return await QRCode.toDataURL(qrData, {
         width: 200,
         margin: 2,
         color: {
           dark: '#000000',
-          light: '#FFFFFF'
-        }
+          light: '#FFFFFF',
+        },
       });
-      return qrCodeDataUrl;
     } catch (error) {
       console.error('Error generando QR:', error);
       throw error;
@@ -159,7 +158,7 @@ export class DigitalSignatureService {
       name: string;
       rut: string;
       role: string;
-    }
+    },
   ): Promise<Uint8Array> {
     const pdfDoc = await PDFDocument.load(pdfBytes);
     const pages = pdfDoc.getPages();
@@ -184,7 +183,7 @@ export class DigitalSignatureService {
       height: signatureBoxHeight,
       borderColor: rgb(0.2, 0.2, 0.2),
       borderWidth: 1,
-      color: rgb(0.98, 0.98, 0.98)
+      color: rgb(0.98, 0.98, 0.98),
     });
     
     // Título de la firma
@@ -193,7 +192,7 @@ export class DigitalSignatureService {
       y: signatureBoxY + signatureBoxHeight - 20,
       size: 10,
       font: helveticaBoldFont,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
     
     // Información del firmante
@@ -202,7 +201,7 @@ export class DigitalSignatureService {
       `RUT: ${signerInfo.rut}`,
       `Cargo: ${signerInfo.role}`,
       `Fecha: ${new Date(signatureData.signedAt).toLocaleString('es-CL')}`,
-      `Código: ${signatureData.verificationCode}`
+      `Código: ${signatureData.verificationCode}`,
     ];
     
     let yPosition = signatureBoxY + signatureBoxHeight - 40;
@@ -212,7 +211,7 @@ export class DigitalSignatureService {
         y: yPosition,
         size: 8,
         font: helveticaFont,
-        color: rgb(0.2, 0.2, 0.2)
+        color: rgb(0.2, 0.2, 0.2),
       });
       yPosition -= 12;
     }
@@ -222,7 +221,7 @@ export class DigitalSignatureService {
       const qrImageBase64 = await this.generateQRCodeImage(signatureData.qrCodeData);
       const qrImageBytes = Uint8Array.from(
         atob(qrImageBase64.split(',')[1]),
-        c => c.charCodeAt(0)
+        c => c.charCodeAt(0),
       );
       
       const qrImage = await pdfDoc.embedPng(qrImageBytes);
@@ -232,7 +231,7 @@ export class DigitalSignatureService {
         x: signatureBoxX + signatureBoxWidth - qrSize - 10,
         y: signatureBoxY + 10,
         width: qrSize,
-        height: qrSize
+        height: qrSize,
       });
     } catch (error) {
       console.error('Error agregando QR al PDF:', error);
@@ -247,7 +246,7 @@ export class DigitalSignatureService {
         size: 8,
         font: helveticaFont,
         color: rgb(0.7, 0.7, 0.7),
-        opacity: 0.5
+        opacity: 0.5,
       });
     }
     
@@ -269,7 +268,7 @@ export class DigitalSignatureService {
    */
   static verifyDocumentIntegrity(
     documentContent: any, 
-    storedDocumentHash: string
+    storedDocumentHash: string,
   ): boolean {
     const currentHash = this.generateDocumentHash(documentContent);
     return currentHash === storedDocumentHash;
@@ -290,7 +289,7 @@ export class DigitalSignatureService {
       type: string;
       name: string;
       period?: string;
-    }
+    },
   ): Promise<Uint8Array> {
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage([595, 842]); // A4
@@ -307,7 +306,7 @@ export class DigitalSignatureService {
       y: height - 100,
       size: 20,
       font: helveticaBoldFont,
-      color: rgb(0, 0, 0.8)
+      color: rgb(0, 0, 0.8),
     });
     
     // Línea decorativa
@@ -316,7 +315,7 @@ export class DigitalSignatureService {
       y: height - 120,
       width: width - 100,
       height: 2,
-      color: rgb(0, 0, 0.8)
+      color: rgb(0, 0, 0.8),
     });
     
     // Contenido del certificado
@@ -349,7 +348,7 @@ export class DigitalSignatureService {
       '• La fecha y hora de la firma',
       '',
       'Para verificar la autenticidad de esta firma, escanee el código QR',
-      'o visite: www.contapyme.cl/verificar/' + signatureData.verificationCode
+      `o visite: www.contapyme.cl/verificar/${  signatureData.verificationCode}`,
     ];
     
     let yPosition = height - 160;
@@ -371,7 +370,7 @@ export class DigitalSignatureService {
         y: yPosition,
         size: isMainInfo ? 14 : (isBold ? 12 : 11),
         font: isMainInfo ? helveticaBoldFont : (isBold ? helveticaBoldFont : helveticaFont),
-        color: isMainInfo ? rgb(0, 0, 0.8) : rgb(0, 0, 0)
+        color: isMainInfo ? rgb(0, 0, 0.8) : rgb(0, 0, 0),
       });
       
       yPosition -= isMainInfo ? 25 : 20;
@@ -382,7 +381,7 @@ export class DigitalSignatureService {
       const qrImageBase64 = await this.generateQRCodeImage(signatureData.qrCodeData);
       const qrImageBytes = Uint8Array.from(
         atob(qrImageBase64.split(',')[1]),
-        c => c.charCodeAt(0)
+        c => c.charCodeAt(0),
       );
       
       const qrImage = await pdfDoc.embedPng(qrImageBytes);
@@ -392,7 +391,7 @@ export class DigitalSignatureService {
         x: width / 2 - qrSize / 2,
         y: 50,
         width: qrSize,
-        height: qrSize
+        height: qrSize,
       });
     } catch (error) {
       console.error('Error agregando QR al certificado:', error);
@@ -404,7 +403,7 @@ export class DigitalSignatureService {
       y: 30,
       size: 8,
       font: helveticaFont,
-      color: rgb(0.5, 0.5, 0.5)
+      color: rgb(0.5, 0.5, 0.5),
     });
     
     // Metadata

@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+
 import { PayrollHeader } from '@/components/layout/PayrollHeader';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
 interface Employee {
   id: string;
@@ -66,7 +67,7 @@ const TERMINATION_CAUSES = [
   { code: '161-2', name: 'Art. 161 N°2 - Desahucio escrito del empleador', requiresNotice: true, requiresSeverance: true },
   
   // Art. 163 bis - Procedimiento concursal
-  { code: '163-bis', name: 'Art. 163 bis - Procedimiento concursal de liquidación', requiresNotice: false, requiresSeverance: true }
+  { code: '163-bis', name: 'Art. 163 bis - Procedimiento concursal de liquidación', requiresNotice: false, requiresSeverance: true },
 ];
 
 export default function TerminationsPage() {
@@ -89,7 +90,7 @@ export default function TerminationsPage() {
     vacation_days_taken: 0,
     pending_overtime_amount: 0,
     christmas_bonus_pending: false,
-    other_bonuses: 0
+    other_bonuses: 0,
   });
 
   const companyId = '8033ee69-b420-4d91-ba0e-482f46cd6fce'; // Demo company
@@ -107,7 +108,7 @@ export default function TerminationsPage() {
       if (result.success) {
         // Solo empleados activos
         const activeEmployees = result.data.filter((emp: Employee) => 
-          emp.employment_contracts && emp.employment_contracts.length > 0
+          emp.employment_contracts && emp.employment_contracts.length > 0,
         );
         setEmployees(activeEmployees);
       }
@@ -139,7 +140,7 @@ export default function TerminationsPage() {
       const response = await fetch(`/api/payroll/terminations?company_id=${companyId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       const result = await response.json();
@@ -156,7 +157,7 @@ export default function TerminationsPage() {
           vacation_days_taken: 0,
           pending_overtime_amount: 0,
           christmas_bonus_pending: false,
-          other_bonuses: 0
+          other_bonuses: 0,
         });
         fetchTerminations();
       } else {
@@ -177,8 +178,8 @@ export default function TerminationsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           termination_id: terminationId,
-          document_type: documentType
-        })
+          document_type: documentType,
+        }),
       });
 
       const result = await response.json();
@@ -205,7 +206,7 @@ export default function TerminationsPage() {
       console.log('🗑️ Frontend: Intentando eliminar finiquito ID:', terminationId);
       
       const response = await fetch(`/api/payroll/terminations/${terminationId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       const result = await response.json();
@@ -241,13 +242,11 @@ export default function TerminationsPage() {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   const getStatusColor = (status: string) => {
     const colors = {
@@ -255,7 +254,7 @@ export default function TerminationsPage() {
       calculated: 'bg-blue-100 text-blue-800',
       approved: 'bg-yellow-100 text-yellow-800',
       notified: 'bg-purple-100 text-purple-800',
-      paid: 'bg-green-100 text-green-800'
+      paid: 'bg-green-100 text-green-800',
     };
     return colors[status as keyof typeof colors] || colors.draft;
   };
@@ -266,7 +265,7 @@ export default function TerminationsPage() {
       calculated: 'Calculado',
       approved: 'Aprobado',
       notified: 'Notificado',
-      paid: 'Pagado'
+      paid: 'Pagado',
     };
     return texts[status as keyof typeof texts] || 'Desconocido';
   };
@@ -280,7 +279,7 @@ export default function TerminationsPage() {
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto" />
             <p className="mt-4 text-gray-600">Cargando finiquitos...</p>
           </div>
         </div>
@@ -362,7 +361,7 @@ export default function TerminationsPage() {
         {/* Acciones principales */}
         <div className="mb-8 flex flex-wrap gap-3">
           <Button 
-            onClick={() => setShowCreateForm(true)}
+            onClick={() => { setShowCreateForm(true); }}
             className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
             size="lg"
           >
@@ -399,7 +398,7 @@ export default function TerminationsPage() {
                     </label>
                     <select
                       value={formData.employee_id}
-                      onChange={(e) => setFormData({ ...formData, employee_id: e.target.value })}
+                      onChange={(e) => { setFormData({ ...formData, employee_id: e.target.value }); }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                       required
                     >
@@ -419,7 +418,7 @@ export default function TerminationsPage() {
                     </label>
                     <select
                       value={formData.termination_cause_code}
-                      onChange={(e) => setFormData({ ...formData, termination_cause_code: e.target.value })}
+                      onChange={(e) => { setFormData({ ...formData, termination_cause_code: e.target.value }); }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                       required
                     >
@@ -440,7 +439,7 @@ export default function TerminationsPage() {
                     <input
                       type="date"
                       value={formData.termination_date}
-                      onChange={(e) => setFormData({ ...formData, termination_date: e.target.value })}
+                      onChange={(e) => { setFormData({ ...formData, termination_date: e.target.value }); }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                       required
                     />
@@ -454,7 +453,7 @@ export default function TerminationsPage() {
                     <input
                       type="date"
                       value={formData.last_work_date}
-                      onChange={(e) => setFormData({ ...formData, last_work_date: e.target.value })}
+                      onChange={(e) => { setFormData({ ...formData, last_work_date: e.target.value }); }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                       required
                     />
@@ -469,7 +468,7 @@ export default function TerminationsPage() {
                       type="number"
                       min="0"
                       value={formData.vacation_days_taken}
-                      onChange={(e) => setFormData({ ...formData, vacation_days_taken: parseInt(e.target.value) || 0 })}
+                      onChange={(e) => { setFormData({ ...formData, vacation_days_taken: parseInt(e.target.value) || 0 }); }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
@@ -483,7 +482,7 @@ export default function TerminationsPage() {
                       type="number"
                       min="0"
                       value={formData.pending_overtime_amount}
-                      onChange={(e) => setFormData({ ...formData, pending_overtime_amount: parseInt(e.target.value) || 0 })}
+                      onChange={(e) => { setFormData({ ...formData, pending_overtime_amount: parseInt(e.target.value) || 0 }); }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                       placeholder="Monto en CLP"
                     />
@@ -496,7 +495,7 @@ export default function TerminationsPage() {
                     <input
                       type="checkbox"
                       checked={formData.christmas_bonus_pending}
-                      onChange={(e) => setFormData({ ...formData, christmas_bonus_pending: e.target.checked })}
+                      onChange={(e) => { setFormData({ ...formData, christmas_bonus_pending: e.target.checked }); }}
                       className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                     />
                     <span className="text-sm font-medium text-gray-700">
@@ -512,7 +511,7 @@ export default function TerminationsPage() {
                   </label>
                   <textarea
                     value={formData.termination_reason_details}
-                    onChange={(e) => setFormData({ ...formData, termination_reason_details: e.target.value })}
+                    onChange={(e) => { setFormData({ ...formData, termination_reason_details: e.target.value }); }}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                     placeholder="Descripción detallada del motivo..."
@@ -529,7 +528,7 @@ export default function TerminationsPage() {
                   </Button>
                   <Button 
                     type="button"
-                    onClick={() => setShowCreateForm(false)}
+                    onClick={() => { setShowCreateForm(false); }}
                     variant="outline"
                   >
                     Cancelar
@@ -554,7 +553,7 @@ export default function TerminationsPage() {
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No hay finiquitos registrados</h3>
                 <p className="text-gray-600 mb-6">Crea el primer finiquito para comenzar</p>
                 <Button 
-                  onClick={() => setShowCreateForm(true)}
+                  onClick={() => { setShowCreateForm(true); }}
                   className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
                 >
                   ➕ Crear Finiquito
@@ -617,7 +616,7 @@ export default function TerminationsPage() {
                       </Button>
                       {termination.status !== 'paid' && (
                         <Button
-                          onClick={() => setShowDeleteConfirm(termination)}
+                          onClick={() => { setShowDeleteConfirm(termination); }}
                           variant="outline"
                           size="sm"
                           className="text-red-600 hover:text-red-700 hover:bg-red-50"
@@ -674,7 +673,7 @@ export default function TerminationsPage() {
                     {deleting === showDeleteConfirm.id ? 'Eliminando...' : '🗑️ Eliminar Finiquito'}
                   </Button>
                   <Button
-                    onClick={() => setShowDeleteConfirm(null)}
+                    onClick={() => { setShowDeleteConfirm(null); }}
                     variant="outline"
                     disabled={deleting === showDeleteConfirm.id}
                     className="flex-1"

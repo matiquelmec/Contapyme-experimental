@@ -1,16 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+import { ArrowLeft, ArrowRight, User, Phone, Calendar, AlertCircle, Calculator, Settings, DollarSign, UserPlus, Briefcase } from 'lucide-react';
+
 import { PayrollHeader } from '@/components/layout';
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { ArrowLeft, ArrowRight, Save, User, Phone, Mail, Home, Calendar, AlertCircle, Calculator, Settings, DollarSign, UserPlus, Briefcase } from 'lucide-react';
-import RutInputFixed from '@/modules/remuneraciones/components/empleados/RutInputFixed';
-import { usePayrollOptions } from '@/modules/remuneraciones/hooks/useConfiguracion';
-import { useCompanyId } from '@/contexts/CompanyContext';
 import { JobDescriptionAssistant } from '@/components/payroll/JobDescriptionAssistant';
 import { WeeklyScheduleConfigurator } from '@/components/payroll/WeeklyScheduleConfigurator';
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
+import { useCompanyId } from '@/contexts/CompanyContext';
+import RutInputFixed from '@/modules/remuneraciones/components/empleados/RutInputFixed';
+import { usePayrollOptions } from '@/modules/remuneraciones/hooks/useConfiguracion';
 
 interface EmployeeFormData {
   // Información Personal
@@ -141,7 +144,6 @@ export default function NewEmployeePage() {
     hasLegalGratification: false,
   });
 
-
   // 🎯 FUNCIÓN PARA AUTOCOMPLETAR AFP Y SALUD BASADO EN RUT
   const autoCompletePrevisionalData = async (rut: string) => {
     // Solo autocompletar si el RUT es válido, los campos están vacíos y hay opciones disponibles
@@ -150,24 +152,24 @@ export default function NewEmployeePage() {
 
       // AFP: PROVIDA es una opción común, sino la primera disponible
       const defaultAFP = payrollOptions.afp_options?.find(afp =>
-        afp.name.toUpperCase().includes('PROVIDA')
+        afp.name.toUpperCase().includes('PROVIDA'),
       ) || payrollOptions.afp_options?.[0];
 
       // Salud: FONASA es la opción más común para empleados
       const defaultHealth = payrollOptions.health_options?.find(health =>
-        health.name.toUpperCase().includes('FONASA')
+        health.name.toUpperCase().includes('FONASA'),
       ) || payrollOptions.health_options?.[0];
 
       if (defaultAFP || defaultHealth) {
         setFormData(prev => ({
           ...prev,
           ...(defaultAFP && { pensionFund: defaultAFP.name }),
-          ...(defaultHealth && { healthInsurance: defaultHealth.name })
+          ...(defaultHealth && { healthInsurance: defaultHealth.name }),
         }));
 
         console.log('✅ Autocompletado previsional simple:', {
           AFP: defaultAFP?.name,
-          Salud: defaultHealth?.name
+          Salud: defaultHealth?.name,
         });
       }
     }
@@ -179,7 +181,7 @@ export default function NewEmployeePage() {
       hasPayrollOptions: !!payrollOptions,
       rutLength: formData.rut.length,
       currentPensionFund: formData.pensionFund,
-      currentHealthInsurance: formData.healthInsurance
+      currentHealthInsurance: formData.healthInsurance,
     });
     
     if (payrollOptions && formData.rut.length >= 11 && !formData.pensionFund && !formData.healthInsurance && !disableAutoComplete) {
@@ -190,11 +192,11 @@ export default function NewEmployeePage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
+    const { checked } = (e.target as HTMLInputElement);
     
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
     
     // 🎯 AUTOCOMPLETAR AFP Y SALUD AL INGRESAR RUT
@@ -218,7 +220,7 @@ export default function NewEmployeePage() {
       // Actualizar campos individuales basados en el primer día laborable
       entryTime: getFirstWorkingDayTime(schedule, 'start') || prev.entryTime,
       exitTime: getFirstWorkingDayTime(schedule, 'end') || prev.exitTime,
-      lunchBreakDuration: getFirstWorkingDayLunch(schedule)?.toString() || prev.lunchBreakDuration
+      lunchBreakDuration: getFirstWorkingDayLunch(schedule)?.toString() || prev.lunchBreakDuration,
     }));
   };
 
@@ -259,22 +261,20 @@ export default function NewEmployeePage() {
       // Actualizar arrays de funciones
       jobFunctions: data.job_functions || [],
       obligations: data.obligations || [],
-      prohibitions: data.prohibitions || []
+      prohibitions: data.prohibitions || [],
     }));
     
     // Limpiar errores relacionados inmediatamente
     setErrors(prev => ({
       ...prev,
       position: '',
-      department: ''
+      department: '',
     }));
     
     // Log para debug
     console.log('✅ Datos del descriptor actualizados en el formulario');
     console.log('ℹ️ Permaneciendo en la pestaña actual sin guardar automáticamente');
   };
-
-
 
   // 📅 CALCULAR DÍAS TRABAJADOS DEL MES
   const calculateWorkedDays = (startDate: string) => {
@@ -302,7 +302,7 @@ export default function NewEmployeePage() {
         workedDays,
         totalDays: totalDaysInMonth,
         startDay,
-        note: `Inicia el día ${startDay}, trabajará ${workedDays} días de ${totalDaysInMonth} días del mes`
+        note: `Inicia el día ${startDay}, trabajará ${workedDays} días de ${totalDaysInMonth} días del mes`,
       };
     }
     return null;
@@ -402,7 +402,6 @@ export default function NewEmployeePage() {
         company_id: companyId,
         created_by: '550e8400-e29b-41d4-a716-446655440000',
         
-        
         // Employee data
         rut: formData.rut,
         first_name: formData.fullNames,
@@ -453,8 +452,8 @@ export default function NewEmployeePage() {
           health_institution_code: healthCode,
           family_allowances: 0,
           legal_gratification_type: formData.hasLegalGratification ? 'article_50' : 'none',
-          has_unemployment_insurance: true
-        }
+          has_unemployment_insurance: true,
+        },
       };
       
       const response = await fetch('/api/payroll/employees', {
@@ -496,7 +495,7 @@ export default function NewEmployeePage() {
               contract_id: contractId,
               company_id: companyId,
               format: 'json', // Especificar que queremos respuesta JSON
-              save_to_contracts: true // Flag para guardar en sección contratos
+              save_to_contracts: true, // Flag para guardar en sección contratos
             }),
           });
 
@@ -573,7 +572,7 @@ export default function NewEmployeePage() {
                 <nav className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => setActiveTab('basic-info')}
+                    onClick={() => { setActiveTab('basic-info'); }}
                     className={`flex items-center px-6 py-3 rounded-xl font-medium text-sm transition-all duration-200 whitespace-nowrap ${
                       activeTab === 'basic-info'
                         ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg transform scale-105'
@@ -585,7 +584,7 @@ export default function NewEmployeePage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setActiveTab('work-info')}
+                    onClick={() => { setActiveTab('work-info'); }}
                     className={`flex items-center px-6 py-3 rounded-xl font-medium text-sm transition-all duration-200 whitespace-nowrap ${
                       activeTab === 'work-info'
                         ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg transform scale-105'
@@ -622,7 +621,7 @@ export default function NewEmployeePage() {
                           value={formData.rut}
                           onChange={(value) => {
                             setFormData(prev => ({ ...prev, rut: value }));
-                            setErrors({...errors, rut: ''});
+                            setErrors({ ...errors, rut: '' });
                             // 🎯 AUTOCOMPLETAR AFP Y SALUD AL INGRESAR RUT
                             if (value.length >= 11) {
                               autoCompletePrevisionalData(value).catch(console.error);
@@ -815,7 +814,6 @@ export default function NewEmployeePage() {
               </div>
             )}
 
-
             {/* Work Information Tab - Contract + Payroll */}
             {activeTab === 'work-info' && (
               <div className="space-y-6">
@@ -828,7 +826,7 @@ export default function NewEmployeePage() {
                       <h3 className="text-xl font-semibold text-gray-900">Información Laboral</h3>
                       <div className="ml-auto">
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                           Se generará automáticamente
                         </span>
                       </div>
@@ -995,7 +993,7 @@ export default function NewEmployeePage() {
                           <ul className="space-y-2">
                             {formData.jobFunctions.map((func, index) => (
                               <li key={index} className="flex items-start">
-                                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0" />
                                 <span className="text-gray-700">{func}</span>
                               </li>
                             ))}
@@ -1009,7 +1007,7 @@ export default function NewEmployeePage() {
                           <ul className="space-y-2">
                             {formData.obligations.map((obl, index) => (
                               <li key={index} className="flex items-start">
-                                <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0" />
                                 <span className="text-gray-700">{obl}</span>
                               </li>
                             ))}
@@ -1023,7 +1021,7 @@ export default function NewEmployeePage() {
                           <ul className="space-y-2">
                             {formData.prohibitions.map((proh, index) => (
                               <li key={index} className="flex items-start">
-                                <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0" />
                                 <span className="text-gray-700">{proh}</span>
                               </li>
                             ))}
@@ -1551,7 +1549,7 @@ export default function NewEmployeePage() {
                     className="w-full sm:w-auto bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg"
                   >
                     {loading ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                     ) : (
                       <UserPlus className="w-4 h-4 mr-2" />
                     )}

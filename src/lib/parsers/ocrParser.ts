@@ -9,8 +9,8 @@ export async function performOCR(imageData: Blob): Promise<string> {
     imageData,
     'spa', // Español
     {
-      logger: (info) => console.log('OCR Progress:', info)
-    }
+      logger: (info) => { console.log('OCR Progress:', info); },
+    },
   );
   
   return result.data.text;

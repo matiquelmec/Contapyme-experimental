@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button, Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
+
 import { Upload, FileText, Zap, Loader2, CheckCircle, AlertTriangle, X, Sparkles, Save } from 'lucide-react';
-import { SavedJobDescriptionsSelector } from './SavedJobDescriptionsSelector';
+
+import { Button, Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 import { useCompanyId } from '@/contexts/CompanyContext';
+
+import { SavedJobDescriptionsSelector } from './SavedJobDescriptionsSelector';
 
 interface JobDescriptionData {
   position?: string;
@@ -25,7 +28,7 @@ interface JobDescriptionAssistantProps {
 export function JobDescriptionAssistant({ 
   onDataExtracted, 
   currentPosition = '',
-  currentDepartment = '' 
+  currentDepartment = '', 
 }: JobDescriptionAssistantProps) {
   const companyId = useCompanyId();
   const [activeTab, setActiveTab] = useState<'upload' | 'ai' | 'manual'>('manual');
@@ -41,7 +44,7 @@ export function JobDescriptionAssistant({
     position: currentPosition,
     department: currentDepartment,
     company_type: '',
-    additional_context: ''
+    additional_context: '',
   });
 
   // Estados para upload PDF
@@ -54,7 +57,7 @@ export function JobDescriptionAssistant({
     department: currentDepartment,
     functions: [''],
     obligations: [''],
-    prohibitions: ['']
+    prohibitions: [''],
   });
 
   // Sincronizar manualForm con props cuando cambien
@@ -62,7 +65,7 @@ export function JobDescriptionAssistant({
     setManualForm(prev => ({
       ...prev,
       position: currentPosition,
-      department: currentDepartment
+      department: currentDepartment,
     }));
   }, [currentPosition, currentDepartment]);
 
@@ -83,13 +86,13 @@ export function JobDescriptionAssistant({
         position: currentPosition,
         department: currentDepartment,
         company_type: aiForm.company_type,
-        additional_context: aiForm.additional_context
+        additional_context: aiForm.additional_context,
       };
 
       const response = await fetch('/api/payroll/job-description/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestData)
+        body: JSON.stringify(requestData),
       });
 
       const data = await response.json();
@@ -121,7 +124,7 @@ export function JobDescriptionAssistant({
 
       const response = await fetch('/api/payroll/job-description/parse', {
         method: 'POST',
-        body: formData
+        body: formData,
       });
 
       const data = await response.json();
@@ -158,7 +161,7 @@ export function JobDescriptionAssistant({
     e.stopPropagation();
     setDragActive(false);
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    if (e.dataTransfer.files?.[0]) {
       const file = e.dataTransfer.files[0];
       if (file.type === 'application/pdf') {
         handlePDFUpload(file);
@@ -173,14 +176,14 @@ export function JobDescriptionAssistant({
     let dataToRefine: any = {};
 
     // Determinar qué datos refinar según el contexto
-    if (result && result.data) {
+    if (result?.data) {
       // Si hay resultados previos (PDF o IA), usar esos
       dataToRefine = {
         position: result.data.position || aiForm.position || manualForm.position,
         department: result.data.department || aiForm.department || manualForm.department,
         raw_functions: result.data.job_functions || [],
         raw_obligations: result.data.obligations || [],
-        raw_prohibitions: result.data.prohibitions || []
+        raw_prohibitions: result.data.prohibitions || [],
       };
     } else {
       // Si no hay resultados previos, usar datos manuales
@@ -206,7 +209,7 @@ export function JobDescriptionAssistant({
         raw_obligations: nonEmptyObligations,
         raw_prohibitions: nonEmptyProhibitions,
         company_type: aiForm.company_type,
-        additional_context: aiForm.additional_context
+        additional_context: aiForm.additional_context,
       };
     }
 
@@ -217,7 +220,7 @@ export function JobDescriptionAssistant({
       const response = await fetch('/api/payroll/job-description/refine', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToRefine)
+        body: JSON.stringify(dataToRefine),
       });
 
       const data = await response.json();
@@ -229,7 +232,7 @@ export function JobDescriptionAssistant({
       // Actualizar resultado con datos refinados
       setResult({
         ...data,
-        message: 'Descriptor refinado con IA según normativa chilena'
+        message: 'Descriptor refinado con IA según normativa chilena',
       });
       setShowRefinedResult(true);
       
@@ -239,7 +242,7 @@ export function JobDescriptionAssistant({
         department: data.data.department,
         job_functions: data.data.refined_functions,
         obligations: data.data.refined_obligations,
-        prohibitions: data.data.refined_prohibitions
+        prohibitions: data.data.refined_prohibitions,
       });
 
     } catch (err) {
@@ -256,7 +259,7 @@ export function JobDescriptionAssistant({
       ...prev,
       [field]: field === 'position' || field === 'department' 
         ? value 
-        : prev[field as keyof typeof prev].map((item: string, i: number) => i === index ? value : item)
+        : prev[field as keyof typeof prev].map((item: string, i: number) => i === index ? value : item),
     }));
   };
 
@@ -264,7 +267,7 @@ export function JobDescriptionAssistant({
   const addManualLine = (field: 'functions' | 'obligations' | 'prohibitions') => {
     setManualForm(prev => ({
       ...prev,
-      [field]: [...prev[field], '']
+      [field]: [...prev[field], ''],
     }));
   };
 
@@ -272,7 +275,7 @@ export function JobDescriptionAssistant({
   const removeManualLine = (field: 'functions' | 'obligations' | 'prohibitions', index: number) => {
     setManualForm(prev => ({
       ...prev,
-      [field]: prev[field].filter((_, i) => i !== index)
+      [field]: prev[field].filter((_, i) => i !== index),
     }));
   };
 
@@ -283,14 +286,14 @@ export function JobDescriptionAssistant({
       department: descriptor.department,
       job_functions: descriptor.job_functions,
       obligations: descriptor.obligations,
-      prohibitions: descriptor.prohibitions
+      prohibitions: descriptor.prohibitions,
     };
 
     setResult({
       success: true,
       data,
       message: 'Descriptor cargado desde base de datos',
-      confidence: null
+      confidence: null,
     });
 
     onDataExtracted(data);
@@ -320,7 +323,7 @@ export function JobDescriptionAssistant({
           </div>
           {companyId && (
             <Button
-              onClick={() => setShowSavedSelector(true)}
+              onClick={() => { setShowSavedSelector(true); }}
               variant="outline"
               className="flex items-center gap-2 text-indigo-600 border-indigo-200 hover:bg-indigo-50"
             >
@@ -334,7 +337,7 @@ export function JobDescriptionAssistant({
         {/* Tabs */}
         <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
           <button
-            onClick={() => setActiveTab('manual')}
+            onClick={() => { setActiveTab('manual'); }}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
               activeTab === 'manual'
                 ? 'bg-white text-purple-600 shadow-sm'
@@ -345,7 +348,7 @@ export function JobDescriptionAssistant({
             Manual
           </button>
           <button
-            onClick={() => setActiveTab('ai')}
+            onClick={() => { setActiveTab('ai'); }}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
               activeTab === 'ai'
                 ? 'bg-white text-purple-600 shadow-sm'
@@ -356,7 +359,7 @@ export function JobDescriptionAssistant({
             Asistente IA
           </button>
           <button
-            onClick={() => setActiveTab('upload')}
+            onClick={() => { setActiveTab('upload'); }}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
               activeTab === 'upload'
                 ? 'bg-white text-purple-600 shadow-sm'
@@ -385,10 +388,10 @@ export function JobDescriptionAssistant({
                   <input
                     type="text"
                     value={manualForm.position}
-                    onChange={(e) => setManualForm(prev => ({
+                    onChange={(e) => { setManualForm(prev => ({
                       ...prev,
-                      position: e.target.value
-                    }))}
+                      position: e.target.value,
+                    })); }}
                     placeholder="Ej: Cajero, Vendedor"
                     className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -400,10 +403,10 @@ export function JobDescriptionAssistant({
                   <input
                     type="text"
                     value={manualForm.department}
-                    onChange={(e) => setManualForm(prev => ({
+                    onChange={(e) => { setManualForm(prev => ({
                       ...prev,
-                      department: e.target.value
-                    }))}
+                      department: e.target.value,
+                    })); }}
                     placeholder="Ej: Caja, Ventas"
                     className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -424,13 +427,13 @@ export function JobDescriptionAssistant({
                   <input
                     type="text"
                     value={func}
-                    onChange={(e) => handleManualChange('functions', index, e.target.value)}
+                    onChange={(e) => { handleManualChange('functions', index, e.target.value); }}
                     placeholder="ej: Atender clientes de manera cordial"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                   {manualForm.functions.length > 1 && (
                     <Button
-                      onClick={() => removeManualLine('functions', index)}
+                      onClick={() => { removeManualLine('functions', index); }}
                       variant="ghost"
                       size="sm"
                     >
@@ -440,7 +443,7 @@ export function JobDescriptionAssistant({
                 </div>
               ))}
               <Button
-                onClick={() => addManualLine('functions')}
+                onClick={() => { addManualLine('functions'); }}
                 variant="outline"
                 size="sm"
                 className="mt-2"
@@ -459,13 +462,13 @@ export function JobDescriptionAssistant({
                   <input
                     type="text"
                     value={obl}
-                    onChange={(e) => handleManualChange('obligations', index, e.target.value)}
+                    onChange={(e) => { handleManualChange('obligations', index, e.target.value); }}
                     placeholder="ej: Cumplir horarios de trabajo establecidos"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                   {manualForm.obligations.length > 1 && (
                     <Button
-                      onClick={() => removeManualLine('obligations', index)}
+                      onClick={() => { removeManualLine('obligations', index); }}
                       variant="ghost"
                       size="sm"
                     >
@@ -475,7 +478,7 @@ export function JobDescriptionAssistant({
                 </div>
               ))}
               <Button
-                onClick={() => addManualLine('obligations')}
+                onClick={() => { addManualLine('obligations'); }}
                 variant="outline"
                 size="sm"
                 className="mt-2"
@@ -494,13 +497,13 @@ export function JobDescriptionAssistant({
                   <input
                     type="text"
                     value={proh}
-                    onChange={(e) => handleManualChange('prohibitions', index, e.target.value)}
+                    onChange={(e) => { handleManualChange('prohibitions', index, e.target.value); }}
                     placeholder="ej: No usar teléfono personal durante horario laboral"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                   {manualForm.prohibitions.length > 1 && (
                     <Button
-                      onClick={() => removeManualLine('prohibitions', index)}
+                      onClick={() => { removeManualLine('prohibitions', index); }}
                       variant="ghost"
                       size="sm"
                     >
@@ -510,7 +513,7 @@ export function JobDescriptionAssistant({
                 </div>
               ))}
               <Button
-                onClick={() => addManualLine('prohibitions')}
+                onClick={() => { addManualLine('prohibitions'); }}
                 variant="outline"
                 size="sm"
                 className="mt-2"
@@ -528,14 +531,14 @@ export function JobDescriptionAssistant({
                   department: manualForm.department,
                   job_functions: manualForm.functions.filter(f => f.trim()),
                   obligations: manualForm.obligations.filter(o => o.trim()),
-                  prohibitions: manualForm.prohibitions.filter(p => p.trim())
+                  prohibitions: manualForm.prohibitions.filter(p => p.trim()),
                 };
                 
                 setResult({
                   success: true,
                   data,
                   message: 'Datos manuales aplicados correctamente',
-                  confidence: null
+                  confidence: null,
                 });
                 
                 onDataExtracted(data);
@@ -586,7 +589,7 @@ export function JobDescriptionAssistant({
               </label>
               <select
                 value={aiForm.company_type}
-                onChange={(e) => setAiForm(prev => ({ ...prev, company_type: e.target.value }))}
+                onChange={(e) => { setAiForm(prev => ({ ...prev, company_type: e.target.value })); }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               >
                 <option value="">Seleccionar tipo de empresa</option>
@@ -608,7 +611,7 @@ export function JobDescriptionAssistant({
               </label>
               <textarea
                 value={aiForm.additional_context}
-                onChange={(e) => setAiForm(prev => ({ ...prev, additional_context: e.target.value }))}
+                onChange={(e) => { setAiForm(prev => ({ ...prev, additional_context: e.target.value })); }}
                 placeholder="Describa características específicas del cargo, herramientas a usar, objetivos especiales, etc."
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -698,7 +701,7 @@ export function JobDescriptionAssistant({
                 <FileText className="h-5 w-5 text-purple-600 mr-3" />
                 <span className="text-sm text-gray-700 flex-1">{uploadedFile.name}</span>
                 <Button
-                  onClick={() => setUploadedFile(null)}
+                  onClick={() => { setUploadedFile(null); }}
                   variant="ghost"
                   size="sm"
                 >
@@ -801,7 +804,7 @@ export function JobDescriptionAssistant({
                   </div>
                   
                   <Button
-                    onClick={() => setShowRefinedResult(false)}
+                    onClick={() => { setShowRefinedResult(false); }}
                     variant="outline"
                     size="sm"
                     className="w-full text-purple-600 border-purple-300 hover:bg-purple-50"
@@ -976,7 +979,7 @@ export function JobDescriptionAssistant({
           <SavedJobDescriptionsSelector
             companyId={companyId}
             onSelect={handleSavedDescriptorSelect}
-            onClose={() => setShowSavedSelector(false)}
+            onClose={() => { setShowSavedSelector(false); }}
           />
         )}
       </CardContent>

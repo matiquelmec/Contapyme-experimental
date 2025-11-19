@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 // Force dynamic rendering for this API route
@@ -19,7 +21,7 @@ export async function GET(request: NextRequest) {
     if (!rut) {
       return NextResponse.json({
         success: false,
-        error: 'RUT es requerido para la búsqueda'
+        error: 'RUT es requerido para la búsqueda',
       }, { status: 400 });
     }
 
@@ -55,7 +57,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: 'Entidad no encontrada',
         entity_found: false,
-        details: error.message
+        details: error.message,
       }, { status: 404 });
     }
 
@@ -63,7 +65,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: `No se encontró ninguna entidad activa con RUT ${cleanRut}`,
-        entity_found: false
+        entity_found: false,
       }, { status: 404 });
     }
 
@@ -88,13 +90,13 @@ export async function GET(request: NextRequest) {
           main_account: {
             code: entity.account_code,
             name: entity.account_name,
-            type: entity.account_type
+            type: entity.account_type,
           },
           tax_rate: entity.default_tax_rate,
-          is_exempt: entity.is_tax_exempt
-        }
+          is_exempt: entity.is_tax_exempt,
+        },
       },
-      message: `Entidad encontrada: ${entity.entity_name}`
+      message: `Entidad encontrada: ${entity.entity_name}`,
     });
 
   } catch (error) {
@@ -103,7 +105,7 @@ export async function GET(request: NextRequest) {
       success: false,
       error: 'Error interno en búsqueda de entidad',
       entity_found: false,
-      details: error instanceof Error ? error.message : 'Error desconocido'
+      details: error instanceof Error ? error.message : 'Error desconocido',
     }, { status: 500 });
   }
 }

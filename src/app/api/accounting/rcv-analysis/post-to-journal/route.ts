@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection } from '@/lib/database/databaseSimple';
 
 /**
@@ -19,20 +21,20 @@ export async function POST(request: NextRequest) {
       lines_count: preliminary_entry?.lines?.length || 0,
       total_debit: preliminary_entry?.total_debit || 0,
       total_credit: preliminary_entry?.total_credit || 0,
-      is_balanced: preliminary_entry?.is_balanced || false
+      is_balanced: preliminary_entry?.is_balanced || false,
     });
 
     if (!company_id || !rcv_analysis || !preliminary_entry) {
       return NextResponse.json({
         success: false,
-        error: 'Faltan datos requeridos: company_id, rcv_analysis, preliminary_entry'
+        error: 'Faltan datos requeridos: company_id, rcv_analysis, preliminary_entry',
       }, { status: 400 });
     }
 
     if (!preliminary_entry.is_balanced) {
       return NextResponse.json({
         success: false,
-        error: 'El asiento debe estar balanceado antes de poder contabilizarlo'
+        error: 'El asiento debe estar balanceado antes de poder contabilizarlo',
       }, { status: 400 });
     }
 
@@ -49,7 +51,7 @@ export async function POST(request: NextRequest) {
       if (existingJournalEntry?.journal_entry_id) {
         return NextResponse.json({
           success: false,
-          error: 'Este RCV ya tiene un asiento contable creado'
+          error: 'Este RCV ya tiene un asiento contable creado',
         }, { status: 400 });
       }
     }
@@ -79,12 +81,12 @@ export async function POST(request: NextRequest) {
       source_id: ledger_id,
       source_period: period?.toString()?.substring(0, 6) || null, // Asegurar máximo 6 caracteres
       status: 'draft',
-      created_by: 'system'
+      created_by: 'system',
     };
 
     console.log('🔍 Datos del asiento a insertar:', {
       ...journalEntry,
-      source_period_length: journalEntry.source_period?.length
+      source_period_length: journalEntry.source_period?.length,
     });
 
     const { data: createdEntry, error: entryError } = await supabase
@@ -97,7 +99,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ Error creando asiento principal:', entryError);
       return NextResponse.json({
         success: false,
-        error: 'Error creando el asiento en el libro diario: ' + entryError.message
+        error: `Error creando el asiento en el libro diario: ${  entryError.message}`,
       }, { status: 500 });
     }
 
@@ -114,7 +116,7 @@ export async function POST(request: NextRequest) {
       credit_amount: line.credit_amount || 0,
       reference: null,
       cost_center: null,
-      analytical_account: null
+      analytical_account: null,
     }));
 
     const { error: linesError } = await supabase
@@ -132,7 +134,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: false,
-        error: 'Error creando las líneas del asiento: ' + linesError.message
+        error: `Error creando las líneas del asiento: ${  linesError.message}`,
       }, { status: 500 });
     }
 
@@ -145,7 +147,7 @@ export async function POST(request: NextRequest) {
         .update({
           journal_entry_id: createdEntry.id,
           is_processed: true,
-          processed_at: new Date().toISOString()
+          processed_at: new Date().toISOString(),
         })
         .eq('id', ledger_id);
 
@@ -167,16 +169,16 @@ export async function POST(request: NextRequest) {
         total_debit: createdEntry.total_debit,
         total_credit: createdEntry.total_credit,
         is_balanced: Math.abs(createdEntry.total_debit - createdEntry.total_credit) < 0.01,
-        created_at: createdEntry.created_at
+        created_at: createdEntry.created_at,
       },
-      message: `Asiento #${createdEntry.entry_number} creado exitosamente en el libro diario con ${journalLines.length} líneas`
+      message: `Asiento #${createdEntry.entry_number} creado exitosamente en el libro diario con ${journalLines.length} líneas`,
     });
 
   } catch (error) {
     console.error('❌ Error en post-to-journal:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }

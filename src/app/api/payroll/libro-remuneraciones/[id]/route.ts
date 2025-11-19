@@ -1,10 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection } from '@/lib/database/databaseSimple';
 
 // DELETE - Eliminar libro de remuneraciones por ID
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const bookId = params.id;
@@ -12,7 +14,7 @@ export async function DELETE(
     if (!bookId) {
       return NextResponse.json(
         { error: 'ID del libro es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -22,7 +24,7 @@ export async function DELETE(
     if (!supabase) {
       return NextResponse.json(
         { error: 'Error de configuración de base de datos' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -30,7 +32,7 @@ export async function DELETE(
     console.log('🔍 Configuración Supabase:', {
       hasClient: !!supabase,
       url: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'configurada' : 'no configurada',
-      key: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'configurada' : 'no configurada'
+      key: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'configurada' : 'no configurada',
     });
 
     // Verificar que el libro existe sin filtro de company_id para debug
@@ -43,14 +45,14 @@ export async function DELETE(
     console.log('🔍 Resultado consulta libro:', {
       data: existingBook,
       error: checkError,
-      bookId: bookId
+      bookId,
     });
 
     if (checkError) {
       console.error('❌ Error en consulta de libro:', checkError);
       return NextResponse.json(
         { error: 'Error al consultar libro', details: checkError.message },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -58,7 +60,7 @@ export async function DELETE(
       console.error('❌ Libro no encontrado para ID:', bookId);
       return NextResponse.json(
         { error: 'Libro no encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -74,7 +76,7 @@ export async function DELETE(
       console.error('❌ Error eliminando detalles del libro:', detailsError);
       return NextResponse.json(
         { error: 'Error al eliminar detalles del libro' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -90,7 +92,7 @@ export async function DELETE(
       console.error('❌ Error eliminando libro:', bookError);
       return NextResponse.json(
         { error: 'Error al eliminar libro' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -98,14 +100,14 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: `Libro de ${existingBook.period} eliminado exitosamente`
+      message: `Libro de ${existingBook.period} eliminado exitosamente`,
     });
 
   } catch (error) {
     console.error('Error en DELETE /api/payroll/libro-remuneraciones/[id]:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

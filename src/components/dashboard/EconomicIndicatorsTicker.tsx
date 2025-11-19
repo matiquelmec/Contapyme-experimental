@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
 import { TrendingUp, TrendingDown, Minus, RefreshCw } from 'lucide-react'
 
 interface IndicatorData {
@@ -24,7 +25,7 @@ export function EconomicIndicatorsTicker() {
 
     // Auto-refresh every 5 minutes
     const interval = setInterval(loadIndicators, 300000)
-    return () => clearInterval(interval)
+    return () => { clearInterval(interval); }
   }, [])
 
   const loadIndicators = async () => {
@@ -44,7 +45,7 @@ export function EconomicIndicatorsTicker() {
             change: 12.45,
             changePercent: 0.033,
             lastUpdate: new Date().toISOString(),
-            trend: 'up'
+            trend: 'up',
           },
           {
             code: 'UTM',
@@ -54,7 +55,7 @@ export function EconomicIndicatorsTicker() {
             change: 0,
             changePercent: 0,
             lastUpdate: new Date().toISOString(),
-            trend: 'stable'
+            trend: 'stable',
           },
           {
             code: 'USD',
@@ -64,7 +65,7 @@ export function EconomicIndicatorsTicker() {
             change: -4.23,
             changePercent: -0.44,
             lastUpdate: new Date().toISOString(),
-            trend: 'down'
+            trend: 'down',
           },
           {
             code: 'EUR',
@@ -74,7 +75,7 @@ export function EconomicIndicatorsTicker() {
             change: -2.15,
             changePercent: -0.21,
             lastUpdate: new Date().toISOString(),
-            trend: 'down'
+            trend: 'down',
           },
           {
             code: 'IPC',
@@ -84,7 +85,7 @@ export function EconomicIndicatorsTicker() {
             change: 0.1,
             changePercent: 0,
             lastUpdate: new Date().toISOString(),
-            trend: 'up'
+            trend: 'up',
           },
           {
             code: 'TPM',
@@ -94,8 +95,8 @@ export function EconomicIndicatorsTicker() {
             change: 0,
             changePercent: 0,
             lastUpdate: new Date().toISOString(),
-            trend: 'stable'
-          }
+            trend: 'stable',
+          },
         ]
 
         setIndicators(tickerData)
@@ -110,7 +111,7 @@ export function EconomicIndicatorsTicker() {
             change: 12.45,
             changePercent: 0.033,
             lastUpdate: new Date().toISOString(),
-            trend: 'up'
+            trend: 'up',
           },
           {
             code: 'UTM',
@@ -120,7 +121,7 @@ export function EconomicIndicatorsTicker() {
             change: 0,
             changePercent: 0,
             lastUpdate: new Date().toISOString(),
-            trend: 'stable'
+            trend: 'stable',
           },
           {
             code: 'USD',
@@ -130,7 +131,7 @@ export function EconomicIndicatorsTicker() {
             change: -4.23,
             changePercent: -0.44,
             lastUpdate: new Date().toISOString(),
-            trend: 'down'
+            trend: 'down',
           },
           {
             code: 'EUR',
@@ -140,7 +141,7 @@ export function EconomicIndicatorsTicker() {
             change: -2.15,
             changePercent: -0.21,
             lastUpdate: new Date().toISOString(),
-            trend: 'down'
+            trend: 'down',
           },
           {
             code: 'IPC',
@@ -150,7 +151,7 @@ export function EconomicIndicatorsTicker() {
             change: 0.1,
             changePercent: 0,
             lastUpdate: new Date().toISOString(),
-            trend: 'up'
+            trend: 'up',
           },
           {
             code: 'TPM',
@@ -160,8 +161,8 @@ export function EconomicIndicatorsTicker() {
             change: 0,
             changePercent: 0,
             lastUpdate: new Date().toISOString(),
-            trend: 'stable'
-          }
+            trend: 'stable',
+          },
         ])
       }
     } catch (error) {
@@ -176,7 +177,7 @@ export function EconomicIndicatorsTicker() {
           change: 12.45,
           changePercent: 0.033,
           lastUpdate: new Date().toISOString(),
-          trend: 'up'
+          trend: 'up',
         },
         {
           code: 'UTM',
@@ -186,7 +187,7 @@ export function EconomicIndicatorsTicker() {
           change: 0,
           changePercent: 0,
           lastUpdate: new Date().toISOString(),
-          trend: 'stable'
+          trend: 'stable',
         },
         {
           code: 'USD',
@@ -196,8 +197,8 @@ export function EconomicIndicatorsTicker() {
           change: -4.23,
           changePercent: -0.44,
           lastUpdate: new Date().toISOString(),
-          trend: 'down'
-        }
+          trend: 'down',
+        },
       ])
     } finally {
       setIsLoading(false)
@@ -211,7 +212,7 @@ export function EconomicIndicatorsTicker() {
         style: 'currency',
         currency: 'CLP',
         minimumFractionDigits: indicator.code === 'UF' || indicator.code === 'UTM' ? 2 : 0,
-        maximumFractionDigits: indicator.code === 'UF' || indicator.code === 'UTM' ? 2 : 2
+        maximumFractionDigits: indicator.code === 'UF' || indicator.code === 'UTM' ? 2 : 2,
       }).format(indicator.value)
     } else {
       return `${indicator.value}${indicator.unit}`
@@ -248,8 +249,8 @@ export function EconomicIndicatorsTicker() {
             <div className="flex space-x-8 animate-pulse">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="flex items-center space-x-2">
-                  <div className="w-8 h-4 bg-blue-400/30 rounded"></div>
-                  <div className="w-16 h-4 bg-blue-400/30 rounded"></div>
+                  <div className="w-8 h-4 bg-blue-400/30 rounded" />
+                  <div className="w-16 h-4 bg-blue-400/30 rounded" />
                 </div>
               ))}
             </div>
@@ -311,7 +312,7 @@ export function EconomicIndicatorsTicker() {
             <div className="text-xs text-blue-100">
               {lastRefresh.toLocaleTimeString('es-CL', {
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
               })}
             </div>
             <button

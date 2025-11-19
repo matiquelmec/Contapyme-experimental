@@ -76,7 +76,7 @@ export function usePayrollOptions(companyId: string): UsePayrollOptionsReturn {
               commission_percentage: afp.commission_percentage,
               sis_percentage: afp.sis_percentage || 1.88,
               display_name: `${afp.name} (${afp.commission_percentage}% + SIS ${afp.sis_percentage || 1.88}%)`,
-              active: afp.active
+              active: afp.active,
             })) || [],
           
           health_options: settings.health_configs
@@ -88,11 +88,11 @@ export function usePayrollOptions(companyId: string): UsePayrollOptionsReturn {
               display_name: health.name === 'FONASA' 
                 ? `${health.name} (7% obligatorio)`
                 : `${health.name} (${health.plan_percentage || 7.0}% mínimo)`,
-              active: health.active
+              active: health.active,
             })) || [],
           
           has_custom_config: true,
-          last_updated: new Date().toISOString()
+          last_updated: new Date().toISOString(),
         };
         
         setOptions(formattedOptions);
@@ -115,7 +115,7 @@ export function usePayrollOptions(companyId: string): UsePayrollOptionsReturn {
           { code: 'MODELO', name: 'AFP Modelo', commission_percentage: 0.58, sis_percentage: 1.15, display_name: 'AFP Modelo (0.58% + SIS 1.15%)', active: true },
           { code: 'PLANVITAL', name: 'AFP PlanVital', commission_percentage: 1.16, sis_percentage: 1.15, display_name: 'AFP PlanVital (1.16% + SIS 1.15%)', active: true },
           { code: 'PROVIDA', name: 'AFP ProVida', commission_percentage: 1.69, sis_percentage: 1.15, display_name: 'AFP ProVida (1.69% + SIS 1.15%)', active: true },
-          { code: 'UNO', name: 'AFP Uno', commission_percentage: 0.69, sis_percentage: 1.15, display_name: 'AFP Uno (0.69% + SIS 1.15%)', active: true }
+          { code: 'UNO', name: 'AFP Uno', commission_percentage: 0.69, sis_percentage: 1.15, display_name: 'AFP Uno (0.69% + SIS 1.15%)', active: true },
         ],
         health_options: [
           { code: 'FONASA', name: 'FONASA', plan_percentage: 7.0, display_name: 'FONASA (7% obligatorio)', active: true },
@@ -123,10 +123,10 @@ export function usePayrollOptions(companyId: string): UsePayrollOptionsReturn {
           { code: 'CONSALUD', name: 'Consalud', plan_percentage: 8.2, display_name: 'Consalud (8.2% mínimo)', active: true },
           { code: 'CRUZ_BLANCA', name: 'Cruz Blanca', plan_percentage: 8.8, display_name: 'Cruz Blanca (8.8% mínimo)', active: true },
           { code: 'COLMENA', name: 'Colmena Golden Cross', plan_percentage: 8.6, display_name: 'Colmena Golden Cross (8.6% mínimo)', active: true },
-          { code: 'VIDA_TRES', name: 'Vida Tres', plan_percentage: 8.3, display_name: 'Vida Tres (8.3% mínimo)', active: true }
+          { code: 'VIDA_TRES', name: 'Vida Tres', plan_percentage: 8.3, display_name: 'Vida Tres (8.3% mínimo)', active: true },
         ],
         has_custom_config: false,
-        last_updated: new Date().toISOString()
+        last_updated: new Date().toISOString(),
       });
     } finally {
       setLoading(false);
@@ -141,7 +141,7 @@ export function usePayrollOptions(companyId: string): UsePayrollOptionsReturn {
     options,
     loading,
     error,
-    refetch: fetchOptions
+    refetch: fetchOptions,
   };
 }
 
@@ -153,7 +153,7 @@ export function useAFPOptions(companyId: string) {
     afpOptions: options?.afp_options || [],
     loading,
     error,
-    refetch
+    refetch,
   };
 }
 
@@ -165,6 +165,6 @@ export function useHealthOptions(companyId: string) {
     healthOptions: options?.health_options || [],
     loading,
     error,
-    refetch
+    refetch,
   };
 }

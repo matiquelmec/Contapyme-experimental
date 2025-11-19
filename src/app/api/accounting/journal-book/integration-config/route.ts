@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -14,10 +16,10 @@ const DEFAULT_INTEGRATION_CONFIG = {
     accounts: {
       debit_client_account: '1105001', // Clientes
       credit_sales_account: '4101001', // Ventas
-      credit_iva_account: '2104001'    // IVA Débito Fiscal
+      credit_iva_account: '2104001',    // IVA Débito Fiscal
     },
     description_template: 'Venta según RCV {period} - {file_name}',
-    auto_process: true
+    auto_process: true,
   },
   // Configuración para RCV Compras
   rcv_purchases: {
@@ -25,10 +27,10 @@ const DEFAULT_INTEGRATION_CONFIG = {
     accounts: {
       debit_expense_account: '5101001', // Gastos
       debit_iva_account: '1104001',     // IVA Crédito Fiscal
-      credit_supplier_account: '2101001' // Proveedores
+      credit_supplier_account: '2101001', // Proveedores
     },
     description_template: 'Compra según RCV {period} - {file_name}',
-    auto_process: true
+    auto_process: true,
   },
   // Configuración para Activos Fijos
   fixed_assets: {
@@ -36,11 +38,11 @@ const DEFAULT_INTEGRATION_CONFIG = {
     accounts: {
       debit_asset_account: '', // Se usa la cuenta del activo específico
       credit_cash_account: '1101001', // Caja/Bancos por defecto
-      credit_supplier_account: '2101001' // Proveedores alternativo
+      credit_supplier_account: '2101001', // Proveedores alternativo
     },
     description_template: 'Adquisición Activo Fijo: {asset_name}',
-    auto_process: false // Requiere revisión manual
-  }
+    auto_process: false, // Requiere revisión manual
+  },
 };
 
 /**
@@ -55,7 +57,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -72,15 +74,15 @@ export async function GET(request: NextRequest) {
         company_id: companyId,
         config,
         is_default: true,
-        updated_at: null
-      }
+        updated_at: null,
+      },
     });
 
   } catch (error) {
     console.error('❌ Error obteniendo configuración de integración:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -97,7 +99,7 @@ export async function POST(request: NextRequest) {
     if (!company_id || !config) {
       return NextResponse.json(
         { success: false, error: 'Faltan campos requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -108,7 +110,7 @@ export async function POST(request: NextRequest) {
     if (!validationResult.isValid) {
       return NextResponse.json(
         { success: false, error: `Configuración inválida: ${validationResult.errors.join(', ')}` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -127,7 +129,7 @@ export async function POST(request: NextRequest) {
         .from('integration_config')
         .update({
           config,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('company_id', company_id)
         .select()
@@ -143,7 +145,7 @@ export async function POST(request: NextRequest) {
           company_id,
           config,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -155,14 +157,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: result,
-      message: 'Configuración de integración actualizada exitosamente'
+      message: 'Configuración de integración actualizada exitosamente',
     });
 
   } catch (error) {
     console.error('❌ Error actualizando configuración de integración:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -184,7 +186,7 @@ function validateIntegrationConfig(config: any) {
     if (!config.rcv_sales.accounts) {
       errors.push('Faltan cuentas para RCV Ventas');
     } else {
-      const accounts = config.rcv_sales.accounts;
+      const { accounts } = config.rcv_sales;
       if (!accounts.debit_client_account) errors.push('Falta cuenta de clientes (débito)');
       if (!accounts.credit_sales_account) errors.push('Falta cuenta de ventas (crédito)');
       if (!accounts.credit_iva_account) errors.push('Falta cuenta de IVA (crédito)');
@@ -196,7 +198,7 @@ function validateIntegrationConfig(config: any) {
     if (!config.rcv_purchases.accounts) {
       errors.push('Faltan cuentas para RCV Compras');
     } else {
-      const accounts = config.rcv_purchases.accounts;
+      const { accounts } = config.rcv_purchases;
       if (!accounts.debit_expense_account) errors.push('Falta cuenta de gastos (débito)');
       if (!accounts.debit_iva_account) errors.push('Falta cuenta de IVA crédito (débito)');
       if (!accounts.credit_supplier_account) errors.push('Falta cuenta de proveedores (crédito)');
@@ -208,7 +210,7 @@ function validateIntegrationConfig(config: any) {
     if (!config.fixed_assets.accounts) {
       errors.push('Faltan cuentas para Activos Fijos');
     } else {
-      const accounts = config.fixed_assets.accounts;
+      const { accounts } = config.fixed_assets;
       if (!accounts.credit_cash_account && !accounts.credit_supplier_account) {
         errors.push('Falta al menos una cuenta de crédito para Activos Fijos (caja o proveedores)');
       }
@@ -217,7 +219,7 @@ function validateIntegrationConfig(config: any) {
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -233,7 +235,7 @@ export async function DELETE(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -248,14 +250,14 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Configuración restablecida a valores por defecto'
+      message: 'Configuración restablecida a valores por defecto',
     });
 
   } catch (error) {
     console.error('❌ Error eliminando configuración de integración:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,17 +1,17 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
+
 import {
   Users,
   TrendingUp,
   TrendingDown,
   Star,
   MapPin,
-  Phone,
   Calendar,
-  DollarSign
 } from 'lucide-react'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 
 interface Client {
   id: string
@@ -70,7 +70,7 @@ export function TopClients() {
             lastPurchase: '2024-11-10',
             purchaseFrequency: 2.3,
             category: 'premium',
-            paymentBehavior: 'excellent'
+            paymentBehavior: 'excellent',
           },
           {
             id: '2',
@@ -85,7 +85,7 @@ export function TopClients() {
             lastPurchase: '2024-11-08',
             purchaseFrequency: 4.1,
             category: 'regular',
-            paymentBehavior: 'good'
+            paymentBehavior: 'good',
           },
           {
             id: '3',
@@ -100,7 +100,7 @@ export function TopClients() {
             lastPurchase: '2024-11-12',
             purchaseFrequency: 3.8,
             category: 'regular',
-            paymentBehavior: 'excellent'
+            paymentBehavior: 'excellent',
           },
           {
             id: '4',
@@ -113,7 +113,7 @@ export function TopClients() {
             lastPurchase: '2024-11-05',
             purchaseFrequency: 1.2,
             category: 'premium',
-            paymentBehavior: 'good'
+            paymentBehavior: 'good',
           },
           {
             id: '5',
@@ -128,9 +128,9 @@ export function TopClients() {
             lastPurchase: '2024-10-28',
             purchaseFrequency: 2.9,
             category: 'regular',
-            paymentBehavior: 'regular'
-          }
-        ]
+            paymentBehavior: 'regular',
+          },
+        ],
       }
 
       setData(mockData)
@@ -141,21 +141,17 @@ export function TopClients() {
     }
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(amount)
-  }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL', {
+  const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('es-CL', {
       day: 'numeric',
-      month: 'short'
+      month: 'short',
     })
-  }
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -204,7 +200,7 @@ export function TopClients() {
         <CardContent>
           <div className="animate-pulse space-y-4">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-200 rounded"></div>
+              <div key={i} className="h-16 bg-gray-200 rounded" />
             ))}
           </div>
         </CardContent>
@@ -212,7 +208,7 @@ export function TopClients() {
     )
   }
 
-  if (!data || !data.clients.length) {
+  if (!data?.clients.length) {
     return (
       <Card className="h-full">
         <CardContent className="flex items-center justify-center h-full">
@@ -235,7 +231,7 @@ export function TopClients() {
           </div>
           <select
             value={timeframe}
-            onChange={(e) => setTimeframe(e.target.value as typeof timeframe)}
+            onChange={(e) => { setTimeframe(e.target.value as typeof timeframe); }}
             className="text-xs border rounded px-2 py-1"
           >
             <option value="month">Este mes</option>
@@ -334,9 +330,9 @@ export function TopClients() {
                   <div
                     className="bg-gradient-to-r from-blue-500 to-purple-600 h-1.5 rounded-full"
                     style={{
-                      width: `${(client.monthlyRevenue / data.clients[0].monthlyRevenue) * 100}%`
+                      width: `${(client.monthlyRevenue / data.clients[0].monthlyRevenue) * 100}%`,
                     }}
-                  ></div>
+                   />
                 </div>
               </div>
             </div>

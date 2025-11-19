@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -91,7 +93,7 @@ function parseRCVData(csvContent: string, recordType: 'purchase' | 'sale'): RCVR
     'comuna': 'entity_commune',
     'giro': 'entity_business_name',
     'glosa': 'description',
-    'descripcion': 'description'
+    'descripcion': 'description',
   };
   
   // Procesar cada línea de datos
@@ -101,7 +103,7 @@ function parseRCVData(csvContent: string, recordType: 'purchase' | 'sale'): RCVR
     if (values.length < headers.length) continue;
     
     const record: any = {
-      record_type: recordType
+      record_type: recordType,
     };
     
     // Mapear valores según headers
@@ -165,7 +167,7 @@ export async function POST(request: NextRequest) {
     if (!file || !companyId || !recordType) {
       return NextResponse.json({
         success: false,
-        error: 'Archivo, company_id y record_type son requeridos'
+        error: 'Archivo, company_id y record_type son requeridos',
       }, { status: 400 });
     }
     
@@ -186,7 +188,7 @@ export async function POST(request: NextRequest) {
         period_month: periodMonth ? parseInt(periodMonth) : null,
         record_type: recordType,
         status: 'processing',
-        processing_started_at: new Date().toISOString()
+        processing_started_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -195,7 +197,7 @@ export async function POST(request: NextRequest) {
       console.error('Error creating import batch:', batchError);
       return NextResponse.json({
         success: false,
-        error: 'Error al crear lote de importación'
+        error: 'Error al crear lote de importación',
       }, { status: 500 });
     }
     
@@ -208,13 +210,13 @@ export async function POST(request: NextRequest) {
         .update({
           status: 'failed',
           error_message: 'No se encontraron registros válidos en el archivo',
-          processing_completed_at: new Date().toISOString()
+          processing_completed_at: new Date().toISOString(),
         })
         .eq('id', batch.id);
       
       return NextResponse.json({
         success: false,
-        error: 'No se encontraron registros válidos en el archivo'
+        error: 'No se encontraron registros válidos en el archivo',
       }, { status: 400 });
     }
     
@@ -238,7 +240,7 @@ export async function POST(request: NextRequest) {
       status: 'pending',
       import_batch_id: batchId,
       import_source: 'csv',
-      original_data: record
+      original_data: record,
     }));
     
     // Insertar registros en la base de datos
@@ -254,14 +256,14 @@ export async function POST(request: NextRequest) {
         .from('rcv_import_batches')
         .update({
           status: 'failed',
-          error_message: 'Error al insertar registros: ' + insertError.message,
-          processing_completed_at: new Date().toISOString()
+          error_message: `Error al insertar registros: ${  insertError.message}`,
+          processing_completed_at: new Date().toISOString(),
         })
         .eq('id', batch.id);
       
       return NextResponse.json({
         success: false,
-        error: 'Error al insertar registros en la base de datos'
+        error: 'Error al insertar registros en la base de datos',
       }, { status: 500 });
     }
     
@@ -293,7 +295,7 @@ export async function POST(request: NextRequest) {
     const totals = records.reduce((acc, record) => ({
       net: acc.net + (record.net_amount || 0),
       tax: acc.tax + (record.tax_amount || 0),
-      total: acc.total + record.total_amount
+      total: acc.total + record.total_amount,
     }), { net: 0, tax: 0, total: 0 });
     
     // Actualizar estadísticas del lote
@@ -308,7 +310,7 @@ export async function POST(request: NextRequest) {
         total_tax_amount: totals.tax,
         total_amount: totals.total,
         status: errorCount === 0 ? 'completed' : 'partial',
-        processing_completed_at: new Date().toISOString()
+        processing_completed_at: new Date().toISOString(),
       })
       .eq('id', batch.id);
     
@@ -331,17 +333,17 @@ export async function POST(request: NextRequest) {
         totals: {
           net_amount: totals.net,
           tax_amount: totals.tax,
-          total_amount: totals.total
-        }
+          total_amount: totals.total,
+        },
       },
-      message: `Importación completada: ${records.length} registros procesados, ${entitiesCreated.size} entidades gestionadas`
+      message: `Importación completada: ${records.length} registros procesados, ${entitiesCreated.size} entidades gestionadas`,
     });
     
   } catch (error) {
     console.error('Error in POST /api/accounting/rcv/import:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -355,7 +357,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json({
         success: false,
-        error: 'company_id es requerido'
+        error: 'company_id es requerido',
       }, { status: 400 });
     }
     
@@ -370,20 +372,20 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching import batches:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error al obtener historial de importaciones'
+        error: 'Error al obtener historial de importaciones',
       }, { status: 500 });
     }
     
     return NextResponse.json({
       success: true,
-      data: batches || []
+      data: batches || [],
     });
     
   } catch (error) {
     console.error('Error in GET /api/accounting/rcv/import:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }

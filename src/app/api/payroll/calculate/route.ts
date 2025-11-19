@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 // Inicializar cliente de Supabase
@@ -67,14 +69,14 @@ export async function POST(request: NextRequest) {
       overtime_hours = 0,
       bonuses = 0,
       allowances = 0,
-      additional_deductions = 0
+      additional_deductions = 0,
     } = body;
 
     // Validaciones
     if (!employee_id || !period || !base_salary) {
       return NextResponse.json(
         { error: 'Faltan campos requeridos: employee_id, period, base_salary' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -93,7 +95,7 @@ export async function POST(request: NextRequest) {
     if (empError || !employee) {
       return NextResponse.json(
         { error: 'Empleado no encontrado o sin contrato activo' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -103,7 +105,7 @@ export async function POST(request: NextRequest) {
     if (!config) {
       return NextResponse.json(
         { error: 'Empleado sin configuración previsional' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -119,7 +121,7 @@ export async function POST(request: NextRequest) {
     if (paramError || !parameters) {
       return NextResponse.json(
         { error: 'No se encontraron parámetros para el período' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -186,7 +188,7 @@ export async function POST(request: NextRequest) {
       .rpc('calculate_unique_tax', {
         p_taxable_income: taxable_income,
         p_utm_value: 66000, // UTM 2025 aproximada
-        p_period: period
+        p_period: period,
       });
 
     const unique_tax = taxResult?.[0]?.tax_amount || 0;
@@ -245,7 +247,7 @@ export async function POST(request: NextRequest) {
       // Empleador (costos patronales)
       afp_employer: sis_employer, // SIS es el costo patronal AFP
       afc_employer,
-      mutual_insurance
+      mutual_insurance,
     };
 
     return NextResponse.json({
@@ -254,17 +256,17 @@ export async function POST(request: NextRequest) {
       employee: {
         name: `${employee.first_name} ${employee.last_name}`,
         rut: employee.rut,
-        position: contract.position
+        position: contract.position,
       },
       period,
-      calculation_date: new Date().toISOString()
+      calculation_date: new Date().toISOString(),
     });
 
   } catch (error) {
     console.error('Error en cálculo de liquidación:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -272,14 +274,14 @@ export async function POST(request: NextRequest) {
 // GET - Obtener liquidación existente
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const employee_id = searchParams.get('employee_id');
     const period = searchParams.get('period');
 
     if (!employee_id || !period) {
       return NextResponse.json(
         { error: 'employee_id y period son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -298,20 +300,20 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Liquidación no encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json({
       success: true,
-      data: payroll
+      data: payroll,
     });
 
   } catch (error) {
     console.error('Error al obtener liquidación:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

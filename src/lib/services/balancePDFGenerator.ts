@@ -41,7 +41,7 @@ export class BalancePDFGenerator {
     const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
     
     let currentPage = pdfDoc.addPage([1100, 850]); // Horizontal para más espacio
-    let { width, height } = currentPage.getSize();
+    const { width, height } = currentPage.getSize();
     let yPosition = height - 50;
     
     // Título principal
@@ -50,7 +50,7 @@ export class BalancePDFGenerator {
       y: yPosition,
       size: 16,
       font: boldFont,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
     yPosition -= 25;
     
@@ -60,7 +60,7 @@ export class BalancePDFGenerator {
       y: yPosition,
       size: 14,
       font: boldFont,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
     yPosition -= 20;
     
@@ -70,8 +70,8 @@ export class BalancePDFGenerator {
       x: width / 2 - (periodText.length * 5) / 2,
       y: yPosition,
       size: 12,
-      font: font,
-      color: rgb(0, 0, 0)
+      font,
+      color: rgb(0, 0, 0),
     });
     yPosition -= 30;
     
@@ -86,7 +86,7 @@ export class BalancePDFGenerator {
       'Activos',
       'Pasivos',
       'Pérdidas',
-      'Ganancias'
+      'Ganancias',
     ];
     
     const columnWidths = [60, 150, 80, 80, 80, 80, 80, 80, 80, 80];
@@ -109,10 +109,10 @@ export class BalancePDFGenerator {
       // Línea vertical
       if (i > 0) {
         currentPage.drawLine({
-          start: { x: x, y: yPosition - 10 },
-          end: { x: x, y: yPosition + 30 },
+          start: { x, y: yPosition - 10 },
+          end: { x, y: yPosition + 30 },
           thickness: 1,
-          color: rgb(0, 0, 0)
+          color: rgb(0, 0, 0),
         });
       }
       
@@ -122,7 +122,7 @@ export class BalancePDFGenerator {
         y: yPosition,
         size: 9,
         font: boldFont,
-        color: rgb(0, 0, 0)
+        color: rgb(0, 0, 0),
       });
     }
     
@@ -131,7 +131,7 @@ export class BalancePDFGenerator {
       start: { x: 50, y: yPosition - 10 },
       end: { x: 50 + columnWidths.reduce((a, b) => a + b, 0), y: yPosition - 10 },
       thickness: 2,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
     
     yPosition -= 25;
@@ -142,7 +142,7 @@ export class BalancePDFGenerator {
       return new Intl.NumberFormat('es-CL', {
         style: 'currency',
         currency: 'CLP',
-        minimumFractionDigits: 0
+        minimumFractionDigits: 0,
       }).format(amount);
     };
     
@@ -157,7 +157,7 @@ export class BalancePDFGenerator {
       const rowData = [
         account.account_code,
         account.account_name.length > 20 
-          ? account.account_name.substring(0, 20) + '...' 
+          ? `${account.account_name.substring(0, 20)  }...` 
           : account.account_name,
         formatCurrency(account.trial_balance_debit),
         formatCurrency(account.trial_balance_credit),
@@ -166,7 +166,7 @@ export class BalancePDFGenerator {
         formatCurrency(account.balance_sheet_debit),
         formatCurrency(account.balance_sheet_credit),
         formatCurrency(account.income_statement_debit),
-        formatCurrency(account.income_statement_credit)
+        formatCurrency(account.income_statement_credit),
       ];
       
       xPosition = 50;
@@ -177,8 +177,8 @@ export class BalancePDFGenerator {
           x: x + 5,
           y: yPosition,
           size: 8,
-          font: font,
-          color: rgb(0, 0, 0)
+          font,
+          color: rgb(0, 0, 0),
         });
       }
       
@@ -194,7 +194,7 @@ export class BalancePDFGenerator {
         start: { x: 50, y: yPosition + 10 },
         end: { x: 50 + columnWidths.reduce((a, b) => a + b, 0), y: yPosition + 10 },
         thickness: 1,
-        color: rgb(0.5, 0.5, 0.5)
+        color: rgb(0.5, 0.5, 0.5),
       });
       
       const resultRowData = [
@@ -207,7 +207,7 @@ export class BalancePDFGenerator {
         data.net_income > 0 ? formatCurrency(data.net_income) : '-',
         data.net_income < 0 ? formatCurrency(Math.abs(data.net_income)) : '-',
         data.net_income < 0 ? formatCurrency(Math.abs(data.net_income)) : '-',
-        data.net_income > 0 ? formatCurrency(data.net_income) : '-'
+        data.net_income > 0 ? formatCurrency(data.net_income) : '-',
       ];
       
       xPosition = 50;
@@ -219,7 +219,7 @@ export class BalancePDFGenerator {
           y: yPosition,
           size: 8,
           font: i === 1 ? boldFont : font,
-          color: rgb(0, 0, 0)
+          color: rgb(0, 0, 0),
         });
       }
       
@@ -231,7 +231,7 @@ export class BalancePDFGenerator {
       start: { x: 50, y: yPosition + 10 },
       end: { x: 50 + columnWidths.reduce((a, b) => a + b, 0), y: yPosition + 10 },
       thickness: 2,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
     
     // Fila de totales
@@ -245,7 +245,7 @@ export class BalancePDFGenerator {
       formatCurrency(data.totals.balance_sheet_debit),
       formatCurrency(data.totals.balance_sheet_credit),
       formatCurrency(data.totals.income_statement_debit),
-      formatCurrency(data.totals.income_statement_credit)
+      formatCurrency(data.totals.income_statement_credit),
     ];
     
     xPosition = 50;
@@ -257,7 +257,7 @@ export class BalancePDFGenerator {
         y: yPosition,
         size: 9,
         font: boldFont,
-        color: rgb(0, 0, 0)
+        color: rgb(0, 0, 0),
       });
     }
     
@@ -266,13 +266,13 @@ export class BalancePDFGenerator {
       start: { x: 50, y: yPosition - 5 },
       end: { x: 50 + columnWidths.reduce((a, b) => a + b, 0), y: yPosition - 5 },
       thickness: 2,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
     currentPage.drawLine({
       start: { x: 50, y: yPosition - 8 },
       end: { x: 50 + columnWidths.reduce((a, b) => a + b, 0), y: yPosition - 8 },
       thickness: 1,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
     
     // Pie de página
@@ -282,8 +282,8 @@ export class BalancePDFGenerator {
       x: 50,
       y: footerY,
       size: 8,
-      font: font,
-      color: rgb(0.5, 0.5, 0.5)
+      font,
+      color: rgb(0.5, 0.5, 0.5),
     });
     
     // Página actual
@@ -295,8 +295,8 @@ export class BalancePDFGenerator {
         x: width - 100,
         y: footerY,
         size: 8,
-        font: font,
-        color: rgb(0.5, 0.5, 0.5)
+        font,
+        color: rgb(0.5, 0.5, 0.5),
       });
     }
     
@@ -333,7 +333,7 @@ export class BalancePDFGenerator {
           balance_sheet_debit: 1000000,
           balance_sheet_credit: 0,
           income_statement_debit: 0,
-          income_statement_credit: 0
+          income_statement_credit: 0,
         },
         {
           account_code: '2.1.1.001',
@@ -345,7 +345,7 @@ export class BalancePDFGenerator {
           balance_sheet_debit: 0,
           balance_sheet_credit: 500000,
           income_statement_debit: 0,
-          income_statement_credit: 0
+          income_statement_credit: 0,
         },
         {
           account_code: '4.1.1.001',
@@ -357,8 +357,8 @@ export class BalancePDFGenerator {
           balance_sheet_debit: 0,
           balance_sheet_credit: 0,
           income_statement_debit: 0,
-          income_statement_credit: 10000000
-        }
+          income_statement_credit: 10000000,
+        },
       ],
       totals: {
         trial_balance_debit: 1000000,
@@ -368,8 +368,8 @@ export class BalancePDFGenerator {
         balance_sheet_debit: 1000000,
         balance_sheet_credit: 500000,
         income_statement_debit: 0,
-        income_statement_credit: 10000000
-      }
+        income_statement_credit: 10000000,
+      },
     };
   }
 }

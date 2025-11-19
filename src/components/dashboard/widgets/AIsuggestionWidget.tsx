@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
+
 import {
   Brain,
   TrendingUp,
@@ -13,8 +13,10 @@ import {
   Target,
   Zap,
   RefreshCw,
-  X
+  X,
 } from 'lucide-react'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 
 interface AISuggestion {
   id: string
@@ -81,7 +83,7 @@ export function AIsuggestionWidget() {
             implementation: 'short_term',
             tags: ['inventario', 'costos', 'optimización'],
             createdAt: '2024-11-15T10:30:00Z',
-            status: 'new'
+            status: 'new',
           },
           {
             id: '2',
@@ -97,7 +99,7 @@ export function AIsuggestionWidget() {
             implementation: 'immediate',
             tags: ['tributario', 'sii', 'beneficios'],
             createdAt: '2024-11-14T15:45:00Z',
-            status: 'new'
+            status: 'new',
           },
           {
             id: '3',
@@ -112,7 +114,7 @@ export function AIsuggestionWidget() {
             implementation: 'immediate',
             tags: ['cobranza', 'flujo-caja', 'clientes'],
             createdAt: '2024-11-13T09:20:00Z',
-            status: 'viewed'
+            status: 'viewed',
           },
           {
             id: '4',
@@ -127,7 +129,7 @@ export function AIsuggestionWidget() {
             implementation: 'long_term',
             tags: ['ventas', 'estacionalidad', 'planificación'],
             createdAt: '2024-11-12T14:15:00Z',
-            status: 'viewed'
+            status: 'viewed',
           },
           {
             id: '5',
@@ -143,9 +145,9 @@ export function AIsuggestionWidget() {
             implementation: 'short_term',
             tags: ['automatización', 'banco', 'tiempo'],
             createdAt: '2024-11-11T11:30:00Z',
-            status: 'implemented'
-          }
-        ]
+            status: 'implemented',
+          },
+        ],
       }
 
       setData(mockData)
@@ -156,14 +158,12 @@ export function AIsuggestionWidget() {
     }
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(amount)
-  }
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -295,16 +295,16 @@ export function AIsuggestionWidget() {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-16 bg-gray-200 rounded"></div>
-            <div className="h-8 bg-gray-200 rounded"></div>
-            <div className="h-12 bg-gray-200 rounded"></div>
+            <div className="h-16 bg-gray-200 rounded" />
+            <div className="h-8 bg-gray-200 rounded" />
+            <div className="h-12 bg-gray-200 rounded" />
           </div>
         </CardContent>
       </Card>
     )
   }
 
-  if (!data || !data.suggestions.length) {
+  if (!data?.suggestions.length) {
     return (
       <Card className="h-full">
         <CardContent className="flex items-center justify-center h-full">
@@ -336,7 +336,7 @@ export function AIsuggestionWidget() {
           <div className="flex items-center space-x-2">
             <select
               value={filter}
-              onChange={(e) => setFilter(e.target.value as typeof filter)}
+              onChange={(e) => { setFilter(e.target.value as typeof filter); }}
               className="text-xs border rounded px-2 py-1"
             >
               <option value="all">Todas ({data.totalSuggestions})</option>
@@ -426,7 +426,7 @@ export function AIsuggestionWidget() {
                     <div
                       className="h-1.5 bg-gradient-to-r from-green-400 to-blue-500 rounded-full"
                       style={{ width: `${currentItem.confidence}%` }}
-                    ></div>
+                     />
                   </div>
                   <span className="text-gray-600">{currentItem.confidence}%</span>
                 </div>
@@ -483,7 +483,7 @@ export function AIsuggestionWidget() {
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold text-gray-900">Todas las Sugerencias IA</h2>
                   <button
-                    onClick={() => setShowAllModal(false)}
+                    onClick={() => { setShowAllModal(false); }}
                     className="p-2 hover:bg-gray-100 rounded-full"
                   >
                     <X className="w-5 h-5 text-gray-500" />
@@ -528,7 +528,7 @@ export function AIsuggestionWidget() {
                               <div
                                 className="h-1.5 bg-gradient-to-r from-green-400 to-blue-500 rounded-full"
                                 style={{ width: `${suggestion.confidence}%` }}
-                              ></div>
+                               />
                             </div>
                             <span className="text-gray-600">{suggestion.confidence}%</span>
                           </div>
@@ -558,7 +558,7 @@ export function AIsuggestionWidget() {
                     Ahorro potencial: {formatCurrency(data?.potentialSavings || 0)}
                   </div>
                   <button
-                    onClick={() => setShowAllModal(false)}
+                    onClick={() => { setShowAllModal(false); }}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     Cerrar

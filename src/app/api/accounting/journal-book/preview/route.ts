@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection } from '@/lib/database/databaseSimple';
 
 export async function POST(request: NextRequest) {
@@ -9,7 +11,7 @@ export async function POST(request: NextRequest) {
     if (!transactionId || !companyId) {
       return NextResponse.json({
         success: false,
-        error: 'Transaction ID and Company ID are required'
+        error: 'Transaction ID and Company ID are required',
       }, { status: 400 });
     }
 
@@ -18,7 +20,7 @@ export async function POST(request: NextRequest) {
     // Import the same logic used in integration
     const { 
       createRCVJournalEntry, 
-      createPayrollJournalEntry 
+      createPayrollJournalEntry, 
     } = await import('../integration/route');
     
     // Get transaction data
@@ -51,7 +53,7 @@ export async function POST(request: NextRequest) {
     if (!previewData) {
       return NextResponse.json({
         success: false,
-        error: 'Could not generate preview - transaction data not found'
+        error: 'Could not generate preview - transaction data not found',
       }, { status: 404 });
     }
 
@@ -70,25 +72,25 @@ export async function POST(request: NextRequest) {
           total_debit,
           total_credit,
           balance_difference,
-          is_balanced: balance_difference <= 2
+          is_balanced: balance_difference <= 2,
         },
         transaction_info: rcvData ? {
           type: 'rcv',
           file_name: rcvData.file_name,
           total_amount: rcvData.total_amount,
-          total_transactions: rcvData.total_transactions
+          total_transactions: rcvData.total_transactions,
         } : {
           type: 'payroll',
-          period: `${year}-${String(month).padStart(2, '0')}`
-        }
-      }
+          period: `${year}-${String(month).padStart(2, '0')}`,
+        },
+      },
     });
 
   } catch (error) {
     console.error('❌ Error generating preview:', error);
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : 'Error generating preview'
+      error: error instanceof Error ? error.message : 'Error generating preview',
     }, { status: 500 });
   }
 }

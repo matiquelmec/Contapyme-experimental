@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { databaseSimple } from '@/lib/database/databaseSimple';
 
 export const dynamic = 'force-dynamic';
@@ -12,7 +14,7 @@ export async function POST(request: NextRequest) {
     if (!data) {
       return NextResponse.json({
         success: false,
-        error: 'Datos para importar son requeridos'
+        error: 'Datos para importar son requeridos',
       }, { status: 400 });
     }
 
@@ -31,14 +33,14 @@ export async function POST(request: NextRequest) {
     } catch (parseError: any) {
       return NextResponse.json({
         success: false,
-        error: 'Error al parsear datos: ' + parseError.message
+        error: `Error al parsear datos: ${  parseError.message}`,
       }, { status: 400 });
     }
 
     if (!Array.isArray(accounts) || accounts.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'No se encontraron cuentas válidas para importar'
+        error: 'No se encontraron cuentas válidas para importar',
       }, { status: 400 });
     }
 
@@ -48,7 +50,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: 'Errores de validación encontrados',
-        validation_errors: validationResults.errors
+        validation_errors: validationResults.errors,
       }, { status: 400 });
     }
 
@@ -57,7 +59,7 @@ export async function POST(request: NextRequest) {
       created: 0,
       updated: 0,
       skipped: 0,
-      errors: [] as string[]
+      errors: [] as string[],
     };
 
     // Si replace_existing es true, desactivar todas las cuentas existentes primero
@@ -89,7 +91,7 @@ export async function POST(request: NextRequest) {
               account.parent_code || null,
               account.is_active !== undefined ? account.is_active : true,
               account.code,
-              company_id
+              company_id,
             ]);
             
             results.updated++;
@@ -111,7 +113,7 @@ export async function POST(request: NextRequest) {
             account.account_type,
             account.parent_code || null,
             account.is_active !== undefined ? account.is_active : true,
-            company_id
+            company_id,
           ]);
 
           results.created++;
@@ -124,14 +126,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: `Importación completada. Creadas: ${results.created}, Actualizadas: ${results.updated}, Omitidas: ${results.skipped}`,
-      results
+      results,
     });
 
   } catch (error: any) {
     console.error('Error in import chart of accounts:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor: ' + error.message
+      error: `Error interno del servidor: ${  error.message}`,
     }, { status: 500 });
   }
 }
@@ -165,7 +167,7 @@ function parseCSVData(csvContent: string): any[] {
     'padre': 'parent_code',
     'activa': 'is_active',
     'active': 'is_active',
-    'is_active': 'is_active'
+    'is_active': 'is_active',
   };
 
   for (let i = 1; i < lines.length; i++) {
@@ -245,6 +247,6 @@ function validateAccounts(accounts: any[]): { valid: boolean; errors: string[] }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }

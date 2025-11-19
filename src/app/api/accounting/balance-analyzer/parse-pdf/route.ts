@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,7 +9,7 @@ export async function POST(request: NextRequest) {
     if (!file) {
       return NextResponse.json({
         success: false,
-        error: 'No se proporcionó archivo'
+        error: 'No se proporcionó archivo',
       }, { status: 400 });
     }
 
@@ -120,9 +121,9 @@ export async function POST(request: NextRequest) {
             activosTotal: accounts.length > 0 ? classification.activosTotal : identifyActivosAndPasivos(fallbackAccounts).activosTotal,
             pasivosTotal: accounts.length > 0 ? classification.pasivosTotal : identifyActivosAndPasivos(fallbackAccounts).pasivosTotal,
             margenPorcentaje: accounts.length > 0 ? classification.margenPorcentaje : identifyActivosAndPasivos(fallbackAccounts).margenPorcentaje,
-            equilibrioBalance: accounts.length > 0 ? classification.equilibrioBalance : identifyActivosAndPasivos(fallbackAccounts).equilibrioBalance
-          }
-        }
+            equilibrioBalance: accounts.length > 0 ? classification.equilibrioBalance : identifyActivosAndPasivos(fallbackAccounts).equilibrioBalance,
+          },
+        },
       });
       
     } catch (parseError) {
@@ -136,8 +137,8 @@ export async function POST(request: NextRequest) {
           rut: '77.151.471-5',
           period: '2023',
           accounts: getComarcaPredefinedAccounts(),
-          source: 'Fallback data'
-        }
+          source: 'Fallback data',
+        },
       });
     }
 
@@ -145,7 +146,7 @@ export async function POST(request: NextRequest) {
     console.error('❌ Error procesando PDF:', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Error procesando archivo PDF'
+      error: error.message || 'Error procesando archivo PDF',
     }, { status: 500 });
   }
 }
@@ -168,7 +169,7 @@ function extractCompanyInfo(text: string) {
     return {
       company: companyMatch ? companyMatch[0]?.trim() : null,
       rut: rutMatch ? rutMatch[0] : null,
-      period: periodMatch ? periodMatch[0].match(/20\d{2}/)?.[0] : null
+      period: periodMatch ? periodMatch[0].match(/20\d{2}/)?.[0] : null,
     };
   } catch (error) {
     console.error('Error extrayendo info de empresa:', error);
@@ -186,7 +187,7 @@ function parseUniversalBalance(text: string) {
     
     const lines = text.split(/\r?\n/);
     let accountsFound = 0;
-    let totalLines = lines.length;
+    const totalLines = lines.length;
     
     for (let i = 0; i < lines.length && accountsFound < 50; i++) {
       const line = lines[i].trim();
@@ -250,7 +251,7 @@ function parseUniversalBalance(text: string) {
             activo: numbers[4] || (accountCode.startsWith('1') ? Math.max(0, (numbers[0] || 0) - (numbers[1] || 0)) : 0), // Columna 5: Activo
             pasivo: numbers[5] || (accountCode.startsWith('2') ? Math.max(0, (numbers[1] || 0) - (numbers[0] || 0)) : 0), // Columna 6: Pasivo
             perdida: numbers[6] || (accountCode.startsWith('4') || accountCode.startsWith('5') ? Math.max(0, (numbers[0] || 0) - (numbers[1] || 0)) : 0), // Columna 7: Pérdida
-            ganancia: numbers[7] || (accountCode.startsWith('3') ? Math.max(0, (numbers[1] || 0) - (numbers[0] || 0)) : 0) // Columna 8: Ganancia
+            ganancia: numbers[7] || (accountCode.startsWith('3') ? Math.max(0, (numbers[1] || 0) - (numbers[0] || 0)) : 0), // Columna 8: Ganancia
           };
           
           accounts.push(account);
@@ -275,7 +276,7 @@ function parseUniversalBalance(text: string) {
           
           if (numbers.length >= 1) {
             accounts.push({
-              code: code,
+              code,
               description: desc.trim().toUpperCase(),
               debit: numbers[0] || 0,
               credit: numbers[1] || 0,
@@ -284,7 +285,7 @@ function parseUniversalBalance(text: string) {
               activo: numbers[4] || (code.startsWith('1') ? Math.max(0, (numbers[0] || 0) - (numbers[1] || 0)) : 0),
               pasivo: numbers[5] || (code.startsWith('2') ? Math.max(0, (numbers[1] || 0) - (numbers[0] || 0)) : 0),
               perdida: numbers[6] || (code.startsWith('4') || code.startsWith('5') ? Math.max(0, (numbers[0] || 0) - (numbers[1] || 0)) : 0),
-              ganancia: numbers[7] || (code.startsWith('3') ? Math.max(0, (numbers[1] || 0) - (numbers[0] || 0)) : 0)
+              ganancia: numbers[7] || (code.startsWith('3') ? Math.max(0, (numbers[1] || 0) - (numbers[0] || 0)) : 0),
             });
             accountsFound++;
           }
@@ -469,7 +470,7 @@ function identifyActivosAndPasivos(accounts: any[]) {
     porcentajePasivos: Math.round((pasivos.length / accounts.length) * 100),
     equilibrioBalance: Math.abs(activosTotal - pasivosTotal - patrimonioTotal) < 1000000, // Tolerancia 1M
     margenBruto: ingresosTotal - gastosTotal,
-    margenPorcentaje: ingresosTotal > 0 ? Math.round(((ingresosTotal - gastosTotal) / ingresosTotal) * 100) : 0
+    margenPorcentaje: ingresosTotal > 0 ? Math.round(((ingresosTotal - gastosTotal) / ingresosTotal) * 100) : 0,
   };
 }
 
@@ -502,7 +503,7 @@ function analyzeBalancePatterns(accounts: any[]) {
     ingresosTotal,
     gastosTotal,
     margenBruto,
-    margenPorcentaje
+    margenPorcentaje,
   };
 }
 
@@ -526,7 +527,7 @@ function getComarcaPredefinedAccounts() {
       activo: 5437277,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '1.1.1040.10.01',
@@ -538,7 +539,7 @@ function getComarcaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '1.1.1090.10.01',
@@ -550,7 +551,7 @@ function getComarcaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '1.1.1090.10.02',
@@ -562,7 +563,7 @@ function getComarcaPredefinedAccounts() {
       activo: 1829716,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '1.1.1090.10.06',
@@ -574,7 +575,7 @@ function getComarcaPredefinedAccounts() {
       activo: 656533,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '2.1.1070.20.01',
@@ -586,7 +587,7 @@ function getComarcaPredefinedAccounts() {
       activo: 0,
       pasivo: 4717426,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '2.1.2030.10.01',
@@ -598,7 +599,7 @@ function getComarcaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '2.1.2030.10.04',
@@ -610,7 +611,7 @@ function getComarcaPredefinedAccounts() {
       activo: 0,
       pasivo: 89220,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '2.1.2030.10.05',
@@ -622,7 +623,7 @@ function getComarcaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '2.4.1000.10.01',
@@ -634,7 +635,7 @@ function getComarcaPredefinedAccounts() {
       activo: 0,
       pasivo: 50000,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '2.4.1500.30.01',
@@ -646,7 +647,7 @@ function getComarcaPredefinedAccounts() {
       activo: 7940000,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '3.1.1010.10.01',
@@ -658,7 +659,7 @@ function getComarcaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 303933900
+      ganancia: 303933900,
     },
     {
       code: '4.1.1010.10.01',
@@ -670,8 +671,8 @@ function getComarcaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 292927020,
-      ganancia: 0
-    }
+      ganancia: 0,
+    },
   ];
 }
 
@@ -689,7 +690,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 19198659,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '1.01.05.01',
@@ -701,7 +702,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '1.01.06.01',
@@ -713,7 +714,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '1.01.06.02',
@@ -725,7 +726,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '1.01.09.01',
@@ -737,7 +738,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 113479068,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '1.01.10.01',
@@ -749,7 +750,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '1.01.10.02',
@@ -761,7 +762,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 3715785,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '1.01.10.03',
@@ -773,7 +774,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     // PASIVOS (2.xx)
     {
@@ -786,7 +787,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 25609690,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '2.01.01.02',
@@ -798,7 +799,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 20000000,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '2.01.02.01',
@@ -810,7 +811,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '2.01.02.02',
@@ -822,7 +823,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 360000,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '2.01.02.04',
@@ -834,7 +835,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 3000000,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '2.02.01.01',
@@ -846,7 +847,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 1000000,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     // INGRESOS (3.xx)
     {
@@ -859,7 +860,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 113000000
+      ganancia: 113000000,
     },
     // GASTOS (4.xx) - TODOS LOS GASTOS GASTROLOGICA
     {
@@ -872,7 +873,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 62077018,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.02.01.01',
@@ -884,7 +885,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 62000000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.02.04.02',
@@ -896,7 +897,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 3254373,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.02.07.01',
@@ -908,7 +909,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 62085,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.02.07.06',
@@ -920,7 +921,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 1691147,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.02.10.03',
@@ -932,7 +933,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 22383,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.02.11.01',
@@ -944,7 +945,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 1123
+      ganancia: 1123,
     },
     // GASTOS ADICIONALES QUE FALTABAN
     {
@@ -957,7 +958,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 5000000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.02.01',
@@ -969,7 +970,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 15000000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.02.02',
@@ -981,7 +982,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 8000000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.02.03',
@@ -993,7 +994,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 2500000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.02.04',
@@ -1005,7 +1006,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 3200000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.01',
@@ -1017,7 +1018,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 6000000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.02',
@@ -1029,7 +1030,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 800000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.03',
@@ -1041,7 +1042,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 1200000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.04',
@@ -1053,7 +1054,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 350000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.05',
@@ -1065,7 +1066,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 600000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.06',
@@ -1077,7 +1078,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 250000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.07',
@@ -1089,7 +1090,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 180000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.08',
@@ -1101,7 +1102,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 900000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.09',
@@ -1113,7 +1114,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 450000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.10',
@@ -1125,7 +1126,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 1500000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.11',
@@ -1137,7 +1138,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 320000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.12',
@@ -1149,7 +1150,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 280000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.13',
@@ -1161,7 +1162,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 400000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.14',
@@ -1173,7 +1174,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 500000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.15',
@@ -1185,7 +1186,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 800000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.16',
@@ -1197,7 +1198,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 150000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.17',
@@ -1209,7 +1210,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 1200000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.18',
@@ -1221,7 +1222,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 850000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.19',
@@ -1233,7 +1234,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 600000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.20',
@@ -1245,7 +1246,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 450000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.21',
@@ -1257,7 +1258,7 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 729282,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '4.01.03.22',
@@ -1269,8 +1270,8 @@ function getGastrologicaPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 1838005,
-      ganancia: 0
-    }
+      ganancia: 0,
+    },
   ];
 }
 
@@ -1288,7 +1289,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 295200417,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1300,7 +1301,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 1288048,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1312,7 +1313,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1324,7 +1325,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 33000000,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1336,7 +1337,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 9956900,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1348,7 +1349,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 43859436,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1360,7 +1361,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 17400000,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     // PASIVOS - Datos reales del Balance Market Austral 2024
     {
@@ -1373,7 +1374,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 26730920,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1385,7 +1386,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 28045211,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1397,7 +1398,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 1072785,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1409,7 +1410,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 76188307,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1421,7 +1422,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 166869552,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     // PATRIMONIO
     {
@@ -1434,7 +1435,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 28600000,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1446,7 +1447,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 39060831,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     // GASTOS/PERDIDAS
     {
@@ -1459,7 +1460,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 90000000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1471,7 +1472,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 13786236,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1483,7 +1484,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 59412234,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1495,7 +1496,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 21658735,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1507,7 +1508,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 1692600551,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1519,7 +1520,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 11691310,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1531,7 +1532,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 18000000,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1543,7 +1544,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 9694600,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '', // Sin código
@@ -1555,7 +1556,7 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 15188355,
-      ganancia: 0
+      ganancia: 0,
     },
     // INGRESOS/GANANCIAS
     {
@@ -1568,8 +1569,8 @@ function getMarketAustralPredefinedAccounts() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 1995045706
-    }
+      ganancia: 1995045706,
+    },
   ];
 }
 
@@ -1587,7 +1588,7 @@ function getGenericBalanceStructure() {
       activo: 1000000,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '1.01.02',
@@ -1599,7 +1600,7 @@ function getGenericBalanceStructure() {
       activo: 500000,
       pasivo: 0,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '2.01.01',
@@ -1611,7 +1612,7 @@ function getGenericBalanceStructure() {
       activo: 0,
       pasivo: 300000,
       perdida: 0,
-      ganancia: 0
+      ganancia: 0,
     },
     {
       code: '3.01.01',
@@ -1623,7 +1624,7 @@ function getGenericBalanceStructure() {
       activo: 0,
       pasivo: 0,
       perdida: 0,
-      ganancia: 1000000
+      ganancia: 1000000,
     },
     {
       code: '4.01.01',
@@ -1635,7 +1636,7 @@ function getGenericBalanceStructure() {
       activo: 0,
       pasivo: 0,
       perdida: 200000,
-      ganancia: 0
-    }
+      ganancia: 0,
+    },
   ];
 }

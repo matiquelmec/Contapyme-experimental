@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { X, Save, Package, Calendar, DollarSign, Settings } from 'lucide-react';
+
 import { Button } from '@/components/ui';
-import { CreateFixedAssetData, Account } from '@/types';
 import { useChartOfAccountsCache } from '@/hooks/useChartOfAccountsCache';
+import type { CreateFixedAssetData } from '@/types';
 
 interface AddFixedAssetFormProps {
   isOpen: boolean;
@@ -33,7 +35,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
     brand: '',
     model: '',
     location: '',
-    responsible_person: ''
+    responsible_person: '',
   });
 
   const [errors, setErrors] = useState<Partial<CreateFixedAssetData>>({});
@@ -63,7 +65,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
       setFormData(prev => ({
         ...prev,
         depreciation_account_code: mapping.depreciation,
-        expense_account_code: mapping.expense
+        expense_account_code: mapping.expense,
       }));
     } else {
       // Lógica fallback: intentar generar códigos automáticamente
@@ -73,7 +75,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
         setFormData(prev => ({
           ...prev,
           depreciation_account_code: `1.2.2.${suffix}`,
-          expense_account_code: `6.1.1.${suffix}`
+          expense_account_code: `6.1.1.${suffix}`,
         }));
       }
     }
@@ -185,7 +187,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
           // Error - mostrar mensaje
           alert(error || 'Error al crear activo fijo');
           setLoading(false);
-        }
+        },
       );
     } else {
       // Fallback a método tradicional
@@ -236,18 +238,16 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
       brand: '',
       model: '',
       location: '',
-      responsible_person: ''
+      responsible_person: '',
     });
     setErrors({});
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   if (!isOpen) return null;
 
@@ -293,11 +293,10 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                       }`}
                       placeholder="Ej: Escritorio ejecutivo, Computador Dell, etc."
                       value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      onChange={(e) => { handleInputChange('name', e.target.value); }}
                     />
                     {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
                   </div>
-
 
                   {/* Descripción */}
                   <div>
@@ -309,7 +308,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                       rows={3}
                       placeholder="Descripción detallada del activo..."
                       value={formData.description}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
+                      onChange={(e) => { handleInputChange('description', e.target.value); }}
                     />
                   </div>
 
@@ -324,7 +323,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         placeholder="S/N o código interno"
                         value={formData.serial_number}
-                        onChange={(e) => handleInputChange('serial_number', e.target.value)}
+                        onChange={(e) => { handleInputChange('serial_number', e.target.value); }}
                       />
                     </div>
                     <div>
@@ -336,7 +335,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         placeholder="Marca o fabricante"
                         value={formData.brand}
-                        onChange={(e) => handleInputChange('brand', e.target.value)}
+                        onChange={(e) => { handleInputChange('brand', e.target.value); }}
                       />
                     </div>
                   </div>
@@ -351,7 +350,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         placeholder="Modelo específico"
                         value={formData.model}
-                        onChange={(e) => handleInputChange('model', e.target.value)}
+                        onChange={(e) => { handleInputChange('model', e.target.value); }}
                       />
                     </div>
                     <div>
@@ -363,7 +362,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         placeholder="Oficina, bodega, etc."
                         value={formData.location}
-                        onChange={(e) => handleInputChange('location', e.target.value)}
+                        onChange={(e) => { handleInputChange('location', e.target.value); }}
                       />
                     </div>
                   </div>
@@ -377,7 +376,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       placeholder="Persona a cargo del activo"
                       value={formData.responsible_person}
-                      onChange={(e) => handleInputChange('responsible_person', e.target.value)}
+                      onChange={(e) => { handleInputChange('responsible_person', e.target.value); }}
                     />
                   </div>
                 </div>
@@ -408,7 +407,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                       }`}
                       placeholder="0"
                       value={formData.purchase_value || ''}
-                      onChange={(e) => handleInputChange('purchase_value', parseFloat(e.target.value) || 0)}
+                      onChange={(e) => { handleInputChange('purchase_value', parseFloat(e.target.value) || 0); }}
                     />
                     {errors.purchase_value && <p className="mt-1 text-sm text-red-600">{errors.purchase_value}</p>}
                     {formData.purchase_value > 0 && (
@@ -432,7 +431,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                       }`}
                       placeholder="0"
                       value={formData.residual_value || ''}
-                      onChange={(e) => handleInputChange('residual_value', parseFloat(e.target.value) || 0)}
+                      onChange={(e) => { handleInputChange('residual_value', parseFloat(e.target.value) || 0); }}
                     />
                     {errors.residual_value && <p className="mt-1 text-sm text-red-600">{errors.residual_value}</p>}
                     {formData.residual_value > 0 && (
@@ -475,7 +474,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                         errors.purchase_date ? 'border-red-500' : 'border-gray-300'
                       }`}
                       value={formData.purchase_date}
-                      onChange={(e) => handleInputChange('purchase_date', e.target.value)}
+                      onChange={(e) => { handleInputChange('purchase_date', e.target.value); }}
                     />
                     {errors.purchase_date && <p className="mt-1 text-sm text-red-600">{errors.purchase_date}</p>}
                   </div>
@@ -491,7 +490,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                         errors.start_depreciation_date ? 'border-red-500' : 'border-gray-300'
                       }`}
                       value={formData.start_depreciation_date}
-                      onChange={(e) => handleInputChange('start_depreciation_date', e.target.value)}
+                      onChange={(e) => { handleInputChange('start_depreciation_date', e.target.value); }}
                     />
                     {errors.start_depreciation_date && <p className="mt-1 text-sm text-red-600">{errors.start_depreciation_date}</p>}
                     <p className="mt-1 text-xs text-gray-500">
@@ -513,7 +512,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                         errors.useful_life_years ? 'border-red-500' : 'border-gray-300'
                       }`}
                       value={formData.useful_life_years || ''}
-                      onChange={(e) => handleInputChange('useful_life_years', parseInt(e.target.value) || 1)}
+                      onChange={(e) => { handleInputChange('useful_life_years', parseInt(e.target.value) || 1); }}
                     />
                     {errors.useful_life_years && <p className="mt-1 text-sm text-red-600">{errors.useful_life_years}</p>}
                   </div>
@@ -550,7 +549,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                         errors.asset_account_code ? 'border-red-500' : 'border-gray-300'
                       }`}
                       value={formData.asset_account_code}
-                      onChange={(e) => handleInputChange('asset_account_code', e.target.value)}
+                      onChange={(e) => { handleInputChange('asset_account_code', e.target.value); }}
                     >
                       <option value="">Seleccionar cuenta de activo</option>
                       {accounts
@@ -572,7 +571,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                     <select
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       value={formData.depreciation_account_code}
-                      onChange={(e) => handleInputChange('depreciation_account_code', e.target.value)}
+                      onChange={(e) => { handleInputChange('depreciation_account_code', e.target.value); }}
                     >
                       <option value="">Seleccionar cuenta (opcional)</option>
                       {accounts
@@ -593,7 +592,7 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
                     <select
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       value={formData.expense_account_code}
-                      onChange={(e) => handleInputChange('expense_account_code', e.target.value)}
+                      onChange={(e) => { handleInputChange('expense_account_code', e.target.value); }}
                     >
                       <option value="">Seleccionar cuenta (opcional)</option>
                       {accounts

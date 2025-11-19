@@ -1,9 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 export const dynamic = 'force-dynamic';
@@ -54,14 +56,14 @@ export async function POST(request: NextRequest) {
     if (!company_id || !period || !rcv_data) {
       return NextResponse.json({
         success: false,
-        error: 'Campos requeridos: company_id, period, rcv_data'
+        error: 'Campos requeridos: company_id, period, rcv_data',
       }, { status: 400 });
     }
 
     console.log('🧮 Generando asientos RCV Compras:', {
       company_id,
       period,
-      transactions: rcv_data.length
+      transactions: rcv_data.length,
     });
 
     // 1. Obtener configuración centralizada de cuentas
@@ -74,7 +76,7 @@ export async function POST(request: NextRequest) {
     if (!centralConfig) {
       return NextResponse.json({
         success: false,
-        error: 'Configuración centralizada de cuentas no encontrada. Configúrala primero en /accounting/configuration'
+        error: 'Configuración centralizada de cuentas no encontrada. Configúrala primero en /accounting/configuration',
       }, { status: 400 });
     }
 
@@ -122,7 +124,7 @@ export async function POST(request: NextRequest) {
           account_code: expenseAccountCode,
           account_name: expenseAccountName,
           net_amount: 0,
-          transactions: []
+          transactions: [],
         });
       }
 
@@ -139,7 +141,7 @@ export async function POST(request: NextRequest) {
         providerTotals.set(providerKey, {
           entity_rut: transaction.entity_rut,
           entity_name: transaction.entity_name,
-          total_amount: 0
+          total_amount: 0,
         });
       }
       providerTotals.get(providerKey)!.total_amount += transaction.total_amount;
@@ -156,7 +158,7 @@ export async function POST(request: NextRequest) {
         account_name: accountTotal.account_name,
         description: `Gastos ${period} - ${accountTotal.transactions.length} transacciones`,
         debit_amount: accountTotal.net_amount,
-        credit_amount: 0
+        credit_amount: 0,
       });
     }
 
@@ -167,7 +169,7 @@ export async function POST(request: NextRequest) {
         account_name: centralConfig.iva_credit_account_name || 'IVA Crédito Fiscal',
         description: `IVA Crédito Fiscal ${period}`,
         debit_amount: totalIVA,
-        credit_amount: 0
+        credit_amount: 0,
       });
     }
 
@@ -179,7 +181,7 @@ export async function POST(request: NextRequest) {
         account_name: centralConfig.suppliers_account_name || 'Proveedores Nacionales',
         description: `Proveedores ${period} - ${providerTotals.size} proveedores`,
         debit_amount: 0,
-        credit_amount: totalProviders
+        credit_amount: totalProviders,
       });
     } else {
       // Opción 2: Detalle por proveedor (usando configuración específica si existe)
@@ -195,7 +197,7 @@ export async function POST(request: NextRequest) {
           debit_amount: 0,
           credit_amount: providerData.total_amount,
           entity_rut: providerData.entity_rut,
-          entity_name: providerData.entity_name
+          entity_name: providerData.entity_name,
         });
       }
     }
@@ -205,7 +207,7 @@ export async function POST(request: NextRequest) {
       entry_date: new Date().toISOString().split('T')[0],
       description: `RCV Compras ${period} - Integración Automática`,
       reference: `RCV-COMP-${period}`,
-      details: journalDetails
+      details: journalDetails,
     };
 
     // 6. Validar balance del asiento
@@ -216,7 +218,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: `Asiento desbalanceado: Debe ${totalDebits} vs Haber ${totalCredits}`,
-        debug: { totalDebits, totalCredits, difference: totalDebits - totalCredits }
+        debug: { totalDebits, totalCredits, difference: totalDebits - totalCredits },
       }, { status: 400 });
     }
 
@@ -239,22 +241,22 @@ export async function POST(request: NextRequest) {
           total_net_amount: Array.from(accountTotals.values()).reduce((sum, acc) => sum + acc.net_amount, 0),
           total_iva_amount: totalIVA,
           total_gross_amount: totalProviders,
-          balance_check: { totalDebits, totalCredits, balanced: Math.abs(totalDebits - totalCredits) < 0.01 }
+          balance_check: { totalDebits, totalCredits, balanced: Math.abs(totalDebits - totalCredits) < 0.01 },
         },
         account_breakdown: {
           expense_accounts: Array.from(accountTotals.entries()).map(([code, data]) => ({
             account_code: data.account_code,
             account_name: data.account_name,
             amount: data.net_amount,
-            transaction_count: data.transactions.length
+            transaction_count: data.transactions.length,
           })),
           supplier_breakdown: Array.from(providerTotals.entries()).map(([rut, data]) => ({
             entity_rut: data.entity_rut,
             entity_name: data.entity_name,
-            total_amount: data.total_amount
-          }))
-        }
-      }
+            total_amount: data.total_amount,
+          })),
+        },
+      },
     });
 
   } catch (error) {
@@ -262,7 +264,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Error desconocido'
+      details: error instanceof Error ? error.message : 'Error desconocido',
     }, { status: 500 });
   }
 }
@@ -280,7 +282,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json({
         success: false,
-        error: 'company_id es requerido'
+        error: 'company_id es requerido',
       }, { status: 400 });
     }
 
@@ -322,7 +324,7 @@ export async function GET(request: NextRequest) {
       console.error('❌ Error consultando RCV records:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error consultando registros RCV'
+        error: 'Error consultando registros RCV',
       }, { status: 500 });
     }
 
@@ -337,7 +339,7 @@ export async function GET(request: NextRequest) {
       transaction_count: record.transactions?.length || 0,
       unique_suppliers: new Set(record.transactions?.map((t: any) => t.entity_rut)).size,
       created_at: record.created_at,
-      can_integrate: record.transactions && record.transactions.length > 0
+      can_integrate: record.transactions && record.transactions.length > 0,
     })) || [];
 
     return NextResponse.json({
@@ -350,18 +352,18 @@ export async function GET(request: NextRequest) {
           total_amount: processedData.reduce((sum, record) => sum + record.total_amount, 0),
           unique_suppliers: new Set(
             processedData.flatMap(record => 
-              record.transactions?.map((t: any) => t.entity_rut) || []
-            )
-          ).size
-        }
-      }
+              record.transactions?.map((t: any) => t.entity_rut) || [],
+            ),
+          ).size,
+        },
+      },
     });
 
   } catch (error) {
     console.error('❌ Error obteniendo datos RCV Compras:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }

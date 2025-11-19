@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { AlertCircle, Check } from 'lucide-react';
 
 interface RutInputProps {
@@ -22,15 +23,13 @@ export default function RutInputFixed({
   className = "",
   required = false,
   disabled = false,
-  autoFocus = false
+  autoFocus = false,
 }: RutInputProps) {
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [displayValue, setDisplayValue] = useState('');
 
   // Función para limpiar RUT (solo números y K)
-  const cleanRut = (rut: string): string => {
-    return rut.replace(/[^0-9kK]/g, '').toUpperCase();
-  };
+  const cleanRut = (rut: string): string => rut.replace(/[^0-9kK]/g, '').toUpperCase();
 
   // Función para formatear RUT
   const formatRut = (rut: string): string => {
@@ -47,14 +46,14 @@ export default function RutInputFixed({
     let formatted = '';
     for (let i = num.length - 1, j = 0; i >= 0; i--, j++) {
       if (j > 0 && j % 3 === 0) {
-        formatted = '.' + formatted;
+        formatted = `.${  formatted}`;
       }
       formatted = num[i] + formatted;
     }
     
     // Agregar guión y dígito verificador si hay más de 1 carácter
     if (clean.length > 1) {
-      formatted += '-' + dv;
+      formatted += `-${  dv}`;
     }
     
     return formatted;

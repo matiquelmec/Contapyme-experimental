@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PayrollHeader } from '@/components/layout';
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
+
 import { FileSpreadsheet, Download, Plus, Calendar, Users, DollarSign, CheckCircle, Clock, AlertCircle, FileText, Filter, Search, X, CheckSquare, Square, Calculator, Trash2 } from 'lucide-react';
+
+import { PayrollHeader } from '@/components/layout';
 import GenerateJournalButton from '@/components/payroll/GenerateJournalButton';
 
 interface PayrollBook {
@@ -117,7 +118,7 @@ export default function LibroRemuneracionesPage() {
           company_id: companyId,
           period: selectedPeriod,
           company_name: 'Empresa Demo ContaPyme',
-          company_rut: '12.345.678-9'
+          company_rut: '12.345.678-9',
         }),
       });
 
@@ -169,13 +170,11 @@ export default function LibroRemuneracionesPage() {
     }
   };
 
-
-
   const downloadExcel = async (book: PayrollBook) => {
     try {
       const [year, month] = book.period.split('-');
       const response = await fetch(
-        `/api/payroll/libro-remuneraciones/excel?company_id=${companyId}&year=${year}&month=${month}`
+        `/api/payroll/libro-remuneraciones/excel?company_id=${companyId}&year=${year}&month=${month}`,
       );
       
       if (response.ok) {
@@ -185,7 +184,7 @@ export default function LibroRemuneracionesPage() {
         a.href = url;
         const monthNames = [
           'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
         ];
         a.download = `Libro_Remuneraciones_${monthNames[parseInt(month) - 1]}_${year}.xlsx`;
         document.body.appendChild(a);
@@ -261,13 +260,11 @@ export default function LibroRemuneracionesPage() {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   const deleteBook = async (book: PayrollBook) => {
     // ✅ PREVENIR: Múltiples eliminaciones del mismo libro
@@ -282,7 +279,7 @@ export default function LibroRemuneracionesPage() {
       `• Empleados incluidos: ${book.total_employees}\n` +
       `• Total haberes: ${formatCurrency(book.total_haberes)}\n` +
       `• Total líquido: ${formatCurrency(book.total_liquido)}\n\n` +
-      `Esta acción NO SE PUEDE DESHACER.`
+      `Esta acción NO SE PUEDE DESHACER.`,
     );
 
     if (!confirmDelete) return;
@@ -340,7 +337,7 @@ export default function LibroRemuneracionesPage() {
     const [year, month] = period.split('-');
     const months = [
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
     ];
     return `${months[parseInt(month) - 1]} ${year}`;
   };
@@ -425,7 +422,7 @@ export default function LibroRemuneracionesPage() {
     setSelectedBooks(prev => 
       prev.includes(bookId) 
         ? prev.filter(id => id !== bookId)
-        : [...prev, bookId]
+        : [...prev, bookId],
     );
   };
 
@@ -483,7 +480,7 @@ export default function LibroRemuneracionesPage() {
       for (const book of selectedBooksData) {
         const [year, month] = book.period.split('-');
         const response = await fetch(
-          `/api/payroll/libro-remuneraciones/excel?company_id=${companyId}&year=${year}&month=${month}`
+          `/api/payroll/libro-remuneraciones/excel?company_id=${companyId}&year=${year}&month=${month}`,
         );
         
         if (response.ok) {
@@ -493,7 +490,7 @@ export default function LibroRemuneracionesPage() {
           a.href = url;
           const monthNames = [
             'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
           ];
           a.download = `Libro_Remuneraciones_${monthNames[parseInt(month) - 1]}_${year}.xlsx`;
           document.body.appendChild(a);
@@ -527,7 +524,7 @@ export default function LibroRemuneracionesPage() {
         <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-center items-center h-64">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
               <p className="mt-4 text-gray-600">Cargando libros de remuneraciones...</p>
             </div>
           </div>
@@ -611,7 +608,7 @@ export default function LibroRemuneracionesPage() {
                     </label>
                     <select
                       value={selectedPeriod}
-                      onChange={(e) => setSelectedPeriod(e.target.value)}
+                      onChange={(e) => { setSelectedPeriod(e.target.value); }}
                       className="w-full px-4 py-3 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
                     >
                       <option value="">Seleccionar período</option>
@@ -629,7 +626,7 @@ export default function LibroRemuneracionesPage() {
                       className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none disabled:hover:scale-100 flex items-center justify-center"
                     >
                       {generatingBook ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                       ) : (
                         <FileSpreadsheet className="w-4 h-4 mr-2" />
                       )}
@@ -642,7 +639,7 @@ export default function LibroRemuneracionesPage() {
                 {checkingAvailability && (
                   <div className="p-4 bg-blue-50/80 backdrop-blur-sm border border-blue-200/50 rounded-xl">
                     <div className="flex items-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 mr-3"></div>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 mr-3" />
                       <span className="text-sm font-medium text-blue-700">Verificando liquidaciones disponibles...</span>
                     </div>
                   </div>
@@ -708,14 +705,14 @@ export default function LibroRemuneracionesPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-center space-x-3">
                     <button
-                      onClick={() => setShowFilters(!showFilters)}
+                      onClick={() => { setShowFilters(!showFilters); }}
                       className="flex items-center px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                     >
                       <Filter className="w-4 h-4 mr-2" />
                       {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
                     </button>
                     <button
-                      onClick={() => setShowBulkActions(!showBulkActions)}
+                      onClick={() => { setShowBulkActions(!showBulkActions); }}
                       className="flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                     >
                       <CheckSquare className="w-4 h-4 mr-2" />
@@ -756,7 +753,7 @@ export default function LibroRemuneracionesPage() {
                           <input
                             type="text"
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={(e) => { setSearchTerm(e.target.value); }}
                             placeholder="Buscar por período o número..."
                             className="w-full pl-10 pr-3 py-2 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                           />
@@ -770,7 +767,7 @@ export default function LibroRemuneracionesPage() {
                         </label>
                         <select
                           value={statusFilter}
-                          onChange={(e) => setStatusFilter(e.target.value)}
+                          onChange={(e) => { setStatusFilter(e.target.value); }}
                           className="w-full px-3 py-2 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                         >
                           <option value="all">Todos los estados</option>
@@ -788,7 +785,7 @@ export default function LibroRemuneracionesPage() {
                         </label>
                         <select
                           value={yearFilter}
-                          onChange={(e) => setYearFilter(e.target.value)}
+                          onChange={(e) => { setYearFilter(e.target.value); }}
                           className="w-full px-3 py-2 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                         >
                           <option value="all">Todos los años</option>
@@ -830,7 +827,7 @@ export default function LibroRemuneracionesPage() {
                             className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none"
                           >
                             {exportingMultiple ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                             ) : (
                               <Download className="w-4 h-4 mr-2" />
                             )}
@@ -842,7 +839,7 @@ export default function LibroRemuneracionesPage() {
                             className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none"
                           >
                             {exportingMultiple ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                             ) : (
                               <FileSpreadsheet className="w-4 h-4 mr-2" />
                             )}
@@ -921,7 +918,7 @@ export default function LibroRemuneracionesPage() {
                             {/* Checkbox de selección múltiple */}
                             {showBulkActions && (
                               <button
-                                onClick={() => toggleBookSelection(book.id)}
+                                onClick={() => { toggleBookSelection(book.id); }}
                                 className="mr-3 p-2 hover:bg-white/50 rounded-lg transition-all duration-200"
                               >
                                 {selectedBooks.includes(book.id) ? (
@@ -1021,7 +1018,7 @@ export default function LibroRemuneracionesPage() {
                             </div>
                             <p className="text-sm text-gray-700 leading-relaxed">
                               {book.payroll_book_details.slice(0, 3).map(detail => 
-                                `${detail.nombres} ${detail.apellido_paterno}`
+                                `${detail.nombres} ${detail.apellido_paterno}`,
                               ).join(', ')}
                               {book.payroll_book_details.length > 3 && (
                                 <span className="font-medium text-blue-700"> y {book.payroll_book_details.length - 3} más</span>
@@ -1065,7 +1062,7 @@ export default function LibroRemuneracionesPage() {
                           >
                             {deletingBookIds.includes(book.id) ? (
                               <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
                                 Eliminando...
                               </>
                             ) : (
@@ -1110,7 +1107,7 @@ export default function LibroRemuneracionesPage() {
                               <GenerateJournalButton
                                 period={book.period}
                                 companyId="8033ee69-b420-4d91-ba0e-482f46cd6fce"
-                                autoIntegrate={true}
+                                autoIntegrate
                                 size="sm"
                                 variant="primary"
                                 className="w-full"

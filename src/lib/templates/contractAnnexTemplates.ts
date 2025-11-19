@@ -100,7 +100,7 @@ function formatDate(dateString: string): string {
   
   const months = [
     'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
   ];
   
   const dayFormatted = date.getDate();
@@ -116,7 +116,7 @@ function formatCurrency(amount: number): string {
     style: 'currency',
     currency: 'CLP',
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0
+    maximumFractionDigits: 0,
   }).format(amount);
 }
 
@@ -179,9 +179,9 @@ export function generateRenovationAnnex(data: AnnexData): string {
         en virtud del cual el trabajador presta servicios como <strong>${data.employeePosition}</strong>.</p>
         
         <p><strong>SEGUNDO:</strong> Por el presente instrumento, las partes acuerdan ${isIndefinite ? 
-          'modificar el contrato de trabajo, transformándolo en un <strong>CONTRATO INDEFINIDO</strong>, a contar del ' + formatDate(data.effectiveDate || data.annexDate) :
-          'renovar el contrato de trabajo a plazo fijo por el período comprendido entre el ' + formatDate(data.effectiveDate || data.annexDate) + 
-          ' y el ' + formatDate(data.newEndDate || '')}, manteniendo todas las demás condiciones establecidas en el contrato original.</p>
+          `modificar el contrato de trabajo, transformándolo en un <strong>CONTRATO INDEFINIDO</strong>, a contar del ${  formatDate(data.effectiveDate || data.annexDate)}` :
+          `renovar el contrato de trabajo a plazo fijo por el período comprendido entre el ${  formatDate(data.effectiveDate || data.annexDate)  
+          } y el ${  formatDate(data.newEndDate || '')}`}, manteniendo todas las demás condiciones establecidas en el contrato original.</p>
         
         ${data.renovationReason ? `
         <p><strong>TERCERO:</strong> La renovación del contrato se fundamenta en: ${data.renovationReason}</p>
@@ -284,7 +284,7 @@ export function generateNightShiftAnnex(data: AnnexData): string {
         ${data.nightShiftStartTime || '21:00'} horas y las ${data.nightShiftEndTime || '07:00'} horas.</p>
         
         <p><strong>TERCERO:</strong> El horario nocturno se desarrollará ${data.nightShiftDays?.length ? 
-          'los días ' + data.nightShiftDays.join(', ') : 'según los turnos rotativos establecidos por la empresa'}.</p>
+          `los días ${  data.nightShiftDays.join(', ')}` : 'según los turnos rotativos establecidos por la empresa'}.</p>
         
         <p><strong>CUARTO:</strong> Por el trabajo en horario nocturno, el trabajador percibirá un recargo del 
         <strong>${nightBonus}%</strong> sobre el valor de la hora ordinaria, el cual se pagará junto con la remuneración mensual.</p>

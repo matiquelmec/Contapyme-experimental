@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+
 import { Upload, FileSpreadsheet, CheckCircle, XCircle, AlertTriangle, Download, Users, Calculator } from 'lucide-react';
 
 interface ExcelData {
@@ -65,13 +66,11 @@ export default function ValidateExcelPage() {
 
   const companyId = '9df50bf1-2c78-4c82-bd6c-8e6b0f74e1e0'; // Hardcoded for demo
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -106,7 +105,7 @@ export default function ValidateExcelPage() {
               name: values[1] || '',
               total_haberes: parseFloat(values[2]) || 0,
               total_descuentos: parseFloat(values[3]) || 0,
-              total_liquido: parseFloat(values[4]) || 0
+              total_liquido: parseFloat(values[4]) || 0,
             });
           }
         }
@@ -147,8 +146,8 @@ export default function ValidateExcelPage() {
           company_id: companyId,
           period_year: selectedPeriod.year,
           period_month: selectedPeriod.month,
-          excel_data: excelData
-        })
+          excel_data: excelData,
+        }),
       });
 
       const result = await response.json();
@@ -162,7 +161,7 @@ export default function ValidateExcelPage() {
 
     } catch (error) {
       console.error('Error validating:', error);
-      alert('Error al validar con el sistema: ' + (error as Error).message);
+      alert(`Error al validar con el sistema: ${  (error as Error).message}`);
     } finally {
       setIsValidating(false);
     }
@@ -293,7 +292,7 @@ export default function ValidateExcelPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Año</label>
                   <select
                     value={selectedPeriod?.year || ''}
-                    onChange={(e) => setSelectedPeriod(prev => ({ ...prev, year: parseInt(e.target.value), month: prev?.month || 10 }))}
+                    onChange={(e) => { setSelectedPeriod(prev => ({ ...prev, year: parseInt(e.target.value), month: prev?.month || 10 })); }}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Seleccionar año</option>
@@ -306,7 +305,7 @@ export default function ValidateExcelPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Mes</label>
                   <select
                     value={selectedPeriod?.month || ''}
-                    onChange={(e) => setSelectedPeriod(prev => ({ ...prev, month: parseInt(e.target.value), year: prev?.year || 2025 }))}
+                    onChange={(e) => { setSelectedPeriod(prev => ({ ...prev, month: parseInt(e.target.value), year: prev?.year || 2025 })); }}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Seleccionar mes</option>
@@ -373,7 +372,7 @@ export default function ValidateExcelPage() {
               >
                 {isValidating ? (
                   <>
-                    <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                    <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
                     Validando...
                   </>
                 ) : (

@@ -1,5 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
+
 import { PayrollCalculator } from '@/modules/remuneraciones/services/calculadorService';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -15,7 +18,7 @@ export async function GET(request: NextRequest) {
     env_check: {
       supabase_url: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
       supabase_service_key: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-    }
+    },
   });
 }
 
@@ -29,7 +32,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ NEXT_PUBLIC_SUPABASE_URL not set');
       return NextResponse.json(
         { success: false, error: 'Configuración Supabase incompleta - URL' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -37,7 +40,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ SUPABASE_SERVICE_ROLE_KEY not set');
       return NextResponse.json(
         { success: false, error: 'Configuración Supabase incompleta - Service Key' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -48,7 +51,7 @@ export async function POST(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -62,14 +65,14 @@ export async function POST(request: NextRequest) {
       overtime_hours = 0,
       additional_income = {},
       additional_deductions = {},
-      save_liquidation = false
+      save_liquidation = false,
     } = body;
 
     // Validar datos requeridos
     if (!employee_id || !period_year || !period_month) {
       return NextResponse.json(
         { success: false, error: 'employee_id, period_year y period_month son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -110,7 +113,7 @@ export async function POST(request: NextRequest) {
         console.error('Employee fetch error:', employeeError);
         return NextResponse.json(
           { success: false, error: `Empleado no encontrado: ${employeeError?.message || 'Unknown error'}` },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -118,7 +121,7 @@ export async function POST(request: NextRequest) {
       if (!activeContract) {
         return NextResponse.json(
           { success: false, error: 'Empleado no tiene contrato activo' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -128,7 +131,7 @@ export async function POST(request: NextRequest) {
         weekly_hours: activeContract.weekly_hours || 44,
         contract_type: activeContract.contract_type,
         position: activeContract.position,
-        department: activeContract.department
+        department: activeContract.department,
       };
       var employeeInfo = employee;
       console.log('⚠️ Usando contrato actual como fallback');
@@ -155,7 +158,7 @@ export async function POST(request: NextRequest) {
       if (employeeError || !employee) {
         return NextResponse.json(
           { success: false, error: 'Error obteniendo datos del empleado' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       employeeInfo = employee;
@@ -163,7 +166,7 @@ export async function POST(request: NextRequest) {
         salary: periodContract.base_salary,
         hours: periodContract.weekly_hours,
         type: periodContract.contract_type,
-        modifications: periodContract.modifications_applied?.length || 0
+        modifications: periodContract.modifications_applied?.length || 0,
       });
     }
 
@@ -176,7 +179,7 @@ export async function POST(request: NextRequest) {
       contractType: periodContract.contract_type,
       shouldPay: shouldPayUnemployment,
       period: `${period_month}/${period_year}`,
-      modificationsApplied: contractForPeriod ? periodContract.modifications_applied?.length : 0
+      modificationsApplied: contractForPeriod ? periodContract.modifications_applied?.length : 0,
     });
 
     // 2. Obtener configuración previsional de la empresa
@@ -199,19 +202,19 @@ export async function POST(request: NextRequest) {
           { code: 'MODELO', commission_percentage: 0.58, sis_percentage: 1.88 },  // 10.58% total
           { code: 'PLANVITAL', commission_percentage: 1.16, sis_percentage: 1.88 }, // 11.16% total
           { code: 'PROVIDA', commission_percentage: 1.45, sis_percentage: 1.88 }, // 11.45% total
-          { code: 'UNO', commission_percentage: 0.49, sis_percentage: 1.88 }      // 10.49% total
+          { code: 'UNO', commission_percentage: 0.49, sis_percentage: 1.88 },      // 10.49% total
         ],
         family_allowances: {
           tramo_a: 15000,
           tramo_b: 10000, 
-          tramo_c: 5000
+          tramo_c: 5000,
         },
         income_limits: {
           uf_limit: 87.8, // Límite AFP afiliados según Previred 2025
           uf_value: 39383.07, // Valor UF agosto 31, 2025
           minimum_wage: 529000,
-          family_allowance_limit: 470148
-        }
+          family_allowance_limit: 470148,
+        },
       };
     } else {
       payrollSettings = settingsData.settings;
@@ -224,7 +227,7 @@ export async function POST(request: NextRequest) {
       salario: periodContract.base_salary,
       horas: periodContract.weekly_hours,
       tipo: periodContract.contract_type,
-      cesantia: shouldPayUnemployment
+      cesantia: shouldPayUnemployment,
     });
     console.log('🔍 NUEVO SISTEMA - AFP desde payroll_config:', payrollConfig.afp_code);
     console.log('🔍 NUEVO SISTEMA - Salud desde payroll_config:', payrollConfig.health_institution_code);
@@ -242,7 +245,7 @@ export async function POST(request: NextRequest) {
       family_allowances: payrollConfig.family_allowances || 0,
       legal_gratification_type: payrollConfig.legal_gratification_type || 'none',
       // ✅ NUEVO: Indicador de cesantía automática
-      should_pay_unemployment: shouldPayUnemployment || false
+      should_pay_unemployment: shouldPayUnemployment || false,
     };
 
     const periodData = {
@@ -250,7 +253,7 @@ export async function POST(request: NextRequest) {
       month: period_month,
       days_worked,
       worked_hours,
-      overtime_hours
+      overtime_hours,
     };
 
     // 4. Inicializar calculador con configuración de la empresa
@@ -261,7 +264,7 @@ export async function POST(request: NextRequest) {
       employeeData,
       periodData,
       additional_income,
-      additional_deductions
+      additional_deductions,
     );
 
     // 6. Guardar liquidación si se solicita
@@ -271,12 +274,12 @@ export async function POST(request: NextRequest) {
         .from('payroll_liquidations')
         .upsert({
           company_id: companyId,
-          employee_id: employee_id,
-          period_year: period_year,
-          period_month: period_month,
-          days_worked: days_worked,
-          worked_hours: worked_hours,
-          overtime_hours: overtime_hours,
+          employee_id,
+          period_year,
+          period_month,
+          days_worked,
+          worked_hours,
+          overtime_hours,
           
           // Haberes Imponibles
           base_salary: liquidationResult.base_salary,
@@ -328,9 +331,9 @@ export async function POST(request: NextRequest) {
           // Metadatos (SIEMPRE DRAFT - Aprobación manual requerida)
           status: 'draft',
           generated_by: companyId, // TODO: usar ID de usuario real
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         }, {
-          onConflict: 'company_id,employee_id,period_year,period_month'
+          onConflict: 'company_id,employee_id,period_year,period_month',
         })
         .select()
         .single();
@@ -339,7 +342,7 @@ export async function POST(request: NextRequest) {
         console.error('Error saving liquidation:', saveError);
         return NextResponse.json(
           { success: false, error: 'Error al guardar liquidación' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -351,16 +354,16 @@ export async function POST(request: NextRequest) {
       data: {
         liquidation: liquidationResult,
         saved: savedLiquidation,
-        warnings: liquidationResult.warnings
+        warnings: liquidationResult.warnings,
       },
-      message: save_liquidation ? 'Liquidación calculada y guardada' : 'Liquidación calculada'
+      message: save_liquidation ? 'Liquidación calculada y guardada' : 'Liquidación calculada',
     });
 
   } catch (error) {
     console.error('Error in POST /api/payroll/liquidations/calculate:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -374,7 +377,7 @@ export async function PUT(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -412,7 +415,7 @@ export async function PUT(request: NextRequest) {
     if (fetchError || !existingLiquidation) {
       return NextResponse.json(
         { success: false, error: 'Liquidación no encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -440,7 +443,7 @@ export async function PUT(request: NextRequest) {
       afp_code: payrollConfig.afp_code || contractAfpName || 'MODELO', // PRIORIDAD: configuración individual primero
       health_institution_code: payrollConfig.health_institution_code || contractHealthInstitution || 'FONASA',
       family_allowances: payrollConfig.family_allowances || 0,
-      legal_gratification_type: payrollConfig.legal_gratification_type || 'none'
+      legal_gratification_type: payrollConfig.legal_gratification_type || 'none',
     };
 
     const periodData = {
@@ -448,7 +451,7 @@ export async function PUT(request: NextRequest) {
       month: existingLiquidation.period_month,
       days_worked: existingLiquidation.days_worked,
       worked_hours: existingLiquidation.worked_hours || 0,
-      overtime_hours: existingLiquidation.overtime_hours || 0
+      overtime_hours: existingLiquidation.overtime_hours || 0,
     };
 
     // Obtener configuración actual
@@ -469,15 +472,15 @@ export async function PUT(request: NextRequest) {
           { code: 'MODELO', commission_percentage: 0.58, sis_percentage: 1.88 },  // 10.58% total
           { code: 'PLANVITAL', commission_percentage: 1.16, sis_percentage: 1.88 }, // 11.16% total
           { code: 'PROVIDA', commission_percentage: 1.45, sis_percentage: 1.88 }, // 11.45% total
-          { code: 'UNO', commission_percentage: 0.49, sis_percentage: 1.88 }      // 10.49% total
+          { code: 'UNO', commission_percentage: 0.49, sis_percentage: 1.88 },      // 10.49% total
         ],
         family_allowances: { tramo_a: 15000, tramo_b: 10000, tramo_c: 5000 },
         income_limits: { 
           uf_limit: 87.8, // Límite AFP afiliados según Previred 2025
           uf_value: 39383.07, // Valor UF agosto 31, 2025
           minimum_wage: 529000, 
-          family_allowance_limit: 470148 
-        }
+          family_allowance_limit: 470148, 
+        },
       };
     } else {
       payrollSettings = settingsData.settings;
@@ -488,7 +491,7 @@ export async function PUT(request: NextRequest) {
       employeeData,
       periodData,
       additional_income,
-      additional_deductions
+      additional_deductions,
     );
 
     console.log('🔍 liquidationResult.afp_commission_percentage:', liquidationResult.afp_commission_percentage);
@@ -530,7 +533,7 @@ export async function PUT(request: NextRequest) {
         net_salary: liquidationResult.net_salary,
         
         calculation_config: liquidationResult.calculation_config,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', liquidation_id)
       .select()
@@ -540,7 +543,7 @@ export async function PUT(request: NextRequest) {
       console.error('Error updating liquidation:', updateError);
       return NextResponse.json(
         { success: false, error: 'Error al actualizar liquidación' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -548,17 +551,17 @@ export async function PUT(request: NextRequest) {
       success: true,
       data: {
         liquidation: liquidationResult,
-        updated: updated,
-        warnings: liquidationResult.warnings
+        updated,
+        warnings: liquidationResult.warnings,
       },
-      message: 'Liquidación recalculada exitosamente'
+      message: 'Liquidación recalculada exitosamente',
     });
 
   } catch (error) {
     console.error('Error in PUT /api/payroll/liquidations/calculate:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

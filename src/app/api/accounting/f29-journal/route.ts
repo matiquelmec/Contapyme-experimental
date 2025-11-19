@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -16,13 +18,13 @@ export async function POST(request: NextRequest) {
     const { 
       company_id,
       f29_data,
-      preview = false 
+      preview = false, 
     } = body;
 
     if (!company_id || !f29_data) {
       return NextResponse.json(
         { success: false, error: 'company_id y f29_data son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -30,7 +32,7 @@ export async function POST(request: NextRequest) {
       company_id,
       ventas_netas: f29_data.codigo563,
       iva_debito: f29_data.codigo538,
-      preview
+      preview,
     });
 
     // Obtener configuración de cuentas
@@ -43,8 +45,8 @@ export async function POST(request: NextRequest) {
         missing_accounts: {
           caja: !accountsConfig.caja,
           iva_debito: !accountsConfig.iva_debito,
-          ventas: !accountsConfig.ventas
-        }
+          ventas: !accountsConfig.ventas,
+        },
       }, { status: 400 });
     }
 
@@ -60,7 +62,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: 'Asiento contable desbalanceado',
-        debug: { totalDebit, totalCredit, difference: totalDebit - totalCredit }
+        debug: { totalDebit, totalCredit, difference: totalDebit - totalCredit },
       }, { status: 400 });
     }
 
@@ -72,14 +74,14 @@ export async function POST(request: NextRequest) {
       totals: {
         debit_total: totalDebit,
         credit_total: totalCredit,
-        is_balanced: Math.abs(totalDebit - totalCredit) < 0.01
+        is_balanced: Math.abs(totalDebit - totalCredit) < 0.01,
       },
       f29_data: {
         codigo563: f29_data.codigo563, // Ventas Netas
         codigo538: f29_data.codigo538, // IVA Débito Fiscal
         periodo: f29_data.periodo,
-        rut: f29_data.rut
-      }
+        rut: f29_data.rut,
+      },
     };
 
     // Si no es preview, guardar el asiento
@@ -96,7 +98,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: 'Error al guardar el asiento en el libro diario. El asiento se generó pero no se pudo guardar.',
           debug: error instanceof Error ? error.message : 'Error desconocido',
-          data: result // Incluir el resultado aunque no se haya guardado
+          data: result, // Incluir el resultado aunque no se haya guardado
         }, { status: 500 });
       }
     }
@@ -105,12 +107,12 @@ export async function POST(request: NextRequest) {
       lines: journalLines.length,
       total_debit: totalDebit,
       total_credit: totalCredit,
-      is_balanced: result.totals.is_balanced
+      is_balanced: result.totals.is_balanced,
     });
 
     return NextResponse.json({
       success: true,
-      data: result
+      data: result,
     });
 
   } catch (error) {
@@ -118,7 +120,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Error desconocido'
+      details: error instanceof Error ? error.message : 'Error desconocido',
     }, { status: 500 });
   }
 }
@@ -142,11 +144,11 @@ async function getF29AccountsConfig(companyId: string) {
   const config = {
     caja: null,
     iva_debito: null,
-    ventas: null
+    ventas: null,
   };
 
   for (const account of accounts) {
-    const code = account.code;
+    const { code } = account;
     const name = account.name.toLowerCase();
     
     // Buscar cuenta Caja (1.1.1.001)
@@ -181,7 +183,7 @@ function createF29JournalLines(f29Data: any, accountsConfig: any) {
     account_name: accountsConfig.caja.name,
     description: `Ventas ${formatPeriod(f29Data.periodo)}`,
     debit_amount: totalVentasConIVA,
-    credit_amount: 0
+    credit_amount: 0,
   });
 
   // HABER: Ventas del Giro (sin IVA)
@@ -190,7 +192,7 @@ function createF29JournalLines(f29Data: any, accountsConfig: any) {
     account_name: accountsConfig.ventas.name,
     description: `Ventas netas ${formatPeriod(f29Data.periodo)}`,
     debit_amount: 0,
-    credit_amount: f29Data.codigo563
+    credit_amount: f29Data.codigo563,
   });
 
   // HABER: IVA Débito Fiscal
@@ -199,7 +201,7 @@ function createF29JournalLines(f29Data: any, accountsConfig: any) {
     account_name: accountsConfig.iva_debito.name,
     description: `IVA débito fiscal ${formatPeriod(f29Data.periodo)}`,
     debit_amount: 0,
-    credit_amount: f29Data.codigo538
+    credit_amount: f29Data.codigo538,
   });
 
   return lines;
@@ -214,7 +216,7 @@ function formatPeriod(periodo: string): string {
   
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
   ];
   
   const monthName = monthNames[parseInt(month) - 1];
@@ -236,7 +238,7 @@ async function saveF29JournalEntry(companyId: string, entryData: any) {
     status: 'draft',
     total_debit: entryData.totals.debit_total,
     total_credit: entryData.totals.credit_total,
-    created_by: 'system'
+    created_by: 'system',
   };
 
   const { data: journalEntry, error: entryError } = await supabase

@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection } from '@/lib/database/databaseSimple';
 
 // Tipos para el asiento contable
@@ -32,13 +34,13 @@ export async function POST(request: NextRequest) {
       company_id,
       total_proveedores: rcv_analysis.proveedoresPrincipales.length,
       monto_total: rcv_analysis.montoCalculadoGlobal,
-      period
+      period,
     });
 
     if (!company_id || !rcv_analysis) {
       return NextResponse.json({
         success: false,
-        error: 'Faltan datos requeridos para generar asiento'
+        error: 'Faltan datos requeridos para generar asiento',
       }, { status: 400 });
     }
 
@@ -128,7 +130,7 @@ export async function POST(request: NextRequest) {
             accountTotals.set(key, {
               account_code: entity.account_code,
               account_name: entity.account_name,
-              total: montoNetoProveedor
+              total: montoNetoProveedor,
             });
           }
         } else {
@@ -142,7 +144,7 @@ export async function POST(request: NextRequest) {
             accountTotals.set(key, {
               account_code: '5.1.1.001',
               account_name: 'Gastos Generales',
-              total: montoNetoProveedor
+              total: montoNetoProveedor,
             });
           }
         }
@@ -159,7 +161,7 @@ export async function POST(request: NextRequest) {
           account_name: accountData.account_name,
           description: `Gastos del período ${period} (K+Z+J)`,
           debit_amount: accountData.total,
-          credit_amount: 0
+          credit_amount: 0,
         });
         totalDebit += accountData.total;
       } else if (accountData.total < 0) {
@@ -169,7 +171,7 @@ export async function POST(request: NextRequest) {
           account_name: accountData.account_name,
           description: `Devoluciones del período ${period}`,
           debit_amount: 0,
-          credit_amount: Math.abs(accountData.total)
+          credit_amount: Math.abs(accountData.total),
         });
         totalCredit += Math.abs(accountData.total);
       }
@@ -183,7 +185,7 @@ export async function POST(request: NextRequest) {
         account_name: 'Gastos Generales',
         description: `Gastos del período ${period} (K+Z+J)`,
         debit_amount: montoNetoTotal,
-        credit_amount: 0
+        credit_amount: 0,
       });
       totalDebit += montoNetoTotal;
     }
@@ -196,7 +198,7 @@ export async function POST(request: NextRequest) {
         account_name: 'IVA Crédito Fiscal',
         description: `IVA Crédito Fiscal período ${period}`,
         debit_amount: totalIVA,
-        credit_amount: 0
+        credit_amount: 0,
       });
       
       totalDebit += totalIVA;
@@ -215,7 +217,7 @@ export async function POST(request: NextRequest) {
         account_name: 'Proveedores',
         description: `Proveedores por pagar período ${period} (K+Z+J+L)`,
         debit_amount: 0,
-        credit_amount: totalProveedores
+        credit_amount: totalProveedores,
       });
       
       totalCredit += totalProveedores;
@@ -228,26 +230,26 @@ export async function POST(request: NextRequest) {
       total_credit: totalCredit,
       lines: journalLines,
       period,
-      is_balanced: Math.abs(totalDebit - totalCredit) < 0.01
+      is_balanced: Math.abs(totalDebit - totalCredit) < 0.01,
     };
 
     console.log('✅ Asiento contable generado:', {
       lines: journalLines.length,
       total_debit: totalDebit,
       total_credit: totalCredit,
-      is_balanced: journalEntry.is_balanced
+      is_balanced: journalEntry.is_balanced,
     });
 
     return NextResponse.json({
       success: true,
-      data: journalEntry
+      data: journalEntry,
     });
 
   } catch (error) {
     console.error('❌ Error generando asiento contable RCV:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }

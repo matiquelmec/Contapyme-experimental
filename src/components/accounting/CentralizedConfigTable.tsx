@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Edit2, Trash2, Settings, FileText, Search } from 'lucide-react';
-import { Button } from '@/components/ui';
+
+import { Edit2, Trash2, Settings, Search } from 'lucide-react';
 
 interface CentralizedAccountConfig {
   id: string;

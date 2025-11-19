@@ -28,7 +28,7 @@ export async function extractBasicTextFromPDF(file: File): Promise<string> {
         // Buscar texto legible en el stream (caracteres alfanuméricos y espacios)
         const readableText = streamContent.match(/[a-zA-Z0-9\s.,;:()áéíóúñÁÉÍÓÚÑ\-]+/g);
         if (readableText) {
-          extractedText += readableText.join(' ') + ' ';
+          extractedText += `${readableText.join(' ')  } `;
         }
       }
       
@@ -47,7 +47,7 @@ export async function extractBasicTextFromPDF(file: File): Promise<string> {
       { code: '511', pattern: /511[\s\S]{0,100}?([0-9]{4,})/g },
       { code: '062', pattern: /062[\s\S]{0,100}?([0-9]{4,})/g },
       { code: '077', pattern: /077[\s\S]{0,100}?([0-9]{4,})/g },
-      { code: '563', pattern: /563[\s\S]{0,100}?([0-9]{4,})/g }
+      { code: '563', pattern: /563[\s\S]{0,100}?([0-9]{4,})/g },
     ];
     
     let foundData = '';
@@ -89,24 +89,24 @@ export function extractF29CodesFromSimpleText(text: string): any {
   const patterns = {
     codigo538: [
       /538[\s\S]{0,100}?([0-9]{4,})/gi,
-      /débito\s*fiscal[\s\S]{0,100}?([0-9]{4,})/gi
+      /débito\s*fiscal[\s\S]{0,100}?([0-9]{4,})/gi,
     ],
     codigo511: [
       /511[\s\S]{0,100}?([0-9]{4,})/gi,
-      /crédito\s*fiscal[\s\S]{0,100}?([0-9]{4,})/gi
+      /crédito\s*fiscal[\s\S]{0,100}?([0-9]{4,})/gi,
     ],
     codigo062: [
       /062[\s\S]{0,100}?([0-9]{4,})/gi,
-      /ppm[\s\S]{0,100}?([0-9]{4,})/gi
+      /ppm[\s\S]{0,100}?([0-9]{4,})/gi,
     ],
     codigo077: [
       /077[\s\S]{0,100}?([0-9]{4,})/gi,
-      /remanente[\s\S]{0,100}?([0-9]{4,})/gi
+      /remanente[\s\S]{0,100}?([0-9]{4,})/gi,
     ],
     codigo563: [
       /563[\s\S]{0,100}?([0-9]{4,})/gi,
-      /ventas?\s*netas?[\s\S]{0,100}?([0-9]{4,})/gi
-    ]
+      /ventas?\s*netas?[\s\S]{0,100}?([0-9]{4,})/gi,
+    ],
   };
   
   for (const [key, patternList] of Object.entries(patterns)) {

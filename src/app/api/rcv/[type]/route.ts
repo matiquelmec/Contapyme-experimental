@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -16,7 +18,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { type: string } }
+  { params }: { params: { type: string } },
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -29,14 +31,14 @@ export async function GET(
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (rcvType !== 'purchase' && rcvType !== 'sales') {
       return NextResponse.json(
         { success: false, error: 'Tipo debe ser "purchase" o "sales"' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -47,14 +49,14 @@ export async function GET(
       return NextResponse.json({
         success: true,
         data: result,
-        type: 'purchase'
+        type: 'purchase',
       });
     } else {
       const result = await getSalesData(companyId, period, limit);
       return NextResponse.json({
         success: true,
         data: result,
-        type: 'sales'
+        type: 'sales',
       });
     }
 
@@ -62,7 +64,7 @@ export async function GET(
     console.error('❌ Error obteniendo datos RCV:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -98,8 +100,8 @@ async function getPurchaseData(companyId: string, period?: string | null, limit?
       summary: {
         total_ledgers: 0,
         total_transactions: 0,
-        total_amount: 0
-      }
+        total_amount: 0,
+      },
     };
   }
 
@@ -121,7 +123,7 @@ async function getPurchaseData(companyId: string, period?: string | null, limit?
   // Agrupar documentos por ledger
   const ledgersWithDocuments = ledgers.map(ledger => ({
     ...ledger,
-    documents: documents?.filter(doc => doc.purchase_ledger_id === ledger.id) || []
+    documents: documents?.filter(doc => doc.purchase_ledger_id === ledger.id) || [],
   }));
 
   return {
@@ -130,8 +132,8 @@ async function getPurchaseData(companyId: string, period?: string | null, limit?
     summary: {
       total_ledgers: ledgers.length,
       total_transactions: totalTransactions,
-      total_amount: totalAmount
-    }
+      total_amount: totalAmount,
+    },
   };
 }
 
@@ -166,8 +168,8 @@ async function getSalesData(companyId: string, period?: string | null, limit?: s
       summary: {
         total_ledgers: 0,
         total_transactions: 0,
-        total_amount: 0
-      }
+        total_amount: 0,
+      },
     };
   }
 
@@ -189,7 +191,7 @@ async function getSalesData(companyId: string, period?: string | null, limit?: s
   // Agrupar documentos por ledger
   const ledgersWithDocuments = ledgers.map(ledger => ({
     ...ledger,
-    documents: documents?.filter(doc => doc.sales_ledger_id === ledger.id) || []
+    documents: documents?.filter(doc => doc.sales_ledger_id === ledger.id) || [],
   }));
 
   return {
@@ -198,8 +200,8 @@ async function getSalesData(companyId: string, period?: string | null, limit?: s
     summary: {
       total_ledgers: ledgers.length,
       total_transactions: totalTransactions,
-      total_amount: totalAmount
-    }
+      total_amount: totalAmount,
+    },
   };
 }
 

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDatabaseConnection } from '@/lib/database/databaseSimple';
+
 import ExcelJS from 'exceljs';
+
+import { getDatabaseConnection } from '@/lib/database/databaseSimple';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +19,7 @@ export async function GET(request: NextRequest) {
     if (!company_id) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -26,14 +28,14 @@ export async function GET(request: NextRequest) {
       date_from,
       date_to,
       account_code,
-      format
+      format,
     });
 
     const supabase = getDatabaseConnection();
     if (!supabase) {
       return NextResponse.json({
         success: false,
-        error: 'Error de conexión con la base de datos'
+        error: 'Error de conexión con la base de datos',
       }, { status: 500 });
     }
 
@@ -76,7 +78,7 @@ export async function GET(request: NextRequest) {
       console.error('❌ Error obteniendo asientos del Libro Diario:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error al obtener datos del Libro Diario: ' + error.message
+        error: `Error al obtener datos del Libro Diario: ${  error.message}`,
       }, { status: 500 });
     }
 
@@ -89,10 +91,10 @@ export async function GET(request: NextRequest) {
             total_accounts: 0,
             total_debit: 0,
             total_credit: 0,
-            period: { date_from, date_to }
+            period: { date_from, date_to },
           },
-          message: 'No hay asientos en el Libro Diario para el período seleccionado'
-        }
+          message: 'No hay asientos en el Libro Diario para el período seleccionado',
+        },
       });
     }
 
@@ -116,7 +118,7 @@ export async function GET(request: NextRequest) {
             movements: [],
             total_debit: 0,
             total_credit: 0,
-            balance: 0
+            balance: 0,
           });
         }
 
@@ -130,7 +132,7 @@ export async function GET(request: NextRequest) {
           reference: line.reference || entry.reference,
           debit: line.debit_amount || 0,
           credit: line.credit_amount || 0,
-          entry_type: entry.entry_type
+          entry_type: entry.entry_type,
         });
 
         // Actualizar totales
@@ -145,7 +147,7 @@ export async function GET(request: NextRequest) {
 
     // Convertir el Map a array y ordenar por código de cuenta
     const accounts = Array.from(accountsMap.values()).sort((a, b) => 
-      a.account_code.localeCompare(b.account_code)
+      a.account_code.localeCompare(b.account_code),
     );
 
     // Calcular saldo acumulado para cada cuenta
@@ -155,7 +157,7 @@ export async function GET(request: NextRequest) {
         runningBalance += (movement.debit - movement.credit);
         return {
           ...movement,
-          running_balance: runningBalance
+          running_balance: runningBalance,
         };
       });
     });
@@ -169,10 +171,10 @@ export async function GET(request: NextRequest) {
         balance_check: Math.abs(totalDebit - totalCredit) < 0.01, // Verificar balance
         period: { 
           date_from: date_from || 'Inicio',
-          date_to: date_to || 'Actual'
+          date_to: date_to || 'Actual',
         },
-        generated_at: new Date().toISOString()
-      }
+        generated_at: new Date().toISOString(),
+      },
     };
 
     console.log(`✅ Libro Mayor generado: ${accounts.length} cuentas, ${entries.length} asientos procesados`);
@@ -194,7 +196,7 @@ export async function GET(request: NextRequest) {
           { header: 'Tipo', key: 'entry_type', width: 12 },
           { header: 'Débito', key: 'debit', width: 15 },
           { header: 'Crédito', key: 'credit', width: 15 },
-          { header: 'Saldo', key: 'balance', width: 15 }
+          { header: 'Saldo', key: 'balance', width: 15 },
         ];
         
         // Estilo de encabezados
@@ -202,10 +204,10 @@ export async function GET(request: NextRequest) {
         worksheet.getRow(1).fill = {
           type: 'pattern',
           pattern: 'solid',
-          fgColor: { argb: 'FFE0E0E0' }
+          fgColor: { argb: 'FFE0E0E0' },
         };
         
-        let rowIndex = 2;
+        const rowIndex = 2;
         
         // Agregar datos de cada cuenta
         accounts.forEach(account => {
@@ -219,14 +221,14 @@ export async function GET(request: NextRequest) {
             entry_type: '',
             debit: account.total_debit,
             credit: account.total_credit,
-            balance: account.balance
+            balance: account.balance,
           });
           
           headerRow.font = { bold: true };
           headerRow.fill = {
             type: 'pattern',
             pattern: 'solid',
-            fgColor: { argb: 'FFF0F0F0' }
+            fgColor: { argb: 'FFF0F0F0' },
           };
           
           // Movimientos de la cuenta
@@ -246,7 +248,7 @@ export async function GET(request: NextRequest) {
               entry_type: movement.entry_type,
               debit: movement.debit || '',
               credit: movement.credit || '',
-              balance: balanceText
+              balance: balanceText,
             });
           });
           
@@ -262,29 +264,29 @@ export async function GET(request: NextRequest) {
           headers: {
             'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition': `attachment; filename="${filename}"`,
-            'Content-Length': buffer.length.toString()
-          }
+            'Content-Length': buffer.length.toString(),
+          },
         });
         
       } catch (excelError: any) {
         console.error('❌ Error generando Excel:', excelError);
         return NextResponse.json({
           success: false,
-          error: 'Error generando archivo Excel: ' + excelError.message
+          error: `Error generando archivo Excel: ${  excelError.message}`,
         }, { status: 500 });
       }
     }
 
     return NextResponse.json({
       success: true,
-      data: generalLedger
+      data: generalLedger,
     });
 
   } catch (error: any) {
     console.error('❌ Error en GET /api/accounting/general-ledger:', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Error interno del servidor'
+      error: error.message || 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -298,7 +300,7 @@ export async function POST(request: NextRequest) {
     if (!company_id) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -306,7 +308,7 @@ export async function POST(request: NextRequest) {
       company_id,
       date_from,
       date_to,
-      format
+      format,
     });
 
     // Obtener datos del Libro Mayor usando el mismo proceso que GET
@@ -314,7 +316,7 @@ export async function POST(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json({
         success: false,
-        error: 'Error de conexión con la base de datos'
+        error: 'Error de conexión con la base de datos',
       }, { status: 500 });
     }
 
@@ -352,7 +354,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       return NextResponse.json({
         success: false,
-        error: 'Error al obtener datos: ' + error.message
+        error: `Error al obtener datos: ${  error.message}`,
       }, { status: 500 });
     }
 
@@ -361,12 +363,12 @@ export async function POST(request: NextRequest) {
       company_id,
       format: 'excel',
       ...(date_from && { date_from }),
-      ...(date_to && { date_to })
+      ...(date_to && { date_to }),
     });
     
     // Hacer request interno
     const getRequest = new NextRequest(`${request.url}?${queryParams}`, {
-      method: 'GET'
+      method: 'GET',
     });
     
     return await GET(getRequest);
@@ -375,7 +377,7 @@ export async function POST(request: NextRequest) {
     console.error('❌ Error en POST /api/accounting/general-ledger/export:', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Error interno del servidor'
+      error: error.message || 'Error interno del servidor',
     }, { status: 500 });
   }
 }

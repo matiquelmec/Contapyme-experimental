@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -17,7 +19,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -67,7 +69,7 @@ export async function GET(request: NextRequest) {
                 ...book,
                 total_haberes: totalHaberes,
                 total_descuentos: totalDescuentos,
-                total_liquido: totalLiquido
+                total_liquido: totalLiquido,
               };
             }
             return book;
@@ -75,13 +77,13 @@ export async function GET(request: NextRequest) {
             console.log('Error recalculando libro:', book.id);
             return book;
           }
-        })
+        }),
       );
       
       return NextResponse.json({
         success: true,
         data: booksWithRecalculatedTotals,
-        source: 'database'
+        source: 'database',
       });
     }
 
@@ -99,28 +101,28 @@ export async function GET(request: NextRequest) {
           total_descuentos: 900000,
           total_liquido: 3600000, // = 4500000 - 900000
           generation_date: new Date().toISOString(),
-          payroll_book_details: []
-        }
+          payroll_book_details: [],
+        },
       ];
 
       return NextResponse.json({
         success: true,
         data: demoBooks,
-        source: 'demo'
+        source: 'demo',
       });
     }
 
     return NextResponse.json({
       success: true,
       data: books || [],
-      source: 'database'
+      source: 'database',
     });
 
   } catch (error) {
     console.error('❌ Error en consulta rápida:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

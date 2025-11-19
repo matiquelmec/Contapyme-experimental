@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { PayrollCalculator } from '@/modules/remuneraciones/services/calculadorService';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -9,13 +10,11 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Generar HTML para la liquidación
 function generateLiquidationHTML(liquidation: any, employee: any, company: any) {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   const formatPeriod = (year: number, month: number) => {
     const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -44,8 +43,7 @@ function generateLiquidationHTML(liquidation: any, employee: any, company: any) 
   };
 
   // ✅ FUNCIÓN PARA CALCULAR TOTAL DESCUENTOS DINÁMICAMENTE
-  const calculateTotalDeductions = (liq: any) => {
-    return (liq.afp_amount || 0) + 
+  const calculateTotalDeductions = (liq: any) => (liq.afp_amount || 0) + 
            (liq.afp_commission_amount || 0) +
            (liq.health_amount || 0) + 
            (liq.additional_health_amount || 0) +
@@ -55,12 +53,9 @@ function generateLiquidationHTML(liquidation: any, employee: any, company: any) 
            (liq.advance_payments || 0) +
            (liq.apv_amount || 0) +
            (liq.other_deductions || 0);
-  };
 
   // ✅ CALCULAR LÍQUIDO A PAGAR DINÁMICAMENTE
-  const calculateNetSalary = (liq: any) => {
-    return liq.total_gross_income - calculateTotalDeductions(liq);
-  };
+  const calculateNetSalary = (liq: any) => liq.total_gross_income - calculateTotalDeductions(liq);
 
   return `
 <!DOCTYPE html>
@@ -380,7 +375,7 @@ export async function POST(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -412,14 +407,14 @@ export async function POST(request: NextRequest) {
       if (error || !dbLiquidation) {
         return NextResponse.json(
           { success: false, error: 'Liquidación no encontrada' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
       liquidation = dbLiquidation;
       employee = {
         ...dbLiquidation.employees,
-        position: dbLiquidation.employees.employment_contracts?.[0]?.position
+        position: dbLiquidation.employees.employment_contracts?.[0]?.position,
       };
     } else if (liquidation_data) {
       // Usar datos proporcionados directamente
@@ -428,7 +423,7 @@ export async function POST(request: NextRequest) {
     } else {
       return NextResponse.json(
         { success: false, error: 'Se requiere liquidation_id o liquidation_data' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -463,7 +458,7 @@ export async function POST(request: NextRequest) {
         email: companyInfo.company_email,
         legal_representative_name: legalRep?.full_name,
         legal_representative_rut: legalRep?.rut,
-        legal_representative_position: legalRep?.position || 'GERENTE GENERAL'
+        legal_representative_position: legalRep?.position || 'GERENTE GENERAL',
       };
       
       console.log('✅ Liquidación usando representante legal de payroll_settings:', legalRep?.full_name);
@@ -478,15 +473,15 @@ export async function POST(request: NextRequest) {
       success: true,
       data: {
         html,
-        filename: `liquidacion_${employee.rut}_${liquidation.period_year}_${liquidation.period_month}.pdf`
-      }
+        filename: `liquidacion_${employee.rut}_${liquidation.period_year}_${liquidation.period_month}.pdf`,
+      },
     });
 
   } catch (error) {
     console.error('Error in POST /api/payroll/liquidations/export:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -502,7 +497,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -553,7 +548,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { success: false, error: 'Error al obtener liquidaciones' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -562,7 +557,7 @@ export async function GET(request: NextRequest) {
       'RUT', 'Nombre', 'Año', 'Mes', 'Días Trabajados',
       'Sueldo Base', 'Gratificación Art. 50', 'Total Imponible', 'Total No Imponible',
       'AFP', 'Salud', 'Cesantía', 'Impuesto',
-      'Total Descuentos', 'Líquido a Pagar'
+      'Total Descuentos', 'Líquido a Pagar',
     ];
 
     const rows = liquidations?.map(liq => [
@@ -580,27 +575,27 @@ export async function GET(request: NextRequest) {
       liq.unemployment_amount,
       liq.income_tax_amount,
       liq.total_deductions,
-      liq.net_salary
+      liq.net_salary,
     ]) || [];
 
     const csv = [
       headers.join(','),
-      ...rows.map(row => row.join(','))
+      ...rows.map(row => row.join(',')),
     ].join('\n');
 
     return new NextResponse(csv, {
       status: 200,
       headers: {
         'Content-Type': 'text/csv;charset=utf-8',
-        'Content-Disposition': `attachment; filename="liquidaciones_${year || 'todas'}_${month || 'todos'}.csv"`
-      }
+        'Content-Disposition': `attachment; filename="liquidaciones_${year || 'todas'}_${month || 'todos'}.csv"`,
+      },
     });
 
   } catch (error) {
     console.error('Error in GET /api/payroll/liquidations/export:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

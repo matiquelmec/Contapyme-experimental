@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic({
@@ -17,7 +19,7 @@ export async function POST(request: NextRequest) {
       raw_prohibitions = [],
       company_type = 'PyME general',
       contract_type = 'indefinido',
-      additional_context = ''
+      additional_context = '',
     } = body;
 
     if (!position) {
@@ -112,8 +114,8 @@ Refina y mejora el descriptor manteniendo la esencia del cargo pero elevando la 
       temperature: 0.3, // Menos creativo, más consistente para refinamiento
       messages: [{
         role: 'user',
-        content: prompt
-      }]
+        content: prompt,
+      }],
     });
 
     const generatedContent = response.content[0];
@@ -165,7 +167,7 @@ Refina y mejora el descriptor manteniendo la esencia del cargo pero elevando la 
 
     // Limpiar arrays eliminando bullets y numeración
     const cleanArray = (arr: string[]) => arr.map(item => 
-      item.replace(/^\d+\.?\s*/, '').replace(/^[•*-]\s*/, '').trim()
+      item.replace(/^\d+\.?\s*/, '').replace(/^[•*-]\s*/, '').trim(),
     ).filter(item => item.length > 0);
 
     const cleanedFunctions = cleanArray(refinedFunctions);
@@ -182,16 +184,16 @@ Refina y mejora el descriptor manteniendo la esencia del cargo pero elevando la 
         refined_prohibitions: cleanedProhibitions,
         improvements_made: improvements,
         compliance_notes: complianceNotes,
-        raw_response: responseText
+        raw_response: responseText,
       },
       refined_by: 'ai',
       refinement_quality: {
         functions_improved: cleanedFunctions.length,
         obligations_added: cleanedObligations.length,
         prohibitions_added: cleanedProhibitions.length,
-        compliance_level: complianceNotes.length > 0 ? 'high' : 'medium'
+        compliance_level: complianceNotes.length > 0 ? 'high' : 'medium',
       },
-      message: 'Descriptor de cargo refinado exitosamente según normativa chilena'
+      message: 'Descriptor de cargo refinado exitosamente según normativa chilena',
     });
 
   } catch (error) {
@@ -201,13 +203,13 @@ Refina y mejora el descriptor manteniendo la esencia del cargo pero elevando la 
     if (error instanceof Error && error.message.includes('API key')) {
       return NextResponse.json({ 
         error: 'Error de configuración de IA - verifique las credenciales',
-        details: 'ANTHROPIC_API_KEY no configurada correctamente'
+        details: 'ANTHROPIC_API_KEY no configurada correctamente',
       }, { status: 500 });
     }
 
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }

@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
+
 import Link from 'next/link';
+
 import {
   FileText,
   Upload,
@@ -19,9 +21,10 @@ import {
   Activity,
   DollarSign,
   Users,
-  AlertTriangle
+  AlertTriangle,
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+
 import MissingEntitiesManager from '@/components/accounting/MissingEntitiesManager';
 
 interface ProveedorSummary {
@@ -122,7 +125,7 @@ export default function RCVAnalysisPage() {
       result: null,
       error: null,
       storageResult: null,
-      uploading: false
+      uploading: false,
     }));
 
     setFiles(prev => [...prev, ...newFileResults]);
@@ -142,7 +145,7 @@ export default function RCVAnalysisPage() {
       result: null,
       error: null,
       storageResult: null,
-      uploading: false
+      uploading: false,
     }));
 
     setFiles(prev => [...prev, ...newFileResults]);
@@ -170,7 +173,7 @@ export default function RCVAnalysisPage() {
     if (!fileData || fileData.uploading) return;
 
     setFiles(prev => prev.map((f, i) =>
-      i === fileIndex ? { ...f, uploading: true, error: null } : f
+      i === fileIndex ? { ...f, uploading: true, error: null } : f,
     ));
 
     try {
@@ -194,16 +197,16 @@ export default function RCVAnalysisPage() {
             uploading: false,
             result: data.data,
             storageResult: data.storage,
-            error: null
-          } : f
+            error: null,
+          } : f,
         ));
       } else {
         setFiles(prev => prev.map((f, i) =>
           i === fileIndex ? {
             ...f,
             uploading: false,
-            error: data.error || 'Error al procesar el archivo RCV'
-          } : f
+            error: data.error || 'Error al procesar el archivo RCV',
+          } : f,
         ));
       }
     } catch (err) {
@@ -211,8 +214,8 @@ export default function RCVAnalysisPage() {
         i === fileIndex ? {
           ...f,
           uploading: false,
-          error: 'Error de conexión. Inténtalo nuevamente.'
-        } : f
+          error: 'Error de conexión. Inténtalo nuevamente.',
+        } : f,
       ));
     }
   };
@@ -238,13 +241,11 @@ export default function RCVAnalysisPage() {
     setGlobalUploading(false);
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return 'N/A';
@@ -302,8 +303,8 @@ export default function RCVAnalysisPage() {
         body: JSON.stringify({
           company_id: companyId,
           rcv_analysis: result,
-          period: period,
-          ledger_id: currentFile?.storageResult?.ledger_id || null
+          period,
+          ledger_id: currentFile?.storageResult?.ledger_id || null,
         }),
       });
 
@@ -312,7 +313,7 @@ export default function RCVAnalysisPage() {
       if (data.success) {
         setJournalEntry(data.data);
       } else {
-        alert('Error al generar el asiento contable: ' + data.error);
+        alert(`Error al generar el asiento contable: ${  data.error}`);
       }
     } catch (error) {
       alert('Error de conexión al generar asiento contable');
@@ -343,8 +344,8 @@ export default function RCVAnalysisPage() {
           company_id: companyId,
           rcv_analysis: result,
           preliminary_entry: journalEntry,
-          ledger_id: ledger_id,
-          period: period
+          ledger_id,
+          period,
         }),
       });
 
@@ -360,7 +361,7 @@ export default function RCVAnalysisPage() {
 
         setJournalEntry(null);
       } else {
-        alert('Error al contabilizar el asiento: ' + data.error);
+        alert(`Error al contabilizar el asiento: ${  data.error}`);
       }
     } catch (error) {
       alert('Error de conexión al contabilizar asiento');
@@ -384,7 +385,7 @@ export default function RCVAnalysisPage() {
       totalAmount,
       totalSuppliers,
       hasErrors: files.some(f => f.error),
-      isProcessing: files.some(f => f.uploading) || globalUploading
+      isProcessing: files.some(f => f.uploading) || globalUploading,
     };
   };
 
@@ -392,7 +393,7 @@ export default function RCVAnalysisPage() {
   const result = currentFile?.result;
 
   const chartData = result ? result.proveedoresPrincipales.slice(0, 10).map(p => ({
-    name: p.razonSocial.length > 25 ? p.razonSocial.substring(0, 25) + '...' : p.razonSocial,
+    name: p.razonSocial.length > 25 ? `${p.razonSocial.substring(0, 25)  }...` : p.razonSocial,
     fullName: p.razonSocial,
     monto: Math.abs(p.montoCalculado),
     montoReal: p.montoCalculado,
@@ -400,7 +401,7 @@ export default function RCVAnalysisPage() {
     transaccionesSuma: p.transaccionesSuma,
     transaccionesResta: p.transaccionesResta,
     porcentaje: p.porcentajeDelTotal,
-    tipo: p.montoCalculado >= 0 ? 'Compras' : 'Devoluciones'
+    tipo: p.montoCalculado >= 0 ? 'Compras' : 'Devoluciones',
   })) : [];
 
   const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4', '#84CC16', '#F97316', '#EC4899', '#6B7280'];
@@ -416,7 +417,7 @@ export default function RCVAnalysisPage() {
       const month = yearMonth.substring(4, 6);
       const monthNames = [
         'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
       ];
       const monthName = monthNames[parseInt(month) - 1];
       const period = `${monthName} ${year}`;
@@ -427,7 +428,7 @@ export default function RCVAnalysisPage() {
     return {
       rut: '12.345.678-9',
       period: `${formatDate(result?.periodoInicio || '')} - ${formatDate(result?.periodoFin || '')}`,
-      yearMonth: result?.periodoInicio?.replace(/\//g, '') || '010125'
+      yearMonth: result?.periodoInicio?.replace(/\//g, '') || '010125',
     };
   };
 
@@ -457,7 +458,7 @@ export default function RCVAnalysisPage() {
           scale: 2,
           useCORS: true,
           allowTaint: true,
-          backgroundColor: '#FFFFFF'
+          backgroundColor: '#FFFFFF',
         });
         return canvas.toDataURL('image/png');
       };
@@ -576,7 +577,7 @@ export default function RCVAnalysisPage() {
         // Razón Social (truncar si es muy largo)
         pdf.setFontSize(9);
         const razonSocial = proveedor.razonSocial.length > 32
-          ? proveedor.razonSocial.substring(0, 32) + '...'
+          ? `${proveedor.razonSocial.substring(0, 32)  }...`
           : proveedor.razonSocial;
         pdf.text(razonSocial, currentX + 2, currentY + 4);
         currentX += colWidths[1];
@@ -646,8 +647,8 @@ export default function RCVAnalysisPage() {
         p.montoNetoTotal.toString(),
         p.montoIVATotal.toString(),
         p.montoCalculado.toString(),
-        p.porcentajeDelTotal.toFixed(2) + '%'
-      ])
+        `${p.porcentajeDelTotal.toFixed(2)  }%`,
+      ]),
     ];
 
     const csvContent = csvData.map(row => row.join(',')).join('\n');
@@ -783,7 +784,7 @@ export default function RCVAnalysisPage() {
                     </label>
                     <select
                       value={rcvType}
-                      onChange={(e) => setRcvType(e.target.value as 'purchase' | 'sales')}
+                      onChange={(e) => { setRcvType(e.target.value as 'purchase' | 'sales'); }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       disabled={globalUploading || files.some(f => f.uploading)}
                     >
@@ -801,7 +802,7 @@ export default function RCVAnalysisPage() {
                       <input
                         type="checkbox"
                         checked={storeInDB}
-                        onChange={(e) => setStoreInDB(e.target.checked)}
+                        onChange={(e) => { setStoreInDB(e.target.checked); }}
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         disabled={globalUploading || files.some(f => f.uploading)}
                       />
@@ -822,13 +823,13 @@ export default function RCVAnalysisPage() {
                             fileData.uploading ? 'bg-yellow-500 animate-pulse' :
                             fileData.error ? 'bg-red-500' :
                             fileData.result ? 'bg-green-500' : 'bg-gray-300'
-                          }`}></div>
+                          }`} />
                           <span className="text-sm font-medium text-gray-900 truncate">
                             {fileData.file.name}
                           </span>
                         </div>
                         <button
-                          onClick={() => removeFile(index)}
+                          onClick={() => { removeFile(index); }}
                           disabled={fileData.uploading}
                           className="text-gray-400 hover:text-red-500"
                         >
@@ -861,7 +862,7 @@ export default function RCVAnalysisPage() {
 
                       {fileData.result && (
                         <button
-                          onClick={() => setActiveTab(index)}
+                          onClick={() => { setActiveTab(index); }}
                           className="w-full bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-sm font-medium"
                         >
                           Ver Análisis
@@ -903,7 +904,7 @@ export default function RCVAnalysisPage() {
                     fileData.result && (
                       <button
                         key={index}
-                        onClick={() => setActiveTab(index)}
+                        onClick={() => { setActiveTab(index); }}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                           activeTab === index
                             ? 'bg-blue-600 text-white shadow-md'
@@ -1057,7 +1058,7 @@ export default function RCVAnalysisPage() {
                                     border: 'none',
                                     borderRadius: '8px',
                                     color: 'white',
-                                    fontSize: '12px'
+                                    fontSize: '12px',
                                   }}
                                   formatter={(value: number, name: string) => [formatCurrency(value), 'Monto Total']}
                                   labelFormatter={(label) => {
@@ -1112,7 +1113,7 @@ export default function RCVAnalysisPage() {
                                     <Pie
                                       data={chartData.slice(0, 8).map((item, index) => ({
                                         ...item,
-                                        fill: COLORS[index % COLORS.length]
+                                        fill: COLORS[index % COLORS.length],
                                       }))}
                                       cx="50%"
                                       cy="50%"
@@ -1137,10 +1138,10 @@ export default function RCVAnalysisPage() {
                                         borderRadius: '8px',
                                         color: 'white',
                                         fontSize: '12px',
-                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.1)'
+                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.1)',
                                       }}
                                       content={({ active, payload }) => {
-                                        if (active && payload && payload.length) {
+                                        if (active && payload?.length) {
                                           const data = payload[0].payload;
                                           return (
                                             <div style={{
@@ -1150,7 +1151,7 @@ export default function RCVAnalysisPage() {
                                               color: 'white',
                                               fontSize: '12px',
                                               padding: '8px 12px',
-                                              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.1)'
+                                              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.1)',
                                             }}>
                                               <p style={{ margin: 0, fontWeight: 'bold', marginBottom: '4px' }}>
                                                 {data.fullName}
@@ -1180,7 +1181,7 @@ export default function RCVAnalysisPage() {
                                         <div
                                           className="w-3 h-3 rounded-full"
                                           style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                                        ></div>
+                                         />
                                         <span className="text-sm font-medium text-gray-700 truncate max-w-32">
                                           {item.fullName}
                                         </span>
@@ -1237,7 +1238,7 @@ export default function RCVAnalysisPage() {
                           {exportingPDF ? 'Generando PDF...' : 'Exportar PDF'}
                         </button>
                         <button
-                          onClick={() => setShowDetailed(showDetailed === activeTab ? null : activeTab)}
+                          onClick={() => { setShowDetailed(showDetailed === activeTab ? null : activeTab); }}
                           className="bg-white hover:bg-purple-50 text-purple-700 border border-purple-200 px-4 py-3 rounded-lg font-medium flex items-center gap-2 transition-all hover:shadow-sm"
                         >
                           <BarChart3 className="w-4 h-4" />
@@ -1433,9 +1434,9 @@ export default function RCVAnalysisPage() {
                                     line.account_name,
                                     line.description,
                                     line.debit_amount.toString(),
-                                    line.credit_amount.toString()
+                                    line.credit_amount.toString(),
                                   ]),
-                                  ['', '', 'TOTALES:', journalEntry.total_debit.toString(), journalEntry.total_credit.toString()]
+                                  ['', '', 'TOTALES:', journalEntry.total_debit.toString(), journalEntry.total_credit.toString()],
                                 ];
 
                                 const csvContent = csvData.map(row => row.join(',')).join('\n');
@@ -1458,7 +1459,7 @@ export default function RCVAnalysisPage() {
                               Exportar CSV
                             </button>
                             <button
-                              onClick={() => setJournalEntry(null)}
+                              onClick={() => { setJournalEntry(null); }}
                               className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2"
                             >
                               <X className="w-4 h-4" />
@@ -1494,7 +1495,7 @@ export default function RCVAnalysisPage() {
 
                           <div className="flex justify-end space-x-3">
                             <button
-                              onClick={() => setShowConfirmDialog(false)}
+                              onClick={() => { setShowConfirmDialog(false); }}
                               className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium"
                             >
                               Cancelar

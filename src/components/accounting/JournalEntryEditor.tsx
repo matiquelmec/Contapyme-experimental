@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
+
 import AccountSelector from './AccountSelector';
 
 interface JournalEntry {
@@ -41,27 +43,23 @@ export default function JournalEntryEditor({ entries, onSave, onCancel, isLoadin
   const [expandedEntry, setExpandedEntry] = useState<string | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('es-CL', {
+  const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString('es-CL', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
     });
-  };
 
   const updateEntry = (tempId: string, field: keyof JournalEntry, value: string | number) => {
     setEditableEntries(prev => prev.map(entry => 
       entry.tempId === tempId 
         ? { ...entry, [field]: value }
-        : entry
+        : entry,
     ));
   };
 
@@ -105,7 +103,7 @@ export default function JournalEntryEditor({ entries, onSave, onCancel, isLoadin
       return {
         ...entry,
         debitAccountName: debitAccountData?.name || entry.debitAccountName,
-        creditAccountName: creditAccountData?.name || entry.creditAccountName
+        creditAccountName: creditAccountData?.name || entry.creditAccountName,
       };
     }));
   };
@@ -144,7 +142,7 @@ export default function JournalEntryEditor({ entries, onSave, onCancel, isLoadin
   const handleSave = () => {
     const errors = validateEntries();
     if (errors.length > 0) {
-      alert('Errores encontrados:\n\n' + errors.join('\n'));
+      alert(`Errores encontrados:\n\n${  errors.join('\n')}`);
       return;
     }
     onSave(editableEntries);
@@ -207,14 +205,14 @@ export default function JournalEntryEditor({ entries, onSave, onCancel, isLoadin
                     <div className="flex items-center gap-2">
                       <Button
                         variant="outline"
-                        onClick={() => toggleExpanded(entry.tempId)}
+                        onClick={() => { toggleExpanded(entry.tempId); }}
                         className="text-sm px-3 py-1"
                       >
                         {expandedEntry === entry.tempId ? '📕 Contraer' : '📖 Editar'}
                       </Button>
                       <Button
                         variant="danger"
-                        onClick={() => removeEntry(entry.tempId)}
+                        onClick={() => { removeEntry(entry.tempId); }}
                         className="text-sm px-3 py-1"
                       >
                         🗑️
@@ -249,7 +247,7 @@ export default function JournalEntryEditor({ entries, onSave, onCancel, isLoadin
                             <input
                               type="date"
                               value={entry.date}
-                              onChange={(e) => updateEntry(entry.tempId, 'date', e.target.value)}
+                              onChange={(e) => { updateEntry(entry.tempId, 'date', e.target.value); }}
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                             />
                           </div>
@@ -259,7 +257,7 @@ export default function JournalEntryEditor({ entries, onSave, onCancel, isLoadin
                             </label>
                             <textarea
                               value={entry.description}
-                              onChange={(e) => updateEntry(entry.tempId, 'description', e.target.value)}
+                              onChange={(e) => { updateEntry(entry.tempId, 'description', e.target.value); }}
                               rows={2}
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-none"
                             />
@@ -271,7 +269,7 @@ export default function JournalEntryEditor({ entries, onSave, onCancel, isLoadin
                             <input
                               type="text"
                               value={entry.reference}
-                              onChange={(e) => updateEntry(entry.tempId, 'reference', e.target.value)}
+                              onChange={(e) => { updateEntry(entry.tempId, 'reference', e.target.value); }}
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                               placeholder="Número de documento o referencia"
                             />
@@ -317,7 +315,7 @@ export default function JournalEntryEditor({ entries, onSave, onCancel, isLoadin
                             <input
                               type="number"
                               value={entry.amount}
-                              onChange={(e) => updateEntry(entry.tempId, 'amount', parseFloat(e.target.value) || 0)}
+                              onChange={(e) => { updateEntry(entry.tempId, 'amount', parseFloat(e.target.value) || 0); }}
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                               min="0"
                               step="1"
@@ -357,7 +355,7 @@ export default function JournalEntryEditor({ entries, onSave, onCancel, isLoadin
               >
                 {isLoading ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                     Guardando...
                   </>
                 ) : (

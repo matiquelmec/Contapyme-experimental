@@ -1,4 +1,3 @@
-import { WebSearch } from '@/lib/webSearchHelper';
 
 // =============================================
 // SISTEMA HÍBRIDO DE INDICADORES ECONÓMICOS
@@ -34,7 +33,7 @@ const INDICATOR_CONFIG = {
     decimal_places: 2,
     api_url: 'https://mindicador.cl/api/uf',
     search_terms: 'valor UF hoy Chile agosto 2025 unidad fomento',
-    expected_range: [35000, 45000]
+    expected_range: [35000, 45000],
   },
   utm: {
     name: 'Unidad Tributaria Mensual', 
@@ -44,7 +43,7 @@ const INDICATOR_CONFIG = {
     decimal_places: 0,
     api_url: 'https://mindicador.cl/api/utm',
     search_terms: 'UTM agosto 2025 Chile unidad tributaria mensual',
-    expected_range: [65000, 75000]
+    expected_range: [65000, 75000],
   },
   dolar: {
     name: 'Dólar Observado',
@@ -54,7 +53,7 @@ const INDICATOR_CONFIG = {
     decimal_places: 2,
     api_url: 'https://mindicador.cl/api/dolar',
     search_terms: 'dolar observado hoy Chile agosto 2025 tipo cambio USD CLP',
-    expected_range: [800, 1200]
+    expected_range: [800, 1200],
   },
   bitcoin: {
     name: 'Bitcoin',
@@ -64,7 +63,7 @@ const INDICATOR_CONFIG = {
     decimal_places: 0,
     api_url: 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',
     search_terms: 'Bitcoin price USD today August 2025 BTC current value',
-    expected_range: [20000, 200000]
+    expected_range: [20000, 200000],
   },
   ethereum: {
     name: 'Ethereum',
@@ -74,8 +73,8 @@ const INDICATOR_CONFIG = {
     decimal_places: 2,
     api_url: 'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd',
     search_terms: 'Ethereum price USD today August 2025 ETH current value',
-    expected_range: [1000, 8000]
-  }
+    expected_range: [1000, 8000],
+  },
 };
 
 // Cache en memoria (en producción sería Redis o similar)
@@ -148,7 +147,7 @@ async function tryPrimaryAPIs(): Promise<IndicatorResult> {
           category: config.category,
           format_type: config.format_type,
           decimal_places: config.decimal_places,
-          source: 'api'
+          source: 'api',
         };
         
         results.push(indicator);
@@ -165,7 +164,7 @@ async function tryPrimaryAPIs(): Promise<IndicatorResult> {
   return {
     success: results.length > 0,
     data: results,
-    error: errors.length > 0 ? errors.join(', ') : undefined
+    error: errors.length > 0 ? errors.join(', ') : undefined,
   };
 }
 
@@ -178,18 +177,18 @@ async function tryWebSearchFallback(): Promise<IndicatorResult> {
     {
       code: 'uf',
       query: 'valor UF hoy 3 agosto 2025 Chile banco central unidad fomento',
-      extractPattern: /UF.*?(\d{1,2}[.,]\d{3}[.,]\d{2})/i
+      extractPattern: /UF.*?(\d{1,2}[.,]\d{3}[.,]\d{2})/i,
     },
     {
       code: 'dolar', 
       query: 'dolar observado hoy 3 agosto 2025 Chile tipo cambio USD CLP',
-      extractPattern: /dolar.*?(\d{3}[.,]\d{2})/i
+      extractPattern: /dolar.*?(\d{3}[.,]\d{2})/i,
     },
     {
       code: 'bitcoin',
       query: 'Bitcoin price today August 3 2025 USD current BTC value',
-      extractPattern: /bitcoin.*?\$?(\d{1,3}[.,]\d{3})/i
-    }
+      extractPattern: /bitcoin.*?\$?(\d{1,3}[.,]\d{3})/i,
+    },
   ];
 
   for (const search of searchQueries) {
@@ -208,7 +207,7 @@ async function tryWebSearchFallback(): Promise<IndicatorResult> {
           category: config.category,
           format_type: config.format_type,
           decimal_places: config.decimal_places,
-          source: 'web_search'
+          source: 'web_search',
         };
         
         results.push(indicator);
@@ -221,7 +220,7 @@ async function tryWebSearchFallback(): Promise<IndicatorResult> {
 
   return {
     success: results.length > 0,
-    data: results
+    data: results,
   };
 }
 
@@ -235,7 +234,7 @@ async function getWebSearchValue(code: string, query: string): Promise<number | 
     'euro': 1123.11,       // EUR/CLP Investing.com actualizado ✅
     'bitcoin': 113625,     // Bitcoin USD Coinbase ✅
     'ethereum': 3492.54,   // Ethereum USD
-    'sueldo_minimo': 529000 // Sueldo mínimo oficial vigente desde mayo 2025 ✅
+    'sueldo_minimo': 529000, // Sueldo mínimo oficial vigente desde mayo 2025 ✅
   };
 
   // Agregar variación realista (±1-3%)
@@ -261,7 +260,7 @@ function getSmartMockData(): IndicatorResult {
     ethereum: 3492.54,
     sueldo_minimo: 440000,
     ipc: 3.2,
-    tpm: 5.75
+    tpm: 5.75,
   };
 
   for (const [code, config] of Object.entries(INDICATOR_CONFIG)) {
@@ -282,7 +281,7 @@ function getSmartMockData(): IndicatorResult {
         category: config.category,
         format_type: config.format_type,
         decimal_places: config.decimal_places,
-        source: 'cache'
+        source: 'cache',
       });
     }
   }
@@ -311,7 +310,7 @@ function isValueInRange(value: number, range: [number, number]): boolean {
 async function fetchMindicador(indicator: string) {
   try {
     const response = await fetch(`https://mindicador.cl/api/${indicator}`, {
-      headers: { 'User-Agent': 'ContaPymeApp/1.0' }
+      headers: { 'User-Agent': 'ContaPymeApp/1.0' },
     });
     return response.ok ? await response.json() : null;
   } catch {
@@ -323,7 +322,7 @@ async function fetchCryptoData() {
   try {
     const response = await fetch(
       'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd',
-      { headers: { 'User-Agent': 'ContaPymeApp/1.0' } }
+      { headers: { 'User-Agent': 'ContaPymeApp/1.0' } },
     );
     return response.ok ? await response.json() : null;
   } catch {

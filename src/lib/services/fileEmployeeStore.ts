@@ -51,7 +51,7 @@ interface FileData {
 }
 
 class FileEmployeeStore {
-  private dataFilePath: string;
+  private readonly dataFilePath: string;
   private data: FileData;
   
   constructor() {
@@ -122,8 +122,8 @@ class FileEmployeeStore {
             start_date: '2024-01-01',
             base_salary: 1500000,
             salary_type: 'monthly',
-            status: 'active'
-          }
+            status: 'active',
+          },
         ],
         payroll_config: [
           {
@@ -131,9 +131,9 @@ class FileEmployeeStore {
             health_institution_code: 'FONASA',
             family_allowances: 2,
             legal_gratification_type: 'code_47',
-            has_unemployment_insurance: true
-          }
-        ]
+            has_unemployment_insurance: true,
+          },
+        ],
       },
       {
         id: 'file-employee-2',
@@ -163,8 +163,8 @@ class FileEmployeeStore {
             start_date: '2023-06-15',
             base_salary: 1200000,
             salary_type: 'monthly',
-            status: 'active'
-          }
+            status: 'active',
+          },
         ],
         payroll_config: [
           {
@@ -172,22 +172,22 @@ class FileEmployeeStore {
             health_institution_code: 'ISAPRE_CONSALUD',
             family_allowances: 1,
             legal_gratification_type: 'code_50',
-            has_unemployment_insurance: true
-          }
-        ]
-      }
+            has_unemployment_insurance: true,
+          },
+        ],
+      },
     ];
     
     this.data = {
       employees: {
-        [companyId]: defaultEmployees
+        [companyId]: defaultEmployees,
       },
       metadata: {
         created_at: new Date().toISOString(),
         last_updated: new Date().toISOString(),
         total_employees: defaultEmployees.length,
-        version: '1.0.0'
-      }
+        version: '1.0.0',
+      },
     };
     
     this.saveData();
@@ -282,7 +282,7 @@ class FileEmployeeStore {
     companyEmployees[index] = {
       ...companyEmployees[index],
       ...updates,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
     
     // Guardar al archivo
@@ -316,7 +316,7 @@ class FileEmployeeStore {
     return {
       companies: Object.keys(this.data.employees).length,
       totalEmployees: this.data.metadata.total_employees,
-      filePath: this.dataFilePath
+      filePath: this.dataFilePath,
     };
   }
 }

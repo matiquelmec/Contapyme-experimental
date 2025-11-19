@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -12,7 +14,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const configId = params.id;
@@ -20,7 +22,7 @@ export async function DELETE(
     if (!configId) {
       return NextResponse.json(
         { success: false, error: 'ID de configuración es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -35,20 +37,20 @@ export async function DELETE(
       console.error('Error deleting centralized config:', error);
       return NextResponse.json(
         { success: false, error: 'Error eliminando configuración' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Configuración eliminada exitosamente'
+      message: 'Configuración eliminada exitosamente',
     });
 
   } catch (error) {
     console.error('❌ Error eliminando configuración centralizada:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

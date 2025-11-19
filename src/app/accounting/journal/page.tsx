@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
 import { useCompany } from '@/contexts/CompanyContext';
 
 interface JournalEntry {
@@ -67,7 +68,7 @@ export default function JournalPage() {
 
     try {
       const response = await fetch(`/api/accounting/journal?id=${entryId}&company_id=${company.id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
       
       const data = await response.json();
@@ -75,7 +76,7 @@ export default function JournalPage() {
       if (data.success) {
         setEntries(entries.filter(entry => entry.id !== entryId));
       } else {
-        alert('Error al eliminar el asiento: ' + data.error);
+        alert(`Error al eliminar el asiento: ${  data.error}`);
       }
     } catch (err) {
       alert('Error al eliminar el asiento');

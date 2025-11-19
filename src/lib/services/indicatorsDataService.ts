@@ -29,7 +29,7 @@ export const INDICATORS_CONFIG: Record<string, IndicatorConfig> = {
     volatility: 'low',
     updateFrequency: 1440, // 24 horas
     sources: ['SII', 'Banco Central'],
-    lastVerified: '2025-08-03'
+    lastVerified: '2025-08-03',
   },
   utm: {
     code: 'utm',
@@ -42,7 +42,7 @@ export const INDICATORS_CONFIG: Record<string, IndicatorConfig> = {
     volatility: 'low',
     updateFrequency: 43200, // 30 días
     sources: ['SII'],
-    lastVerified: '2025-08-03'
+    lastVerified: '2025-08-03',
   },
   ipc: {
     code: 'ipc',
@@ -55,7 +55,7 @@ export const INDICATORS_CONFIG: Record<string, IndicatorConfig> = {
     volatility: 'low',
     updateFrequency: 43200, // 30 días
     sources: ['INE', 'Banco Central'],
-    lastVerified: '2025-08-03'
+    lastVerified: '2025-08-03',
   },
   tpm: {
     code: 'tpm',
@@ -68,7 +68,7 @@ export const INDICATORS_CONFIG: Record<string, IndicatorConfig> = {
     volatility: 'low',
     updateFrequency: 10080, // 7 días
     sources: ['Banco Central'],
-    lastVerified: '2025-08-03'
+    lastVerified: '2025-08-03',
   },
 
   // DIVISAS
@@ -83,7 +83,7 @@ export const INDICATORS_CONFIG: Record<string, IndicatorConfig> = {
     volatility: 'medium',
     updateFrequency: 5,
     sources: ['Banco Central', 'Investing.com'],
-    lastVerified: '2025-08-03'
+    lastVerified: '2025-08-03',
   },
   euro: {
     code: 'euro',
@@ -96,7 +96,7 @@ export const INDICATORS_CONFIG: Record<string, IndicatorConfig> = {
     volatility: 'medium',
     updateFrequency: 5,
     sources: ['Investing.com', 'Banco Central'],
-    lastVerified: '2025-08-03'
+    lastVerified: '2025-08-03',
   },
 
   // CRIPTOMONEDAS
@@ -111,9 +111,8 @@ export const INDICATORS_CONFIG: Record<string, IndicatorConfig> = {
     volatility: 'extreme',
     updateFrequency: 2,
     sources: ['Coinbase', 'CoinMarketCap', 'CoinGecko'],
-    lastVerified: '2025-08-04'
+    lastVerified: '2025-08-04',
   },
-
 
   // LABORALES
   sueldo_minimo: {
@@ -127,8 +126,8 @@ export const INDICATORS_CONFIG: Record<string, IndicatorConfig> = {
     volatility: 'low',
     updateFrequency: 262800, // 6 meses
     sources: ['Ministerio del Trabajo', 'Ley N°21.751'],
-    lastVerified: '2025-08-03'
-  }
+    lastVerified: '2025-08-03',
+  },
 };
 
 // Función para obtener variación según volatilidad
@@ -177,12 +176,12 @@ export function formatIndicatorValue(code: string, value: number): string {
     if (config.unit === 'USD') {
       return `$${value.toLocaleString('en-US', { 
         minimumFractionDigits: config.decimal_places,
-        maximumFractionDigits: config.decimal_places
+        maximumFractionDigits: config.decimal_places,
       })} USD`;
     } else {
       return `$${value.toLocaleString('es-CL', { 
         minimumFractionDigits: config.decimal_places,
-        maximumFractionDigits: config.decimal_places
+        maximumFractionDigits: config.decimal_places,
       })}`;
     }
   } else if (config.format_type === 'percentage') {
@@ -191,29 +190,27 @@ export function formatIndicatorValue(code: string, value: number): string {
   
   return value.toLocaleString('es-CL', { 
     minimumFractionDigits: config.decimal_places,
-    maximumFractionDigits: config.decimal_places
+    maximumFractionDigits: config.decimal_places,
   });
 }
 
 // Función para obtener metadata de actualización
 export function getUpdateMetadata() {
   const now = new Date();
-  const metadata = {
+  return {
     lastUpdate: now.toISOString(),
     nextScheduledUpdate: new Date(now.getTime() + 5 * 60 * 1000).toISOString(), // +5 min
     dataQuality: {
       verified: Object.values(INDICATORS_CONFIG).filter(i => i.lastVerified === '2025-08-03').length,
       total: Object.keys(INDICATORS_CONFIG).length,
-      percentage: 100 // Todos verificados hoy
+      percentage: 100, // Todos verificados hoy
     },
     sources: {
       primary: ['mindicador.cl', 'Banco Central', 'SII'],
       secondary: ['Investing.com', 'Coinbase', 'CoinMarketCap'],
-      tertiary: ['Web Search', 'Historical Data']
-    }
+      tertiary: ['Web Search', 'Historical Data'],
+    },
   };
-  
-  return metadata;
 }
 
 // Exportar valores base para uso directo
@@ -226,7 +223,7 @@ export const CURRENT_BASE_VALUES = {
   ethereum: 3200,     // Actualizado agosto 2025
   sueldo_minimo: 529000,
   ipc: 3.2,
-  tpm: 5.75
+  tpm: 5.75,
 };
 
 // Validación de valores

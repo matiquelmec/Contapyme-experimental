@@ -6,12 +6,14 @@
 // ==========================================
 
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+
+import { FileText, Upload, TrendingUp, AlertCircle, CheckCircle, X, BarChart3, Zap, Brain, Activity, Target, Shield } from 'lucide-react';
+
+import F29History from '@/components/f29/F29History';
 import { Header } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { FileText, Upload, TrendingUp, AlertCircle, CheckCircle, X, BarChart3, Zap, Brain, Activity, Target, Shield } from 'lucide-react';
 // Comentado para optimización - Web Worker puede causar overhead en móvil
 // import { useF29AnalyticsWorker } from '@/hooks/useF29AnalyticsWorker';
-import F29History from '@/components/f29/F29History';
 
 interface UploadResult {
   file_name: string;
@@ -91,7 +93,7 @@ export default function F29ComparativePage() {
     setDragActive(false);
 
     const droppedFiles = Array.from(e.dataTransfer.files).filter(
-      file => file.type === 'application/pdf'
+      file => file.type === 'application/pdf',
     );
     
     if (droppedFiles.length > 0) {
@@ -101,7 +103,7 @@ export default function F29ComparativePage() {
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []).filter(
-      file => file.type === 'application/pdf'
+      file => file.type === 'application/pdf',
     );
     
     if (selectedFiles.length > 0) {
@@ -199,7 +201,7 @@ export default function F29ComparativePage() {
           file_name: `F29_${['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'][i]}_2024.pdf`,
           success: true,
           period: `2024${(i + 1).toString().padStart(2, '0')}`,
-          confidence_score: 85 + Math.round(Math.random() * 15)
+          confidence_score: 85 + Math.round(Math.random() * 15),
         }));
 
         setResults(demoResults);
@@ -209,22 +211,22 @@ export default function F29ComparativePage() {
           periodos_analizados: 12,
           rango_temporal: {
             inicio: '202401',
-            fin: '202412'
+            fin: '202412',
           },
           metricas_clave: {
             total_ventas: 235000000,
             promedio_mensual: 19583333,
             crecimiento_periodo: 24.5,
             mejor_mes: { period: '202412', ventas: 26500000 },
-            peor_mes: { period: '202401', ventas: 15010000 }
+            peor_mes: { period: '202401', ventas: 15010000 },
           },
           insights_iniciales: [
             '📈 Crecimiento sostenido del 24.5% durante 2024',
             '🎄 Diciembre es tu mejor mes con $26.5M en ventas (+76% vs enero)',
             '📊 Tendencia estacional clara: Q4 supera Q1 por 45%',
             '💰 Margen bruto promedio saludable del 28%',
-            '🎯 Proyección 2025: $31M en ventas si mantiene tendencia'
-          ]
+            '🎯 Proyección 2025: $31M en ventas si mantiene tendencia',
+          ],
         };
 
         setAnalysis(demoAnalysis);
@@ -240,13 +242,11 @@ export default function F29ComparativePage() {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   const formatPeriod = (period: string | number) => {
     const periodStr = String(period || '');
@@ -255,7 +255,7 @@ export default function F29ComparativePage() {
     const month = periodStr.substring(4, 6);
     const monthNames = [
       '', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
     ];
     return `${monthNames[parseInt(month)] || month} ${year}`;
   };
@@ -281,7 +281,7 @@ export default function F29ComparativePage() {
       iva_determinado: result.data.ivaDeterminado || 0,
       total_a_pagar: result.data.totalAPagar || 0,
       confidence: result.confidence_score || 0,
-      rut: result.data.rut
+      rut: result.data.rut,
     }));
 
     // Ordenar por período
@@ -295,10 +295,10 @@ export default function F29ComparativePage() {
 
     // Encontrar mejor y peor mes
     const mejorMes = f29DataPoints.reduce((max, current) => 
-      current.ventas_netas > max.ventas_netas ? current : max
+      current.ventas_netas > max.ventas_netas ? current : max,
     );
     const peorMes = f29DataPoints.reduce((min, current) => 
-      current.ventas_netas < min.ventas_netas ? current : min
+      current.ventas_netas < min.ventas_netas ? current : min,
     );
 
     // Calcular crecimiento del período
@@ -343,7 +343,7 @@ export default function F29ComparativePage() {
     const periodos = f29DataPoints.map(f => String(f.period || '')).filter(p => p);
     const rangoTemporal = {
       inicio: periodos.length > 0 ? periodos.sort()[0] : '202401',
-      fin: periodos.length > 0 ? periodos.sort()[periodos.length - 1] : '202412'
+      fin: periodos.length > 0 ? periodos.sort()[periodos.length - 1] : '202412',
     };
 
     return {
@@ -356,15 +356,15 @@ export default function F29ComparativePage() {
         crecimiento_periodo: crecimientoPeriodo,
         mejor_mes: {
           period: mejorMes.period,
-          ventas: mejorMes.ventas_netas
+          ventas: mejorMes.ventas_netas,
         },
         peor_mes: {
           period: peorMes.period,
-          ventas: peorMes.ventas_netas
-        }
+          ventas: peorMes.ventas_netas,
+        },
       },
       insights_iniciales: insights,
-      ruts_encontrados: [...new Set(f29DataPoints.map(f => f.rut).filter(r => r))]
+      ruts_encontrados: [...new Set(f29DataPoints.map(f => f.rut).filter(r => r))],
     };
   };
 
@@ -392,7 +392,7 @@ export default function F29ComparativePage() {
           iva_determinado: result.data.ivaDeterminado || 0,
           total_a_pagar: result.data.totalAPagar || 0,
           confidence: result.confidence_score || 0,
-          rut: result.data.rut
+          rut: result.data.rut,
         }));
         
       } else {
@@ -407,8 +407,8 @@ export default function F29ComparativePage() {
             },
             body: JSON.stringify({
               company_id: demoCompanyId,
-              user_id: demoUserId
-            })
+              user_id: demoUserId,
+            }),
           });
 
           if (response.ok) {
@@ -428,7 +428,7 @@ export default function F29ComparativePage() {
 
       console.log('🧠 Iniciando análisis avanzado con Worker...', { 
         dataPoints: f29Data.length,
-        source: results.some(r => r.success && r.data) ? 'real' : 'demo'
+        source: results.some(r => r.success && r.data) ? 'real' : 'demo',
       });
       
       const advancedResults = await performFullAnalysis(f29Data);
@@ -459,7 +459,7 @@ export default function F29ComparativePage() {
       iva_determinado: f29.iva_determinado || 0,
       total_a_pagar: f29.total_a_pagar || 0,
       confidence: f29.confidence || 0,
-      rut: f29.rut
+      rut: f29.rut,
     }));
   };
 
@@ -467,7 +467,7 @@ export default function F29ComparativePage() {
   const generateDemoF29Data = () => {
     const months = [
       '202401', '202402', '202403', '202404', '202405', '202406',
-      '202407', '202408', '202409', '202410', '202411', '202412'
+      '202407', '202408', '202409', '202410', '202411', '202412',
     ];
 
     return months.map((period, index) => {
@@ -482,20 +482,19 @@ export default function F29ComparativePage() {
 
       return {
         period: parseInt(period),
-        ventas_netas: ventas_netas,
-        compras_netas: compras_netas,
+        ventas_netas,
+        compras_netas,
         debito_fiscal: Math.round(ventas_netas * 0.19),
         credito_fiscal: Math.round(compras_netas * 0.19),
         ppm: Math.round(ventas_netas * 0.01),
         user_id: demoUserId,
-        company_id: demoCompanyId
+        company_id: demoCompanyId,
       };
     });
   };
 
   // Generar análisis avanzado de demostración si el Worker falla
-  const generateDemoAdvancedAnalysis = () => {
-    return {
+  const generateDemoAdvancedAnalysis = () => ({
       seasonal: {
         hasSeasonality: true,
         patterns: [
@@ -504,15 +503,15 @@ export default function F29ComparativePage() {
             month: 11,
             monthName: 'Diciembre',
             value: 26500000,
-            percentageAboveAverage: 35.2
+            percentageAboveAverage: 35.2,
           },
           {
             type: 'SEASONAL_LOW',
             month: 0,
             monthName: 'Enero',
             value: 15010000,
-            percentageBelowAverage: 23.4
-          }
+            percentageBelowAverage: 23.4,
+          },
         ],
         confidence: 87.5,
         variation: 58.7,
@@ -520,8 +519,8 @@ export default function F29ComparativePage() {
           'Diciembre es tu mes más fuerte con ventas 35% superiores al promedio',
           'Enero es tu mes más débil con ventas 23% por debajo del promedio',
           'Tu negocio tiene alta estacionalidad - considera ajustar inventario y capital de trabajo',
-          'Patrón típico de retail/turismo - aprovecha las fiestas de fin de año'
-        ]
+          'Patrón típico de retail/turismo - aprovecha las fiestas de fin de año',
+        ],
       },
       trends: {
         trend: 'GROWING',
@@ -531,13 +530,13 @@ export default function F29ComparativePage() {
         projections: [
           { period: 202501, periodDisplay: '01/2025', projectedSales: 27200000, confidence: 85 },
           { period: 202502, periodDisplay: '02/2025', projectedSales: 28100000, confidence: 80 },
-          { period: 202503, periodDisplay: '03/2025', projectedSales: 29000000, confidence: 75 }
+          { period: 202503, periodDisplay: '03/2025', projectedSales: 29000000, confidence: 75 },
         ],
         insights: [
           'Tendencia muy consistente detectada (R² = 82%)',
           'Excelente crecimiento del 25% anualizado - considera expandir operaciones',
-          'Crecimiento estable sin alta volatilidad'
-        ]
+          'Crecimiento estable sin alta volatilidad',
+        ],
       },
       anomalies: {
         anomalies: [
@@ -547,26 +546,26 @@ export default function F29ComparativePage() {
             deviation: -18,
             type: 'SUDDEN_DROP',
             severity: 'WARNING',
-            change: -22
-          }
+            change: -22,
+          },
         ],
         insights: [
           '1 anomalía menor detectada - monitorear evolución',
-          'Detectada caída abrupta en Agosto - identificar factores estacionales'
-        ]
+          'Detectada caída abrupta en Agosto - identificar factores estacionales',
+        ],
       },
       comparative: {
         insights: [
           'Margen promedio: 32%',
           'Mejor eficiencia en período 202412 con 38.2% de margen',
           'Ratio promedio compras/ventas: 68%',
-          'Excelente control de costos - margen superior al promedio del mercado'
+          'Excelente control de costos - margen superior al promedio del mercado',
         ],
         comparisons: [],
         recommendations: [
           'Diciembre tiende a ser tu mes más fuerte - planifica campañas especiales',
-          'Considera estrategias para mejorar ventas en Q1'
-        ]
+          'Considera estrategias para mejorar ventas en Q1',
+        ],
       },
       summary: {
         overallHealth: 'EXCELLENT',
@@ -574,19 +573,18 @@ export default function F29ComparativePage() {
           'Crecimiento sostenido del 24.5% con alta confiabilidad',
           'Patrón estacional claro: Q4 supera Q1 significativamente',
           'Margen de ganancia saludable del 32% promedio',
-          'Solo 1 anomalía menor detectada en todo el período'
+          'Solo 1 anomalía menor detectada en todo el período',
         ],
         actionItems: [
           'Planifica inventario extra para temporada navideña',
           'Desarrolla estrategias para mejorar ventas en enero-febrero',
-          'Mantén la estrategia actual de crecimiento'
+          'Mantén la estrategia actual de crecimiento',
         ],
         riskFactors: [
-          'Dependencia alta de estacionalidad navideña'
-        ]
-      }
-    };
-  };
+          'Dependencia alta de estacionalidad navideña',
+        ],
+      },
+    });
 
   // Activar análisis avanzado automáticamente cuando se complete el análisis básico
   useEffect(() => {
@@ -596,7 +594,7 @@ export default function F29ComparativePage() {
         performAdvancedAnalysis();
       }, 2000);
       
-      return () => clearTimeout(timer);
+      return () => { clearTimeout(timer); };
     }
   }, [analysis, isWorkerReady, advancedAnalysis, analyzingWithWorker]);
 
@@ -612,7 +610,7 @@ export default function F29ComparativePage() {
       <Header 
         title="Análisis Comparativo F29"
         subtitle="Único sistema en Chile para comparar múltiples períodos F29 automáticamente"
-        showBackButton={true}
+        showBackButton
         backHref="/accounting"
         variant="premium"
         actions={
@@ -634,7 +632,7 @@ export default function F29ComparativePage() {
                   : workerError 
                   ? 'bg-red-500'
                   : 'bg-gray-400'
-              }`}></div>
+              }`} />
               <span>
                 {isWorkerReady 
                   ? '🧠 IA Lista' 
@@ -784,7 +782,7 @@ export default function F29ComparativePage() {
                         <span className="text-sm font-medium text-gray-900 truncate">{file.name}</span>
                       </div>
                       <button
-                        onClick={() => removeFile(index)}
+                        onClick={() => { removeFile(index); }}
                         className="text-gray-400 hover:text-red-600 flex-shrink-0 ml-2"
                       >
                         <X className="w-4 h-4" />
@@ -804,7 +802,7 @@ export default function F29ComparativePage() {
                   >
                     {uploading ? (
                       <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
                         Procesando con IA...
                       </>
                     ) : (
@@ -862,8 +860,8 @@ export default function F29ComparativePage() {
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({
                         companyId: demoCompanyId,
-                        userId: demoUserId
-                      })
+                        userId: demoUserId,
+                      }),
                     });
                     const data = await response.json();
                     if (data.success) {
@@ -884,7 +882,7 @@ export default function F29ComparativePage() {
               >
                 {uploading ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-600 mr-2"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-600 mr-2" />
                     Generando...
                   </>
                 ) : (
@@ -996,7 +994,7 @@ export default function F29ComparativePage() {
                 <div className="space-y-3">
                   {(analysis.insights_iniciales || []).map((insight, index) => (
                     <div key={index} className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0" />
                       <p className="text-gray-700">{insight}</p>
                     </div>
                   ))}
@@ -1035,7 +1033,7 @@ export default function F29ComparativePage() {
                 <span>Análisis Avanzado con IA</span>
                 {analyzingWithWorker && (
                   <div className="ml-2 flex items-center space-x-1">
-                    <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />
                     <span className="text-xs text-emerald-600">Analizando...</span>
                   </div>
                 )}
@@ -1048,7 +1046,7 @@ export default function F29ComparativePage() {
               {analyzingWithWorker ? (
                 <div className="flex items-center justify-center py-12">
                   <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4" />
                     <p className="text-emerald-700 font-medium">🧠 IA analizando patrones complejos...</p>
                     <p className="text-sm text-gray-600 mt-2">Esto puede tomar unos segundos</p>
                   </div>
@@ -1093,7 +1091,7 @@ export default function F29ComparativePage() {
                         <div className="space-y-2">
                           {advancedAnalysis.summary.keyInsights.slice(0, 3).map((insight, index) => (
                             <div key={index} className="flex items-start space-x-2">
-                              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-2 flex-shrink-0"></div>
+                              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-2 flex-shrink-0" />
                               <p className="text-sm text-gray-700">{insight}</p>
                             </div>
                           ))}
@@ -1105,7 +1103,7 @@ export default function F29ComparativePage() {
                         <div className="space-y-2">
                           {advancedAnalysis.summary.actionItems.slice(0, 3).map((action, index) => (
                             <div key={index} className="flex items-start space-x-2">
-                              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
                               <p className="text-sm text-gray-700">{action}</p>
                             </div>
                           ))}
@@ -1118,7 +1116,7 @@ export default function F29ComparativePage() {
                           {advancedAnalysis.summary.riskFactors.length > 0 ? 
                             advancedAnalysis.summary.riskFactors.slice(0, 3).map((risk, index) => (
                               <div key={index} className="flex items-start space-x-2">
-                                <div className="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <div className="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 flex-shrink-0" />
                                 <p className="text-sm text-gray-700">{risk}</p>
                               </div>
                             )) : (
@@ -1168,7 +1166,7 @@ export default function F29ComparativePage() {
                           <div className="mt-4 space-y-2">
                             {advancedAnalysis.seasonal.insights.slice(0, 2).map((insight, index) => (
                               <div key={index} className="flex items-start space-x-2">
-                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
                                 <p className="text-xs text-blue-800">{insight}</p>
                               </div>
                             ))}
@@ -1230,7 +1228,7 @@ export default function F29ComparativePage() {
                         <div className="space-y-2">
                           {advancedAnalysis.trends.insights.slice(0, 2).map((insight, index) => (
                             <div key={index} className="flex items-start space-x-2">
-                              <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                              <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0" />
                               <p className="text-xs text-green-800">{insight}</p>
                             </div>
                           ))}
@@ -1279,7 +1277,7 @@ export default function F29ComparativePage() {
                       <div className="mt-4 space-y-2">
                         {advancedAnalysis.anomalies.insights.slice(0, 2).map((insight, index) => (
                           <div key={index} className="flex items-start space-x-2">
-                            <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mt-2 flex-shrink-0" />
                             <p className="text-xs text-orange-800">{insight}</p>
                           </div>
                         ))}
@@ -1299,7 +1297,7 @@ export default function F29ComparativePage() {
                         <div className="space-y-2">
                           {advancedAnalysis.comparative.insights.slice(0, 4).map((insight, index) => (
                             <div key={index} className="flex items-start space-x-2">
-                              <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                              <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 flex-shrink-0" />
                               <p className="text-sm text-purple-800">{insight}</p>
                             </div>
                           ))}
@@ -1311,7 +1309,7 @@ export default function F29ComparativePage() {
                             <div className="space-y-2">
                               {advancedAnalysis.comparative.recommendations.slice(0, 2).map((rec, index) => (
                                 <div key={index} className="flex items-start space-x-2">
-                                  <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></div>
+                                  <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full mt-2 flex-shrink-0" />
                                   <p className="text-xs text-indigo-800">{rec}</p>
                                 </div>
                               ))}

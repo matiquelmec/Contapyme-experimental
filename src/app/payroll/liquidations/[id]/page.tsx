@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { useRouter, useParams } from 'next/navigation';
+
 import jsPDF from 'jspdf';
-import { PayrollHeader } from '@/components/layout';
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
 import {
   ArrowLeft,
   Download,
@@ -25,9 +25,12 @@ import {
   Eye,
   Send,
   RotateCcw,
-  Ban
+  Ban,
 } from 'lucide-react';
-import { formatDate, formatCurrency } from '@/lib/utils';
+
+import { PayrollHeader } from '@/components/layout';
+import { Button, Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
+import { formatDate } from '@/lib/utils';
 
 interface LiquidationDetail {
   id: string;
@@ -103,32 +106,32 @@ export default function LiquidationDetailPage() {
       label: 'Borrador', 
       color: 'bg-gray-100 text-gray-800', 
       icon: FileText,
-      description: 'Puede editarse libremente'
+      description: 'Puede editarse libremente',
     },
     review: { 
       label: 'En Revisión', 
       color: 'bg-yellow-100 text-yellow-800', 
       icon: Clock,
-      description: 'Pendiente de aprobación'
+      description: 'Pendiente de aprobación',
     },
     approved: { 
       label: 'Aprobada', 
       color: 'bg-green-100 text-green-800', 
       icon: CheckCircle,
-      description: 'Lista para pago'
+      description: 'Lista para pago',
     },
     paid: { 
       label: 'Pagada', 
       color: 'bg-blue-100 text-blue-800', 
       icon: DollarSign,
-      description: 'Proceso completado'
+      description: 'Proceso completado',
     },
     cancelled: { 
       label: 'Cancelada', 
       color: 'bg-red-100 text-red-800', 
       icon: X,
-      description: 'Liquidación cancelada'
-    }
+      description: 'Liquidación cancelada',
+    },
   };
 
   // Transiciones permitidas entre estados
@@ -137,7 +140,7 @@ export default function LiquidationDetailPage() {
     review: ['approved', 'draft'],       // Revisión → Aprobar o Rechazar
     approved: ['paid', 'cancelled', 'draft'], // Aprobada → Pagar, Cancelar o Revertir a borrador
     paid: [],                           // Pagada → Estado final
-    cancelled: ['draft']                // Cancelada → Restaurar a borrador
+    cancelled: ['draft'],                // Cancelada → Restaurar a borrador
   };
 
   useEffect(() => {
@@ -150,7 +153,7 @@ export default function LiquidationDetailPage() {
     try {
       setLoading(true);
       const response = await fetch(
-        `/api/payroll/liquidations/${liquidationId}?company_id=${COMPANY_ID}`
+        `/api/payroll/liquidations/${liquidationId}?company_id=${COMPANY_ID}`,
       );
       const data = await response.json();
 
@@ -180,7 +183,7 @@ export default function LiquidationDetailPage() {
 
     // Confirmar la acción con el usuario
     const confirmed = confirm(
-      confirmMessage || `¿Confirmas cambiar el estado a "${STATUS_CONFIG[newStatus].label}"?`
+      confirmMessage || `¿Confirmas cambiar el estado a "${STATUS_CONFIG[newStatus].label}"?`,
     );
     if (!confirmed) return;
 
@@ -195,8 +198,8 @@ export default function LiquidationDetailPage() {
         },
         body: JSON.stringify({
           status: newStatus,
-          updated_at: new Date().toISOString()
-        })
+          updated_at: new Date().toISOString(),
+        }),
       });
 
       const data = await response.json();
@@ -204,7 +207,7 @@ export default function LiquidationDetailPage() {
       if (response.ok && data.success) {
         setLiquidation({ ...liquidation, status: newStatus });
         setSuccessMessage(`Estado actualizado a: ${STATUS_CONFIG[newStatus].label}`);
-        setTimeout(() => setSuccessMessage(null), 3000);
+        setTimeout(() => { setSuccessMessage(null); }, 3000);
       } else {
         setError(data.error || 'Error al actualizar estado');
       }
@@ -229,7 +232,7 @@ export default function LiquidationDetailPage() {
       `Período: ${period}\n` +
       `Monto: ${formatCurrency(calculateNetSalary(liquidation))}\n\n` +
       `Esta acción NO se puede deshacer.\n\n` +
-      `¿Estás completamente seguro?`
+      `¿Estás completamente seguro?`,
     );
 
     if (!confirmed) return;
@@ -239,7 +242,7 @@ export default function LiquidationDetailPage() {
       setError(null);
 
       const response = await fetch(`/api/payroll/liquidations/${liquidationId}?company_id=${COMPANY_ID}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       const data = await response.json();
@@ -260,51 +263,49 @@ export default function LiquidationDetailPage() {
   // 🎯 ACCIONES ESPECÍFICAS MEJORADAS: Cada una con su mensaje personalizado
   const handleSubmitForReview = () => updateLiquidationStatus(
     'review',
-    '📋 ENVIAR A REVISIÓN\n\nEsta liquidación será enviada para revisión y aprobación.\n\n¿Confirmas el envío?'
+    '📋 ENVIAR A REVISIÓN\n\nEsta liquidación será enviada para revisión y aprobación.\n\n¿Confirmas el envío?',
   );
 
   const handleApprove = () => updateLiquidationStatus(
     'approved',
-    '✅ APROBAR LIQUIDACIÓN\n\nEsta liquidación será marcada como aprobada y estará lista para el pago.\n\n¿Confirmas la aprobación?'
+    '✅ APROBAR LIQUIDACIÓN\n\nEsta liquidación será marcada como aprobada y estará lista para el pago.\n\n¿Confirmas la aprobación?',
   );
 
   const handleRevertToDraft = () => updateLiquidationStatus(
     'draft',
-    '🔄 REVERTIR A BORRADOR\n\nEsta liquidación volverá al estado de borrador para permitir ediciones.\n\n¿Confirmas la reversión?'
+    '🔄 REVERTIR A BORRADOR\n\nEsta liquidación volverá al estado de borrador para permitir ediciones.\n\n¿Confirmas la reversión?',
   );
 
   const handleReject = () => updateLiquidationStatus(
     'draft',
-    '❌ RECHAZAR LIQUIDACIÓN\n\nEsta liquidación será rechazada y volverá al estado de borrador para correcciones.\n\n¿Confirmas el rechazo?'
+    '❌ RECHAZAR LIQUIDACIÓN\n\nEsta liquidación será rechazada y volverá al estado de borrador para correcciones.\n\n¿Confirmas el rechazo?',
   );
 
   const handleCancel = () => updateLiquidationStatus(
     'cancelled',
-    '❌ CANCELAR LIQUIDACIÓN\n\nEsta liquidación será marcada como cancelada.\n\n¿Confirmas la cancelación?'
+    '❌ CANCELAR LIQUIDACIÓN\n\nEsta liquidación será marcada como cancelada.\n\n¿Confirmas la cancelación?',
   );
 
   const handleMarkAsPaid = () => updateLiquidationStatus(
     'paid',
-    '💰 MARCAR COMO PAGADA\n\nEsta liquidación será marcada como pagada y el proceso estará completo.\n\n¿Confirmas que el pago fue realizado?'
+    '💰 MARCAR COMO PAGADA\n\nEsta liquidación será marcada como pagada y el proceso estará completo.\n\n¿Confirmas que el pago fue realizado?',
   );
 
   const handleAnnulLiquidation = () => updateLiquidationStatus(
     'cancelled',
-    '❌ ANULAR LIQUIDACIÓN\n\nEsta liquidación será anulada por error o irregularidad.\n\n⚠️ Efectos:\n• Se marca como anulada en el sistema\n• No afecta cálculos futuros\n• Se puede restaurar si es necesario\n\n¿Confirmas la anulación?'
+    '❌ ANULAR LIQUIDACIÓN\n\nEsta liquidación será anulada por error o irregularidad.\n\n⚠️ Efectos:\n• Se marca como anulada en el sistema\n• No afecta cálculos futuros\n• Se puede restaurar si es necesario\n\n¿Confirmas la anulación?',
   );
 
   const handleRestoreFromCancelled = () => updateLiquidationStatus(
     'draft',
-    '🔄 RESTAURAR LIQUIDACIÓN\n\nEsta liquidación anulada será restaurada al estado de borrador.\n\n¿Confirmas la restauración?'
+    '🔄 RESTAURAR LIQUIDACIÓN\n\nEsta liquidación anulada será restaurada al estado de borrador.\n\n¿Confirmas la restauración?',
   );
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   // Función para limpiar caracteres con encoding incorrecto
   const cleanText = (text: string) => {
@@ -325,14 +326,13 @@ export default function LiquidationDetailPage() {
   const formatPeriod = (year: number, month: number) => {
     const monthNames = [
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
     ];
     return `${monthNames[month - 1]} ${year}`;
   };
 
   // ✅ FUNCIÓN PARA CALCULAR TOTAL DESCUENTOS DINÁMICAMENTE (igual que en PDF)
-  const calculateTotalDeductions = (liq: LiquidationDetail) => {
-    return (liq.afp_amount || 0) + 
+  const calculateTotalDeductions = (liq: LiquidationDetail) => (liq.afp_amount || 0) + 
            (liq.afp_commission_amount || 0) +
            (liq.health_amount || 0) + 
            (liq.unemployment_amount || 0) + 
@@ -341,12 +341,9 @@ export default function LiquidationDetailPage() {
            (liq.advance_payments || 0) +
            (liq.apv_amount || 0) +
            (liq.other_deductions || 0);
-  };
 
   // ✅ CALCULAR LÍQUIDO A PAGAR DINÁMICAMENTE
-  const calculateNetSalary = (liq: LiquidationDetail) => {
-    return liq.total_gross_income - calculateTotalDeductions(liq);
-  };
+  const calculateNetSalary = (liq: LiquidationDetail) => liq.total_gross_income - calculateTotalDeductions(liq);
 
   const getStatusBadge = (status: string) => {
     const statusConfig = STATUS_CONFIG[status as LiquidationStatus] || STATUS_CONFIG.draft;
@@ -383,7 +380,7 @@ export default function LiquidationDetailPage() {
             >
               <Send className="h-4 w-4 mr-2" />
               Enviar a Revisión
-            </Button>
+            </Button>,
           );
           break;
           
@@ -398,7 +395,7 @@ export default function LiquidationDetailPage() {
             >
               <CheckCircle className="h-4 w-4 mr-2" />
               Aprobar
-            </Button>
+            </Button>,
           );
           break;
           
@@ -413,7 +410,7 @@ export default function LiquidationDetailPage() {
             >
               <DollarSign className="h-4 w-4 mr-2" />
               Marcar Pagada
-            </Button>
+            </Button>,
           );
           break;
           
@@ -430,7 +427,7 @@ export default function LiquidationDetailPage() {
               >
                 <X className="h-4 w-4 mr-2" />
                 Rechazar
-              </Button>
+              </Button>,
             );
           } else if (currentStatus === 'approved') {
             buttons.push(
@@ -443,7 +440,7 @@ export default function LiquidationDetailPage() {
               >
                 <RotateCcw className="h-4 w-4 mr-2" />
                 Revertir a Borrador
-              </Button>
+              </Button>,
             );
           }
           break;
@@ -459,7 +456,7 @@ export default function LiquidationDetailPage() {
             >
               <AlertTriangle className="h-4 w-4 mr-2" />
               Cancelar
-            </Button>
+            </Button>,
           );
           break;
       }
@@ -477,13 +474,12 @@ export default function LiquidationDetailPage() {
         >
           <Trash2 className="h-4 w-4 mr-2" />
           Eliminar
-        </Button>
+        </Button>,
       );
     }
     
     return buttons;
   };
-
 
   const handleDownloadPDF = async () => {
     if (!liquidation) return;
@@ -500,8 +496,8 @@ export default function LiquidationDetailPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          liquidation_id: liquidationId
-        })
+          liquidation_id: liquidationId,
+        }),
       });
 
       const data = await response.json();
@@ -509,7 +505,7 @@ export default function LiquidationDetailPage() {
       if (response.ok && data.success) {
         // Crear un blob con el contenido HTML y abrir en nueva ventana para imprimir/descargar
         const htmlContent = data.data.html;
-        const filename = data.data.filename;
+        const { filename } = data.data;
         
         console.log('✅ Liquidación HTML recibida. Generando archivo:', filename);
         
@@ -655,7 +651,7 @@ export default function LiquidationDetailPage() {
       `Período: ${period}\n` +
       `Estado: ${STATUS_CONFIG[liquidation.status as LiquidationStatus]?.label}\n\n` +
       `Se abrirá el generador de liquidaciones con los datos actuales pre-cargados.\n\n` +
-      `¿Deseas continuar con la edición?`
+      `¿Deseas continuar con la edición?`,
     );
 
     if (confirmed) {
@@ -665,7 +661,7 @@ export default function LiquidationDetailPage() {
         employee_id: liquidation.employee.rut, // Usar RUT para identificar empleado
         period_year: liquidation.period_year.toString(),
         period_month: liquidation.period_month.toString(),
-        return_url: window.location.pathname
+        return_url: window.location.pathname,
       });
 
       router.push(`/payroll/liquidations/generate?${editParams.toString()}`);
@@ -684,7 +680,7 @@ export default function LiquidationDetailPage() {
         <div className="max-w-4xl mx-auto py-6 px-4">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
               <p className="mt-4 text-gray-600">Cargando liquidación...</p>
             </div>
           </div>
@@ -715,7 +711,7 @@ export default function LiquidationDetailPage() {
                 </p>
                 <Button 
                   variant="outline" 
-                  onClick={() => router.push('/payroll/liquidations')}
+                  onClick={() => { router.push('/payroll/liquidations'); }}
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Volver a Liquidaciones
@@ -755,7 +751,7 @@ export default function LiquidationDetailPage() {
                     >
                       <Edit3 className="w-4 h-4 group-hover:scale-110 transition-transform" />
                       <span className="text-sm">Editar Liquidación</span>
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
 
                     <button
@@ -765,7 +761,7 @@ export default function LiquidationDetailPage() {
                     >
                       <Send className="w-4 h-4 group-hover:scale-110 transition-transform" />
                       <span className="text-sm">Enviar a Revisión</span>
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
 
                     <button
@@ -775,7 +771,7 @@ export default function LiquidationDetailPage() {
                     >
                       <Trash2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
                       <span className="text-sm">Eliminar</span>
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
                   </>
                 )}
@@ -789,7 +785,7 @@ export default function LiquidationDetailPage() {
                     >
                       <CheckCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
                       <span className="text-sm">Aprobar</span>
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
 
                     <button
@@ -799,7 +795,7 @@ export default function LiquidationDetailPage() {
                     >
                       <RotateCcw className="w-4 h-4 group-hover:scale-110 transition-transform" />
                       <span className="text-sm">Revertir a Borrador</span>
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
                   </>
                 )}
@@ -813,7 +809,7 @@ export default function LiquidationDetailPage() {
                     >
                       <DollarSign className="w-4 h-4 group-hover:scale-110 transition-transform" />
                       <span className="text-sm">Marcar como Pagada</span>
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
 
                     <button
@@ -823,7 +819,7 @@ export default function LiquidationDetailPage() {
                     >
                       <RotateCcw className="w-4 h-4 group-hover:scale-110 transition-transform" />
                       <span className="text-sm">Revertir a Borrador</span>
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
 
                     <button
@@ -833,7 +829,7 @@ export default function LiquidationDetailPage() {
                     >
                       <Ban className="w-4 h-4 group-hover:scale-110 transition-transform" />
                       <span className="text-sm">Anular Liquidación</span>
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
                   </>
                 )}
@@ -856,7 +852,7 @@ export default function LiquidationDetailPage() {
                   >
                     <RotateCcw className="w-4 h-4 group-hover:scale-110 transition-transform" />
                     <span className="text-sm">Restaurar Liquidación</span>
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </button>
                 )}
 
@@ -870,9 +866,9 @@ export default function LiquidationDetailPage() {
                   <span className="text-sm">
                     {downloadingPDF ? 'Generando...' : 'Descargar PDF'}
                   </span>
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                   {downloadingPDF && (
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/20 to-blue-500/20 animate-pulse"></div>
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/20 to-blue-500/20 animate-pulse" />
                   )}
                 </button>
               </div>
@@ -899,7 +895,7 @@ export default function LiquidationDetailPage() {
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={() => setError(null)}
+              onClick={() => { setError(null); }}
               className="ml-auto p-1 h-auto"
             >
               <X className="h-3 w-3" />
@@ -1296,7 +1292,7 @@ export default function LiquidationDetailPage() {
                     <div className="text-xs text-gray-500">Utiliza Ctrl+P para imprimir</div>
                     {updatingStatus && (
                       <div className="text-xs text-blue-600 mt-1 flex items-center gap-1">
-                        <div className="animate-spin rounded-full h-3 w-3 border border-blue-600 border-t-transparent"></div>
+                        <div className="animate-spin rounded-full h-3 w-3 border border-blue-600 border-t-transparent" />
                         Actualizando...
                       </div>
                     )}

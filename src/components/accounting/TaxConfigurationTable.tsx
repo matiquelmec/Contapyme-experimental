@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Edit2, Trash2, Plus, Save, X, Check, AlertTriangle, FileText } from 'lucide-react';
+
+import { Edit2, Trash2, Plus, X, Check, AlertTriangle, FileText } from 'lucide-react';
+
 import { Button } from '@/components/ui';
 
 interface TaxConfiguration {
@@ -41,7 +43,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
     sales_account_name: '',
     purchases_account_code: '',
     purchases_account_name: '',
-    notes: ''
+    notes: '',
   });
 
   // Tipos de impuestos disponibles
@@ -57,7 +59,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
     { value: 'tabaco', label: 'Impuesto al Tabaco', rate: null },
     { value: 'lujo', label: 'Impuesto a Artículos de Lujo', rate: 15 },
     { value: 'digital', label: 'IVA Servicios Digitales', rate: 19 },
-    { value: 'vehiculos', label: 'Impuesto Verde Vehículos', rate: null }
+    { value: 'vehiculos', label: 'Impuesto Verde Vehículos', rate: null },
   ];
 
   useEffect(() => {
@@ -83,9 +85,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
     }
   };
 
-  const getDetailAccounts = () => {
-    return accounts.filter(acc => acc.is_detail).sort((a, b) => a.code.localeCompare(b.code));
-  };
+  const getDetailAccounts = () => accounts.filter(acc => acc.is_detail).sort((a, b) => a.code.localeCompare(b.code));
 
   const handleAccountSelect = (field: string, accountCode: string, isNew = false) => {
     const account = accounts.find(acc => acc.code === accountCode);
@@ -96,14 +96,14 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
         setNewConfig(prev => ({
           ...prev,
           [field]: accountCode,
-          [nameField]: account.name
+          [nameField]: account.name,
         }));
       } else {
         // Para edición en línea, actualizar la configuración
         setConfigurations(prev => prev.map(config => 
           config.id === editingId 
             ? { ...config, [field]: accountCode, [nameField]: account.name }
-            : config
+            : config,
         ));
       }
     }
@@ -117,8 +117,8 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
         body: JSON.stringify({
           company_id: companyId,
           ...newConfig,
-          tax_rate: newConfig.tax_rate ? parseFloat(newConfig.tax_rate) : null
-        })
+          tax_rate: newConfig.tax_rate ? parseFloat(newConfig.tax_rate) : null,
+        }),
       });
 
       const data = await response.json();
@@ -138,11 +138,11 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
           purchases_debit_account_name: '',
           purchases_credit_account_code: '',
           purchases_credit_account_name: '',
-          notes: ''
+          notes: '',
         });
         alert('✅ Configuración creada exitosamente');
       } else {
-        alert('❌ Error: ' + data.error);
+        alert(`❌ Error: ${  data.error}`);
       }
     } catch (error) {
       console.error('Error saving configuration:', error);
@@ -158,7 +158,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
       const response = await fetch(`/api/accounting/tax-configurations/${configId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(configToUpdate)
+        body: JSON.stringify(configToUpdate),
       });
 
       const data = await response.json();
@@ -168,7 +168,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
         await loadConfigurations();
         alert('✅ Configuración actualizada exitosamente');
       } else {
-        alert('❌ Error: ' + data.error);
+        alert(`❌ Error: ${  data.error}`);
       }
     } catch (error) {
       console.error('Error updating configuration:', error);
@@ -181,7 +181,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
 
     try {
       const response = await fetch(`/api/accounting/tax-configurations/${configId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       const data = await response.json();
@@ -190,7 +190,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
         await loadConfigurations();
         alert('✅ Configuración eliminada exitosamente');
       } else {
-        alert('❌ Error: ' + data.error);
+        alert(`❌ Error: ${  data.error}`);
       }
     } catch (error) {
       console.error('Error deleting configuration:', error);
@@ -206,7 +206,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
           ...prev,
           tax_type: taxType,
           tax_name: taxInfo.label,
-          tax_rate: taxInfo.rate?.toString() || ''
+          tax_rate: taxInfo.rate?.toString() || '',
         }));
       }
     }
@@ -215,7 +215,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
         <span className="ml-3 text-gray-600">Cargando configuraciones...</span>
       </div>
     );
@@ -256,7 +256,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
             variant="primary"
             size="sm"
             leftIcon={<Plus className="w-4 h-4" />}
-            onClick={() => setShowNewRow(true)}
+            onClick={() => { setShowNewRow(true); }}
             className="bg-gradient-to-r from-blue-600 to-indigo-600"
           >
             Nueva Configuración
@@ -303,7 +303,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                   <td className="px-4 py-3">
                     <select
                       value={newConfig.tax_type}
-                      onChange={(e) => handleTaxTypeChange(e.target.value, true)}
+                      onChange={(e) => { handleTaxTypeChange(e.target.value, true); }}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                     >
                       <option value="">Seleccionar...</option>
@@ -319,7 +319,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                       type="number"
                       step="0.1"
                       value={newConfig.tax_rate}
-                      onChange={(e) => setNewConfig(prev => ({ ...prev, tax_rate: e.target.value }))}
+                      onChange={(e) => { setNewConfig(prev => ({ ...prev, tax_rate: e.target.value })); }}
                       className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
                       placeholder="%"
                     />
@@ -327,7 +327,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                   <td className="px-4 py-3">
                     <select
                       value={newConfig.sales_debit_account_code}
-                      onChange={(e) => handleAccountSelect('sales_debit_account_code', e.target.value, true)}
+                      onChange={(e) => { handleAccountSelect('sales_debit_account_code', e.target.value, true); }}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                     >
                       <option value="">Seleccionar cuenta...</option>
@@ -341,7 +341,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                   <td className="px-4 py-3">
                     <select
                       value={newConfig.sales_credit_account_code}
-                      onChange={(e) => handleAccountSelect('sales_credit_account_code', e.target.value, true)}
+                      onChange={(e) => { handleAccountSelect('sales_credit_account_code', e.target.value, true); }}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                     >
                       <option value="">Seleccionar cuenta...</option>
@@ -355,7 +355,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                   <td className="px-4 py-3">
                     <select
                       value={newConfig.purchases_debit_account_code}
-                      onChange={(e) => handleAccountSelect('purchases_debit_account_code', e.target.value, true)}
+                      onChange={(e) => { handleAccountSelect('purchases_debit_account_code', e.target.value, true); }}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                     >
                       <option value="">Seleccionar cuenta...</option>
@@ -369,7 +369,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                   <td className="px-4 py-3">
                     <select
                       value={newConfig.purchases_credit_account_code}
-                      onChange={(e) => handleAccountSelect('purchases_credit_account_code', e.target.value, true)}
+                      onChange={(e) => { handleAccountSelect('purchases_credit_account_code', e.target.value, true); }}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                     >
                       <option value="">Seleccionar cuenta...</option>
@@ -395,7 +395,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                         <Check className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => setShowNewRow(false)}
+                        onClick={() => { setShowNewRow(false); }}
                         className="p-1 text-gray-600 hover:bg-gray-100 rounded"
                         title="Cancelar"
                       >
@@ -419,9 +419,9 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                         type="number"
                         step="0.1"
                         value={config.tax_rate || ''}
-                        onChange={(e) => setConfigurations(prev => prev.map(c => 
-                          c.id === config.id ? { ...c, tax_rate: parseFloat(e.target.value) || null } : c
-                        ))}
+                        onChange={(e) => { setConfigurations(prev => prev.map(c => 
+                          c.id === config.id ? { ...c, tax_rate: parseFloat(e.target.value) || null } : c,
+                        )); }}
                         className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
                       />
                     ) : (
@@ -434,7 +434,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                     {editingId === config.id ? (
                       <select
                         value={config.sales_debit_account_code || ''}
-                        onChange={(e) => handleAccountSelect('sales_debit_account_code', e.target.value)}
+                        onChange={(e) => { handleAccountSelect('sales_debit_account_code', e.target.value); }}
                         className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                       >
                         <option value="">Seleccionar...</option>
@@ -455,7 +455,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                     {editingId === config.id ? (
                       <select
                         value={config.sales_credit_account_code || ''}
-                        onChange={(e) => handleAccountSelect('sales_credit_account_code', e.target.value)}
+                        onChange={(e) => { handleAccountSelect('sales_credit_account_code', e.target.value); }}
                         className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                       >
                         <option value="">Seleccionar...</option>
@@ -476,7 +476,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                     {editingId === config.id ? (
                       <select
                         value={config.purchases_debit_account_code || ''}
-                        onChange={(e) => handleAccountSelect('purchases_debit_account_code', e.target.value)}
+                        onChange={(e) => { handleAccountSelect('purchases_debit_account_code', e.target.value); }}
                         className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                       >
                         <option value="">Seleccionar...</option>
@@ -497,7 +497,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                     {editingId === config.id ? (
                       <select
                         value={config.purchases_credit_account_code || ''}
-                        onChange={(e) => handleAccountSelect('purchases_credit_account_code', e.target.value)}
+                        onChange={(e) => { handleAccountSelect('purchases_credit_account_code', e.target.value); }}
                         className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                       >
                         <option value="">Seleccionar...</option>
@@ -548,7 +548,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                       ) : (
                         <>
                           <button
-                            onClick={() => setEditingId(config.id)}
+                            onClick={() => { setEditingId(config.id); }}
                             className="p-1 text-blue-600 hover:bg-blue-100 rounded"
                             title="Editar"
                           >

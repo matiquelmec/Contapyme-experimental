@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 // API para consultar AFP automáticamente por RUT
 export async function POST(request: NextRequest) {
@@ -19,19 +20,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         data: {
-          rut: rut,
+          rut,
           afp_name: mockAfpData.afp,
           afp_code: mockAfpData.code,
           health_institution: mockAfpData.salud,
           isapre_plan: mockAfpData.plan,
           updated_at: new Date().toISOString(),
-          source: 'SII_API' // o 'PREVIRED_API'
-        }
+          source: 'SII_API', // o 'PREVIRED_API'
+        },
       });
     } else {
       return NextResponse.json({
         success: false,
-        error: 'No se pudo obtener información de AFP para el RUT proporcionado'
+        error: 'No se pudo obtener información de AFP para el RUT proporcionado',
       }, { status: 404 });
     }
     
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
     console.error('Error consultando AFP:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -54,7 +55,7 @@ async function getMockAfpData(rut: string) {
     '182094420': { afp: 'MODELO', code: '34', salud: 'FONASA', plan: null },
     '182089478': { afp: 'PLANVITAL', code: '29', salud: 'FONASA', plan: null },
     '172380980': { afp: 'UNO', code: '35', salud: 'FONASA', plan: null },
-    '182824151': { afp: 'MODELO', code: '34', salud: 'FONASA', plan: null }
+    '182824151': { afp: 'MODELO', code: '34', salud: 'FONASA', plan: null },
   };
   
   return afpDatabase[cleanRut] || null;

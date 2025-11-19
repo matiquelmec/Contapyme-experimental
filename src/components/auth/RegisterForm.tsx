@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
+
 import { createClient } from '@/lib/auth'
 
 export default function RegisterForm() {
@@ -26,8 +28,8 @@ export default function RegisterForm() {
         options: {
           data: {
             name,
-          }
-        }
+          },
+        },
       })
 
       if (error) {
@@ -41,8 +43,8 @@ export default function RegisterForm() {
               id: data.user.id,
               email: data.user.email!,
               name,
-              role: 'CLIENT'
-            }
+              role: 'CLIENT',
+            },
           ])
 
         if (profileError) {
@@ -108,7 +110,7 @@ export default function RegisterForm() {
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Tu nombre completo"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => { setName(e.target.value); }}
               />
             </div>
             <div>
@@ -124,7 +126,7 @@ export default function RegisterForm() {
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="tu@email.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); }}
               />
             </div>
             <div>
@@ -141,7 +143,7 @@ export default function RegisterForm() {
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Mínimo 6 caracteres"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => { setPassword(e.target.value); }}
               />
             </div>
           </div>

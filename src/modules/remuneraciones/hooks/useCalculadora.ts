@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { PayrollCalculator, type EmployeeData, type PayrollPeriod, type AdditionalIncome, type AdditionalDeductions, type LiquidationResult } from '../services/calculadorService';
-import { CHILEAN_PAYROLL_CONFIG } from '../constants/parametrosLegales';
-import { usePayrollCalculatorSettings } from './usePayrollCalculatorSettings';
+
 import { useCompanyId } from '@/contexts/CompanyContext';
+
+import { CHILEAN_PAYROLL_CONFIG } from '../constants/parametrosLegales';
+import { PayrollCalculator, type EmployeeData, type PayrollPeriod, type AdditionalIncome, type AdditionalDeductions, type LiquidationResult } from '../services/calculadorService';
+
+import { usePayrollCalculatorSettings } from './usePayrollCalculatorSettings';
 
 interface LiveCalculationData {
   employee?: EmployeeData;
@@ -104,7 +107,7 @@ export function useLivePayrollCalculation(data: LiveCalculationData): LiveCalcul
     return {
       errors: newErrors,
       warnings: newWarnings,
-      isValid: newErrors.length === 0 && !!data.employee
+      isValid: newErrors.length === 0 && !!data.employee,
     };
   }, [data]);
 
@@ -122,7 +125,7 @@ export function useLivePayrollCalculation(data: LiveCalculationData): LiveCalcul
         data.employee,
         data.period,
         data.additionalIncome,
-        data.additionalDeductions
+        data.additionalDeductions,
       );
 
       setResult(liquidationResult);
@@ -155,7 +158,7 @@ export function useLivePayrollCalculation(data: LiveCalculationData): LiveCalcul
       runCalculation().catch(console.error);
     }, 500); // ✅ OPTIMIZACIÓN: Debounce aumentado a 500ms
 
-    return () => clearTimeout(timeoutId);
+    return () => { clearTimeout(timeoutId); };
   }, [calculateLiquidation, validationResult.isValid]);
 
   return {
@@ -164,7 +167,7 @@ export function useLivePayrollCalculation(data: LiveCalculationData): LiveCalcul
     errors,
     warnings,
     isValid: validationResult.isValid,
-    configurationStatus // ✅ NUEVO: Estado de configuración
+    configurationStatus, // ✅ NUEVO: Estado de configuración
   };
 }
 
@@ -172,13 +175,11 @@ export function useLivePayrollCalculation(data: LiveCalculationData): LiveCalcul
  * Hook auxiliar para formatear moneda chilena
  */
 export function useChileanCurrency() {
-  return useCallback((amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  return useCallback((amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
-    }).format(amount);
-  }, []);
+      minimumFractionDigits: 0,
+    }).format(amount), []);
 }
 
 /**
@@ -191,20 +192,20 @@ export function useContractTypeInfo() {
         name: 'Indefinido',
         unemployment: true,
         color: 'text-green-600',
-        description: 'Con seguro de cesantía (0.6%)'
+        description: 'Con seguro de cesantía (0.6%)',
       },
       plazo_fijo: {
         name: 'Plazo Fijo',
         unemployment: false,
         color: 'text-blue-600',
-        description: 'Sin seguro de cesantía'
+        description: 'Sin seguro de cesantía',
       },
       obra_faena: {
         name: 'Obra o Faena',
         unemployment: false,
         color: 'text-purple-600',
-        description: 'Sin seguro de cesantía'
-      }
+        description: 'Sin seguro de cesantía',
+      },
     };
 
     return info[contractType as keyof typeof info] || info.indefinido;

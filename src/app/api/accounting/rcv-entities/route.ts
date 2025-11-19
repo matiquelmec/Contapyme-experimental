@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -21,7 +23,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -59,7 +61,7 @@ export async function GET(request: NextRequest) {
       console.error('❌ Error fetching RCV entities:', error);
       return NextResponse.json(
         { success: false, error: 'Error obteniendo entidades RCV' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -68,7 +70,7 @@ export async function GET(request: NextRequest) {
       total: entities?.length || 0,
       suppliers: entities?.filter(e => e.entity_type === 'supplier' || e.entity_type === 'both').length || 0,
       customers: entities?.filter(e => e.entity_type === 'customer' || e.entity_type === 'both').length || 0,
-      withAccounts: entities?.filter(e => e.account_code && e.account_name).length || 0
+      withAccounts: entities?.filter(e => e.account_code && e.account_name).length || 0,
     };
 
     console.log(`✅ Found ${stats.total} RCV entities, ${stats.withAccounts} with accounts`);
@@ -76,14 +78,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: entities || [],
-      stats
+      stats,
     });
 
   } catch (error) {
     console.error('❌ Error in RCV entities GET:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -107,20 +109,20 @@ export async function POST(request: NextRequest) {
       contact_email,
       contact_phone,
       address,
-      notes
+      notes,
     } = body;
 
     if (!company_id || !entity_name || !entity_rut || !entity_type) {
       return NextResponse.json(
         { success: false, error: 'Faltan campos requeridos: company_id, entity_name, entity_rut, entity_type' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!['supplier', 'customer', 'both'].includes(entity_type)) {
       return NextResponse.json(
         { success: false, error: 'entity_type debe ser: supplier, customer, o both' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -137,7 +139,7 @@ export async function POST(request: NextRequest) {
     if (existing) {
       return NextResponse.json(
         { success: false, error: `Ya existe una entidad con RUT ${entity_rut}: ${existing.entity_name}` },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -157,7 +159,7 @@ export async function POST(request: NextRequest) {
         contact_phone,
         address,
         notes,
-        is_active: true
+        is_active: true,
       })
       .select()
       .single();
@@ -166,7 +168,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ Error creating RCV entity:', error);
       return NextResponse.json(
         { success: false, error: 'Error creando entidad RCV' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -175,14 +177,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: newEntity,
-      message: 'Entidad RCV creada exitosamente'
+      message: 'Entidad RCV creada exitosamente',
     });
 
   } catch (error) {
     console.error('❌ Error in RCV entities POST:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -206,13 +208,13 @@ export async function PUT(request: NextRequest) {
       contact_email,
       contact_phone,
       address,
-      notes
+      notes,
     } = body;
 
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'ID de entidad es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -232,7 +234,7 @@ export async function PUT(request: NextRequest) {
         contact_phone,
         address,
         notes,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -242,7 +244,7 @@ export async function PUT(request: NextRequest) {
       console.error('❌ Error updating RCV entity:', error);
       return NextResponse.json(
         { success: false, error: 'Error actualizando entidad RCV' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -251,14 +253,14 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: updatedEntity,
-      message: 'Entidad RCV actualizada exitosamente'
+      message: 'Entidad RCV actualizada exitosamente',
     });
 
   } catch (error) {
     console.error('❌ Error in RCV entities PUT:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

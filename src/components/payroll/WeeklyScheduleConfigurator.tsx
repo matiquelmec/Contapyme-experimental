@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+
+import { Clock, Calendar, CheckCircle, XCircle, AlertTriangle, AlertCircle, ShieldCheck } from 'lucide-react';
+
 import { Button, Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
-import { Clock, Plus, Trash2, Calendar, CheckCircle, XCircle, AlertTriangle, AlertCircle, ShieldCheck } from 'lucide-react';
 
 interface DaySchedule {
   isWorkingDay: boolean;
@@ -53,7 +55,7 @@ const DAYS = {
   thursday: 'Jueves',
   friday: 'Viernes',
   saturday: 'Sábado',
-  sunday: 'Domingo'
+  sunday: 'Domingo',
 } as const;
 
 const DEFAULT_DAY: DaySchedule = {
@@ -61,7 +63,7 @@ const DEFAULT_DAY: DaySchedule = {
   startTime: '09:00',
   endTime: '18:00',
   lunchDuration: 60,
-  hasLunch: true
+  hasLunch: true,
 };
 
 export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }: WeeklyScheduleConfiguratorProps) => {
@@ -73,7 +75,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
     friday: { ...DEFAULT_DAY, isWorkingDay: true },
     saturday: { ...DEFAULT_DAY, isWorkingDay: false },
     sunday: { ...DEFAULT_DAY, isWorkingDay: false },
-    ...initialSchedule
+    ...initialSchedule,
   });
 
   // Calcular horas de un día
@@ -160,7 +162,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
       errors,
       maxDailyHours,
       hasRestDay,
-      exceedsWeeklyLimit
+      exceedsWeeklyLimit,
     };
   };
 
@@ -215,7 +217,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
       averageDailyHours: Math.round(averageDailyHours * 10) / 10,
       scheduleText,
       calculationDetails,
-      legalValidation
+      legalValidation,
     };
   };
 
@@ -223,7 +225,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
   const updateDay = (day: keyof WeeklySchedule, updates: Partial<DaySchedule>) => {
     const newSchedule = {
       ...schedule,
-      [day]: { ...schedule[day], ...updates }
+      [day]: { ...schedule[day], ...updates },
     };
     setSchedule(newSchedule);
     
@@ -249,7 +251,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
           thursday: { ...DEFAULT_DAY, isWorkingDay: true },
           friday: { ...DEFAULT_DAY, isWorkingDay: true },
           saturday: { ...DEFAULT_DAY, isWorkingDay: false },
-          sunday: { ...DEFAULT_DAY, isWorkingDay: false }
+          sunday: { ...DEFAULT_DAY, isWorkingDay: false },
         };
         break;
       case 'sixDays':
@@ -260,7 +262,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
           thursday: { ...DEFAULT_DAY, isWorkingDay: true },
           friday: { ...DEFAULT_DAY, isWorkingDay: true },
           saturday: { ...DEFAULT_DAY, isWorkingDay: true },
-          sunday: { ...DEFAULT_DAY, isWorkingDay: false }
+          sunday: { ...DEFAULT_DAY, isWorkingDay: false },
         };
         break;
       case 'weekend':
@@ -271,7 +273,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
           thursday: { ...DEFAULT_DAY, isWorkingDay: false },
           friday: { ...DEFAULT_DAY, isWorkingDay: false },
           saturday: { ...DEFAULT_DAY, isWorkingDay: true },
-          sunday: { ...DEFAULT_DAY, isWorkingDay: true }
+          sunday: { ...DEFAULT_DAY, isWorkingDay: true },
         };
         break;
       case 'partTime':
@@ -282,7 +284,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
           thursday: { ...DEFAULT_DAY, isWorkingDay: false },
           friday: { ...DEFAULT_DAY, isWorkingDay: false },
           saturday: { ...DEFAULT_DAY, isWorkingDay: false },
-          sunday: { ...DEFAULT_DAY, isWorkingDay: false }
+          sunday: { ...DEFAULT_DAY, isWorkingDay: false },
         };
         break;
       case 'overtime':
@@ -294,7 +296,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
           thursday: { ...DEFAULT_DAY, isWorkingDay: true, startTime: '08:00', endTime: '19:00', lunchDuration: 60 }, // 10h
           friday: { ...DEFAULT_DAY, isWorkingDay: true, startTime: '08:00', endTime: '19:00', lunchDuration: 60 }, // 10h
           saturday: { ...DEFAULT_DAY, isWorkingDay: false },
-          sunday: { ...DEFAULT_DAY, isWorkingDay: false }
+          sunday: { ...DEFAULT_DAY, isWorkingDay: false },
         }; // Total: 50h (excede límite)
         break;
     }
@@ -322,7 +324,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
             type="button"
             variant="outline" 
             size="sm" 
-            onClick={() => applyPreset('standard')}
+            onClick={() => { applyPreset('standard'); }}
             className="text-xs"
           >
             L-V Estándar
@@ -331,7 +333,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
             type="button"
             variant="outline" 
             size="sm" 
-            onClick={() => applyPreset('sixDays')}
+            onClick={() => { applyPreset('sixDays'); }}
             className="text-xs"
           >
             L-S (6 días)
@@ -340,7 +342,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
             type="button"
             variant="outline" 
             size="sm" 
-            onClick={() => applyPreset('partTime')}
+            onClick={() => { applyPreset('partTime'); }}
             className="text-xs"
           >
             Part-Time
@@ -349,7 +351,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
             type="button"
             variant="outline" 
             size="sm" 
-            onClick={() => applyPreset('weekend')}
+            onClick={() => { applyPreset('weekend'); }}
             className="text-xs"
           >
             Fin Semana
@@ -358,7 +360,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
             type="button"
             variant="outline" 
             size="sm" 
-            onClick={() => applyPreset('overtime')}
+            onClick={() => { applyPreset('overtime'); }}
             className="text-xs text-orange-600 border-orange-200"
           >
             🚨 Horas Extras
@@ -385,7 +387,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => toggleWorkingDay(key as keyof WeeklySchedule)}
+                    onClick={() => { toggleWorkingDay(key as keyof WeeklySchedule); }}
                     className={`h-6 w-6 rounded-full p-0 ${
                       daySchedule.isWorkingDay 
                         ? 'text-green-600 hover:text-green-700' 
@@ -407,7 +409,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
                         <input
                           type="time"
                           value={daySchedule.startTime}
-                          onChange={(e) => updateDay(key as keyof WeeklySchedule, { startTime: e.target.value })}
+                          onChange={(e) => { updateDay(key as keyof WeeklySchedule, { startTime: e.target.value }); }}
                           className="w-full text-xs px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
@@ -416,7 +418,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
                         <input
                           type="time"
                           value={daySchedule.endTime}
-                          onChange={(e) => updateDay(key as keyof WeeklySchedule, { endTime: e.target.value })}
+                          onChange={(e) => { updateDay(key as keyof WeeklySchedule, { endTime: e.target.value }); }}
                           className="w-full text-xs px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
@@ -430,7 +432,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
                           type="button"
                           variant="ghost"
                           size="sm"
-                          onClick={() => updateDay(key as keyof WeeklySchedule, { hasLunch: !daySchedule.hasLunch })}
+                          onClick={() => { updateDay(key as keyof WeeklySchedule, { hasLunch: !daySchedule.hasLunch }); }}
                           className={`h-5 w-5 rounded p-0 ${
                             daySchedule.hasLunch 
                               ? 'text-blue-600 hover:text-blue-700' 
@@ -449,7 +451,7 @@ export const WeeklyScheduleConfigurator = ({ initialSchedule, onScheduleChange }
                             max="120"
                             step="15"
                             value={daySchedule.lunchDuration}
-                            onChange={(e) => updateDay(key as keyof WeeklySchedule, { lunchDuration: parseInt(e.target.value) || 60 })}
+                            onChange={(e) => { updateDay(key as keyof WeeklySchedule, { lunchDuration: parseInt(e.target.value) || 60 }); }}
                             className="flex-1 text-xs px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                           />
                           <span className="text-xs text-gray-500">min</span>

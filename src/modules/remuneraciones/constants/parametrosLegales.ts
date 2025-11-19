@@ -32,7 +32,7 @@ export const CHILEAN_OFFICIAL_VALUES = {
   INCOME_TAX_EXEMPT_UTM: 13.5, // Exento impuesto hasta 13.5 UTM
   
   // Asignación familiar por tramos
-  FAMILY_ALLOWANCE_LIMIT_UF: 12.0 // Sin asignación sobre 12 UF
+  FAMILY_ALLOWANCE_LIMIT_UF: 12.0, // Sin asignación sobre 12 UF
 } as const;
 
 // 🏦 ADMINISTRADORAS DE FONDOS DE PENSIONES (AFP) - 2025
@@ -40,38 +40,38 @@ export const AFP_CONFIGURATIONS = {
   'CAPITAL': {
     name: 'AFP Capital',
     commission_percentage: 1.44,
-    sis_percentage: 1.49
+    sis_percentage: 1.49,
   },
   'CUPRUM': {
     name: 'AFP Cuprum',
     commission_percentage: 1.44,
-    sis_percentage: 1.49
+    sis_percentage: 1.49,
   },
   'HABITAT': {
     name: 'AFP Hábitat',
     commission_percentage: 1.27,
-    sis_percentage: 1.49
+    sis_percentage: 1.49,
   },
   'MODELO': {
     name: 'AFP Modelo',
     commission_percentage: 0.77,
-    sis_percentage: 1.49
+    sis_percentage: 1.49,
   },
   'PLANVITAL': {
     name: 'AFP PlanVital',
     commission_percentage: 1.16,
-    sis_percentage: 1.49
+    sis_percentage: 1.49,
   },
   'PROVIDA': {
     name: 'AFP Provida',
     commission_percentage: 1.45,
-    sis_percentage: 1.49
+    sis_percentage: 1.49,
   },
   'UNO': {
     name: 'AFP Uno',
     commission_percentage: 0.69,
-    sis_percentage: 1.49
-  }
+    sis_percentage: 1.49,
+  },
 } as const;
 
 // 🏥 INSTITUCIONES DE SALUD
@@ -79,28 +79,28 @@ export const HEALTH_INSTITUTIONS = {
   'FONASA': {
     name: 'FONASA',
     base_percentage: 7.0,
-    type: 'public'
+    type: 'public',
   },
   'BANMEDICA': {
     name: 'Banmédica',
     base_percentage: 7.0,
-    type: 'isapre'
+    type: 'isapre',
   },
   'CONSALUD': {
     name: 'Consalud',
     base_percentage: 7.0,
-    type: 'isapre'
+    type: 'isapre',
   },
   'CRUZ_BLANCA': {
     name: 'Cruz Blanca',
     base_percentage: 7.0,
-    type: 'isapre'
+    type: 'isapre',
   },
   'COLMENA': {
     name: 'Colmena Golden Cross',
     base_percentage: 7.0,
-    type: 'isapre'
-  }
+    type: 'isapre',
+  },
 } as const;
 
 // 📊 ASIGNACIÓN FAMILIAR POR TRAMOS (valores 2025)
@@ -108,23 +108,23 @@ export const FAMILY_ALLOWANCE_BRACKETS = {
   TRAMO_A: {
     income_limit: 500000,
     amount_per_charge: 15000,
-    description: 'Hasta $500.000'
+    description: 'Hasta $500.000',
   },
   TRAMO_B: {
     income_limit: 750000,
     amount_per_charge: 10000,
-    description: 'Entre $500.001 y $750.000'
+    description: 'Entre $500.001 y $750.000',
   },
   TRAMO_C: {
     income_limit: CHILEAN_OFFICIAL_VALUES.FAMILY_ALLOWANCE_LIMIT_UF * CHILEAN_OFFICIAL_VALUES.UF,
     amount_per_charge: 5000,
-    description: 'Entre $750.001 y 12 UF'
+    description: 'Entre $750.001 y 12 UF',
   },
   TRAMO_D: {
     income_limit: Infinity,
     amount_per_charge: 0,
-    description: 'Sobre 12 UF - Sin asignación'
-  }
+    description: 'Sobre 12 UF - Sin asignación',
+  },
 } as const;
 
 // 💰 IMPUESTO ÚNICO SEGUNDA CATEGORÍA - TABLA PROGRESIVA 2025
@@ -134,50 +134,50 @@ export const INCOME_TAX_BRACKETS = [
     to_utm: 13.5,
     tax_rate: 0,
     fixed_amount: 0,
-    description: 'Exento'
+    description: 'Exento',
   },
   {
     from_utm: 13.5,
     to_utm: 30,
     tax_rate: 0.04,
     fixed_amount: 0,
-    description: '4%'
+    description: '4%',
   },
   {
     from_utm: 30,
     to_utm: 50,
     tax_rate: 0.08,
     fixed_amount: 37169, // 13.5 * 68923 * 0.04
-    description: '8%'
+    description: '8%',
   },
   {
     from_utm: 50,
     to_utm: 70,
     tax_rate: 0.135,
     fixed_amount: 147846, // Acumulado anterior + tramo
-    description: '13.5%'
+    description: '13.5%',
   },
   {
     from_utm: 70,
     to_utm: 90,
     tax_rate: 0.23,
     fixed_amount: 423323, // Acumulado
-    description: '23%'
+    description: '23%',
   },
   {
     from_utm: 90,
     to_utm: 120,
     tax_rate: 0.304,
     fixed_amount: 700061, // Acumulado
-    description: '30.4%'
+    description: '30.4%',
   },
   {
     from_utm: 120,
     to_utm: Infinity,
     tax_rate: 0.35,
     fixed_amount: 1327523, // Acumulado
-    description: '35%'
-  }
+    description: '35%',
+  },
 ] as const;
 
 // 🔧 CONFIGURACIÓN COMPLETA PARA PAYROLL CALCULATOR
@@ -185,26 +185,26 @@ export const CHILEAN_PAYROLL_CONFIG = {
   afp_configs: Object.entries(AFP_CONFIGURATIONS).map(([code, config]) => ({
     code,
     commission_percentage: config.commission_percentage,
-    sis_percentage: config.sis_percentage
+    sis_percentage: config.sis_percentage,
   })),
   
   family_allowances: {
     tramo_a: FAMILY_ALLOWANCE_BRACKETS.TRAMO_A.amount_per_charge,
     tramo_b: FAMILY_ALLOWANCE_BRACKETS.TRAMO_B.amount_per_charge,
-    tramo_c: FAMILY_ALLOWANCE_BRACKETS.TRAMO_C.amount_per_charge
+    tramo_c: FAMILY_ALLOWANCE_BRACKETS.TRAMO_C.amount_per_charge,
   },
   
   income_limits: {
     uf_limit: CHILEAN_OFFICIAL_VALUES.TOPE_IMPONIBLE_UF,
     minimum_wage: CHILEAN_OFFICIAL_VALUES.MINIMUM_WAGE,
-    family_allowance_limit: FAMILY_ALLOWANCE_BRACKETS.TRAMO_C.income_limit
-  }
+    family_allowance_limit: FAMILY_ALLOWANCE_BRACKETS.TRAMO_C.income_limit,
+  },
 } as const;
 
 // 🧮 CALCULADORA DE CESANTÍA - FUNCIÓN CENTRALIZADA
 export function calculateUnemploymentInsurance(
   taxableIncome: number, 
-  contractType: 'indefinido' | 'plazo_fijo' | 'obra_faena'
+  contractType: 'indefinido' | 'plazo_fijo' | 'obra_faena',
 ): { percentage: number; amount: number } {
   let percentage = 0;
   
@@ -230,7 +230,7 @@ export function calculateUnemploymentInsurance(
 // 💰 CALCULADORA DE ASIGNACIÓN FAMILIAR
 export function calculateFamilyAllowance(
   familyCharges: number,
-  baseSalary: number
+  baseSalary: number,
 ): { amount: number; bracket: string } {
   if (familyCharges <= 0) {
     return { amount: 0, bracket: 'Sin cargas' };
@@ -255,7 +255,7 @@ export function calculateFamilyAllowance(
   
   return { 
     amount: amountPerCharge * familyCharges,
-    bracket: `${bracket} (${familyCharges} cargas)`
+    bracket: `${bracket} (${familyCharges} cargas)`,
   };
 }
 
@@ -276,7 +276,7 @@ export function calculateIncomeTax(taxableIncome: number): { amount: number; bra
       
       return {
         amount: Math.round(taxAmount),
-        bracket: bracket.description
+        bracket: bracket.description,
       };
     }
   }
@@ -287,7 +287,7 @@ export function calculateIncomeTax(taxableIncome: number): { amount: number; bra
   
   return {
     amount: Math.round(lastBracket.fixed_amount + (taxableAmountInBracket * lastBracket.tax_rate)),
-    bracket: lastBracket.description
+    bracket: lastBracket.description,
   };
 }
 
@@ -333,7 +333,7 @@ export function mergeWithDynamicConfig(dbConfig?: any) {
       ? dbConfig.afp_configs.map((afp: any) => ({
           code: afp.code || afp.name,
           commission_percentage: afp.commission_percentage,
-          sis_percentage: afp.sis_percentage || CHILEAN_OFFICIAL_VALUES.SIS_PERCENTAGE
+          sis_percentage: afp.sis_percentage || CHILEAN_OFFICIAL_VALUES.SIS_PERCENTAGE,
         }))
       : CHILEAN_PAYROLL_CONFIG.afp_configs,
     
@@ -349,8 +349,8 @@ export function mergeWithDynamicConfig(dbConfig?: any) {
       uf_limit: dbConfig.income_limits?.uf_limit || CHILEAN_OFFICIAL_VALUES.TOPE_IMPONIBLE_UF,
       minimum_wage: dbConfig.income_limits?.minimum_wage || CHILEAN_OFFICIAL_VALUES.MINIMUM_WAGE,
       family_allowance_limit: dbConfig.income_limits?.family_allowance_limit || 
-        FAMILY_ALLOWANCE_BRACKETS.TRAMO_C.income_limit
-    }
+        FAMILY_ALLOWANCE_BRACKETS.TRAMO_C.income_limit,
+    },
   };
 }
 
@@ -362,7 +362,7 @@ export function getAvailableAFPs(dbConfig?: any): Array<{code: string, name: str
     return activeAFPs.map((afp: any) => ({
       code: afp.code || afp.name,
       name: AFP_CONFIGURATIONS[afp.code as keyof typeof AFP_CONFIGURATIONS]?.name || afp.name,
-      commission: afp.commission_percentage
+      commission: afp.commission_percentage,
     }));
   }
   
@@ -370,7 +370,7 @@ export function getAvailableAFPs(dbConfig?: any): Array<{code: string, name: str
   return Object.entries(AFP_CONFIGURATIONS).map(([code, config]) => ({
     code,
     name: config.name,
-    commission: config.commission_percentage
+    commission: config.commission_percentage,
   }));
 }
 
@@ -382,7 +382,7 @@ export function getAvailableHealthInstitutions(dbConfig?: any): Array<{code: str
     return activeHealth.map((health: any) => ({
       code: health.code,
       name: health.name,
-      percentage: health.plan_percentage
+      percentage: health.plan_percentage,
     }));
   }
   
@@ -390,6 +390,6 @@ export function getAvailableHealthInstitutions(dbConfig?: any): Array<{code: str
   return Object.entries(HEALTH_INSTITUTIONS).map(([code, config]) => ({
     code,
     name: config.name,
-    percentage: config.base_percentage
+    percentage: config.base_percentage,
   }));
 }

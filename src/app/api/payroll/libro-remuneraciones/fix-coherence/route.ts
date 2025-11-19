@@ -9,10 +9,14 @@
  * POST /api/payroll/libro-remuneraciones/fix-coherence
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { PayrollUnifiedCalculator, UnifiedLiquidationData } from '@/services/PayrollUnifiedCalculator';
+
 import { SmartCompanyIdResolver } from '@/services/PayrollDataCoherenceEngine';
+import type { UnifiedLiquidationData } from '@/services/PayrollUnifiedCalculator';
+import { PayrollUnifiedCalculator } from '@/services/PayrollUnifiedCalculator';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -26,7 +30,7 @@ export async function POST(request: NextRequest) {
     if (!company_id || !year || !month) {
       return NextResponse.json({
         success: false,
-        error: 'Parámetros requeridos: company_id, year, month'
+        error: 'Parámetros requeridos: company_id, year, month',
       }, { status: 400 });
     }
 
@@ -37,7 +41,7 @@ export async function POST(request: NextRequest) {
       company_id,
       year,
       month,
-      supabase
+      supabase,
     );
 
     console.log('🎯 Company ID resolved for fix:', { requested: company_id, actual: actualCompanyId });
@@ -64,7 +68,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: 'No se encontraron liquidaciones para corregir',
-        company_id_used: actualCompanyId
+        company_id_used: actualCompanyId,
       }, { status: 404 });
     }
 
@@ -80,7 +84,7 @@ export async function POST(request: NextRequest) {
       needs_correction: boolean;
     }> = [];
 
-    let totalCorrections = { haberes: 0, descuentos: 0, liquido: 0 };
+    const totalCorrections = { haberes: 0, descuentos: 0, liquido: 0 };
     let liquidationsToFix = 0;
 
     for (const liquidation of liquidations) {
@@ -105,7 +109,7 @@ export async function POST(request: NextRequest) {
         loan_deductions: liquidation.loan_deductions || 0,
         advance_payments: liquidation.advance_payments || 0,
         apv_amount: liquidation.apv_amount || 0,
-        other_deductions: liquidation.other_deductions || 0
+        other_deductions: liquidation.other_deductions || 0,
       };
 
       // Calcular valores correctos
@@ -137,7 +141,7 @@ export async function POST(request: NextRequest) {
               total_gross_income: correctCalculation.total_haberes,
               total_deductions: correctCalculation.total_descuentos,
               net_salary: correctCalculation.total_liquido,
-              updated_at: new Date().toISOString()
+              updated_at: new Date().toISOString(),
             })
             .eq('id', liquidation.id);
 
@@ -155,19 +159,19 @@ export async function POST(request: NextRequest) {
         current: {
           haberes: currentHaberes,
           descuentos: currentDescuentos,
-          liquido: currentLiquido
+          liquido: currentLiquido,
         },
         correct: {
           haberes: correctCalculation.total_haberes,
           descuentos: correctCalculation.total_descuentos,
-          liquido: correctCalculation.total_liquido
+          liquido: correctCalculation.total_liquido,
         },
         differences: {
           haberes: diffHaberes,
           descuentos: diffDescuentos,
-          liquido: diffLiquido
+          liquido: diffLiquido,
         },
-        needs_correction: needsCorrection
+        needs_correction: needsCorrection,
       });
     }
 
@@ -204,28 +208,28 @@ export async function POST(request: NextRequest) {
         company_id_resolution: {
           requested: company_id,
           actual_used: actualCompanyId,
-          auto_resolved: company_id !== actualCompanyId
+          auto_resolved: company_id !== actualCompanyId,
         },
         liquidations_analyzed: liquidations.length,
         liquidations_needing_fix: liquidationsToFix,
         total_corrections: {
           haberes: Math.round(totalCorrections.haberes * 100) / 100,
           descuentos: Math.round(totalCorrections.descuentos * 100) / 100,
-          liquido: Math.round(totalCorrections.liquido * 100) / 100
+          liquido: Math.round(totalCorrections.liquido * 100) / 100,
         },
         corrections_applied: apply_fixes,
-        book_regenerated: bookRegenerated
+        book_regenerated: bookRegenerated,
       },
       corrections: corrections.filter(c => c.needs_correction),
       summary: {
         total_haberes_diff: Math.round(totalCorrections.haberes * 100) / 100,
         total_descuentos_diff: Math.round(totalCorrections.descuentos * 100) / 100,
         total_liquido_diff: Math.round(totalCorrections.liquido * 100) / 100,
-        coherence_achieved: apply_fixes ? liquidationsToFix > 0 : false
+        coherence_achieved: apply_fixes ? liquidationsToFix > 0 : false,
       },
       next_steps: apply_fixes
         ? ['Correcciones aplicadas', 'Regenerar libro de remuneraciones', 'Verificar coherencia']
-        : ['Ejecutar con apply_fixes: true para aplicar correcciones', 'Regenerar cache de interface']
+        : ['Ejecutar con apply_fixes: true para aplicar correcciones', 'Regenerar cache de interface'],
     };
 
     console.log('🎯 AUTO-FIX COMPLETE:', {
@@ -233,7 +237,7 @@ export async function POST(request: NextRequest) {
       needs_fix: liquidationsToFix,
       applied: apply_fixes,
       total_haberes_diff: totalCorrections.haberes,
-      total_descuentos_diff: totalCorrections.descuentos
+      total_descuentos_diff: totalCorrections.descuentos,
     });
 
     return NextResponse.json(response, { status: 200 });
@@ -243,7 +247,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error en auto-corrección de coherencia',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }

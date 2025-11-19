@@ -34,7 +34,7 @@ export interface ContractForPeriod {
 export async function getContractForPeriod(
   employeeId: string,
   year: number,
-  month: number
+  month: number,
 ): Promise<ContractForPeriod | null> {
   try {
     const supabase = getDatabaseConnection();
@@ -65,13 +65,13 @@ export async function getContractForPeriod(
     }
 
     // 2. Inicializar con valores del contrato base
-    let result: ContractForPeriod = {
+    const result: ContractForPeriod = {
       base_salary: parseFloat(activeContract.base_salary || 0),
       weekly_hours: parseInt(activeContract.weekly_hours || 44),
       contract_type: activeContract.contract_type || 'indefinido',
       position: activeContract.position || '',
       department: activeContract.department || '',
-      modifications_applied: []
+      modifications_applied: [],
     };
 
     // 3. Obtener modificaciones que aplican para el período
@@ -130,7 +130,7 @@ export async function getContractForPeriod(
           effective_date: mod.effective_date,
           reason: mod.reason,
           from: oldValues,
-          to: newValues
+          to: newValues,
         });
       }
     }
@@ -139,7 +139,7 @@ export async function getContractForPeriod(
       salary: result.base_salary,
       hours: result.weekly_hours,
       type: result.contract_type,
-      modifications: result.modifications_applied.length
+      modifications: result.modifications_applied.length,
     });
 
     return result;
@@ -154,7 +154,7 @@ export async function getContractForPeriod(
 export async function shouldPayUnemploymentInsurance(
   employeeId: string,
   year: number,
-  month: number
+  month: number,
 ): Promise<boolean> {
   try {
     const contract = await getContractForPeriod(employeeId, year, month);
@@ -166,7 +166,7 @@ export async function shouldPayUnemploymentInsurance(
     console.log('🔍 Cesantía automática:', {
       contractType: contract.contract_type,
       shouldPay,
-      period: `${month}/${year}`
+      period: `${month}/${year}`,
     });
 
     return shouldPay;
@@ -212,7 +212,7 @@ export async function createContractModification(
   newValues: Record<string, any>,
   reason?: string,
   documentReference?: string,
-  createdBy?: string
+  createdBy?: string,
 ): Promise<ContractModification | null> {
   try {
     const supabase = getDatabaseConnection();
@@ -228,7 +228,7 @@ export async function createContractModification(
       new_values: newValues,
       reason,
       document_reference: documentReference,
-      created_by: createdBy
+      created_by: createdBy,
     };
 
     const { data: modification, error } = await supabase
@@ -255,7 +255,7 @@ export async function createContractModification(
 export function validateModificationData(
   modificationType: string,
   oldValues: any,
-  newValues: any
+  newValues: any,
 ): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
 
@@ -297,6 +297,6 @@ export function validateModificationData(
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 }

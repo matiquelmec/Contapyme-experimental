@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { X } from 'lucide-react';
 
 interface Employee {
@@ -57,7 +58,7 @@ export default function EmployeeEditModal({ isOpen, onClose, employeeId, onSave 
     // Datos previsionales
     afp_code: 'HABITAT',
     health_institution_code: 'FONASA',
-    legal_gratification_type: 'none'
+    legal_gratification_type: 'none',
   });
 
   useEffect(() => {
@@ -88,7 +89,7 @@ export default function EmployeeEditModal({ isOpen, onClose, employeeId, onSave 
           contract_type: data.contract?.contract_type || 'indefinido',
           afp_code: data.payrollConfig?.afp_code || 'HABITAT',
           health_institution_code: data.payrollConfig?.health_institution_code || 'FONASA',
-          legal_gratification_type: data.payrollConfig?.legal_gratification_type || 'none'
+          legal_gratification_type: data.payrollConfig?.legal_gratification_type || 'none',
         });
       }
     } catch (error) {
@@ -105,9 +106,9 @@ export default function EmployeeEditModal({ isOpen, onClose, employeeId, onSave 
       const response = await fetch(`/api/payroll/employees/${employeeId}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
@@ -145,7 +146,7 @@ export default function EmployeeEditModal({ isOpen, onClose, employeeId, onSave 
 
         {loading ? (
           <div className="text-center py-8">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
             <p className="mt-2">Cargando datos...</p>
           </div>
         ) : (
@@ -172,7 +173,7 @@ export default function EmployeeEditModal({ isOpen, onClose, employeeId, onSave 
                   <input
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    onChange={(e) => { setFormData({ ...formData, email: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     placeholder="correo@ejemplo.com"
                   />
@@ -190,7 +191,7 @@ export default function EmployeeEditModal({ isOpen, onClose, employeeId, onSave 
                   </label>
                   <select
                     value={formData.bank_name}
-                    onChange={(e) => setFormData({...formData, bank_name: e.target.value})}
+                    onChange={(e) => { setFormData({ ...formData, bank_name: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   >
                     <option value="">Seleccionar banco...</option>
@@ -212,7 +213,7 @@ export default function EmployeeEditModal({ isOpen, onClose, employeeId, onSave 
                   </label>
                   <select
                     value={formData.bank_account_type}
-                    onChange={(e) => setFormData({...formData, bank_account_type: e.target.value})}
+                    onChange={(e) => { setFormData({ ...formData, bank_account_type: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   >
                     <option value="cuenta_corriente">Cuenta Corriente</option>
@@ -227,7 +228,7 @@ export default function EmployeeEditModal({ isOpen, onClose, employeeId, onSave 
                   <input
                     type="text"
                     value={formData.bank_account_number}
-                    onChange={(e) => setFormData({...formData, bank_account_number: e.target.value})}
+                    onChange={(e) => { setFormData({ ...formData, bank_account_number: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     placeholder="Número de cuenta bancaria"
                   />
@@ -245,7 +246,7 @@ export default function EmployeeEditModal({ isOpen, onClose, employeeId, onSave 
                   </label>
                   <select
                     value={formData.contract_type}
-                    onChange={(e) => setFormData({...formData, contract_type: e.target.value})}
+                    onChange={(e) => { setFormData({ ...formData, contract_type: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   >
                     <option value="indefinido">Indefinido</option>
@@ -261,7 +262,7 @@ export default function EmployeeEditModal({ isOpen, onClose, employeeId, onSave 
                   <input
                     type="number"
                     value={formData.base_salary}
-                    onChange={(e) => setFormData({...formData, base_salary: Number(e.target.value)})}
+                    onChange={(e) => { setFormData({ ...formData, base_salary: Number(e.target.value) }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     placeholder="Sueldo base mensual"
                   />
@@ -279,7 +280,7 @@ export default function EmployeeEditModal({ isOpen, onClose, employeeId, onSave 
                   </label>
                   <select
                     value={formData.afp_code}
-                    onChange={(e) => setFormData({...formData, afp_code: e.target.value})}
+                    onChange={(e) => { setFormData({ ...formData, afp_code: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   >
                     <option value="CAPITAL">Capital</option>
@@ -297,7 +298,7 @@ export default function EmployeeEditModal({ isOpen, onClose, employeeId, onSave 
                   </label>
                   <select
                     value={formData.health_institution_code}
-                    onChange={(e) => setFormData({...formData, health_institution_code: e.target.value})}
+                    onChange={(e) => { setFormData({ ...formData, health_institution_code: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   >
                     <option value="FONASA">Fonasa</option>
@@ -315,7 +316,7 @@ export default function EmployeeEditModal({ isOpen, onClose, employeeId, onSave 
                   </label>
                   <select
                     value={formData.legal_gratification_type}
-                    onChange={(e) => setFormData({...formData, legal_gratification_type: e.target.value})}
+                    onChange={(e) => { setFormData({ ...formData, legal_gratification_type: e.target.value }); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   >
                     <option value="none">Sin gratificación Art. 50</option>

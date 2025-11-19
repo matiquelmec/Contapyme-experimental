@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 // Force dynamic rendering for this API route
@@ -165,7 +167,7 @@ const DT_OFFICIAL_FIELD_MAPPINGS = [
   'Total líquido(5501)',
   'Total indemnizaciones(5502)',
   'Total indemnizaciones tributables(5564)',
-  'Total indemnizaciones no tributables(5565)'
+  'Total indemnizaciones no tributables(5565)',
 ];
 
 // Función para generar una fila de datos según formato DT oficial
@@ -323,7 +325,7 @@ function generateOfficialDTRow(liquidationData: any): string {
     Math.round(liquidationData.sueldo_liquido || (3536581 - 712292)), // Total líquido(5501) - calculado como haberes - descuentos
     Math.round(liquidationData.total_indemnizaciones || 0), // Total indemnizaciones(5502)
     Math.round(liquidationData.total_indemnizaciones_tributables || 0), // Total indemnizaciones tributables(5564)
-    Math.round(liquidationData.total_indemnizaciones_no_tributables || 0) // Total indemnizaciones no tributables(5565)
+    Math.round(liquidationData.total_indemnizaciones_no_tributables || 0), // Total indemnizaciones no tributables(5565)
   ];
 
   return values.join(';');
@@ -348,7 +350,6 @@ function sanitizeForDT(text: string): string {
     .trim();
 }
 
-
 function generateDTCSVHeader(): string {
   return DT_OFFICIAL_FIELD_MAPPINGS.join(';');
 }
@@ -365,9 +366,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { 
           success: false, 
-          error: 'Parámetros requeridos: company_id, period' 
+          error: 'Parámetros requeridos: company_id, period', 
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -392,9 +393,9 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: `No existe libro de remuneraciones para ${period}`,
-          details: 'Debe generar el libro de remuneraciones primero desde la interfaz web'
+          details: 'Debe generar el libro de remuneraciones primero desde la interfaz web',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -422,7 +423,7 @@ export async function GET(request: NextRequest) {
         afc_empleador: Math.round((detail.sueldo_base || 0) * 0.008),
         aporte_accidentes_trabajo: Math.round((detail.sueldo_base || 0) * 0.0093),
         aporte_sis: Math.round((detail.sueldo_base || 0) * 0.017),
-        total_aportes_empleador: Math.round((detail.sueldo_base || 0) * 0.0341)
+        total_aportes_empleador: Math.round((detail.sueldo_base || 0) * 0.0341),
       };
 
       csvRows.push(generateOfficialDTRow(enrichedData));
@@ -435,7 +436,7 @@ export async function GET(request: NextRequest) {
     console.log('✅ CSV DT generado exitosamente:', {
       period,
       empleados: payrollBook.payroll_book_details?.length || 0,
-      filas: csvRows.length - 1 // -1 por el header
+      filas: csvRows.length - 1, // -1 por el header
     });
 
     // Preparar respuesta con el CSV
@@ -443,7 +444,7 @@ export async function GET(request: NextRequest) {
     response.headers.set('Content-Type', 'text/csv; charset=utf-8');
     response.headers.set(
       'Content-Disposition',
-      `attachment; filename="libro_remuneraciones_dt_${period}.csv"`
+      `attachment; filename="libro_remuneraciones_dt_${period}.csv"`,
     );
 
     return response;
@@ -452,7 +453,7 @@ export async function GET(request: NextRequest) {
     console.error('Error generating DT CSV:', error);
     return NextResponse.json(
       { error: 'Error al generar CSV en formato DT' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(claude mcp:*)",
+      "Bash(npm run lint)",
+      "Bash(node:*)",
+      "Bash(del test-app-health.js)",
+      "Bash(npx @modelcontextprotocol/server-chrome-devtools:*)",
+      "Bash(npm install:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

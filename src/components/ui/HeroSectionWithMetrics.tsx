@@ -1,9 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { TrendingUp, Users, DollarSign, BarChart3, Zap } from 'lucide-react'
-import { Button, Badge } from '@/components/ui'
+
 import Link from 'next/link'
+
+import { TrendingUp, Users, DollarSign, BarChart3, Zap } from 'lucide-react'
+
+import { Button, Badge } from '@/components/ui'
 
 interface MetricsData {
   totalCompanies: number
@@ -21,7 +24,7 @@ export function HeroSectionWithMetrics() {
     totalF29Processed: 0,
     totalAssets: 0,
     avgProcessingTime: 0,
-    systemUptime: 99.9
+    systemUptime: 99.9,
   })
   const [isLoading, setIsLoading] = useState(true)
 
@@ -39,7 +42,7 @@ export function HeroSectionWithMetrics() {
             totalF29Processed: data.data.accounting.totalF29,
             totalAssets: data.data.accounting.totalAssetsValue,
             avgProcessingTime: data.data.accounting.avgProcessingTime,
-            systemUptime: data.data.system.systemUptime
+            systemUptime: data.data.system.systemUptime,
           })
         } else {
           // Fallback a datos demo si hay error
@@ -49,7 +52,7 @@ export function HeroSectionWithMetrics() {
             totalF29Processed: 45,
             totalAssets: 8500000,
             avgProcessingTime: 1.8,
-            systemUptime: 99.8
+            systemUptime: 99.8,
           })
         }
       } catch (error) {
@@ -61,7 +64,7 @@ export function HeroSectionWithMetrics() {
           totalF29Processed: 45,
           totalAssets: 8500000,
           avgProcessingTime: 1.8,
-          systemUptime: 99.8
+          systemUptime: 99.8,
         })
       } finally {
         setIsLoading(false)
@@ -76,26 +79,22 @@ export function HeroSectionWithMetrics() {
     animateCounter()
   }, [])
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount)
-  }
 
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('es-CL').format(num)
-  }
+  const formatNumber = (num: number) => new Intl.NumberFormat('es-CL').format(num)
 
   return (
     <section className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white pt-24 pb-20 relative overflow-hidden">
       {/* Elementos decorativos animados */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style={{animationDelay: '2s'}} />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{animationDelay: '4s'}} />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '4s' }} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

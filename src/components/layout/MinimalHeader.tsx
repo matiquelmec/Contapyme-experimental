@@ -2,8 +2,7 @@
 
 import React from 'react'
 
-export const MinimalHeader = () => {
-  return (
+export const MinimalHeader = () => (
     <div className="bg-white border-b">
       <div className="max-w-7xl mx-auto px-4">
         <div className="h-16 flex items-center justify-between">
@@ -24,4 +23,3 @@ export const MinimalHeader = () => {
       </div>
     </div>
   )
-}

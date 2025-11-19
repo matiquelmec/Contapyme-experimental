@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 export const dynamic = 'force-dynamic';
@@ -71,7 +72,7 @@ interface JournalDetail {
  */
 async function getEntityAccountMappings(
   companyId: string,
-  entityRuts: string[]
+  entityRuts: string[],
 ): Promise<Map<string, EntityAccountMapping>> {
   const { data: entities } = await supabase
     .from('rcv_entities')
@@ -88,7 +89,7 @@ async function getEntityAccountMappings(
       account_code: entity.account_code, // Cuenta contable ya asignada a la entidad
       account_name: entity.account_name,
       cost_center: entity.cost_center,
-      document_type_config: entity.document_type_config
+      document_type_config: entity.document_type_config,
     });
   });
 
@@ -103,13 +104,13 @@ function getAccountForDocumentType(
   entity: EntityAccountMapping | undefined,
   documentType: string,
   defaultAccount: string,
-  defaultAccountName: string
+  defaultAccountName: string,
 ): { code: string; name: string } {
   // Si la entidad tiene configuración específica por tipo de documento
-  if (entity?.document_type_config && entity.document_type_config[documentType]) {
+  if (entity?.document_type_config?.[documentType]) {
     return {
       code: entity.document_type_config[documentType].account_code,
-      name: entity.document_type_config[documentType].account_name
+      name: entity.document_type_config[documentType].account_name,
     };
   }
 
@@ -117,14 +118,14 @@ function getAccountForDocumentType(
   if (entity?.account_code) {
     return {
       code: entity.account_code,
-      name: entity.account_name
+      name: entity.account_name,
     };
   }
 
   // Solo usar cuenta por defecto si no hay cuenta en la entidad
   return {
     code: defaultAccount,
-    name: defaultAccountName
+    name: defaultAccountName,
   };
 }
 
@@ -139,7 +140,7 @@ async function generatePurchaseEntries(
   centralConfig: any,
   period: string,
   batchNumber: number = 1,
-  totalBatches: number = 1
+  totalBatches: number = 1,
 ): Promise<JournalEntry[]> {
   const entries: JournalEntry[] = [];
   let currentDetails: JournalDetail[] = [];
@@ -156,7 +157,7 @@ async function generatePurchaseEntries(
       entity,
       transaction.document_type,
       centralConfig.default_expense_account || '5.1.1.001',
-      'Gastos Operacionales'
+      'Gastos Operacionales',
     );
 
     // Crear líneas de detalle para esta transacción
@@ -174,7 +175,7 @@ async function generatePurchaseEntries(
         entity_name: transaction.entity_name,
         cost_center: entity?.cost_center,
         document_reference: transaction.document_number,
-        document_type: transaction.document_type
+        document_type: transaction.document_type,
       });
     }
 
@@ -189,7 +190,7 @@ async function generatePurchaseEntries(
         entity_rut: transaction.entity_rut,
         entity_name: transaction.entity_name,
         document_reference: transaction.document_number,
-        document_type: transaction.document_type
+        document_type: transaction.document_type,
       });
     }
 
@@ -203,7 +204,7 @@ async function generatePurchaseEntries(
       entity_rut: transaction.entity_rut,
       entity_name: transaction.entity_name,
       document_reference: transaction.document_number,
-      document_type: transaction.document_type
+      document_type: transaction.document_type,
     });
 
     // Verificar si necesitamos crear un nuevo asiento
@@ -226,9 +227,9 @@ async function generatePurchaseEntries(
           entry_number: currentEntryNumber,
           total_batches: totalBatches,
           transactions_count: currentDetails.length / 3, // Aproximado (3 líneas por transacción)
-          period: period,
-          total_amount: currentTotalAmount
-        }
+          period,
+          total_amount: currentTotalAmount,
+        },
       });
 
       // Resetear para el siguiente asiento
@@ -259,9 +260,9 @@ async function generatePurchaseEntries(
         entry_number: currentEntryNumber,
         total_batches: totalBatches,
         transactions_count: currentDetails.length / 3,
-        period: period,
-        total_amount: currentTotalAmount
-      }
+        period,
+        total_amount: currentTotalAmount,
+      },
     });
   }
 
@@ -279,7 +280,7 @@ async function generateSalesEntries(
   centralConfig: any,
   period: string,
   batchNumber: number = 1,
-  totalBatches: number = 1
+  totalBatches: number = 1,
 ): Promise<JournalEntry[]> {
   const entries: JournalEntry[] = [];
   let currentDetails: JournalDetail[] = [];
@@ -295,7 +296,7 @@ async function generateSalesEntries(
       entity,
       transaction.document_type,
       centralConfig.default_income_account || '4.1.1.001',
-      'Ingresos Operacionales'
+      'Ingresos Operacionales',
     );
 
     const transactionDetails: JournalDetail[] = [];
@@ -310,7 +311,7 @@ async function generateSalesEntries(
       entity_rut: transaction.entity_rut,
       entity_name: transaction.entity_name,
       document_reference: transaction.document_number,
-      document_type: transaction.document_type
+      document_type: transaction.document_type,
     });
 
     // HABER: Ingresos (USANDO CUENTA DE LA ENTIDAD)
@@ -325,7 +326,7 @@ async function generateSalesEntries(
         entity_name: transaction.entity_name,
         cost_center: entity?.cost_center,
         document_reference: transaction.document_number,
-        document_type: transaction.document_type
+        document_type: transaction.document_type,
       });
     }
 
@@ -340,7 +341,7 @@ async function generateSalesEntries(
         entity_rut: transaction.entity_rut,
         entity_name: transaction.entity_name,
         document_reference: transaction.document_number,
-        document_type: transaction.document_type
+        document_type: transaction.document_type,
       });
     }
 
@@ -363,9 +364,9 @@ async function generateSalesEntries(
           entry_number: currentEntryNumber,
           total_batches: totalBatches,
           transactions_count: currentDetails.length / 3,
-          period: period,
-          total_amount: currentTotalAmount
-        }
+          period,
+          total_amount: currentTotalAmount,
+        },
       });
 
       currentDetails = [];
@@ -393,9 +394,9 @@ async function generateSalesEntries(
         entry_number: currentEntryNumber,
         total_batches: totalBatches,
         transactions_count: currentDetails.length / 3,
-        period: period,
-        total_amount: currentTotalAmount
-      }
+        period,
+        total_amount: currentTotalAmount,
+      },
     });
   }
 
@@ -415,13 +416,13 @@ export async function POST(request: NextRequest) {
       period, 
       rcv_data, 
       rcv_type = 'purchase',
-      options = {} 
+      options = {}, 
     } = body;
 
     if (!company_id || !period || !rcv_data || !Array.isArray(rcv_data)) {
       return NextResponse.json({
         success: false,
-        error: 'Campos requeridos: company_id, period, rcv_data (array)'
+        error: 'Campos requeridos: company_id, period, rcv_data (array)',
       }, { status: 400 });
     }
 
@@ -429,7 +430,7 @@ export async function POST(request: NextRequest) {
       company_id,
       period,
       rcv_type,
-      total_transactions: rcv_data.length
+      total_transactions: rcv_data.length,
     });
 
     // 1. Obtener configuración centralizada
@@ -442,7 +443,7 @@ export async function POST(request: NextRequest) {
     if (!centralConfig && !options.use_defaults) {
       return NextResponse.json({
         success: false,
-        error: 'Configuración centralizada no encontrada. Configure en /accounting/configuration o use options.use_defaults = true'
+        error: 'Configuración centralizada no encontrada. Configure en /accounting/configuration o use options.use_defaults = true',
       }, { status: 400 });
     }
 
@@ -463,7 +464,7 @@ export async function POST(request: NextRequest) {
           rut: entity.entity_rut,
           name: entity.entity_name,
           account_code: entity.account_code,
-          account_name: entity.account_name
+          account_name: entity.account_name,
         });
       }
     }
@@ -474,7 +475,7 @@ export async function POST(request: NextRequest) {
         success: false,
         error: 'Hay entidades sin cuenta contable asignada',
         entities_without_account: entitiesWithoutAccount,
-        message: 'Asigne cuentas a estas entidades en /accounting/rcv-entities o use options.allow_default_accounts = true'
+        message: 'Asigne cuentas a estas entidades en /accounting/rcv-entities o use options.allow_default_accounts = true',
       }, { status: 400 });
     }
 
@@ -496,11 +497,11 @@ export async function POST(request: NextRequest) {
         centralConfig || {
           default_expense_account: '5.1.1.001',
           iva_credit_account: '1.1.4.001',
-          suppliers_account: '2.1.1.001'
+          suppliers_account: '2.1.1.001',
         },
         period,
         1,
-        estimatedEntries
+        estimatedEntries,
       );
     } else {
       journalEntries = await generateSalesEntries(
@@ -510,11 +511,11 @@ export async function POST(request: NextRequest) {
         centralConfig || {
           default_income_account: '4.1.1.001',
           iva_debit_account: '2.1.4.001',
-          customers_account: '1.1.3.001'
+          customers_account: '1.1.3.001',
         },
         period,
         1,
-        estimatedEntries
+        estimatedEntries,
       );
     }
 
@@ -530,8 +531,8 @@ export async function POST(request: NextRequest) {
         total_lines: entry.details.length,
         total_debits: totalDebits,
         total_credits: totalCredits,
-        balanced: balanced,
-        difference: totalDebits - totalCredits
+        balanced,
+        difference: totalDebits - totalCredits,
       };
     });
 
@@ -541,12 +542,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: 'Uno o más asientos están desbalanceados',
-        validation_results: validationResults.filter(v => !v.balanced)
+        validation_results: validationResults.filter(v => !v.balanced),
       }, { status: 400 });
     }
 
     // 7. Guardar en base de datos si se solicita
-    let savedEntries: string[] = [];
+    const savedEntries: string[] = [];
     if (options.save_to_database) {
       console.log('💾 Guardando asientos en base de datos...');
       
@@ -561,7 +562,7 @@ export async function POST(request: NextRequest) {
             entry_type: entry.entry_type,
             status: entry.status,
             metadata: entry.metadata,
-            created_by: 'system'
+            created_by: 'system',
           })
           .select()
           .single();
@@ -570,7 +571,7 @@ export async function POST(request: NextRequest) {
           // Insertar todos los detalles
           const detailsToInsert = entry.details.map(detail => ({
             entry_id: data.id,
-            ...detail
+            ...detail,
           }));
 
           const { error: detailError } = await supabase
@@ -595,7 +596,7 @@ export async function POST(request: NextRequest) {
       entities_without_accounts: entitiesWithoutAccount.length,
       total_amount: rcv_data.reduce((sum, t) => sum + t.total_amount, 0),
       validation_results: validationResults,
-      account_mapping_summary: accountSummary
+      account_mapping_summary: accountSummary,
     };
 
     // 9. Preparar exportación para Excel/CSV si se solicita
@@ -614,8 +615,8 @@ export async function POST(request: NextRequest) {
           documento: detail.document_reference || '',
           tipo_doc: detail.document_type || '',
           debe: detail.debit_amount,
-          haber: detail.credit_amount
-        }))
+          haber: detail.credit_amount,
+        })),
       );
     }
 
@@ -625,8 +626,8 @@ export async function POST(request: NextRequest) {
         summary,
         journal_entries: journalEntries,
         saved_entry_ids: savedEntries,
-        export_data: exportData
-      }
+        export_data: exportData,
+      },
     });
 
   } catch (error) {
@@ -634,7 +635,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Error desconocido'
+      details: error instanceof Error ? error.message : 'Error desconocido',
     }, { status: 500 });
   }
 }
@@ -652,7 +653,7 @@ export async function GET(request: NextRequest) {
     if (!companyId || !rcvRecordId) {
       return NextResponse.json({
         success: false,
-        error: 'company_id y rcv_record_id son requeridos'
+        error: 'company_id y rcv_record_id son requeridos',
       }, { status: 400 });
     }
 
@@ -669,7 +670,7 @@ export async function GET(request: NextRequest) {
     if (error || !rcvRecord) {
       return NextResponse.json({
         success: false,
-        error: 'Registro RCV no encontrado'
+        error: 'Registro RCV no encontrado',
       }, { status: 404 });
     }
 
@@ -684,9 +685,9 @@ export async function GET(request: NextRequest) {
         options: {
           save_to_database: false,
           include_export_format: true,
-          allow_default_accounts: true
-        }
-      })
+          allow_default_accounts: true,
+        },
+      }),
     });
 
     // Reutilizar la lógica del POST para generar preview
@@ -696,7 +697,7 @@ export async function GET(request: NextRequest) {
     console.error('❌ Error generando preview:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }

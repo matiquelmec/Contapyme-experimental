@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+
 import Link from 'next/link'
+
 import { 
   AlertTriangle, 
-  TrendingUp, 
-  DollarSign, 
-  Calendar,
+  TrendingUp,
   CheckCircle,
   XCircle,
   AlertCircle,
@@ -14,7 +14,7 @@ import {
   BarChart3,
   PieChart,
   FileText,
-  Settings
+  Settings,
 } from 'lucide-react'
 
 // Componente para el ticker de indicadores económicos
@@ -23,7 +23,7 @@ const EconomicIndicatorsTicker = () => {
     uf: { value: 39643.59, change: 12.45 },
     utm: { value: 69542.00, change: 0 },
     usd: { value: 953.67, change: -4.23 },
-    eur: { value: 1006.45, change: -2.15 }
+    eur: { value: 1006.45, change: -2.15 },
   })
 
   return (
@@ -157,7 +157,7 @@ const TaxHealthWidget = () => {
   const alertas = [
     { tipo: 'success', mensaje: 'RCV vs F29: Concordancia 100%' },
     { tipo: 'warning', mensaje: '3 entidades RCV sin mapear' },
-    { tipo: 'success', mensaje: 'Sin observaciones SII' }
+    { tipo: 'success', mensaje: 'Sin observaciones SII' },
   ]
 
   return (
@@ -192,29 +192,29 @@ const ContextualNavigation = () => {
       description: "Analizar situación fiscal actual",
       icon: FileText,
       href: "/accounting/f29-analysis",
-      priority: "high"
+      priority: "high",
     },
     {
       title: "RCV vs Libros",
       description: "Verificar concordancia tributaria",
       icon: BarChart3,
       href: "/accounting/rcv-analysis", 
-      priority: "medium"
+      priority: "medium",
     },
     {
       title: "Balance 8 Columnas",
       description: "Estados financieros integrados",
       icon: PieChart,
       href: "/accounting/balance-8-columns",
-      priority: "low"
+      priority: "low",
     },
     {
       title: "Configuración",
       description: "Plan de cuentas y entidades",
       icon: Settings,
       href: "/accounting/configuration",
-      priority: "low"
-    }
+      priority: "low",
+    },
   ]
 
   return (

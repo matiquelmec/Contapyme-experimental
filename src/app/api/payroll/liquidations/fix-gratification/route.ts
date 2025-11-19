@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection, isSupabaseConfigured } from '@/lib/database/databaseSimple';
 
 export async function POST(request: NextRequest) {
@@ -11,7 +13,7 @@ export async function POST(request: NextRequest) {
     if (!isSupabaseConfigured()) {
       return NextResponse.json(
         { success: false, error: 'Base de datos no configurada' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -19,14 +21,14 @@ export async function POST(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { success: false, error: 'Error de configuración de base de datos' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -41,7 +43,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ Error fetching liquidations:', fetchError);
       return NextResponse.json(
         { success: false, error: 'Error al obtener liquidaciones' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -75,7 +77,7 @@ export async function POST(request: NextRequest) {
           id: liquidation.id,
           total_gross_income: correctedTotalGross,
           net_salary: correctedNetSalary,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         });
 
         fixes.push({
@@ -84,7 +86,7 @@ export async function POST(request: NextRequest) {
           gratification: gratificationAmount,
           corrected_total: correctedTotalGross,
           original_net: currentNetSalary,
-          corrected_net: correctedNetSalary
+          corrected_net: correctedNetSalary,
         });
       }
     }
@@ -102,7 +104,7 @@ export async function POST(request: NextRequest) {
           .update({
             total_gross_income: update.total_gross_income,
             net_salary: update.net_salary,
-            updated_at: update.updated_at
+            updated_at: update.updated_at,
           })
           .eq('id', update.id)
           .eq('company_id', companyId);
@@ -127,16 +129,16 @@ export async function POST(request: NextRequest) {
         liquidations_needing_fix: updates.length,
         successful_updates: successCount,
         failed_updates: errorCount,
-        fixes: fixes
+        fixes,
       },
-      message: `Proceso completado: ${successCount} actualizaciones exitosas, ${errorCount} errores`
+      message: `Proceso completado: ${successCount} actualizaciones exitosas, ${errorCount} errores`,
     });
 
   } catch (error) {
     console.error('❌ Error in POST /api/payroll/liquidations/fix-gratification:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

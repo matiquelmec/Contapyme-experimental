@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button, Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
+
 import { 
   AlertTriangle, 
   Plus, 
@@ -12,8 +12,10 @@ import {
   Loader2,
   X,
   Edit,
-  Save
+  Save,
 } from 'lucide-react';
+
+import { Button, Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 
 interface MissingEntity {
   rut: string;
@@ -53,7 +55,7 @@ export default function MissingEntitiesManager({
   rcvAnalysis, 
   rcvType, 
   companyId, 
-  onEntitiesAdded 
+  onEntitiesAdded, 
 }: Props) {
   const [missingData, setMissingData] = useState<MissingEntitiesData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -81,7 +83,7 @@ export default function MissingEntitiesManager({
         const relevantAccounts = data.accounts.filter((account: ChartAccount) => 
           account.level_type === 'Imputable' && 
           (account.account_type === 'ACTIVO' || account.account_type === 'PASIVO') &&
-          account.is_active
+          account.is_active,
         );
         setChartAccounts(relevantAccounts);
       }
@@ -106,7 +108,7 @@ export default function MissingEntitiesManager({
         body: JSON.stringify({
           company_id: companyId,
           rcv_analysis: rcvAnalysis,
-          rcv_type: rcvType
+          rcv_type: rcvType,
         }),
       });
 
@@ -127,7 +129,7 @@ export default function MissingEntitiesManager({
           initialSettings[entity.rut] = {
             account_code: entity.suggested_account_code,
             account_name: entity.suggested_account_name,
-            entity_type: entity.suggested_type
+            entity_type: entity.suggested_type,
           };
         });
         
@@ -149,7 +151,7 @@ export default function MissingEntitiesManager({
 
   // Ejecutar identificación automáticamente cuando se recibe análisis RCV
   useEffect(() => {
-    if (rcvAnalysis && rcvAnalysis.proveedoresPrincipales) {
+    if (rcvAnalysis?.proveedoresPrincipales) {
       identifyMissingEntities();
       loadChartOfAccounts();
     }
@@ -167,7 +169,7 @@ export default function MissingEntitiesManager({
       const settings = entitySettings[entity.rut] || {
         account_code: entity.suggested_account_code,
         account_name: entity.suggested_account_name,
-        entity_type: entity.suggested_type
+        entity_type: entity.suggested_type,
       };
       
       console.log('🔄 Agregando/Actualizando entidad:', entity.rut, '→', formattedRUT, 'Cuenta:', settings.account_code);
@@ -187,7 +189,7 @@ export default function MissingEntitiesManager({
           account_name: settings.account_name,
           default_tax_rate: 19.0,
           is_tax_exempt: false,
-          is_active: true
+          is_active: true,
         }),
       });
 
@@ -215,7 +217,7 @@ export default function MissingEntitiesManager({
               account_code: settings.account_code,
               account_name: settings.account_name,
               default_tax_rate: 19.0,
-              is_tax_exempt: false
+              is_tax_exempt: false,
             }),
           });
 
@@ -249,7 +251,7 @@ export default function MissingEntitiesManager({
     if (!missingData || missingData.missing_entities.length === 0) return;
     
     const entitiesToProcess = missingData.missing_entities.filter(
-      entity => !addedEntities.includes(entity.rut)
+      entity => !addedEntities.includes(entity.rut),
     );
     
     for (const entity of entitiesToProcess) {
@@ -275,8 +277,8 @@ export default function MissingEntitiesManager({
       ...prev,
       [rut]: {
         ...prev[rut],
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
   };
 
@@ -307,7 +309,7 @@ export default function MissingEntitiesManager({
     let formattedNumber = '';
     for (let i = rutNumber.length - 1, counter = 0; i >= 0; i--, counter++) {
       if (counter > 0 && counter % 3 === 0) {
-        formattedNumber = '.' + formattedNumber;
+        formattedNumber = `.${  formattedNumber}`;
       }
       formattedNumber = rutNumber[i] + formattedNumber;
     }
@@ -316,13 +318,11 @@ export default function MissingEntitiesManager({
   };
 
   // Formatear montos
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   // Formatear porcentaje de cobertura de forma segura
   const formatCoveragePercentage = () => {
@@ -415,7 +415,7 @@ export default function MissingEntitiesManager({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setShowManager(!showManager)}
+                onClick={() => { setShowManager(!showManager); }}
               >
                 {showManager ? 'Ocultar' : 'Ver Entidades'}
               </Button>
@@ -447,7 +447,7 @@ export default function MissingEntitiesManager({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setShowManager(false)}
+                onClick={() => { setShowManager(false); }}
               >
                 <X className="w-4 h-4" />
               </Button>
@@ -462,7 +462,7 @@ export default function MissingEntitiesManager({
                 const settings = entitySettings[entity.rut] || {
                   account_code: entity.suggested_account_code,
                   account_name: entity.suggested_account_name,
-                  entity_type: entity.suggested_type
+                  entity_type: entity.suggested_type,
                 };
 
                 return (
@@ -489,7 +489,7 @@ export default function MissingEntitiesManager({
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => startEditEntity(entity.rut)}
+                              onClick={() => { startEditEntity(entity.rut); }}
                               title="Configurar cuenta"
                             >
                               <Edit className="w-4 h-4" />
@@ -499,7 +499,7 @@ export default function MissingEntitiesManager({
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => saveEntitySettings(entity.rut)}
+                              onClick={() => { saveEntitySettings(entity.rut); }}
                               title="Guardar configuración"
                             >
                               <Save className="w-4 h-4 text-green-600" />
@@ -534,7 +534,7 @@ export default function MissingEntitiesManager({
                               </label>
                               <select
                                 value={settings.entity_type}
-                                onChange={(e) => updateEntitySetting(entity.rut, 'entity_type', e.target.value)}
+                                onChange={(e) => { updateEntitySetting(entity.rut, 'entity_type', e.target.value); }}
                                 className="w-full text-sm border border-gray-300 rounded-md px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                               >
                                 <option value="supplier">🏢 Proveedor</option>

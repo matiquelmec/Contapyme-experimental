@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { X, Save, TrendingUp, Info, FileText } from 'lucide-react';
+
 import { Button } from '@/components/ui';
 
 interface TaxConfigModalProps {
@@ -25,7 +27,7 @@ const TAX_TYPES = [
   { value: 'tabaco', label: 'Impuesto al Tabaco', rate: null, description: 'Impuesto específico a productos del tabaco' },
   { value: 'lujo', label: 'Impuesto a artículos de lujo', rate: 15, description: 'Artículos suntuarios y de lujo' },
   { value: 'digital', label: 'IVA Servicios Digitales', rate: 19, description: 'Servicios digitales prestados desde el extranjero' },
-  { value: 'vehiculos', label: 'Impuesto a Vehículos', rate: null, description: 'Impuesto verde y adicional a vehículos' }
+  { value: 'vehiculos', label: 'Impuesto a Vehículos', rate: null, description: 'Impuesto verde y adicional a vehículos' },
 ];
 
 // Cuentas sugeridas según el tipo de impuesto
@@ -41,7 +43,7 @@ const SUGGESTED_ACCOUNTS = {
   'tabaco': ['2.1.4.203'],
   'lujo': ['2.1.4.204'],
   'digital': ['2.1.4.301'],
-  'vehiculos': ['2.1.4.401']
+  'vehiculos': ['2.1.4.401'],
 };
 
 export default function RCVTaxConfigModal({
@@ -49,7 +51,7 @@ export default function RCVTaxConfigModal({
   onClose,
   editingConfig,
   accounts,
-  onSave
+  onSave,
 }: TaxConfigModalProps) {
   const [selectedTaxType, setSelectedTaxType] = useState('');
   const [selectedAccount, setSelectedAccount] = useState('');
@@ -108,24 +110,24 @@ export default function RCVTaxConfigModal({
       revenue_account_name: '',
       asset_account_code: '',
       asset_account_name: '',
-      is_active: true
+      is_active: true,
     };
 
     onSave(config);
   };
 
-  const getFilteredAccounts = () => {
+  const getFilteredAccounts = () => 
     // Filtrar cuentas de impuestos (generalmente en pasivos o activos)
-    return accounts.filter(acc => 
+     accounts.filter(acc => 
       (acc.account_type === 'liability' || acc.account_type === 'asset') &&
       acc.is_detail &&
       (acc.name.toLowerCase().includes('iva') ||
        acc.name.toLowerCase().includes('impuesto') ||
        acc.name.toLowerCase().includes('tribut') ||
        acc.code.startsWith('2.1.4') || // Impuestos por pagar
-       acc.code.startsWith('1.1.4'))   // IVA Crédito Fiscal
-    );
-  };
+       acc.code.startsWith('1.1.4')),   // IVA Crédito Fiscal
+    )
+  ;
 
   if (!isOpen) return null;
 
@@ -181,7 +183,7 @@ export default function RCVTaxConfigModal({
                     type="radio"
                     name="operation_type"
                     checked={isForSales}
-                    onChange={() => setIsForSales(true)}
+                    onChange={() => { setIsForSales(true); }}
                     className="mr-2"
                   />
                   <span className="text-sm">Ventas (Débito Fiscal)</span>
@@ -191,7 +193,7 @@ export default function RCVTaxConfigModal({
                     type="radio"
                     name="operation_type"
                     checked={!isForSales}
-                    onChange={() => setIsForSales(false)}
+                    onChange={() => { setIsForSales(false); }}
                     className="mr-2"
                   />
                   <span className="text-sm">Compras (Crédito Fiscal)</span>
@@ -207,7 +209,7 @@ export default function RCVTaxConfigModal({
             </label>
             <select
               value={selectedTaxType}
-              onChange={(e) => setSelectedTaxType(e.target.value)}
+              onChange={(e) => { setSelectedTaxType(e.target.value); }}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
@@ -233,7 +235,7 @@ export default function RCVTaxConfigModal({
             <input
               type="text"
               value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
+              onChange={(e) => { setDisplayName(e.target.value); }}
               required
               placeholder="ej: RCV Ventas - IVA 19%"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -259,7 +261,7 @@ export default function RCVTaxConfigModal({
                         <button
                           key={code}
                           type="button"
-                          onClick={() => handleAccountSelect(code)}
+                          onClick={() => { handleAccountSelect(code); }}
                           className={`px-3 py-1 text-xs rounded-full transition-colors ${
                             selectedAccount === code
                               ? 'bg-green-600 text-white'
@@ -279,7 +281,7 @@ export default function RCVTaxConfigModal({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <select
                 value={selectedAccount}
-                onChange={(e) => handleAccountSelect(e.target.value)}
+                onChange={(e) => { handleAccountSelect(e.target.value); }}
                 required
                 className="w-full px-3 py-2 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               >

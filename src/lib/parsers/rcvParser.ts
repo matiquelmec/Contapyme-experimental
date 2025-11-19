@@ -228,8 +228,8 @@ function processCSVContent(csvContent: string): RCVAnalysis {
         
         // CORRECCIÓN: Aplicar signo según tipo de documento
         const montoNetoCorrecto = row.montoNeto + (row.valorOtroImpuesto || 0);
-        const montoExento = row.montoExento;
-        const montoIVA = row.montoIVA;
+        const { montoExento } = row;
+        const { montoIVA } = row;
         
         if (row.tipoDoc === '61') {
           // Notas de crédito RESTAN
@@ -266,12 +266,12 @@ function processCSVContent(csvContent: string): RCVAnalysis {
           montoNetoTotal: montoNetoFinal,
           montoIVATotal: montoIVAFinal,
           montoCalculado: montoFinalTransaccion,
-          porcentajeDelTotal: 0 // Se calculará después
+          porcentajeDelTotal: 0, // Se calculará después
         });
       }
       
     } catch (error) {
-      console.warn('⚠️ Error procesando línea CSV:', line.substring(0, 50) + '...');
+      console.warn('⚠️ Error procesando línea CSV:', `${line.substring(0, 50)  }...`);
       continue;
     }
   }
@@ -282,7 +282,7 @@ function processCSVContent(csvContent: string): RCVAnalysis {
       ...proveedor,
       porcentajeDelTotal: Math.abs(montoCalculadoGlobal) > 0 
         ? Math.abs(proveedor.montoCalculado / montoCalculadoGlobal) * 100 
-        : 0
+        : 0,
     }))
     .sort((a, b) => Math.abs(b.montoCalculado) - Math.abs(a.montoCalculado)); // Ordenar por monto calculado absoluto
   
@@ -305,7 +305,7 @@ function processCSVContent(csvContent: string): RCVAnalysis {
     periodoInicio: fechaMinima,
     periodoFin: fechaMaxima,
     confidence: 95, // Alta confianza en parsing CSV
-    method: 'csv-direct-parsing'
+    method: 'csv-direct-parsing',
   };
 }
 
@@ -351,7 +351,7 @@ function parseCSVRow(line: string): RCVRow {
     nceNdeFactura: toNumber(fields[23]),
     codigoOtroImpuesto: fields[24] || '',
     valorOtroImpuesto: toNumber(fields[25]),
-    tasaOtroImpuesto: toNumber(fields[26])
+    tasaOtroImpuesto: toNumber(fields[26]),
   };
 }
 
@@ -383,7 +383,7 @@ export function getEstadisticasRCV(analysis: RCVAnalysis) {
     balanceOperaciones: {
       compras: analysis.transaccionesSuma,
       devoluciones: analysis.transaccionesResta,
-      montoNeto: analysis.montoCalculadoGlobal
-    }
+      montoNeto: analysis.montoCalculadoGlobal,
+    },
   };
 }

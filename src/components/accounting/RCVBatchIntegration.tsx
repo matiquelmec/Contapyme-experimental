@@ -1,6 +1,21 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
+import { 
+  CheckCircle, 
+  AlertCircle, 
+  XCircle, 
+  Upload, 
+  Database,
+  Package,
+  AlertTriangle,
+  Building2,
+  Split,
+  Download,
+  RefreshCw,
+} from 'lucide-react';
+
 import { 
   Card, 
   CardHeader, 
@@ -17,29 +32,7 @@ import {
   TabsTrigger,
   Progress,
   Checkbox,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
 } from '@/components/ui';
-import { 
-  CheckCircle, 
-  AlertCircle, 
-  XCircle, 
-  Upload, 
-  FileText, 
-  Database,
-  Package,
-  AlertTriangle,
-  Building2,
-  DollarSign,
-  Split,
-  Save,
-  Eye,
-  Download,
-  RefreshCw
-} from 'lucide-react';
 
 interface EntityValidation {
   entity_rut: string;
@@ -91,7 +84,7 @@ export default function RCVBatchIntegration({
   period, 
   rcvType,
   onClose,
-  onSuccess 
+  onSuccess, 
 }: RCVBatchIntegrationProps) {
   const [loading, setLoading] = useState(false);
   const [validationStatus, setValidationStatus] = useState<any>(null);
@@ -137,9 +130,9 @@ export default function RCVBatchIntegration({
           rcv_type: rcvType,
           options: {
             save_to_database: saveToDatabase,
-            force_process: forceProcess
-          }
-        })
+            force_process: forceProcess,
+          },
+        }),
       });
 
       const result = await response.json();
@@ -181,8 +174,8 @@ export default function RCVBatchIntegration({
         nombre_cuenta: d.account_name,
         descripcion: d.description,
         debe: d.debit_amount,
-        haber: d.credit_amount
-      }))
+        haber: d.credit_amount,
+      })),
     }));
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -406,7 +399,7 @@ export default function RCVBatchIntegration({
                   <Checkbox 
                     id="save-db"
                     checked={saveToDatabase}
-                    onCheckedChange={(checked) => setSaveToDatabase(checked as boolean)}
+                    onCheckedChange={(checked) => { setSaveToDatabase(checked as boolean); }}
                   />
                   <label 
                     htmlFor="save-db" 
@@ -420,7 +413,7 @@ export default function RCVBatchIntegration({
                   <Checkbox 
                     id="force-process"
                     checked={forceProcess}
-                    onCheckedChange={(checked) => setForceProcess(checked as boolean)}
+                    onCheckedChange={(checked) => { setForceProcess(checked as boolean); }}
                   />
                   <label 
                     htmlFor="force-process" 

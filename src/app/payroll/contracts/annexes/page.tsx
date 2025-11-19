@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { useRouter } from 'next/navigation';
+
 import { useCompanyId } from '@/contexts/CompanyContext';
 
 // Tipos básicos para anexos
@@ -71,7 +73,7 @@ export default function ContractAnnexesPage() {
   // Estados del formulario
   const [formData, setFormData] = useState<Partial<AnnexFormData>>({
     annexDate: new Date().toISOString().split('T')[0],
-    annexType: 'renovation'
+    annexType: 'renovation',
   });
   
   // Estados específicos para renovación
@@ -130,9 +132,7 @@ export default function ContractAnnexesPage() {
   };
 
   // Función para obtener el contrato activo del empleado
-  const getActiveContract = (employee: Employee) => {
-    return employee.employment_contracts?.find(contract => contract.contract_type);
-  };
+  const getActiveContract = (employee: Employee) => employee.employment_contracts?.find(contract => contract.contract_type);
 
   // Función para verificar si un empleado puede renovar contrato
   const canRenovateContract = (employeeId: string): boolean => {
@@ -183,7 +183,7 @@ export default function ContractAnnexesPage() {
       if (data.success) {
         setFormData(prev => ({
           ...prev,
-          ...data.baseData
+          ...data.baseData,
         }));
         
         // Si hay salario actual, sugerirlo como nuevo salario para cambios
@@ -216,20 +216,20 @@ export default function ContractAnnexesPage() {
         ...(selectedType === 'renovation' && {
           renovationType,
           newEndDate: renovationType === 'fixed_term' ? newEndDate : undefined,
-          newSalary: newSalary, // ✅ AGREGAR newSalary para renovación
-          effectiveDate: effectiveDate || formData.annexDate
+          newSalary, // ✅ AGREGAR newSalary para renovación
+          effectiveDate: effectiveDate || formData.annexDate,
         }),
         
         ...(selectedType === 'night_shift' && {
           nightShiftPercentage,
           nightShiftStartTime,
-          nightShiftEndTime
+          nightShiftEndTime,
         }),
         
         ...(selectedType === 'vacation' && {
           vacationStartDate,
           vacationEndDate,
-          vacationDays
+          vacationDays,
         }),
         
         ...(selectedType === 'overtime_agreement' && {
@@ -237,34 +237,34 @@ export default function ContractAnnexesPage() {
           overtimeDuration,
           overtimeMaxHours,
           overtimeJustification,
-          effectiveDate: effectiveDate || formData.annexDate
+          effectiveDate: effectiveDate || formData.annexDate,
         }),
         
         ...(selectedType === 'salary_change' && {
           newSalary,
-          effectiveDate: effectiveDate || formData.annexDate
+          effectiveDate: effectiveDate || formData.annexDate,
         }),
         
         ...(selectedType === 'position_change' && {
           newPosition,
           newDepartment,
-          effectiveDate: effectiveDate || formData.annexDate
+          effectiveDate: effectiveDate || formData.annexDate,
         }),
         
         ...(selectedType === 'schedule_change' && {
           newSchedule,
-          effectiveDate: effectiveDate || formData.annexDate
+          effectiveDate: effectiveDate || formData.annexDate,
         }),
         
-        observations
+        observations,
       };
 
       const response = await fetch('/api/payroll/contracts/generate-annex', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(fullAnnexData)
+        body: JSON.stringify(fullAnnexData),
       });
 
       if (response.ok) {
@@ -304,7 +304,7 @@ export default function ContractAnnexesPage() {
       { value: 'vacation', label: 'Comprobante de Feriado' },
       { value: 'salary_change', label: 'Cambio de Remuneración' },
       { value: 'position_change', label: 'Cambio de Cargo' },
-      { value: 'schedule_change', label: 'Cambio de Horario' }
+      { value: 'schedule_change', label: 'Cambio de Horario' },
     ];
 
     // Solo agregar renovación si el empleado puede renovar
@@ -422,7 +422,7 @@ export default function ContractAnnexesPage() {
                   </label>
                   <select
                     value={renovationType}
-                    onChange={(e) => setRenovationType(e.target.value as 'fixed_term' | 'indefinite')}
+                    onChange={(e) => { setRenovationType(e.target.value as 'fixed_term' | 'indefinite'); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   >
                     <option value="fixed_term">Plazo Fijo</option>
@@ -438,7 +438,7 @@ export default function ContractAnnexesPage() {
                     <input
                       type="date"
                       value={newEndDate}
-                      onChange={(e) => setNewEndDate(e.target.value)}
+                      onChange={(e) => { setNewEndDate(e.target.value); }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                       required
                     />
@@ -457,7 +457,7 @@ export default function ContractAnnexesPage() {
                   <input
                     type="date"
                     value={effectiveDate}
-                    onChange={(e) => setEffectiveDate(e.target.value)}
+                    onChange={(e) => { setEffectiveDate(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     title={effectiveDate && selectedEmployee ? "Fecha calculada como el día siguiente al vencimiento del contrato actual" : ""}
                   />
@@ -484,7 +484,7 @@ export default function ContractAnnexesPage() {
                   <input
                     type="number"
                     value={newSalary || ''}
-                    onChange={(e) => setNewSalary(e.target.value ? Number(e.target.value) : undefined)}
+                    onChange={(e) => { setNewSalary(e.target.value ? Number(e.target.value) : undefined); }}
                     placeholder="Dejar vacío para mantener actual"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   />
@@ -504,7 +504,7 @@ export default function ContractAnnexesPage() {
                   <input
                     type="number"
                     value={nightShiftPercentage}
-                    onChange={(e) => setNightShiftPercentage(Number(e.target.value))}
+                    onChange={(e) => { setNightShiftPercentage(Number(e.target.value)); }}
                     min="20"
                     max="50"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
@@ -518,7 +518,7 @@ export default function ContractAnnexesPage() {
                   <input
                     type="time"
                     value={nightShiftStartTime}
-                    onChange={(e) => setNightShiftStartTime(e.target.value)}
+                    onChange={(e) => { setNightShiftStartTime(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   />
                 </div>
@@ -530,7 +530,7 @@ export default function ContractAnnexesPage() {
                   <input
                     type="time"
                     value={nightShiftEndTime}
-                    onChange={(e) => setNightShiftEndTime(e.target.value)}
+                    onChange={(e) => { setNightShiftEndTime(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   />
                 </div>
@@ -542,7 +542,7 @@ export default function ContractAnnexesPage() {
                   <input
                     type="date"
                     value={effectiveDate}
-                    onChange={(e) => setEffectiveDate(e.target.value)}
+                    onChange={(e) => { setEffectiveDate(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   />
                 </div>
@@ -561,7 +561,7 @@ export default function ContractAnnexesPage() {
                   <input
                     type="number"
                     value={overtimePercentage}
-                    onChange={(e) => setOvertimePercentage(Number(e.target.value))}
+                    onChange={(e) => { setOvertimePercentage(Number(e.target.value)); }}
                     min="50"
                     max="100"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
@@ -575,7 +575,7 @@ export default function ContractAnnexesPage() {
                   </label>
                   <select
                     value={overtimeDuration}
-                    onChange={(e) => setOvertimeDuration(Number(e.target.value))}
+                    onChange={(e) => { setOvertimeDuration(Number(e.target.value)); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   >
                     <option value={1}>1 mes</option>
@@ -594,7 +594,7 @@ export default function ContractAnnexesPage() {
                   <input
                     type="number"
                     value={overtimeMaxHours}
-                    onChange={(e) => setOvertimeMaxHours(Number(e.target.value))}
+                    onChange={(e) => { setOvertimeMaxHours(Number(e.target.value)); }}
                     min="1"
                     max="20"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
@@ -609,7 +609,7 @@ export default function ContractAnnexesPage() {
                   <input
                     type="date"
                     value={effectiveDate}
-                    onChange={(e) => setEffectiveDate(e.target.value)}
+                    onChange={(e) => { setEffectiveDate(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   />
                 </div>
@@ -620,7 +620,7 @@ export default function ContractAnnexesPage() {
                   </label>
                   <textarea
                     value={overtimeJustification}
-                    onChange={(e) => setOvertimeJustification(e.target.value)}
+                    onChange={(e) => { setOvertimeJustification(e.target.value); }}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     placeholder="Ej: Aumento temporal de la demanda, proyecto especial, temporada alta..."
@@ -642,7 +642,7 @@ export default function ContractAnnexesPage() {
                   <input
                     type="date"
                     value={vacationStartDate}
-                    onChange={(e) => setVacationStartDate(e.target.value)}
+                    onChange={(e) => { setVacationStartDate(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     required
                   />
@@ -655,7 +655,7 @@ export default function ContractAnnexesPage() {
                   <input
                     type="date"
                     value={vacationEndDate}
-                    onChange={(e) => setVacationEndDate(e.target.value)}
+                    onChange={(e) => { setVacationEndDate(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     required
                   />
@@ -668,7 +668,7 @@ export default function ContractAnnexesPage() {
                   <input
                     type="number"
                     value={vacationDays}
-                    onChange={(e) => setVacationDays(Number(e.target.value))}
+                    onChange={(e) => { setVacationDays(Number(e.target.value)); }}
                     min="1"
                     max="30"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
@@ -690,7 +690,7 @@ export default function ContractAnnexesPage() {
                     <input
                       type="number"
                       value={newSalary || ''}
-                      onChange={(e) => setNewSalary(Number(e.target.value))}
+                      onChange={(e) => { setNewSalary(Number(e.target.value)); }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     />
                   </div>
@@ -705,7 +705,7 @@ export default function ContractAnnexesPage() {
                       <input
                         type="text"
                         value={newPosition}
-                        onChange={(e) => setNewPosition(e.target.value)}
+                        onChange={(e) => { setNewPosition(e.target.value); }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                       />
                     </div>
@@ -717,7 +717,7 @@ export default function ContractAnnexesPage() {
                       <input
                         type="text"
                         value={newDepartment}
-                        onChange={(e) => setNewDepartment(e.target.value)}
+                        onChange={(e) => { setNewDepartment(e.target.value); }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                       />
                     </div>
@@ -732,7 +732,7 @@ export default function ContractAnnexesPage() {
                     <input
                       type="text"
                       value={newSchedule}
-                      onChange={(e) => setNewSchedule(e.target.value)}
+                      onChange={(e) => { setNewSchedule(e.target.value); }}
                       placeholder="Ej: Lunes a Viernes de 08:00 a 17:00"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     />
@@ -746,7 +746,7 @@ export default function ContractAnnexesPage() {
                   <input
                     type="date"
                     value={effectiveDate}
-                    onChange={(e) => setEffectiveDate(e.target.value)}
+                    onChange={(e) => { setEffectiveDate(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   />
                 </div>
@@ -761,7 +761,7 @@ export default function ContractAnnexesPage() {
             </label>
             <textarea
               value={observations}
-              onChange={(e) => setObservations(e.target.value)}
+              onChange={(e) => { setObservations(e.target.value); }}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="Agregar observaciones adicionales al anexo..."
@@ -771,7 +771,7 @@ export default function ContractAnnexesPage() {
           {/* Botones */}
           <div className="flex justify-end gap-4">
             <button
-              onClick={() => router.push('/payroll/contracts')}
+              onClick={() => { router.push('/payroll/contracts'); }}
               className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
             >
               ← Volver a Contratos

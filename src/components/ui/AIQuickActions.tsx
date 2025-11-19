@@ -1,22 +1,22 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
 import Link from 'next/link'
-import { Card, CardContent, Badge, Button } from '@/components/ui'
+
 import {
-  Zap,
   Brain,
   FileText,
   Calculator,
   TrendingUp,
   Users,
-  DollarSign,
   BarChart3,
-  AlertCircle,
   Lightbulb,
   Target,
-  Clock
+  Clock,
 } from 'lucide-react'
+
+import { Card, CardContent, Badge } from '@/components/ui'
 
 interface QuickAction {
   id: string
@@ -55,7 +55,7 @@ export function AIQuickActions() {
             aiConfidence: 94,
             category: 'analysis',
             estimatedTime: '2-3 min',
-            aiReason: isMonthEnd ? 'Fin de mes - momento ideal para análisis' : 'Optimización recomendada para tu flujo de trabajo'
+            aiReason: isMonthEnd ? 'Fin de mes - momento ideal para análisis' : 'Optimización recomendada para tu flujo de trabajo',
           },
           {
             id: 'payroll-calculation',
@@ -67,7 +67,7 @@ export function AIQuickActions() {
             aiConfidence: 91,
             category: 'management',
             estimatedTime: '5-10 min',
-            aiReason: isBusinessHours ? 'Horario laboral - alta productividad' : 'Considera realizar en horario laboral'
+            aiReason: isBusinessHours ? 'Horario laboral - alta productividad' : 'Considera realizar en horario laboral',
           },
           {
             id: 'indicators-review',
@@ -79,7 +79,7 @@ export function AIQuickActions() {
             aiConfidence: 88,
             category: 'insights',
             estimatedTime: '1-2 min',
-            aiReason: 'Indicadores actualizados hoy - información fresca disponible'
+            aiReason: 'Indicadores actualizados hoy - información fresca disponible',
           },
           {
             id: 'asset-management',
@@ -91,7 +91,7 @@ export function AIQuickActions() {
             aiConfidence: 86,
             category: 'management',
             estimatedTime: '3-5 min',
-            aiReason: 'Control mensual recomendado para optimización fiscal'
+            aiReason: 'Control mensual recomendado para optimización fiscal',
           },
           {
             id: 'comparative-analysis',
@@ -103,7 +103,7 @@ export function AIQuickActions() {
             aiConfidence: 92,
             category: 'insights',
             estimatedTime: '5-8 min',
-            aiReason: 'IA detecta patrones estacionales en tus datos'
+            aiReason: 'IA detecta patrones estacionales en tus datos',
           },
           {
             id: 'employee-onboarding',
@@ -115,8 +115,8 @@ export function AIQuickActions() {
             aiConfidence: 85,
             category: 'efficiency',
             estimatedTime: '8-12 min',
-            aiReason: 'Proceso optimizado con validaciones automáticas'
-          }
+            aiReason: 'Proceso optimizado con validaciones automáticas',
+          },
         ]
 
         setActions(aiActions.sort((a, b) => {
@@ -199,11 +199,11 @@ export function AIQuickActions() {
             { key: 'analysis', label: 'Análisis' },
             { key: 'management', label: 'Gestión' },
             { key: 'insights', label: 'Insights' },
-            { key: 'efficiency', label: 'Eficiencia' }
+            { key: 'efficiency', label: 'Eficiencia' },
           ].map((category) => (
             <button
               key={category.key}
-              onClick={() => setSelectedCategory(category.key)}
+              onClick={() => { setSelectedCategory(category.key); }}
               className={`px-3 py-1 text-xs rounded-full border transition-colors whitespace-nowrap ${
                 selectedCategory === category.key
                   ? 'bg-purple-100 text-purple-700 border-purple-300'

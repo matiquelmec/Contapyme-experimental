@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { useRouter, useParams } from 'next/navigation';
+
+import { Save, ArrowLeft, Loader2 } from 'lucide-react';
+
 import { PayrollHeader } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { Save, ArrowLeft, Loader2 } from 'lucide-react';
 
 interface Contract {
   id: string;
@@ -119,7 +122,7 @@ export default function EditContractPage() {
           <Card>
             <CardContent className="p-6 text-center">
               <p className="text-red-600 mb-4">{error || 'Contrato no encontrado'}</p>
-              <Button onClick={() => router.back()} variant="outline">
+              <Button onClick={() => { router.back(); }} variant="outline">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Volver
               </Button>
@@ -156,7 +159,7 @@ export default function EditContractPage() {
                   <input
                     type="text"
                     value={contract.position}
-                    onChange={(e) => updateContract('position', e.target.value)}
+                    onChange={(e) => { updateContract('position', e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
@@ -169,7 +172,7 @@ export default function EditContractPage() {
                   <input
                     type="text"
                     value={contract.department || ''}
-                    onChange={(e) => updateContract('department', e.target.value)}
+                    onChange={(e) => { updateContract('department', e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -180,7 +183,7 @@ export default function EditContractPage() {
                   </label>
                   <select
                     value={contract.contract_type}
-                    onChange={(e) => updateContract('contract_type', e.target.value)}
+                    onChange={(e) => { updateContract('contract_type', e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
@@ -198,7 +201,7 @@ export default function EditContractPage() {
                   <input
                     type="number"
                     value={contract.base_salary}
-                    onChange={(e) => updateContract('base_salary', parseInt(e.target.value))}
+                    onChange={(e) => { updateContract('base_salary', parseInt(e.target.value)); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                     min="0"
@@ -212,7 +215,7 @@ export default function EditContractPage() {
                   <input
                     type="date"
                     value={contract.start_date}
-                    onChange={(e) => updateContract('start_date', e.target.value)}
+                    onChange={(e) => { updateContract('start_date', e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
@@ -225,7 +228,7 @@ export default function EditContractPage() {
                   <input
                     type="number"
                     value={contract.weekly_hours}
-                    onChange={(e) => updateContract('weekly_hours', parseInt(e.target.value))}
+                    onChange={(e) => { updateContract('weekly_hours', parseInt(e.target.value)); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                     min="1"
@@ -241,7 +244,7 @@ export default function EditContractPage() {
                     <input
                       type="date"
                       value={contract.end_date || ''}
-                      onChange={(e) => updateContract('end_date', e.target.value || null)}
+                      onChange={(e) => { updateContract('end_date', e.target.value || null); }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
@@ -253,7 +256,7 @@ export default function EditContractPage() {
                   </label>
                   <select
                     value={contract.status}
-                    onChange={(e) => updateContract('status', e.target.value)}
+                    onChange={(e) => { updateContract('status', e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="draft">Borrador</option>
@@ -269,7 +272,7 @@ export default function EditContractPage() {
                 </label>
                 <textarea
                   value={contract.workplace_address || ''}
-                  onChange={(e) => updateContract('workplace_address', e.target.value)}
+                  onChange={(e) => { updateContract('workplace_address', e.target.value); }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   rows={3}
                   placeholder="Dirección completa del lugar de trabajo"
@@ -282,7 +285,7 @@ export default function EditContractPage() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.back()}
+              onClick={() => { router.back(); }}
               disabled={saving}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />

@@ -1,6 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getDatabaseConnection } from '@/lib/database/databaseSimple';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import ExcelJS from 'exceljs';
+
+import { getDatabaseConnection } from '@/lib/database/databaseSimple';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +19,7 @@ export async function GET(request: NextRequest) {
     if (!company_id) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -24,20 +27,20 @@ export async function GET(request: NextRequest) {
       company_id,
       date_from,
       date_to,
-      format
+      format,
     });
 
     const supabase = getDatabaseConnection();
     if (!supabase) {
       return NextResponse.json({
         success: false,
-        error: 'Error de conexión con la base de datos'
+        error: 'Error de conexión con la base de datos',
       }, { status: 500 });
     }
 
     // CORRECCIÓN: Obtener TODAS las cuentas que tienen movimientos
     // No filtrar por level_type para asegurar que todas las cuentas aparezcan
-    let accountsQuery = supabase
+    const accountsQuery = supabase
       .from('chart_of_accounts')
       .select('code, name, account_type, level_type')
       .eq('is_active', true)
@@ -50,7 +53,7 @@ export async function GET(request: NextRequest) {
       console.error('❌ Error obteniendo plan de cuentas:', accountsError);
       return NextResponse.json({
         success: false,
-        error: 'Error al obtener plan de cuentas: ' + accountsError.message
+        error: `Error al obtener plan de cuentas: ${  accountsError.message}`,
       }, { status: 500 });
     }
 
@@ -92,7 +95,7 @@ export async function GET(request: NextRequest) {
       console.error('❌ Error obteniendo asientos:', entriesError);
       return NextResponse.json({
         success: false,
-        error: 'Error al obtener asientos: ' + entriesError.message
+        error: `Error al obtener asientos: ${  entriesError.message}`,
       }, { status: 500 });
     }
 
@@ -102,7 +105,7 @@ export async function GET(request: NextRequest) {
     // Calcular totales directos de los asientos para comparar
     const directTotals = {
       debit: 0,
-      credit: 0
+      credit: 0,
     };
     
     entries?.forEach(entry => {
@@ -137,7 +140,7 @@ export async function GET(request: NextRequest) {
         income_statement_credit: 0,
         // Balance General (solo cuentas patrimoniales)
         balance_sheet_debit: 0,
-        balance_sheet_credit: 0
+        balance_sheet_credit: 0,
       });
     });
 
@@ -176,7 +179,7 @@ export async function GET(request: NextRequest) {
           accountsMap.set(line.account_code, {
             account_code: line.account_code,
             account_name: line.account_name,
-            account_type: account_type,
+            account_type,
             trial_balance_debit: debitAmount,
             trial_balance_credit: creditAmount,
             adjustments_debit: 0,
@@ -186,7 +189,7 @@ export async function GET(request: NextRequest) {
             income_statement_debit: 0,
             income_statement_credit: 0,
             balance_sheet_debit: 0,
-            balance_sheet_credit: 0
+            balance_sheet_credit: 0,
           });
           
           if (index < 3) {
@@ -324,7 +327,7 @@ export async function GET(request: NextRequest) {
       income_statement_credit: 0,
       balance_sheet_debit: 0,
       balance_sheet_credit: 0,
-      net_income: 0
+      net_income: 0,
     });
 
     // Calcular utilidad/pérdida del ejercicio
@@ -354,8 +357,8 @@ export async function GET(request: NextRequest) {
       totals,
       period: {
         date_from: date_from || 'Inicio',
-        date_to: date_to || 'Actual'
-      }
+        date_to: date_to || 'Actual',
+      },
     };
 
     // Si se solicita formato Excel
@@ -403,7 +406,7 @@ export async function GET(request: NextRequest) {
             account.income_statement_debit || '',
             account.income_statement_credit || '',
             account.balance_sheet_debit || '',
-            account.balance_sheet_credit || ''
+            account.balance_sheet_credit || '',
           ]);
         });
 
@@ -419,7 +422,7 @@ export async function GET(request: NextRequest) {
           totals.income_statement_debit,
           totals.income_statement_credit,
           totals.balance_sheet_debit,
-          totals.balance_sheet_credit
+          totals.balance_sheet_credit,
         ]);
         totalsRow.font = { bold: true };
 
@@ -428,7 +431,7 @@ export async function GET(request: NextRequest) {
           { width: 12 }, { width: 30 }, { width: 12 },
           { width: 15 }, { width: 15 }, { width: 15 }, { width: 15 },
           { width: 15 }, { width: 15 }, { width: 15 }, { width: 15 },
-          { width: 15 }, { width: 15 }
+          { width: 15 }, { width: 15 },
         ];
 
         const buffer = await workbook.xlsx.writeBuffer();
@@ -438,15 +441,15 @@ export async function GET(request: NextRequest) {
           headers: {
             'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition': `attachment; filename="${filename}"`,
-            'Content-Length': buffer.length.toString()
-          }
+            'Content-Length': buffer.length.toString(),
+          },
         });
 
       } catch (excelError: any) {
         console.error('❌ Error generando Excel:', excelError);
         return NextResponse.json({
           success: false,
-          error: 'Error generando archivo Excel: ' + excelError.message
+          error: `Error generando archivo Excel: ${  excelError.message}`,
         }, { status: 500 });
       }
     }
@@ -461,14 +464,14 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: balance8Columns
+      data: balance8Columns,
     });
 
   } catch (error: any) {
     console.error('❌ Error en GET /api/accounting/balance-8-columns:', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Error interno del servidor'
+      error: error.message || 'Error interno del servidor',
     }, { status: 500 });
   }
 }

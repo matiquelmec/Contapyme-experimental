@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
+
 import { createClient } from '@/lib/auth'
 
 interface AccountFormProps {
@@ -26,14 +28,14 @@ const ACCOUNT_TYPES = [
   { value: 'LIABILITY', label: 'Pasivo' },
   { value: 'EQUITY', label: 'Patrimonio' },
   { value: 'INCOME', label: 'Ingresos' },
-  { value: 'EXPENSE', label: 'Gastos' }
+  { value: 'EXPENSE', label: 'Gastos' },
 ]
 
 export default function AccountForm({ companyId, parentAccount, account, onSuccess }: AccountFormProps) {
   const [formData, setFormData] = useState({
     code: account?.code || '',
     name: account?.name || '',
-    type: account?.type || (parentAccount ? 'ASSET' : 'ASSET') as 'ASSET' | 'LIABILITY' | 'EQUITY' | 'INCOME' | 'EXPENSE'
+    type: account?.type || (parentAccount ? 'ASSET' : 'ASSET') as 'ASSET' | 'LIABILITY' | 'EQUITY' | 'INCOME' | 'EXPENSE',
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -54,7 +56,7 @@ export default function AccountForm({ companyId, parentAccount, account, onSucce
             code: formData.code,
             name: formData.name,
             type: formData.type,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', account.id)
 
@@ -74,8 +76,8 @@ export default function AccountForm({ companyId, parentAccount, account, onSucce
               name: formData.name,
               type: formData.type,
               company_id: companyId,
-              parent_id: parentAccount?.id || null
-            }
+              parent_id: parentAccount?.id || null,
+            },
           ])
 
         if (insertError) {
@@ -96,7 +98,7 @@ export default function AccountForm({ companyId, parentAccount, account, onSucce
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     })
   }
 
@@ -177,7 +179,7 @@ export default function AccountForm({ companyId, parentAccount, account, onSucce
       <div className="flex justify-end space-x-3">
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={() => { router.back(); }}
           className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Cancelar

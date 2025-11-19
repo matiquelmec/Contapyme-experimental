@@ -1,11 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+
 import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+
+import { ArrowLeft, Save, User } from 'lucide-react';
+
 import { Header } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { ArrowLeft, Save, User } from 'lucide-react';
 
 // Versión simplificada sin campos problemáticos
 interface SimpleEmployee {
@@ -35,7 +38,7 @@ export default function EditEmployeePageSimple() {
     rut: '',
     email: '',
     phone: '',
-    status: 'active'
+    status: 'active',
   });
 
   useEffect(() => {
@@ -68,7 +71,7 @@ export default function EditEmployeePageSimple() {
           rut: emp.rut || '',
           email: emp.email || '',
           phone: emp.phone || '',
-          status: emp.status || 'active'
+          status: emp.status || 'active',
         });
       } else {
         setError(data.error || 'Error al cargar empleado');
@@ -85,7 +88,7 @@ export default function EditEmployeePageSimple() {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value || '' // Asegurar que nunca sea undefined
+      [name]: value || '', // Asegurar que nunca sea undefined
     }));
   };
 
@@ -136,7 +139,7 @@ export default function EditEmployeePageSimple() {
         <div className="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
               <p className="mt-4 text-gray-600">Cargando empleado...</p>
             </div>
           </div>

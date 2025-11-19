@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, Badge } from '@/components/ui'
+
 import { TrendingUp, TrendingDown, Wallet, AlertTriangle, Calendar, ArrowUp, ArrowDown } from 'lucide-react'
+
+import { Card, CardContent, Badge } from '@/components/ui'
 
 interface CashFlowData {
   currentBalance: number
@@ -49,20 +51,20 @@ export function CashFlowProjection() {
               date: new Date(today.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString(),
               amount: 8500000,
               description: 'Cobranza Cliente ABC S.A.',
-              source: 'receivables' as const
+              source: 'receivables' as const,
             },
             {
               date: new Date(today.getTime() + 15 * 24 * 60 * 60 * 1000).toISOString(),
               amount: 12000000,
               description: 'Ventas estimadas primera quincena',
-              source: 'sales' as const
+              source: 'sales' as const,
             },
             {
               date: new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString(),
               amount: 11500000,
               description: 'Ventas estimadas segunda quincena',
-              source: 'sales' as const
-            }
+              source: 'sales' as const,
+            },
           ]
 
           // Egresos proyectados (nómina, IVA, proveedores)
@@ -71,20 +73,20 @@ export function CashFlowProjection() {
               date: new Date(today.getTime() + 10 * 24 * 60 * 60 * 1000).toISOString(),
               amount: 10200000,
               description: 'Pago nómina mensual (12 empleados)',
-              source: 'payroll' as const
+              source: 'payroll' as const,
             },
             {
               date: new Date(today.getTime() + 20 * 24 * 60 * 60 * 1000).toISOString(),
               amount: 2310000,
               description: 'Pago IVA F29',
-              source: 'iva' as const
+              source: 'iva' as const,
             },
             {
               date: new Date(today.getTime() + 25 * 24 * 60 * 60 * 1000).toISOString(),
               amount: 6800000,
               description: 'Pago proveedores',
-              source: 'suppliers' as const
-            }
+              source: 'suppliers' as const,
+            },
           ]
 
           // Calcular proyecciones
@@ -113,7 +115,7 @@ export function CashFlowProjection() {
             projectedInflows,
             projectedOutflows,
             riskLevel: getRiskLevel(projection30),
-            lastUpdated: new Date().toISOString()
+            lastUpdated: new Date().toISOString(),
           })
         }
       } catch (error) {
@@ -127,24 +129,20 @@ export function CashFlowProjection() {
 
     // Actualizar cada 10 minutos
     const interval = setInterval(loadCashFlowData, 600000)
-    return () => clearInterval(interval)
+    return () => { clearInterval(interval); }
   }, [])
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount)
-  }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL', {
+  const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('es-CL', {
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     })
-  }
 
   const getRiskColor = (riskLevel: string) => {
     switch (riskLevel) {
@@ -173,9 +171,9 @@ export function CashFlowProjection() {
       <Card className="bg-gradient-to-br from-blue-50 to-indigo-100 border-blue-200">
         <CardContent className="p-6">
           <div className="animate-pulse">
-            <div className="h-6 bg-blue-200 rounded mb-4"></div>
-            <div className="h-32 bg-blue-200 rounded mb-4"></div>
-            <div className="h-4 bg-blue-200 rounded w-3/4"></div>
+            <div className="h-6 bg-blue-200 rounded mb-4" />
+            <div className="h-32 bg-blue-200 rounded mb-4" />
+            <div className="h-4 bg-blue-200 rounded w-3/4" />
           </div>
         </CardContent>
       </Card>
@@ -236,7 +234,7 @@ export function CashFlowProjection() {
           {[30, 60, 90].map((period) => (
             <button
               key={period}
-              onClick={() => setSelectedPeriod(period as 30 | 60 | 90)}
+              onClick={() => { setSelectedPeriod(period as 30 | 60 | 90); }}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 selectedPeriod === period
                   ? 'bg-blue-600 text-white'

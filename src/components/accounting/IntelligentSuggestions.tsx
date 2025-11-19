@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+
 import { AlertCircle, CheckCircle, Lightbulb, Plus, Calculator, TrendingUp } from 'lucide-react';
+
 import { JournalEntryValidator } from '@/lib/services/journalEntryValidator';
 
 interface JournalEntryLine {
@@ -38,7 +40,7 @@ export function IntelligentSuggestions({
   document,
   detectedEntities,
   onApplySuggestion,
-  className = ''
+  className = '',
 }: Props) {
   
   // Usar el validador para obtener sugerencias
@@ -46,7 +48,7 @@ export function IntelligentSuggestions({
     entryLines,
     description,
     document,
-    detectedEntities
+    detectedEntities,
   );
 
   if (suggestions.length === 0) {
@@ -118,7 +120,7 @@ export function IntelligentSuggestions({
                   </div>
                   {suggestion.suggested_account && (
                     <button
-                      onClick={() => handleApplySuggestion(suggestion)}
+                      onClick={() => { handleApplySuggestion(suggestion); }}
                       className="ml-3 px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs rounded-lg transition-colors"
                     >
                       Corregir
@@ -155,7 +157,7 @@ export function IntelligentSuggestions({
                   </div>
                   {suggestion.suggested_account && (
                     <button
-                      onClick={() => handleApplySuggestion(suggestion)}
+                      onClick={() => { handleApplySuggestion(suggestion); }}
                       className="ml-3 px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white text-xs rounded-lg transition-colors flex items-center space-x-1"
                     >
                       <Plus className="w-3 h-3" />
@@ -198,7 +200,7 @@ export function IntelligentSuggestions({
                   </div>
                   {suggestion.suggested_account && (
                     <button
-                      onClick={() => handleApplySuggestion(suggestion)}
+                      onClick={() => { handleApplySuggestion(suggestion); }}
                       className="ml-3 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg transition-colors flex items-center space-x-1"
                     >
                       <Plus className="w-3 h-3" />

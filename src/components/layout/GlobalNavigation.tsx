@@ -1,8 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+
 import {
   LayoutDashboard,
   Calculator,
@@ -12,7 +14,7 @@ import {
   X,
   Home,
   Settings,
-  ChevronRight
+  ChevronRight,
 } from 'lucide-react'
 
 export function GlobalNavigation() {
@@ -31,26 +33,26 @@ export function GlobalNavigation() {
       href: '/portal',
       icon: Home,
       label: 'Portal',
-      badge: 'HUB'
+      badge: 'HUB',
     },
     {
       href: '/accounting',
       icon: Calculator,
       label: 'Contabilidad',
-      active: pathname.startsWith('/accounting')
+      active: pathname.startsWith('/accounting'),
     },
     {
       href: '/payroll',
       icon: Users,
       label: 'Remuneraciones',
-      active: pathname.startsWith('/payroll')
+      active: pathname.startsWith('/payroll'),
     },
     {
       href: '/dashboard-new',
       icon: TrendingUp,
       label: 'Dashboard Ejecutivo',
-      active: pathname.startsWith('/dashboard-new')
-    }
+      active: pathname.startsWith('/dashboard-new'),
+    },
   ]
 
   return (
@@ -117,7 +119,7 @@ export function GlobalNavigation() {
 
             {/* Mobile Menu Button */}
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={() => { setIsMobileMenuOpen(!isMobileMenuOpen); }}
               className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -134,7 +136,7 @@ export function GlobalNavigation() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
+                      onClick={() => { setIsMobileMenuOpen(false); }}
                       className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
                         item.active
                           ? 'bg-blue-50 text-blue-700'
@@ -159,7 +161,7 @@ export function GlobalNavigation() {
                 <div className="border-t border-gray-100 pt-2 mt-2">
                   <Link
                     href="/accounting/configuration"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={() => { setIsMobileMenuOpen(false); }}
                     className="flex items-center justify-between px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center space-x-3">

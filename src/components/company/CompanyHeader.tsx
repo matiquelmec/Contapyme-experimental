@@ -9,7 +9,7 @@ interface CompanyHeaderProps {
 
 export default function CompanyHeader({ 
   showFullInfo = true, 
-  className = "" 
+  className = "", 
 }: CompanyHeaderProps) {
   const {
     razonSocial,
@@ -22,14 +22,14 @@ export default function CompanyHeader({
     planTipo,
     isDemoMode,
     getDisplayName,
-    isActive
+    isActive,
   } = useCompanyData();
 
   if (!isActive) {
     return (
       <div className={`bg-red-50 border border-red-200 rounded-lg p-4 ${className}`}>
         <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+          <div className="w-3 h-3 bg-red-500 rounded-full" />
           <span className="text-red-800 font-medium">Empresa Inactiva</span>
         </div>
       </div>
@@ -68,7 +68,7 @@ export default function CompanyHeader({
 
         {/* Status indicator */}
         <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
           <span className="text-green-600 text-sm font-medium">Activo</span>
         </div>
       </div>

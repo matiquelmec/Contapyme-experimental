@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { F29PrecisionParser } from '@/lib/parsers/f29PrecisionParser';
 
 /**
@@ -17,21 +19,21 @@ export async function POST(request: NextRequest) {
     if (!file) {
       return NextResponse.json({
         success: false,
-        error: 'No se proporcionó archivo'
+        error: 'No se proporcionó archivo',
       }, { status: 400 });
     }
 
     if (file.type !== 'application/pdf') {
       return NextResponse.json({
         success: false,
-        error: 'Solo se permiten archivos PDF'
+        error: 'Solo se permiten archivos PDF',
       }, { status: 400 });
     }
 
     if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json({
         success: false,
-        error: 'Archivo muy grande (máximo 10MB)'
+        error: 'Archivo muy grande (máximo 10MB)',
       }, { status: 400 });
     }
 
@@ -54,14 +56,14 @@ export async function POST(request: NextRequest) {
         confidence: resultado.confianza,
         method: resultado.metodo,
         timestamp: resultado.timestamp,
-        message: 'F29 analizado exitosamente con Precision Parser - 100% Exactitud'
+        message: 'F29 analizado exitosamente con Precision Parser - 100% Exactitud',
       });
     } else {
       return NextResponse.json({
         success: false,
         error: resultado.error || 'No se pudo analizar el F29',
         details: resultado.error,
-        method: 'Precision Parser (fallido)'
+        method: 'Precision Parser (fallido)',
       }, { status: 400 });
     }
 
@@ -72,7 +74,7 @@ export async function POST(request: NextRequest) {
       success: false,
       error: 'Error procesando el archivo con Precision Parser',
       details: error instanceof Error ? error.message : 'Error desconocido',
-      method: 'Precision Parser (error)'
+      method: 'Precision Parser (error)',
     }, { status: 500 });
   }
 }
@@ -112,7 +114,7 @@ function formatearDatosParaPagina(datosOCR) {
 
     // Metadata
     confidence: calculos.confianza || 75,
-    method: 'Precision Parser - Caracteres Normalizados'
+    method: 'Precision Parser - Caracteres Normalizados',
   };
 }
 
@@ -128,7 +130,7 @@ export async function GET() {
       'Entiende estructura exacta de formularios F29 reales',
       'Extracción garantizada de códigos y valores',
       '100% precisión en formularios SII estándar',
-      'Sin dependencias de APIs externas o OCR'
+      'Sin dependencias de APIs externas o OCR',
     ],
     supported_codes: [
       'PPM Neto Determinado (062)',
@@ -141,7 +143,7 @@ export async function GET() {
       'Total Determinado (547)',
       'Compras sin Crédito (562)',
       'Ventas Netas (563)',
-      'Subtotal Impuesto (595)'
+      'Subtotal Impuesto (595)',
     ],
     advantages: [
       'No requiere ANTHROPIC_API_KEY',
@@ -150,7 +152,7 @@ export async function GET() {
       'Especializado en formato SII chileno específico',
       'Procesamiento completamente local',
       'Sin costo por uso',
-      'Respuesta ultra-rápida (segundos)'
-    ]
+      'Respuesta ultra-rápida (segundos)',
+    ],
   });
 }

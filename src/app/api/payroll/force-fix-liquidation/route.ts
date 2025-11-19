@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createServerClient } from '@/lib/database/supabase';
 
 export async function POST(request: NextRequest) {
@@ -8,7 +10,7 @@ export async function POST(request: NextRequest) {
     if (!liquidation_id) {
       return NextResponse.json(
         { error: 'liquidation_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -24,7 +26,7 @@ export async function POST(request: NextRequest) {
     if (fetchError || !liquidationData) {
       return NextResponse.json(
         { error: 'Liquidación no encontrada', details: fetchError },
-        { status: 404 }
+        { status: 404 },
       );
     }
     
@@ -49,7 +51,7 @@ export async function POST(request: NextRequest) {
         p_liquidation_id: liquidation_id,
         p_total_taxable_income: taxableIncome,
         p_total_non_taxable_income: nonTaxableIncome,
-        p_total_gross_income: grossIncome
+        p_total_gross_income: grossIncome,
       });
     
     if (updateError) {
@@ -75,7 +77,7 @@ export async function POST(request: NextRequest) {
       const updates = [
         { field: 'total_taxable_income', value: taxableIncome },
         { field: 'total_non_taxable_income', value: nonTaxableIncome },
-        { field: 'total_gross_income', value: grossIncome }
+        { field: 'total_gross_income', value: grossIncome },
       ];
       
       let successCount = 0;
@@ -108,16 +110,16 @@ export async function POST(request: NextRequest) {
           values: {
             total_taxable_income: taxableIncome,
             total_non_taxable_income: nonTaxableIncome,
-            total_gross_income: grossIncome
+            total_gross_income: grossIncome,
           },
-          errors: errors,
+          errors,
           calculation_details: {
             base_salary: liquidationData.base_salary || 0,
             bonuses: liquidationData.bonuses || 0,
             legal_gratification_art50: liquidationData.legal_gratification_art50 || 0,
-            food_allowance: liquidationData.food_allowance || 0
-          }
-        }
+            food_allowance: liquidationData.food_allowance || 0,
+          },
+        },
       });
     }
     
@@ -129,27 +131,27 @@ export async function POST(request: NextRequest) {
         previous: {
           total_taxable_income: liquidationData.total_taxable_income,
           total_non_taxable_income: liquidationData.total_non_taxable_income,
-          total_gross_income: liquidationData.total_gross_income
+          total_gross_income: liquidationData.total_gross_income,
         },
         updated: {
           total_taxable_income: taxableIncome,
           total_non_taxable_income: nonTaxableIncome,
-          total_gross_income: grossIncome
+          total_gross_income: grossIncome,
         },
         calculation_details: {
           base_salary: liquidationData.base_salary || 0,
           bonuses: liquidationData.bonuses || 0,
           legal_gratification_art50: liquidationData.legal_gratification_art50 || 0,
-          food_allowance: liquidationData.food_allowance || 0
-        }
-      }
+          food_allowance: liquidationData.food_allowance || 0,
+        },
+      },
     });
     
   } catch (error) {
     console.error('Error en force-fix-liquidation:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor', details: error },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

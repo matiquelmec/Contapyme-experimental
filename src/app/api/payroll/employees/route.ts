@@ -1,11 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection, isSupabaseConfigured } from '@/lib/database/databaseSimple';
 // import fileEmployeeStore from '@/lib/services/fileEmployeeStore'; // COMENTADO - Ya no usar file store
 
 // GET - Obtener todos los empleados de una empresa
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const companyId = searchParams.get('company_id');
     const searchRut = searchParams.get('search_rut'); // 🎯 NUEVO: Búsqueda por RUT
     const employeeId = searchParams.get('employee_id'); // 🎯 NUEVO: Búsqueda por ID de empleado
@@ -13,7 +15,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -25,9 +27,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { 
           error: 'Base de datos no configurada. Verifica SUPABASE_SERVICE_ROLE_KEY en variables de entorno.',
-          success: false 
+          success: false, 
         },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -35,7 +37,7 @@ export async function GET(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { error: 'Error de configuración de base de datos', success: false },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -70,7 +72,7 @@ export async function GET(request: NextRequest) {
       console.error('❌ Error Supabase empleados:', error);
       return NextResponse.json(
         { error: 'Error obteniendo empleados de la base de datos' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -80,13 +82,13 @@ export async function GET(request: NextRequest) {
       success: true,
       data: employees || [],
       count: employees?.length || 0,
-      mode: 'supabase_database'
+      mode: 'supabase_database',
     });
   } catch (error) {
     console.error('Error en GET /api/payroll/employees:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -102,7 +104,7 @@ export async function POST(request: NextRequest) {
     if (!body.company_id || !body.rut || !body.first_name || !body.last_name || !body.email) {
       return NextResponse.json(
         { error: 'Faltan campos requeridos: company_id, rut, first_name, last_name, email' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -111,7 +113,7 @@ export async function POST(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { error: 'Error de configuración de base de datos', success: false },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -125,7 +127,7 @@ export async function POST(request: NextRequest) {
     if (existingEmployee) {
       return NextResponse.json({
         error: 'Ya existe un empleado con este RUT',
-        rut: body.rut
+        rut: body.rut,
       }, { status: 409 });
     }
 
@@ -179,7 +181,7 @@ export async function POST(request: NextRequest) {
         emergency_contact_phone: body.emergency_contact_phone,
         emergency_contact_relationship: body.emergency_contact_relationship,
         status: 'active',
-        created_by: body.created_by
+        created_by: body.created_by,
       })
       .select()
       .single();
@@ -190,13 +192,13 @@ export async function POST(request: NextRequest) {
       if (employeeError.code === '23505') {
         return NextResponse.json(
           { error: 'Ya existe un empleado con ese RUT en esta empresa' },
-          { status: 409 }
+          { status: 409 },
         );
       }
       
       return NextResponse.json(
         { error: 'Error creando empleado en base de datos' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -226,7 +228,7 @@ export async function POST(request: NextRequest) {
         // 🔧 AÑADIR FUNCIONES DEL CARGO (desde asistente IA)
         job_functions: body.job_functions || [],
         obligations: body.obligations || [],
-        prohibitions: body.prohibitions || []
+        prohibitions: body.prohibitions || [],
       };
 
       const { data: createdContract, error: contractError } = await supabase
@@ -259,7 +261,7 @@ export async function POST(request: NextRequest) {
           employee_id: employee.id,
           afp_code: body.payroll_config.afp_code || 'HABITAT',
           health_institution_code: body.payroll_config.health_institution_code || 'FONASA',
-          family_allowances: body.payroll_config.family_allowances || 0
+          family_allowances: body.payroll_config.family_allowances || 0,
         })
         .select()
         .single();
@@ -286,23 +288,23 @@ export async function POST(request: NextRequest) {
       data: {
         ...employee,
         employment_contracts: contract ? [contract] : [],
-        payroll_config: payrollConfig ? [payrollConfig] : []
+        payroll_config: payrollConfig ? [payrollConfig] : [],
       },
       message,
       worked_days_info: workedDaysThisMonth > 0 ? {
         worked_days_this_month: workedDaysThisMonth,
         start_date: body.start_date,
         start_day: startDay,
-        calculation_note: `Empleado inicia el ${startDay} del mes, trabajará ${workedDaysThisMonth} días de este período`
+        calculation_note: `Empleado inicia el ${startDay} del mes, trabajará ${workedDaysThisMonth} días de este período`,
       } : null,
-      mode: 'supabase_database'
+      mode: 'supabase_database',
     }, { status: 201 });
 
   } catch (error) {
     console.error('Error en POST /api/payroll/employees:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -316,7 +318,7 @@ export async function PATCH(request: NextRequest) {
     if (!id || !company_id) {
       return NextResponse.json(
         { error: 'ID del empleado y company_id son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -327,7 +329,7 @@ export async function PATCH(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { error: 'Error de configuración de base de datos', success: false },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -336,7 +338,7 @@ export async function PATCH(request: NextRequest) {
       .from('employees')
       .update({
         ...updateData,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .eq('company_id', company_id)
@@ -347,14 +349,14 @@ export async function PATCH(request: NextRequest) {
       console.error('❌ Error actualizando empleado:', updateError);
       return NextResponse.json(
         { error: 'Error actualizando empleado en base de datos' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (!updatedEmployee) {
       return NextResponse.json(
         { error: 'Empleado no encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -364,13 +366,13 @@ export async function PATCH(request: NextRequest) {
       success: true,
       data: updatedEmployee,
       message: 'Empleado actualizado exitosamente',
-      mode: 'supabase_database'
+      mode: 'supabase_database',
     });
   } catch (error) {
     console.error('Error en PATCH /api/payroll/employees:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -378,7 +380,7 @@ export async function PATCH(request: NextRequest) {
 // DELETE - Desactivar o eliminar empleado
 export async function DELETE(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const id = searchParams.get('id');
     const companyId = searchParams.get('company_id');
     const permanent = searchParams.get('permanent') === 'true'; // Nuevo parámetro
@@ -386,7 +388,7 @@ export async function DELETE(request: NextRequest) {
     if (!id || !companyId) {
       return NextResponse.json(
         { error: 'ID del empleado y company_id son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -397,7 +399,7 @@ export async function DELETE(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { error: 'Error de configuración de base de datos', success: false },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -447,7 +449,7 @@ export async function DELETE(request: NextRequest) {
         console.error('❌ Error eliminando empleado:', deleteError);
         return NextResponse.json(
           { error: 'Error eliminando empleado de la base de datos' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -456,7 +458,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: 'Empleado eliminado permanentemente del sistema',
-        mode: 'supabase_database'
+        mode: 'supabase_database',
       });
 
     } else {
@@ -465,7 +467,7 @@ export async function DELETE(request: NextRequest) {
         .from('employees')
         .update({
           status: 'terminated',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', id)
         .eq('company_id', companyId)
@@ -476,14 +478,14 @@ export async function DELETE(request: NextRequest) {
         console.error('❌ Error desactivando empleado:', deleteError);
         return NextResponse.json(
           { error: 'Error desactivando empleado en base de datos' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
       if (!updatedEmployee) {
         return NextResponse.json(
           { error: 'Empleado no encontrado' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -493,14 +495,14 @@ export async function DELETE(request: NextRequest) {
         success: true,
         data: updatedEmployee,
         message: 'Empleado desactivado exitosamente',
-        mode: 'supabase_database'
+        mode: 'supabase_database',
       });
     }
   } catch (error) {
     console.error('Error en DELETE /api/payroll/employees:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

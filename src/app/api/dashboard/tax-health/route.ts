@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
       'COMERCIAL LOS ANDES LTDA (96.987.654-3)',
       'TRANSPORTES RAPID S.A. (87.456.123-9)',
       'CONSULTORA BUSINESS PRO (78.321.654-0)',
-      'DISTRIBUIDORA NORTE LTDA (85.147.258-3)'
+      'DISTRIBUIDORA NORTE LTDA (85.147.258-3)',
     ]
 
     // Seleccionar 2-4 entidades aleatorias para simular detección de nuevas
@@ -34,13 +35,13 @@ export async function GET(request: NextRequest) {
         description: Math.random() > 0.2 ?
           'Los libros RCV coinciden con las declaraciones F29 del último período' :
           'Se detectaron diferencias menores entre RCV y F29 que requieren revisión',
-        actionRequired: Math.random() > 0.2 ? false : true,
+        actionRequired: !(Math.random() > 0.2),
         actionUrl: Math.random() > 0.2 ? undefined : '/accounting/f29-analysis',
         actionText: Math.random() > 0.2 ? undefined : 'Revisar F29',
         lastChecked: currentTime,
         details: Math.random() > 0.2 ?
           ['Débito Fiscal: Concordancia 100%', 'Crédito Fiscal: Concordancia 100%'] :
-          ['Débito Fiscal: Concordancia 98%', 'Crédito Fiscal: Diferencia $125.000', 'Revisar facturas periodo actual']
+          ['Débito Fiscal: Concordancia 98%', 'Crédito Fiscal: Diferencia $125.000', 'Revisar facturas periodo actual'],
       },
 
       // Estado SII
@@ -52,13 +53,13 @@ export async function GET(request: NextRequest) {
         description: Math.random() > 0.15 ?
           'Sin observaciones pendientes del Servicio de Impuestos Internos' :
           'Se detectó 1 observación SII pendiente de respuesta',
-        actionRequired: Math.random() > 0.15 ? false : true,
+        actionRequired: !(Math.random() > 0.15),
         actionUrl: Math.random() > 0.15 ? undefined : '/compliance/sii-status',
         actionText: Math.random() > 0.15 ? undefined : 'Ver Observación',
         lastChecked: currentTime,
         details: Math.random() > 0.15 ?
           ['Última declaración F29: Sin observaciones', 'Estado del contribuyente: Normal'] :
-          ['Observación: Aclaración documentos respaldo', 'Plazo respuesta: 15 días hábiles', 'Estado: Pendiente']
+          ['Observación: Aclaración documentos respaldo', 'Plazo respuesta: 15 días hábiles', 'Estado: Pendiente'],
       },
 
       // Entidades RCV sin mapear
@@ -75,7 +76,7 @@ export async function GET(request: NextRequest) {
         actionText: selectedEntities.length > 0 ? 'Configurar Entidades' : undefined,
         lastChecked: currentTime,
         details: selectedEntities.length > 0 ? selectedEntities :
-          ['Proveedores mapeados: 100%', 'Clientes mapeados: 100%', 'Estado: Completo']
+          ['Proveedores mapeados: 100%', 'Clientes mapeados: 100%', 'Estado: Completo'],
       },
 
       // Próximos vencimientos
@@ -98,8 +99,8 @@ export async function GET(request: NextRequest) {
         details: [
           `Monto proyectado: $${Math.floor(Math.random() * 3000000 + 1500000).toLocaleString('es-CL')}`,
           `Fecha límite: ${nextMonth.toLocaleDateString('es-CL', { day: 'numeric', month: 'long' })}`,
-          ...(daysToIVA <= 5 ? ['Estado: URGENTE - Preparar documentación'] : [])
-        ]
+          ...(daysToIVA <= 5 ? ['Estado: URGENTE - Preparar documentación'] : []),
+        ],
       },
 
       // Backup y seguridad (aparece ocasionalmente)
@@ -113,10 +114,10 @@ export async function GET(request: NextRequest) {
         lastChecked: currentTime,
         details: [
           'Backup automático: Exitoso',
-          'Última copia: ' + new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toLocaleString('es-CL'),
-          'Estado sistemas: Operacional'
-        ]
-      }] : [])
+          `Última copia: ${  new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toLocaleString('es-CL')}`,
+          'Estado sistemas: Operacional',
+        ],
+      }] : []),
     ]
 
     // Determinar estado general
@@ -139,30 +140,30 @@ export async function GET(request: NextRequest) {
         warningChecks: warningAlerts,
         criticalChecks: criticalAlerts,
         complianceScore: Math.round((alerts.filter(alert => alert.status === 'healthy').length / alerts.length) * 100),
-        lastCriticalDate: criticalAlerts > 0 ? currentTime : null
+        lastCriticalDate: criticalAlerts > 0 ? currentTime : null,
       },
 
       // Recomendaciones automáticas
       recommendations: [
         ...(selectedEntities.length > 0 ? [
-          'Configure las cuentas contables para las nuevas entidades detectadas'
+          'Configure las cuentas contables para las nuevas entidades detectadas',
         ] : []),
         ...(daysToIVA <= 10 ? [
-          'Prepare la declaración F29 con anticipación para evitar retrasos'
+          'Prepare la declaración F29 con anticipación para evitar retrasos',
         ] : []),
         ...(warningAlerts > 0 ? [
-          'Revise las alertas pendientes para mantener cumplimiento óptimo'
+          'Revise las alertas pendientes para mantener cumplimiento óptimo',
         ] : [
-          'Excelente estado tributario - Mantenga las buenas prácticas'
-        ])
-      ]
+          'Excelente estado tributario - Mantenga las buenas prácticas',
+        ]),
+      ],
     }
 
     return NextResponse.json({
       success: true,
       data: healthData,
       timestamp: new Date().toISOString(),
-      message: 'Estado de salud tributaria evaluado exitosamente'
+      message: 'Estado de salud tributaria evaluado exitosamente',
     })
 
   } catch (error) {
@@ -170,7 +171,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error al evaluar salud tributaria',
-      details: error instanceof Error ? error.message : 'Error desconocido'
+      details: error instanceof Error ? error.message : 'Error desconocido',
     }, { status: 500 })
   }
 }

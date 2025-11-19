@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { databaseSimple } from '@/lib/database/databaseSimple';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { DEMO_USER_ID } from '@/lib/constants';
+import { databaseSimple } from '@/lib/database/databaseSimple';
 
 // Hacer la ruta dinámica explícitamente
 export const dynamic = 'force-dynamic';
@@ -8,7 +10,7 @@ export const dynamic = 'force-dynamic';
 // GET /api/fixed-assets/depreciation/[id] - Obtener cronograma de depreciación
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -26,7 +28,7 @@ export async function GET(
     if (assetError || !assetData || assetData.length === 0) {
       return NextResponse.json(
         { error: 'Activo fijo no encontrado o no autorizado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -57,20 +59,20 @@ export async function GET(
       console.error('Error fetching depreciation schedule:', error);
       return NextResponse.json(
         { error: 'Error al obtener cronograma de depreciación' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     return NextResponse.json({ 
       asset: assetData[0],
-      depreciation_schedule: data || [] 
+      depreciation_schedule: data || [], 
     });
 
   } catch (error) {
     console.error('Unexpected error:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

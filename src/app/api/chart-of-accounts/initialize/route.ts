@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+
 import { createBasicChartOfAccounts } from '@/lib/database/databaseSimple';
 
 export const dynamic = 'force-dynamic';
@@ -15,13 +16,13 @@ export async function POST() {
         success: true,
         message: 'Plan de cuentas básico inicializado correctamente',
         accounts_created: accounts.length,
-        accounts: accounts
+        accounts,
       });
     } else {
       return NextResponse.json({
         success: false,
         message: 'No se pudieron crear las cuentas',
-        accounts_created: 0
+        accounts_created: 0,
       }, { status: 500 });
     }
 
@@ -30,7 +31,7 @@ export async function POST() {
     return NextResponse.json({
       success: false,
       error: 'Error interno del servidor',
-      message: error.message || 'Error desconocido'
+      message: error.message || 'Error desconocido',
     }, { status: 500 });
   }
 }

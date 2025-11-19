@@ -1,9 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Header } from '@/components/layout/Header';
+
 import { 
   Settings, 
   Save, 
@@ -11,8 +9,12 @@ import {
   AlertCircle, 
   CheckCircle,
   Eye,
-  EyeOff
+  EyeOff,
 } from 'lucide-react';
+
+import { Header } from '@/components/layout/Header';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
 interface IntegrationConfigAccounts {
   debit_client_account?: string;
@@ -86,7 +88,7 @@ export default function IntegrationConfigPage() {
         },
         body: JSON.stringify({
           company_id: companyId,
-          config
+          config,
         }),
       });
 
@@ -112,7 +114,7 @@ export default function IntegrationConfigPage() {
       setMessage('');
 
       const response = await fetch(`/api/accounting/journal-book/integration-config?company_id=${companyId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       const result = await response.json();
@@ -138,8 +140,8 @@ export default function IntegrationConfigPage() {
       ...prev!,
       [module]: {
         ...prev![module],
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
   };
 
@@ -152,9 +154,9 @@ export default function IntegrationConfigPage() {
         ...prev![module],
         accounts: {
           ...prev![module].accounts,
-          [account]: value
-        }
-      }
+          [account]: value,
+        },
+      },
     }));
   };
 
@@ -164,12 +166,12 @@ export default function IntegrationConfigPage() {
         <Header 
           title="Configuración de Integración"
           subtitle="Cargando configuración..."
-          showBackButton={true}
+          showBackButton
           backHref="/accounting/journal-book/integration"
         />
         <div className="max-w-4xl mx-auto py-8 px-4">
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
             <span className="ml-3 text-gray-600">Cargando configuración...</span>
           </div>
         </div>
@@ -182,14 +184,14 @@ export default function IntegrationConfigPage() {
       <Header 
         title="Configuración de Integración"
         subtitle="Personaliza las cuentas contables para asientos automáticos"
-        showBackButton={true}
+        showBackButton
         backHref="/accounting/journal-book/integration"
         actions={
           <div className="flex space-x-2">
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={() => setShowAdvanced(!showAdvanced)}
+              onClick={() => { setShowAdvanced(!showAdvanced); }}
             >
               {showAdvanced ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
               {showAdvanced ? 'Ocultar Avanzado' : 'Mostrar Avanzado'}
@@ -261,7 +263,7 @@ export default function IntegrationConfigPage() {
                     <input
                       type="checkbox"
                       checked={config.rcv_sales.enabled}
-                      onChange={(e) => updateConfigModule('rcv_sales', 'enabled', e.target.checked)}
+                      onChange={(e) => { updateConfigModule('rcv_sales', 'enabled', e.target.checked); }}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2"
                     />
                     <span className="text-sm">Activo</span>
@@ -276,7 +278,7 @@ export default function IntegrationConfigPage() {
                   <input
                     type="text"
                     value={config.rcv_sales.accounts.debit_client_account || ''}
-                    onChange={(e) => updateConfigAccount('rcv_sales', 'debit_client_account', e.target.value)}
+                    onChange={(e) => { updateConfigAccount('rcv_sales', 'debit_client_account', e.target.value); }}
                     placeholder="1105001"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -289,7 +291,7 @@ export default function IntegrationConfigPage() {
                   <input
                     type="text"
                     value={config.rcv_sales.accounts.credit_sales_account || ''}
-                    onChange={(e) => updateConfigAccount('rcv_sales', 'credit_sales_account', e.target.value)}
+                    onChange={(e) => { updateConfigAccount('rcv_sales', 'credit_sales_account', e.target.value); }}
                     placeholder="4101001"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -302,7 +304,7 @@ export default function IntegrationConfigPage() {
                   <input
                     type="text"
                     value={config.rcv_sales.accounts.credit_iva_account || ''}
-                    onChange={(e) => updateConfigAccount('rcv_sales', 'credit_iva_account', e.target.value)}
+                    onChange={(e) => { updateConfigAccount('rcv_sales', 'credit_iva_account', e.target.value); }}
                     placeholder="2104001"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -315,7 +317,7 @@ export default function IntegrationConfigPage() {
                     </label>
                     <textarea
                       value={config.rcv_sales.description_template}
-                      onChange={(e) => updateConfigModule('rcv_sales', 'description_template', e.target.value)}
+                      onChange={(e) => { updateConfigModule('rcv_sales', 'description_template', e.target.value); }}
                       placeholder="Venta según RCV {period} - {file_name}"
                       rows={3}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -336,7 +338,7 @@ export default function IntegrationConfigPage() {
                     <input
                       type="checkbox"
                       checked={config.rcv_purchases.enabled}
-                      onChange={(e) => updateConfigModule('rcv_purchases', 'enabled', e.target.checked)}
+                      onChange={(e) => { updateConfigModule('rcv_purchases', 'enabled', e.target.checked); }}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2"
                     />
                     <span className="text-sm">Activo</span>
@@ -351,7 +353,7 @@ export default function IntegrationConfigPage() {
                   <input
                     type="text"
                     value={config.rcv_purchases.accounts.debit_expense_account || ''}
-                    onChange={(e) => updateConfigAccount('rcv_purchases', 'debit_expense_account', e.target.value)}
+                    onChange={(e) => { updateConfigAccount('rcv_purchases', 'debit_expense_account', e.target.value); }}
                     placeholder="5101001"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -364,7 +366,7 @@ export default function IntegrationConfigPage() {
                   <input
                     type="text"
                     value={config.rcv_purchases.accounts.debit_iva_account || ''}
-                    onChange={(e) => updateConfigAccount('rcv_purchases', 'debit_iva_account', e.target.value)}
+                    onChange={(e) => { updateConfigAccount('rcv_purchases', 'debit_iva_account', e.target.value); }}
                     placeholder="1104001"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -377,7 +379,7 @@ export default function IntegrationConfigPage() {
                   <input
                     type="text"
                     value={config.rcv_purchases.accounts.credit_supplier_account || ''}
-                    onChange={(e) => updateConfigAccount('rcv_purchases', 'credit_supplier_account', e.target.value)}
+                    onChange={(e) => { updateConfigAccount('rcv_purchases', 'credit_supplier_account', e.target.value); }}
                     placeholder="2101001"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -390,7 +392,7 @@ export default function IntegrationConfigPage() {
                     </label>
                     <textarea
                       value={config.rcv_purchases.description_template}
-                      onChange={(e) => updateConfigModule('rcv_purchases', 'description_template', e.target.value)}
+                      onChange={(e) => { updateConfigModule('rcv_purchases', 'description_template', e.target.value); }}
                       placeholder="Compra según RCV {period} - {file_name}"
                       rows={3}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -411,7 +413,7 @@ export default function IntegrationConfigPage() {
                     <input
                       type="checkbox"
                       checked={config.fixed_assets.enabled}
-                      onChange={(e) => updateConfigModule('fixed_assets', 'enabled', e.target.checked)}
+                      onChange={(e) => { updateConfigModule('fixed_assets', 'enabled', e.target.checked); }}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2"
                     />
                     <span className="text-sm">Activo</span>
@@ -426,7 +428,7 @@ export default function IntegrationConfigPage() {
                   <input
                     type="text"
                     value={config.fixed_assets.accounts.credit_cash_account || ''}
-                    onChange={(e) => updateConfigAccount('fixed_assets', 'credit_cash_account', e.target.value)}
+                    onChange={(e) => { updateConfigAccount('fixed_assets', 'credit_cash_account', e.target.value); }}
                     placeholder="1101001"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -439,7 +441,7 @@ export default function IntegrationConfigPage() {
                   <input
                     type="text"
                     value={config.fixed_assets.accounts.credit_supplier_account || ''}
-                    onChange={(e) => updateConfigAccount('fixed_assets', 'credit_supplier_account', e.target.value)}
+                    onChange={(e) => { updateConfigAccount('fixed_assets', 'credit_supplier_account', e.target.value); }}
                     placeholder="2101001"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -458,7 +460,7 @@ export default function IntegrationConfigPage() {
                     </label>
                     <textarea
                       value={config.fixed_assets.description_template}
-                      onChange={(e) => updateConfigModule('fixed_assets', 'description_template', e.target.value)}
+                      onChange={(e) => { updateConfigModule('fixed_assets', 'description_template', e.target.value); }}
                       placeholder="Adquisición Activo Fijo: {asset_name}"
                       rows={3}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

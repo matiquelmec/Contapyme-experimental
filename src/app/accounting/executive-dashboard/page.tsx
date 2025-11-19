@@ -6,13 +6,10 @@
 // ==========================================
 
 import { useState, useCallback, useEffect } from 'react';
-import { Header } from '@/components/layout';
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
+
 import { 
   BarChart3, 
   Brain, 
-  TrendingUp, 
-  DollarSign, 
   Package, 
   Activity, 
   Target, 
@@ -20,14 +17,16 @@ import {
   Shield,
   Zap,
   LineChart,
-  PieChart,
   Trophy,
   Lightbulb,
-  ExternalLink
+  ExternalLink,
 } from 'lucide-react';
+
+import { Header } from '@/components/layout';
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
 import { useCrossModuleAnalytics } from '@/hooks/useCrossModuleAnalytics';
-import { useF29AnalyticsWorker } from '@/hooks/useF29AnalyticsWorker';
 import { useDepreciationWorker } from '@/hooks/useDepreciationWorker';
+import { useF29AnalyticsWorker } from '@/hooks/useF29AnalyticsWorker';
 
 export default function ExecutiveDashboardPage() {
   // Estados para los diferentes tipos de análisis
@@ -42,15 +41,15 @@ export default function ExecutiveDashboardPage() {
   const {
     isWorkerReady: isCrossWorkerReady,
     workerError: crossWorkerError,
-    performFullCrossModuleAnalysis
+    performFullCrossModuleAnalysis,
   } = useCrossModuleAnalytics();
 
   const {
-    isWorkerReady: isF29WorkerReady
+    isWorkerReady: isF29WorkerReady,
   } = useF29AnalyticsWorker();
 
   const {
-    isWorkerReady: isAssetsWorkerReady
+    isWorkerReady: isAssetsWorkerReady,
   } = useDepreciationWorker();
 
   // Datos de demostración para pruebas
@@ -78,7 +77,7 @@ export default function ExecutiveDashboardPage() {
         credito_fiscal: Math.round(compras_netas * 0.19),
         ppm: Math.round(ventas_netas * 0.01),
         user_id: demoUserId,
-        company_id: demoCompanyId
+        company_id: demoCompanyId,
       };
     });
 
@@ -92,7 +91,7 @@ export default function ExecutiveDashboardPage() {
         purchase_date: '2023-01-15',
         start_depreciation_date: '2023-01-15',
         useful_life_years: 3,
-        status: 'active'
+        status: 'active',
       },
       {
         id: '2',
@@ -102,7 +101,7 @@ export default function ExecutiveDashboardPage() {
         purchase_date: '2023-03-10',
         start_depreciation_date: '2023-03-10',
         useful_life_years: 7,
-        status: 'active'
+        status: 'active',
       },
       {
         id: '3',
@@ -112,8 +111,8 @@ export default function ExecutiveDashboardPage() {
         purchase_date: '2024-01-20',
         start_depreciation_date: '2024-01-20',
         useful_life_years: 8,
-        status: 'active'
-      }
+        status: 'active',
+      },
     ];
 
     // Datos de indicadores económicos de demostración
@@ -124,20 +123,20 @@ export default function ExecutiveDashboardPage() {
           code: 'UF',
           value: 36500 + (index * 150) + (Math.random() * 200 - 100),
           date: date.toISOString(),
-          name: 'Unidad de Fomento'
+          name: 'Unidad de Fomento',
         },
         {
           code: 'USD',
           value: 800 + (index * 5) + (Math.random() * 40 - 20),
           date: date.toISOString(),
-          name: 'Dólar'
+          name: 'Dólar',
         },
         {
           code: 'TPM',
           value: 11.25 - (index * 0.1) + (Math.random() * 0.5 - 0.25),
           date: date.toISOString(),
-          name: 'Tasa Política Monetaria'
-        }
+          name: 'Tasa Política Monetaria',
+        },
       ];
     }).flat();
 
@@ -179,7 +178,7 @@ export default function ExecutiveDashboardPage() {
       const analysis = await performFullCrossModuleAnalysis(
         actualF29Data,
         actualAssetsData,
-        actualIndicatorsData
+        actualIndicatorsData,
       );
       
       const duration = performance.now() - startTime;
@@ -205,55 +204,54 @@ export default function ExecutiveDashboardPage() {
     f29Data, 
     fixedAssetsData, 
     economicIndicatorsData,
-    generateDemoData
+    generateDemoData,
   ]);
 
   // Generar análisis de demostración como fallback
-  const generateDemoCrossModuleAnalysis = () => {
-    return {
+  const generateDemoCrossModuleAnalysis = () => ({
       assetsROI: {
         insights: [
           'ROI promedio de activos fijos: 187%',
           'Excelente retorno de inversión en activos - estrategia muy efectiva',
           'Mejor año de inversión: 2024 con ROI del 245%',
           'Ratio activos/ventas: 23%',
-          'Balance saludable entre activos y ventas'
+          'Balance saludable entre activos y ventas',
         ],
         correlations: [
           { year: '2023', investment: 4300000, sales: 198000000, roi: 187.4, efficiency: 46.0 },
-          { year: '2024', investment: 15000000, sales: 251000000, roi: 245.2, efficiency: 16.7 }
+          { year: '2024', investment: 15000000, sales: 251000000, roi: 245.2, efficiency: 16.7 },
         ],
         recommendations: [
           'Considera incrementar inversión en activos similares',
-          'Mantén la estrategia actual de inversión en activos'
+          'Mantén la estrategia actual de inversión en activos',
         ],
         metrics: {
           totalAssetValue: 19300000,
           totalSales: 449000000,
           assetToSalesRatio: 4.3,
-          avgROI: 216.3
-        }
+          avgROI: 216.3,
+        },
       },
       economicCorrelations: {
         correlations: [
           { code: 'UF', indicatorName: 'Unidad de Fomento', correlation: 0.73, periods: 12 },
           { code: 'USD', indicatorName: 'Dólar', correlation: -0.34, periods: 12 },
-          { code: 'TPM', indicatorName: 'Tasa Política Monetaria', correlation: -0.68, periods: 12 }
+          { code: 'TPM', indicatorName: 'Tasa Política Monetaria', correlation: -0.68, periods: 12 },
         ],
         insights: [
           'Correlación fuerte positiva entre Unidad de Fomento y ventas (73%)',
           'Ventas bajan cuando sube la tasa de interés - negocio sensible al crédito',
-          'Tu negocio es resistente a fluctuaciones del dólar - buena diversificación'
+          'Tu negocio es resistente a fluctuaciones del dólar - buena diversificación',
         ],
         predictions: [
           'Si la UF sigue subiendo, espera crecimiento en ventas',
-          'Si el Banco Central sube tasas, prepárate para menor demanda'
+          'Si el Banco Central sube tasas, prepárate para menor demanda',
         ],
         metrics: {
           salesVolatility: 0.18,
           strongCorrelations: 2,
-          totalPeriods: 12
-        }
+          totalPeriods: 12,
+        },
       },
       integratedHealth: {
         overallScore: 87,
@@ -266,8 +264,8 @@ export default function ExecutiveDashboardPage() {
             insights: [
               'Crecimiento: +25%',
               'Margen promedio: 32%',
-              'Estabilidad: 82%'
-            ]
+              'Estabilidad: 82%',
+            ],
           },
           assets: {
             roi: 216.3,
@@ -276,29 +274,29 @@ export default function ExecutiveDashboardPage() {
             insights: [
               'ROI estimado: 216%',
               'Utilización promedio: 79%',
-              'Edad promedio: 1.2 años'
-            ]
+              'Edad promedio: 1.2 años',
+            ],
           },
           economic: {
             volatility: 0.18,
             diversification: 0.82,
             insights: [
               'Volatilidad: 18%',
-              'Diversificación: 82%'
-            ]
-          }
+              'Diversificación: 82%',
+            ],
+          },
         },
         integralInsights: [
           '🌟 Excelente salud empresarial integral - líder en tu sector',
           '💎 Combinación perfecta: alto crecimiento con ROI eficiente de activos',
           '🛡️ Negocio resiliente: buenos márgenes con baja volatilidad económica',
-          '⚡ Activos bien utilizados generando crecimiento sostenido'
+          '⚡ Activos bien utilizados generando crecimiento sostenido',
         ],
         strategicRecommendations: [
           '🚀 Considera expansión o nuevas líneas de negocio',
           'Mantén la estrategia actual de inversión en activos',
-          'Aprovecha la correlación positiva con UF para indexar precios estratégicamente'
-        ]
+          'Aprovecha la correlación positiva con UF para indexar precios estratégicamente',
+        ],
       },
       executiveSummary: {
         overallAssessment: 'EXCELLENT' as const,
@@ -306,33 +304,30 @@ export default function ExecutiveDashboardPage() {
         keyStrengths: [
           'ROI excepcional en activos fijos (216%)',
           'Crecimiento sostenido superior al mercado (25%)',
-          'Alta resistencia a volatilidad económica (82% diversificación)'
+          'Alta resistencia a volatilidad económica (82% diversificación)',
         ],
         majorRisks: [
-          'Dependencia moderada de variaciones en tasas de interés'
+          'Dependencia moderada de variaciones en tasas de interés',
         ],
         strategicPriorities: [
           'Expansión y diversificación estratégica',
-          'Optimización de correlación con indicadores económicos'
+          'Optimización de correlación con indicadores económicos',
         ],
         businessIntelligence: [
           'Salud empresarial: 87/100',
           'ROI activos: 216%',
           'Correlaciones económicas: 3 detectadas',
-          'Volatilidad: 18%'
-        ]
-      }
-    };
-  };
+          'Volatilidad: 18%',
+        ],
+      },
+    });
 
   // Formatear moneda
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   // Inicializar análisis automáticamente
   useEffect(() => {
@@ -342,7 +337,7 @@ export default function ExecutiveDashboardPage() {
         performAnalysis();
       }, 3000);
       
-      return () => clearTimeout(timer);
+      return () => { clearTimeout(timer); };
     }
   }, [isCrossWorkerReady, crossModuleAnalysis, isAnalyzing, performAnalysis]);
 
@@ -358,7 +353,7 @@ export default function ExecutiveDashboardPage() {
       <Header 
         title="Dashboard Ejecutivo"
         subtitle="Análisis integral con IA: F29 + Activos + Indicadores Económicos"
-        showBackButton={true}
+        showBackButton
         backHref="/accounting"
         variant="premium"
         actions={
@@ -376,7 +371,7 @@ export default function ExecutiveDashboardPage() {
                 isCrossWorkerReady && isF29WorkerReady && isAssetsWorkerReady
                   ? 'bg-green-500 animate-pulse' 
                   : 'bg-gray-400'
-              }`}></div>
+              }`} />
               <span>
                 {isCrossWorkerReady && isF29WorkerReady && isAssetsWorkerReady
                   ? '🚀 IA Completa' 
@@ -409,7 +404,7 @@ export default function ExecutiveDashboardPage() {
                 <div className="flex items-center justify-center">
                   <div className="text-center">
                     <div className="relative">
-                      <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
+                      <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4" />
                       <div className="absolute inset-0 flex items-center justify-center">
                         <Brain className="w-6 h-6 text-purple-600" />
                       </div>
@@ -422,15 +417,15 @@ export default function ExecutiveDashboardPage() {
                     </p>
                     <div className="mt-4 flex justify-center space-x-6 text-sm text-purple-600">
                       <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
                         <span>Correlaciones</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse animation-delay-500"></div>
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse animation-delay-500" />
                         <span>ROI Analysis</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse animation-delay-1000"></div>
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse animation-delay-1000" />
                         <span>Business Health</span>
                       </div>
                     </div>
@@ -486,7 +481,7 @@ export default function ExecutiveDashboardPage() {
                     <div className="space-y-3">
                       {crossModuleAnalysis.executiveSummary.keyStrengths.map((strength: string, index: number) => (
                         <div key={index} className="flex items-start space-x-3">
-                          <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
                           <p className="text-sm text-green-800">{strength}</p>
                         </div>
                       ))}
@@ -502,7 +497,7 @@ export default function ExecutiveDashboardPage() {
                     <div className="space-y-3">
                       {crossModuleAnalysis.executiveSummary.strategicPriorities.map((priority: string, index: number) => (
                         <div key={index} className="flex items-start space-x-3">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
                           <p className="text-sm text-blue-800">{priority}</p>
                         </div>
                       ))}
@@ -518,7 +513,7 @@ export default function ExecutiveDashboardPage() {
                     <div className="space-y-3">
                       {crossModuleAnalysis.executiveSummary.businessIntelligence.map((insight: string, index: number) => (
                         <div key={index} className="flex items-start space-x-3">
-                          <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0" />
                           <p className="text-sm text-purple-800">{insight}</p>
                         </div>
                       ))}
@@ -536,7 +531,7 @@ export default function ExecutiveDashboardPage() {
                     <div className="space-y-3">
                       {crossModuleAnalysis.executiveSummary.majorRisks.map((risk: string, index: number) => (
                         <div key={index} className="flex items-start space-x-3">
-                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0" />
                           <p className="text-sm text-orange-800">{risk}</p>
                         </div>
                       ))}
@@ -611,7 +606,7 @@ export default function ExecutiveDashboardPage() {
                   <div className="space-y-2">
                     {crossModuleAnalysis.assetsROI.insights.slice(0, 4).map((insight: string, index: number) => (
                       <div key={index} className="flex items-start space-x-2">
-                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0" />
                         <p className="text-sm text-gray-700">{insight}</p>
                       </div>
                     ))}
@@ -627,7 +622,7 @@ export default function ExecutiveDashboardPage() {
                       <div className="space-y-2">
                         {crossModuleAnalysis.assetsROI.recommendations.map((rec: string, index: number) => (
                           <div key={index} className="flex items-start space-x-2">
-                            <div className="w-1.5 h-1.5 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
+                            <div className="w-1.5 h-1.5 bg-green-600 rounded-full mt-2 flex-shrink-0" />
                             <p className="text-sm text-green-800">{rec}</p>
                           </div>
                         ))}
@@ -698,7 +693,7 @@ export default function ExecutiveDashboardPage() {
                   <div className="space-y-2 mb-6">
                     {crossModuleAnalysis.economicCorrelations.insights.slice(0, 3).map((insight: string, index: number) => (
                       <div key={index} className="flex items-start space-x-2">
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
                         <p className="text-sm text-gray-700">{insight}</p>
                       </div>
                     ))}
@@ -714,7 +709,7 @@ export default function ExecutiveDashboardPage() {
                       <div className="space-y-2">
                         {crossModuleAnalysis.economicCorrelations.predictions.map((pred: string, index: number) => (
                           <div key={index} className="flex items-start space-x-2">
-                            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
                             <p className="text-sm text-blue-800">{pred}</p>
                           </div>
                         ))}

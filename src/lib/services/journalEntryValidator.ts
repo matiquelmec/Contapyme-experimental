@@ -42,7 +42,7 @@ export class JournalEntryValidator {
     lines: JournalEntryLine[],
     description: string,
     document: string,
-    detectedEntities: RCVEntity[] = []
+    detectedEntities: RCVEntity[] = [],
   ): ValidationSuggestion[] {
     const suggestions: ValidationSuggestion[] = [];
     
@@ -78,7 +78,7 @@ export class JournalEntryValidator {
         type: 'balance_check',
         level: 'error',
         message: `Asiento desbalanceado: Diferencia de $${difference.toLocaleString('es-CL')}`,
-        details: `Débito: $${totalDebit.toLocaleString('es-CL')} | Crédito: $${totalCredit.toLocaleString('es-CL')}`
+        details: `Débito: $${totalDebit.toLocaleString('es-CL')} | Crédito: $${totalCredit.toLocaleString('es-CL')}`,
       });
     }
     
@@ -91,7 +91,7 @@ export class JournalEntryValidator {
   private static validateRCVEntityIntegration(
     lines: JournalEntryLine[],
     entities: RCVEntity[],
-    description: string
+    description: string,
   ): ValidationSuggestion[] {
     const suggestions: ValidationSuggestion[] = [];
     
@@ -111,9 +111,9 @@ export class JournalEntryValidator {
             code: entity.account_code,
             name: entity.account_name,
             amount: suggestedAmount,
-            type: entity.entity_type === 'customer' ? 'debit' : 'credit'
+            type: entity.entity_type === 'customer' ? 'debit' : 'credit',
           },
-          details: `RUT: ${entity.entity_rut} | Tipo: ${entity.entity_type === 'supplier' ? 'Proveedor' : entity.entity_type === 'customer' ? 'Cliente' : 'Ambos'}`
+          details: `RUT: ${entity.entity_rut} | Tipo: ${entity.entity_type === 'supplier' ? 'Proveedor' : entity.entity_type === 'customer' ? 'Cliente' : 'Ambos'}`,
         });
       }
       
@@ -132,9 +132,9 @@ export class JournalEntryValidator {
             suggested_account: {
               code: ivaAccount.code,
               name: ivaAccount.name,
-              type: entity.entity_type === 'supplier' ? 'debit' : 'credit'
+              type: entity.entity_type === 'supplier' ? 'debit' : 'credit',
             },
-            details: `Tasa de IVA: ${entity.default_tax_rate}%`
+            details: `Tasa de IVA: ${entity.default_tax_rate}%`,
           });
         }
       }
@@ -148,7 +148,7 @@ export class JournalEntryValidator {
    */
   private static validateTaxAccounts(
     lines: JournalEntryLine[],
-    entities: RCVEntity[]
+    entities: RCVEntity[],
   ): ValidationSuggestion[] {
     const suggestions: ValidationSuggestion[] = [];
     
@@ -156,7 +156,7 @@ export class JournalEntryValidator {
     const mainAccountLines = lines.filter(line => 
       line.account_code.startsWith('4.') || // Ingresos
       line.account_code.startsWith('3.') || // Gastos  
-      (line.debit_amount > 0 || line.credit_amount > 0)
+      (line.debit_amount > 0 || line.credit_amount > 0),
     );
     
     for (const line of mainAccountLines) {
@@ -166,7 +166,7 @@ export class JournalEntryValidator {
         const possibleIVAAmount = Math.round(lineAmount * 0.19);
         const hasCorrespondingIVA = lines.some(ivaLine => 
           (ivaLine.account_code.includes('2.1.2') || ivaLine.account_code.includes('1.1.2')) &&
-          Math.abs((ivaLine.debit_amount || ivaLine.credit_amount) - possibleIVAAmount) < 1
+          Math.abs((ivaLine.debit_amount || ivaLine.credit_amount) - possibleIVAAmount) < 1,
         );
         
         if (!hasCorrespondingIVA && lineAmount > 1000) {
@@ -184,9 +184,9 @@ export class JournalEntryValidator {
               code: ivaAccount.code,
               name: ivaAccount.name,
               amount: possibleIVAAmount,
-              type: isIncome ? 'credit' : 'debit'
+              type: isIncome ? 'credit' : 'debit',
             },
-            details: `Monto base: $${lineAmount.toLocaleString('es-CL')} → IVA 19%: $${possibleIVAAmount.toLocaleString('es-CL')}`
+            details: `Monto base: $${lineAmount.toLocaleString('es-CL')} → IVA 19%: $${possibleIVAAmount.toLocaleString('es-CL')}`,
           });
         }
       }
@@ -201,7 +201,7 @@ export class JournalEntryValidator {
   private static generateContextualSuggestions(
     lines: JournalEntryLine[],
     description: string,
-    document: string
+    document: string,
   ): ValidationSuggestion[] {
     const suggestions: ValidationSuggestion[] = [];
     const combinedText = `${description} ${document}`.toLowerCase();
@@ -213,13 +213,13 @@ export class JournalEntryValidator {
       venta: { type: 'sale', accounts: ['1.1.1.001', '4.1.1.001'] },
       pago: { type: 'payment', accounts: ['1.1.1.001', '2.1.1.001'] },
       cobro: { type: 'collection', accounts: ['1.1.1.001', '1.1.1.002'] },
-      reembolso: { type: 'refund', accounts: ['1.1.1.003', '3.1.1.002'] }
+      reembolso: { type: 'refund', accounts: ['1.1.1.003', '3.1.1.002'] },
     };
     
     for (const [keyword, pattern] of Object.entries(transactionPatterns)) {
       if (combinedText.includes(keyword)) {
         const hasRelatedAccount = lines.some(line => 
-          pattern.accounts.some(acc => line.account_code.startsWith(acc.substring(0, 3)))
+          pattern.accounts.some(acc => line.account_code.startsWith(acc.substring(0, 3))),
         );
         
         if (!hasRelatedAccount) {
@@ -227,7 +227,7 @@ export class JournalEntryValidator {
             type: 'entity_suggestion',
             level: 'suggestion',
             message: `🔍 Palabra clave "${keyword}" detectada`,
-            details: `Considera usar cuentas relacionadas con ${pattern.type}: ${pattern.accounts.join(', ')}`
+            details: `Considera usar cuentas relacionadas con ${pattern.type}: ${pattern.accounts.join(', ')}`,
           });
         }
       }
@@ -240,7 +240,7 @@ export class JournalEntryValidator {
   private static hasIVAAccount(lines: JournalEntryLine[]): boolean {
     return lines.some(line => 
       line.account_code.includes('1.1.2') || // IVA Crédito Fiscal
-      line.account_code.includes('2.1.2')    // IVA Débito Fiscal
+      line.account_code.includes('2.1.2'),    // IVA Débito Fiscal
     );
   }
   
@@ -249,7 +249,7 @@ export class JournalEntryValidator {
     const numberMatches = description.match(/\$?(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)/g);
     if (numberMatches) {
       const amounts = numberMatches.map(match => 
-        parseFloat(match.replace(/[$.,]/g, '').replace(',', '.'))
+        parseFloat(match.replace(/[$.,]/g, '').replace(',', '.')),
       ).filter(num => !isNaN(num) && num > 0);
       
       if (amounts.length > 0) {
@@ -262,7 +262,7 @@ export class JournalEntryValidator {
   private static isCustomerTransaction(description: string): boolean {
     const customerKeywords = ['venta', 'cliente', 'factura', 'cobro', 'ingreso'];
     return customerKeywords.some(keyword => 
-      description.toLowerCase().includes(keyword)
+      description.toLowerCase().includes(keyword),
     );
   }
 }

@@ -24,7 +24,7 @@ export function AccountSelect({
   onCodeChange, 
   onNameChange, 
   placeholder = "Ej: 1.1.1.001",
-  required = false 
+  required = false, 
 }: AccountSelectProps) {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [filteredAccounts, setFilteredAccounts] = useState<Account[]>([]);
@@ -54,7 +54,7 @@ export function AccountSelect({
     if (value && accounts.length > 0) {
       const filtered = accounts.filter(account => 
         account.code.toLowerCase().includes(value.toLowerCase()) ||
-        account.name.toLowerCase().includes(value.toLowerCase())
+        account.name.toLowerCase().includes(value.toLowerCase()),
       );
       setFilteredAccounts(filtered.slice(0, 10)); // Mostrar máximo 10 resultados
     } else {
@@ -70,7 +70,7 @@ export function AccountSelect({
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => { document.removeEventListener('mousedown', handleClickOutside); };
   }, []);
 
   const loadAccounts = async () => {
@@ -169,7 +169,7 @@ export function AccountSelect({
           {filteredAccounts.map((account, index) => (
             <div
               key={`${account.code}-${index}`}
-              onClick={() => handleAccountSelect(account)}
+              onClick={() => { handleAccountSelect(account); }}
               className="px-3 py-2 cursor-pointer hover:bg-blue-50 border-b border-gray-100 last:border-b-0"
             >
               <div className="flex justify-between items-center">

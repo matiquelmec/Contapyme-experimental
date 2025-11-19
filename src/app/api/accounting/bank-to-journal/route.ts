@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -31,14 +33,14 @@ export async function POST(request: NextRequest) {
     if (!transactions || !Array.isArray(transactions)) {
       return NextResponse.json({
         success: false,
-        error: 'No transactions provided'
+        error: 'No transactions provided',
       }, { status: 400 });
     }
 
     if (!companyId) {
       return NextResponse.json({
         success: false,
-        error: 'Company ID is required'
+        error: 'Company ID is required',
       }, { status: 400 });
     }
 
@@ -68,7 +70,7 @@ export async function POST(request: NextRequest) {
           created_by: 'bank_import',
           total_debit: entry.amount,
           total_credit: entry.amount,
-          notes: `Importado desde cartola bancaria - ${transaction.description}`
+          notes: `Importado desde cartola bancaria - ${transaction.description}`,
         };
 
         console.log('📝 Creating journal entry:', journalEntry);
@@ -84,7 +86,7 @@ export async function POST(request: NextRequest) {
           console.error('❌ Error creating journal entry:', journalError);
           errors.push({
             transaction: transaction.description,
-            error: journalError.message
+            error: journalError.message,
           });
           continue;
         }
@@ -101,7 +103,7 @@ export async function POST(request: NextRequest) {
             debit: entry.amount,
             credit: 0,
             entity_rut: transaction.type === 'credit' ? null : transaction.rut,
-            entity_name: transaction.type === 'credit' ? null : extractEntityName(transaction.description)
+            entity_name: transaction.type === 'credit' ? null : extractEntityName(transaction.description),
           },
           {
             journal_entry_id: journalData.id,
@@ -113,8 +115,8 @@ export async function POST(request: NextRequest) {
             debit: 0,
             credit: entry.amount,
             entity_rut: transaction.type === 'credit' ? transaction.rut : null,
-            entity_name: transaction.type === 'credit' ? extractEntityName(transaction.description) : null
-          }
+            entity_name: transaction.type === 'credit' ? extractEntityName(transaction.description) : null,
+          },
         ];
 
         console.log('📝 Creating journal entry lines:', lines);
@@ -135,7 +137,7 @@ export async function POST(request: NextRequest) {
           
           errors.push({
             transaction: transaction.description,
-            error: linesError.message
+            error: linesError.message,
           });
           continue;
         }
@@ -145,7 +147,7 @@ export async function POST(request: NextRequest) {
           description: entry.description,
           amount: entry.amount,
           date: transaction.date,
-          type: entry.type
+          type: entry.type,
         });
 
         console.log(`✅ Journal entry created: ${journalData.id}`);
@@ -154,7 +156,7 @@ export async function POST(request: NextRequest) {
         console.error('❌ Error processing transaction:', error);
         errors.push({
           transaction: transaction.description,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
@@ -166,16 +168,16 @@ export async function POST(request: NextRequest) {
         created: createdEntries.length,
         failed: errors.length,
         entries: createdEntries,
-        errors: errors
+        errors,
       },
-      message: `Se crearon ${createdEntries.length} asientos contables${errors.length > 0 ? ` (${errors.length} errores)` : ''}`
+      message: `Se crearon ${createdEntries.length} asientos contables${errors.length > 0 ? ` (${errors.length} errores)` : ''}`,
     });
 
   } catch (error) {
     console.error('❌ Error in bank-to-journal API:', error);
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : 'Error creating journal entries'
+      error: error instanceof Error ? error.message : 'Error creating journal entries',
     }, { status: 500 });
   }
 }
@@ -191,7 +193,7 @@ function extractEntityName(description: string): string {
 
   for (const pattern of patterns) {
     const match = description.match(pattern);
-    if (match && match[1]) {
+    if (match?.[1]) {
       return match[1].trim();
     }
   }

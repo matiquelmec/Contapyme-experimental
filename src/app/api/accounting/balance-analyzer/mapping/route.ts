@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection } from '@/lib/database/databaseSimple';
 
 export const dynamic = 'force-dynamic';
@@ -11,7 +13,7 @@ export async function POST(request: NextRequest) {
     if (!external_accounts || !company_id) {
       return NextResponse.json({
         success: false,
-        error: 'Faltan parámetros: external_accounts y company_id son requeridos'
+        error: 'Faltan parámetros: external_accounts y company_id son requeridos',
       }, { status: 400 });
     }
 
@@ -21,7 +23,7 @@ export async function POST(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json({
         success: false,
-        error: 'Error de conexión con la base de datos'
+        error: 'Error de conexión con la base de datos',
       }, { status: 500 });
     }
 
@@ -36,7 +38,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ Error obteniendo plan de cuentas:', accountsError);
       return NextResponse.json({
         success: false,
-        error: 'Error obteniendo plan de cuentas: ' + accountsError.message
+        error: `Error obteniendo plan de cuentas: ${  accountsError.message}`,
       }, { status: 500 });
     }
 
@@ -54,7 +56,7 @@ export async function POST(request: NextRequest) {
           amount: calculateMappingAmount(extAccount),
           side: determineSide(extAccount),
           confidence: mapping.confidence,
-          mapping_reason: mapping.reason
+          mapping_reason: mapping.reason,
         };
       });
 
@@ -69,16 +71,16 @@ export async function POST(request: NextRequest) {
           high_confidence: mappingResults.filter(m => m.confidence >= 90).length,
           medium_confidence: mappingResults.filter(m => m.confidence >= 70 && m.confidence < 90).length,
           low_confidence: mappingResults.filter(m => m.confidence < 70).length,
-          average_confidence: Math.round(mappingResults.reduce((sum, m) => sum + m.confidence, 0) / mappingResults.length)
-        }
-      }
+          average_confidence: Math.round(mappingResults.reduce((sum, m) => sum + m.confidence, 0) / mappingResults.length),
+        },
+      },
     });
 
   } catch (error: any) {
     console.error('❌ Error en POST /api/accounting/balance-analyzer/mapping:', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Error interno del servidor'
+      error: error.message || 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -111,7 +113,7 @@ function generateAccountMapping(externalAccount: any, internalAccounts: any[]) {
     code: '1.1.1.999',
     name: 'Cuenta por Clasificar',
     confidence: 30,
-    reason: 'Sin coincidencia - requiere mapeo manual'
+    reason: 'Sin coincidencia - requiere mapeo manual',
   };
 }
 
@@ -295,13 +297,13 @@ function mapByCode(extCode: string, internalAccounts: any[]) {
     '4.02.01.01': { code: '6.2.1.007', name: 'Aguinaldos', confidence: 90 },
     '4.02.02.01': { code: '6.2.1.008', name: 'Asignación Familiar', confidence: 90 },
     '4.02.03.01': { code: '6.2.1.009', name: 'Indemnizaciones', confidence: 90 },
-    '4.02.05.01': { code: '6.2.1.010', name: 'Viáticos', confidence: 90 }
+    '4.02.05.01': { code: '6.2.1.010', name: 'Viáticos', confidence: 90 },
   };
 
   if (exactMappings[extCode]) {
     return {
       ...exactMappings[extCode],
-      reason: 'Mapeo exacto por código'
+      reason: 'Mapeo exacto por código',
     };
   }
 
@@ -313,14 +315,14 @@ function mapByCode(extCode: string, internalAccounts: any[]) {
       defaultCode: '1.1.1.999',
       defaultName: 'Activos - Clasificar',
       confidence: 75,
-      reason: 'Patrón de activos'
+      reason: 'Patrón de activos',
     },
     '2': {
       pattern: /^2\./,
       defaultCode: '2.1.1.999',
       defaultName: 'Pasivos - Clasificar',
       confidence: 75,
-      reason: 'Patrón de pasivos'
+      reason: 'Patrón de pasivos',
     },
     '3': {
       // Gastrologica: 3.xx = INGRESOS → Nuestro: 4.xx = INGRESOS
@@ -328,7 +330,7 @@ function mapByCode(extCode: string, internalAccounts: any[]) {
       defaultCode: '4.1.1.999',
       defaultName: 'Ingresos - Clasificar',
       confidence: 75,
-      reason: 'Patrón de ingresos (Gastrologica 3.xx)'
+      reason: 'Patrón de ingresos (Gastrologica 3.xx)',
     },
     '4': {
       // Gastrologica: 4.xx = GASTOS → Nuestro: 5.xx/6.xx = GASTOS
@@ -336,7 +338,7 @@ function mapByCode(extCode: string, internalAccounts: any[]) {
       defaultCode: '5.1.1.999',
       defaultName: 'Gastos - Clasificar',
       confidence: 75,
-      reason: 'Patrón de gastos (Gastrologica 4.xx)'
+      reason: 'Patrón de gastos (Gastrologica 4.xx)',
     },
     '5': {
       // Nuestro sistema: 5.xx = GASTOS
@@ -344,7 +346,7 @@ function mapByCode(extCode: string, internalAccounts: any[]) {
       defaultCode: '5.1.1.999',
       defaultName: 'Gastos - Clasificar',
       confidence: 75,
-      reason: 'Patrón de gastos (sistema interno 5.xx)'
+      reason: 'Patrón de gastos (sistema interno 5.xx)',
     },
     '6': {
       // Nuestro sistema: 6.xx = GASTOS
@@ -352,8 +354,8 @@ function mapByCode(extCode: string, internalAccounts: any[]) {
       defaultCode: '6.1.1.999',
       defaultName: 'Gastos - Clasificar',
       confidence: 75,
-      reason: 'Patrón de gastos (sistema interno 6.xx)'
-    }
+      reason: 'Patrón de gastos (sistema interno 6.xx)',
+    },
   };
 
   if (patterns[firstDigit]?.pattern.test(extCode)) {
@@ -361,7 +363,7 @@ function mapByCode(extCode: string, internalAccounts: any[]) {
       code: patterns[firstDigit].defaultCode,
       name: patterns[firstDigit].defaultName,
       confidence: patterns[firstDigit].confidence,
-      reason: patterns[firstDigit].reason
+      reason: patterns[firstDigit].reason,
     };
   }
 
@@ -369,7 +371,7 @@ function mapByCode(extCode: string, internalAccounts: any[]) {
     code: '1.1.1.999',
     name: 'Sin Mapeo por Código',
     confidence: 40,
-    reason: 'Código no reconocido'
+    reason: 'Código no reconocido',
   };
 }
 
@@ -459,7 +461,7 @@ function mapByDescription(extDesc: string, internalAccounts: any[]) {
     'combustible': { code: '6.3.1.004', name: 'Gastos de combustible', confidence: 95 },
     'arriendo': { code: '6.3.1.005', name: 'Gastos de Arriendo', confidence: 95 },
     'contables': { code: '6.3.1.006', name: 'Servicios Contables', confidence: 90 },
-    'financieros': { code: '6.3.1.008', name: 'Gastos Financieros', confidence: 90 }
+    'financieros': { code: '6.3.1.008', name: 'Gastos Financieros', confidence: 90 },
   };
 
   // Buscar coincidencias exactas
@@ -467,7 +469,7 @@ function mapByDescription(extDesc: string, internalAccounts: any[]) {
     if (extDesc.includes(keyword)) {
       return {
         ...mapping,
-        reason: `Mapeo por descripción: "${keyword}"`
+        reason: `Mapeo por descripción: "${keyword}"`,
       };
     }
   }
@@ -476,7 +478,7 @@ function mapByDescription(extDesc: string, internalAccounts: any[]) {
     code: '1.1.1.999',
     name: 'Sin Mapeo por Descripción',
     confidence: 45,
-    reason: 'Descripción no reconocida'
+    reason: 'Descripción no reconocida',
   };
 }
 
@@ -489,7 +491,7 @@ function mapByType(externalAccount: any, internalAccounts: any[]) {
       code: '1.1.1.999',
       name: 'Activos - Clasificar',
       confidence: 70,
-      reason: 'Cuenta con saldo en activos'
+      reason: 'Cuenta con saldo en activos',
     };
   }
 
@@ -498,7 +500,7 @@ function mapByType(externalAccount: any, internalAccounts: any[]) {
       code: '2.1.1.999',
       name: 'Pasivos - Clasificar',
       confidence: 70,
-      reason: 'Cuenta con saldo en pasivos'
+      reason: 'Cuenta con saldo en pasivos',
     };
   }
 
@@ -507,7 +509,7 @@ function mapByType(externalAccount: any, internalAccounts: any[]) {
       code: '5.1.1.999',
       name: 'Gastos - Clasificar',
       confidence: 70,
-      reason: 'Cuenta con saldo en pérdidas'
+      reason: 'Cuenta con saldo en pérdidas',
     };
   }
 
@@ -516,7 +518,7 @@ function mapByType(externalAccount: any, internalAccounts: any[]) {
       code: '4.1.1.999',
       name: 'Ingresos - Clasificar',
       confidence: 70,
-      reason: 'Cuenta con saldo en ganancias'
+      reason: 'Cuenta con saldo en ganancias',
     };
   }
 
@@ -524,7 +526,7 @@ function mapByType(externalAccount: any, internalAccounts: any[]) {
     code: '1.1.1.999',
     name: 'Cuenta sin Clasificar',
     confidence: 50,
-    reason: 'Sin saldos significativos para clasificar'
+    reason: 'Sin saldos significativos para clasificar',
   };
 }
 

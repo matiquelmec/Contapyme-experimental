@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 // Estructura del formato Previred basada en el archivo TXT analizado
 interface PreviredRecord {
@@ -54,7 +55,7 @@ const demoPreviredData = [
     apv: 0,
     cesantia: 0,
     codigoAfp: 33,
-    codigoIsapre: 0
+    codigoIsapre: 0,
   },
   {
     rut: '87654321',
@@ -81,7 +82,7 @@ const demoPreviredData = [
     apv: 0,
     cesantia: 0,
     codigoAfp: 34,
-    codigoIsapre: 0
+    codigoIsapre: 0,
   },
   {
     rut: '11222333',
@@ -108,14 +109,14 @@ const demoPreviredData = [
     apv: 0,
     cesantia: 0,
     codigoAfp: 29,
-    codigoIsapre: 0
-  }
+    codigoIsapre: 0,
+  },
 ];
 
 // GET - Generar archivo TXT para Previred
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const period = searchParams.get('period') || '2025-08';
     const companyId = searchParams.get('company_id');
     
@@ -124,7 +125,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -139,14 +140,14 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
-        'Content-Disposition': `attachment; filename="${fileName}"`
-      }
+        'Content-Disposition': `attachment; filename="${fileName}"`,
+      },
     });
   } catch (error) {
     console.error('Error generando archivo Previred:', error);
     return NextResponse.json(
       { error: 'Error generando archivo Previred' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -162,7 +163,7 @@ export async function POST(request: NextRequest) {
     if (!company_id || !period) {
       return NextResponse.json(
         { error: 'company_id y period son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -178,13 +179,13 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Archivo Previred generado exitosamente',
       recordCount: previredData.length,
-      period: period
+      period,
     });
   } catch (error) {
     console.error('Error procesando liquidaciones para Previred:', error);
     return NextResponse.json(
       { error: 'Error procesando liquidaciones' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -257,13 +258,13 @@ function generatePreviredTXT(data: any[], period: string): string {
       Math.round((record.remuneracionImponible || 0) * 0.04), // Último descuento
       0, // Campo final
       '', // Campo texto final
-      0 // Campo final
+      0, // Campo final
     ].join(';');
     
     lines.push(line);
   });
   
-  return lines.join('\n') + '\n';
+  return `${lines.join('\n')  }\n`;
 }
 
 // Función para transformar liquidaciones a formato Previred
@@ -297,7 +298,7 @@ function transformLiquidacionesToPrevired(liquidaciones: any[], period: string):
       apv: 0,
       cesantia: Math.round((liquidacion.gross_income || 0) * 0.006),
       codigoAfp: 33, // Código por defecto
-      codigoIsapre: 0
+      codigoIsapre: 0,
     };
   });
 }
@@ -307,7 +308,7 @@ function formatPeriod(period: string): string {
   const [year, month] = period.split('-');
   const months = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
   ];
   return `${months[parseInt(month) - 1]} ${year}`;
 }

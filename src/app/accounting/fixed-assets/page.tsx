@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+
 import Link from 'next/link';
+
 import { 
   Package, 
   Plus, 
@@ -14,15 +16,15 @@ import {
   Calendar,
   DollarSign,
   FileText,
-  AlertTriangle,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
 } from 'lucide-react';
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { Header } from '@/components/layout';
-import { FixedAsset, FixedAssetReport } from '@/types';
+
 import AddFixedAssetForm from '@/components/fixed-assets/AddFixedAssetForm';
 import EditFixedAssetForm from '@/components/fixed-assets/EditFixedAssetForm';
+import { Header } from '@/components/layout';
+import { Button, Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
+import type { FixedAsset, FixedAssetReport } from '@/types';
 
 interface FixedAssetsPageProps {}
 
@@ -54,7 +56,7 @@ function useOptimizedAssets() {
       // Fetch assets y report en paralelo
       const [assetsRes, reportRes] = await Promise.all([
         fetch('/api/fixed-assets?status=all'),
-        fetch('/api/fixed-assets/reports?type=summary')
+        fetch('/api/fixed-assets/reports?type=summary'),
       ]);
 
       if (assetsRes.ok) {
@@ -143,7 +145,7 @@ function useOptimizedAssets() {
       
       // Optimistic update local
       setAssets(prev => prev.map(asset => 
-        asset.id === id ? result.asset : asset
+        asset.id === id ? result.asset : asset,
       ));
       
       return result.asset;
@@ -155,7 +157,7 @@ function useOptimizedAssets() {
   const deleteAsset = useCallback(async (id: string) => {
     try {
       const response = await fetch(`/api/fixed-assets/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       if (!response.ok) {
@@ -185,7 +187,7 @@ function useOptimizedAssets() {
     createAsset,
     updateAsset,
     deleteAsset,
-    refreshAssets
+    refreshAssets,
   };
 }
 
@@ -197,7 +199,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
     createAsset,
     updateAsset,
     deleteAsset,
-    refreshAssets
+    refreshAssets,
   } = useOptimizedAssets();
 
   // Estados locales (sin dependencias externas)
@@ -210,8 +212,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
   const [showReportDetails, setShowReportDetails] = useState(false);
 
   // Filtrado memoizado (solo cuando cambian los inputs relevantes)
-  const filteredAssets = useMemo(() => {
-    return assets.filter(asset => {
+  const filteredAssets = useMemo(() => assets.filter(asset => {
       // Filtro por texto de búsqueda
       const matchesSearch = !searchTerm || (
         asset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -224,8 +225,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
       const matchesStatus = selectedStatus === 'all' || asset.status === selectedStatus;
 
       return matchesSearch && matchesStatus;
-    });
-  }, [assets, searchTerm, selectedStatus]);
+    }), [assets, searchTerm, selectedStatus]);
 
   // Paginación memoizada
   const paginatedAssets = useMemo(() => {
@@ -237,7 +237,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
       assets: filteredAssets.slice(startIndex, endIndex),
       totalPages,
       startIndex,
-      endIndex: Math.min(endIndex, filteredAssets.length)
+      endIndex: Math.min(endIndex, filteredAssets.length),
     };
   }, [filteredAssets, currentPage]);
 
@@ -248,7 +248,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
     paginatedAssets.assets.forEach(asset => {
       try {
         const monthsSinceDepreciation = Math.max(0, Math.floor(
-          (new Date().getTime() - new Date(asset.start_depreciation_date).getTime()) / (1000 * 60 * 60 * 24 * 30)
+          (new Date().getTime() - new Date(asset.start_depreciation_date).getTime()) / (1000 * 60 * 60 * 24 * 30),
         ));
         
         const depreciableValue = asset.purchase_value - (asset.residual_value || 0);
@@ -257,12 +257,12 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
         
         const accumulatedDepreciation = Math.min(
           monthsSinceDepreciation * monthlyDepreciation,
-          depreciableValue
+          depreciableValue,
         );
         
         const bookValue = Math.max(
           asset.purchase_value - accumulatedDepreciation, 
-          asset.residual_value || 0
+          asset.residual_value || 0,
         );
         
         values.set(asset.id, bookValue);
@@ -341,31 +341,21 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
   }, []);
 
   // Formatters memoizados
-  const formatCurrency = useMemo(() => {
-    return (amount: number) => {
-      return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = useMemo(() => (amount: number) => new Intl.NumberFormat('es-CL', {
         style: 'currency',
         currency: 'CLP',
-        minimumFractionDigits: 0
-      }).format(amount);
-    };
-  }, []);
+        minimumFractionDigits: 0,
+      }).format(amount), []);
 
-  const formatDate = useMemo(() => {
-    return (dateString: string) => {
-      return new Date(dateString).toLocaleDateString('es-CL');
-    };
-  }, []);
+  const formatDate = useMemo(() => (dateString: string) => new Date(dateString).toLocaleDateString('es-CL'), []);
 
-  const getBookValue = useCallback((assetId: string): number => {
-    return bookValues.get(assetId) || 0;
-  }, [bookValues]);
+  const getBookValue = useCallback((assetId: string): number => bookValues.get(assetId) || 0, [bookValues]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
           <p className="mt-4 text-gray-600">Cargando activos fijos...</p>
         </div>
       </div>
@@ -377,7 +367,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
       <Header 
         title="Gestión de Activos Fijos"
         subtitle="Control completo con depreciación automática y reportes ejecutivos"
-        showBackButton={true}
+        showBackButton
         backHref="/accounting"
         variant="premium"
         actions={
@@ -398,7 +388,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
             <Button
               variant="primary"
               size="sm"
-              onClick={() => setShowAddForm(true)}
+              onClick={() => { setShowAddForm(true); }}
               className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700"
             >
               <Plus className="w-4 h-4 mr-1" />
@@ -523,7 +513,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
                       placeholder="Buscar por nombre, marca o número de serie..."
                       className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-300 transition-all duration-300 bg-white/80"
                       value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onChange={(e) => { setSearchTerm(e.target.value); }}
                     />
                   </div>
                 </div>
@@ -533,7 +523,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
                   <select
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-300 transition-all duration-300 bg-white/80 font-medium"
                     value={selectedStatus}
-                    onChange={(e) => setSelectedStatus(e.target.value)}
+                    onChange={(e) => { setSelectedStatus(e.target.value); }}
                   >
                     <option value="all">🔍 Todos los estados</option>
                     <option value="active">✅ Activo</option>
@@ -576,7 +566,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
                       <Button
                         variant="primary"
                         leftIcon={<Plus className="w-4 h-4" />}
-                        onClick={() => setShowAddForm(true)}
+                        onClick={() => { setShowAddForm(true); }}
                       >
                         Agregar Primer Activo
                       </Button>
@@ -672,7 +662,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
                                   variant="outline"
                                   size="sm"
                                   leftIcon={<Edit2 className="w-4 h-4" />}
-                                  onClick={() => openEditModal(asset)}
+                                  onClick={() => { openEditModal(asset); }}
                                   className="border-orange-200 hover:bg-orange-50 hover:border-orange-300"
                                 >
                                   Editar
@@ -703,7 +693,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      onClick={() => { setCurrentPage(prev => Math.max(1, prev - 1)); }}
                       disabled={currentPage === 1}
                       className="border-gray-300"
                     >
@@ -714,7 +704,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setCurrentPage(prev => Math.min(paginatedAssets.totalPages, prev + 1))}
+                      onClick={() => { setCurrentPage(prev => Math.min(paginatedAssets.totalPages, prev + 1)); }}
                       disabled={currentPage === paginatedAssets.totalPages}
                       className="border-gray-300"
                     >
@@ -736,7 +726,7 @@ export default function FixedAssetsPage({}: FixedAssetsPageProps) {
       {/* Modal Agregar Activo */}
       <AddFixedAssetForm
         isOpen={showAddForm}
-        onClose={() => setShowAddForm(false)}
+        onClose={() => { setShowAddForm(false); }}
         onSuccess={handleAssetCreated}
         createAssetOptimistic={createAsset}
       />

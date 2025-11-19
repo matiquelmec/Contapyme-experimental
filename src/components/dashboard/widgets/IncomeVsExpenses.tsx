@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
+
 import { TrendingUp, TrendingDown, DollarSign, AlertCircle } from 'lucide-react'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 
 interface IncomeExpenseData {
   month: string
@@ -36,8 +38,8 @@ export function IncomeVsExpenses() {
           expenses: 14200000,
           net: 4300000,
           incomeChange: 12.5,
-          expenseChange: -8.3
-        }
+          expenseChange: -8.3,
+        },
       ]
 
       setData(mockData)
@@ -49,18 +51,14 @@ export function IncomeVsExpenses() {
     }
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(amount)
-  }
 
-  const getNetMargin = (income: number, expenses: number) => {
-    return ((income - expenses) / income * 100).toFixed(1)
-  }
+  const getNetMargin = (income: number, expenses: number) => ((income - expenses) / income * 100).toFixed(1)
 
   const getChangeIcon = (change: number) => {
     if (change > 0) return <TrendingUp className="w-4 h-4 text-green-500" />
@@ -85,9 +83,9 @@ export function IncomeVsExpenses() {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-20 bg-gray-200 rounded"></div>
-            <div className="h-16 bg-gray-200 rounded"></div>
-            <div className="h-16 bg-gray-200 rounded"></div>
+            <div className="h-20 bg-gray-200 rounded" />
+            <div className="h-16 bg-gray-200 rounded" />
+            <div className="h-16 bg-gray-200 rounded" />
           </div>
         </CardContent>
       </Card>
@@ -170,7 +168,7 @@ export function IncomeVsExpenses() {
             <div
               className="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full"
               style={{ width: `${100 - (currentMonth.expenses / currentMonth.income * 100)}%` }}
-            ></div>
+             />
           </div>
         </div>
 

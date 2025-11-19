@@ -18,7 +18,7 @@ export const createSupabaseClient = () => {
         storage: typeof window !== 'undefined' ? window.localStorage : undefined,
         autoRefreshToken: true,
         persistSession: true,
-      }
+      },
     })
   }
   return globalForSupabase.supabaseClient
@@ -33,16 +33,16 @@ export const createSupabaseAdminClient = () => {
       {
         auth: {
           autoRefreshToken: false,
-          persistSession: false
-        }
-      }
+          persistSession: false,
+        },
+      },
     )
   }
   return globalForSupabase.supabaseAdminClient
 }
 
 // Tipos para TypeScript
-export type Database = {
+export interface Database {
   public: {
     Tables: {
       companies: {

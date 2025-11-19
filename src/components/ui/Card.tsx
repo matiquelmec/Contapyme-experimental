@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { cn } from '@/lib/utils'
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -29,7 +30,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       elevated: "bg-white shadow-lg border border-gray-100",
       flat: "bg-gray-50 border-0",
       glass: "bg-white/80 backdrop-blur-md border border-white/20 shadow-lg",
-      gradient: "bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm"
+      gradient: "bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm",
     }
     
     const paddings = {
@@ -37,7 +38,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       sm: "p-4",
       md: "p-6",
       lg: "p-8",
-      xl: "p-10"
+      xl: "p-10",
     }
     
     const roundeds = {
@@ -46,7 +47,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       md: "rounded-md",
       lg: "rounded-lg",
       xl: "rounded-xl",
-      '2xl': "rounded-2xl"
+      '2xl': "rounded-2xl",
     }
     
     const shadows = {
@@ -54,7 +55,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       sm: "shadow-sm",
       md: "shadow-md",
       lg: "shadow-lg",
-      xl: "shadow-xl"
+      xl: "shadow-xl",
     }
     
     const hoverStyles = hover ? "hover:shadow-lg hover:-translate-y-0.5" : ""
@@ -69,80 +70,70 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
           roundeds[rounded],
           shadow && shadows[shadow],
           hoverStyles,
-          className
+          className,
         )}
         {...props}
       />
     )
-  }
+  },
 )
 
 const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
-  ({ className, border = false, ...props }, ref) => {
-    return (
+  ({ className, border = false, ...props }, ref) => (
       <div
         ref={ref}
         className={cn(
           "flex flex-col space-y-1.5",
           border && "border-b border-gray-200 pb-4 mb-4",
-          className
+          className,
         )}
         {...props}
       />
-    )
-  }
+    ),
 )
 
 const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
-  ({ className, ...props }, ref) => {
-    return (
+  ({ className, ...props }, ref) => (
       <h3
         ref={ref}
         className={cn("text-xl font-semibold leading-none tracking-tight text-gray-900", className)}
         {...props}
       />
-    )
-  }
+    ),
 )
 
 const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-  ({ className, ...props }, ref) => {
-    return (
+  ({ className, ...props }, ref) => (
       <p
         ref={ref}
         className={cn("text-sm text-gray-500 mt-1", className)}
         {...props}
       />
-    )
-  }
+    ),
 )
 
 const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
-  ({ className, ...props }, ref) => {
-    return (
+  ({ className, ...props }, ref) => (
       <div 
         ref={ref} 
         className={cn("text-gray-700", className)} 
         {...props} 
       />
-    )
-  }
+    ),
 )
 
 const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
-  ({ className, border = false, ...props }, ref) => {
-    return (
+  ({ className, border = false, ...props }, ref) => (
       <div
         ref={ref}
         className={cn(
           "flex items-center",
           border && "border-t border-gray-200 pt-4 mt-4",
-          className
+          className,
         )}
         {...props}
       />
-    )
-  }
+    ),
 )
 
 Card.displayName = "Card"

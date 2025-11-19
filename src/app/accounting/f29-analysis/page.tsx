@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
+
+import { FileText, Upload, AlertCircle, CheckCircle, X, TrendingUp, Download, BarChart3, Eye, BookOpen } from 'lucide-react';
+
 import { Header } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { FileText, Upload, AlertCircle, CheckCircle, X, TrendingUp, Download, BarChart3, Eye, BookOpen } from 'lucide-react';
 
 interface UploadResult {
   file_name: string;
@@ -137,13 +139,11 @@ export default function F29AnalysisPage() {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   const getConfidenceColor = (confidence: number) => {
     if (confidence >= 90) return 'text-green-600';
@@ -179,7 +179,7 @@ export default function F29AnalysisPage() {
       ['Margen Bruto', result.margenBruto.toString(), 'Calc'],
       ['Total a Pagar', result.totalAPagar.toString(), 'Calc'],
       ['Confianza (%)', result.confidence.toString(), ''],
-      ['Método', result.method, '']
+      ['Método', result.method, ''],
     ];
 
     // Crear contenido CSV con BOM para compatibilidad con Excel
@@ -217,7 +217,7 @@ export default function F29AnalysisPage() {
       line.account_name,
       line.description,
       line.debit_amount || 0,
-      line.credit_amount || 0
+      line.credit_amount || 0,
     ]);
     
     // Agregar fila de totales
@@ -226,7 +226,7 @@ export default function F29AnalysisPage() {
       '',
       '',
       journalData.totals.debit_total,
-      journalData.totals.credit_total
+      journalData.totals.credit_total,
     ]);
 
     const csvContent = [headers, ...rows]
@@ -261,7 +261,7 @@ export default function F29AnalysisPage() {
         body: JSON.stringify({
           company_id: '8033ee69-b420-4d91-ba0e-482f46cd6fce', // TODO: obtener dinámicamente
           f29_data: result,
-          preview: false
+          preview: false,
         }),
       });
 
@@ -302,7 +302,7 @@ export default function F29AnalysisPage() {
           company_id: '8033ee69-b420-4d91-ba0e-482f46cd6fce', // TODO: obtener dinámicamente
           f29_data: result,
           periodo: result.periodo,
-          preview: false
+          preview: false,
         }),
       });
 
@@ -336,13 +336,13 @@ export default function F29AnalysisPage() {
       <Header 
         title="Análisis F29 Individual"
         subtitle="Analiza un formulario F29 y obtén métricas detalladas con IA"
-        showBackButton={true}
+        showBackButton
         backHref="/accounting"
         variant="premium"
         actions={
           <div className="flex items-center space-x-3">
             <div className="hidden md:flex items-center space-x-2 px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full text-xs font-medium text-blue-800">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
               <span>IA Activa • 95% Precisión</span>
             </div>
             <Button 
@@ -476,7 +476,7 @@ export default function F29AnalysisPage() {
                 >
                   {uploading ? (
                     <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
                       Analizando con IA...
                     </>
                   ) : (
@@ -715,7 +715,7 @@ export default function F29AnalysisPage() {
                 >
                   {generatingJournal ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-600 mr-2"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-600 mr-2" />
                       Generando...
                     </>
                   ) : (
@@ -734,7 +734,7 @@ export default function F29AnalysisPage() {
                 >
                   {generatingIVACentralization ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600 mr-2"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600 mr-2" />
                       Generando...
                     </>
                   ) : (

@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -7,7 +9,7 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 // GET: Obtener descriptor específico
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -34,20 +36,20 @@ export async function GET(
 
     if (!data) {
       return NextResponse.json({ 
-        error: 'Descriptor no encontrado' 
+        error: 'Descriptor no encontrado', 
       }, { status: 404 });
     }
 
     return NextResponse.json({ 
       success: true, 
-      data
+      data,
     });
 
   } catch (error) {
     console.error('Error in GET /api/payroll/job-descriptions/[id]:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }
@@ -55,7 +57,7 @@ export async function GET(
 // POST: Usar descriptor (incrementar contador)
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -93,14 +95,14 @@ export async function POST(
     return NextResponse.json({ 
       success: true, 
       data: updated,
-      message: 'Descriptor utilizado exitosamente'
+      message: 'Descriptor utilizado exitosamente',
     });
 
   } catch (error) {
     console.error('Error in POST /api/payroll/job-descriptions/[id]:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }
@@ -108,7 +110,7 @@ export async function POST(
 // PUT: Actualizar descriptor
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -137,21 +139,21 @@ export async function PUT(
 
     if (!data) {
       return NextResponse.json({ 
-        error: 'Descriptor no encontrado o no tienes permisos para actualizarlo' 
+        error: 'Descriptor no encontrado o no tienes permisos para actualizarlo', 
       }, { status: 404 });
     }
 
     return NextResponse.json({ 
       success: true, 
       data,
-      message: 'Descriptor actualizado exitosamente'
+      message: 'Descriptor actualizado exitosamente',
     });
 
   } catch (error) {
     console.error('Error in PUT /api/payroll/job-descriptions/[id]:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }
@@ -159,7 +161,7 @@ export async function PUT(
 // DELETE: Eliminar descriptor específico
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -188,20 +190,20 @@ export async function DELETE(
 
     if (!data) {
       return NextResponse.json({ 
-        error: 'Descriptor no encontrado o no tienes permisos para eliminarlo' 
+        error: 'Descriptor no encontrado o no tienes permisos para eliminarlo', 
       }, { status: 404 });
     }
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Descriptor eliminado exitosamente'
+      message: 'Descriptor eliminado exitosamente',
     });
 
   } catch (error) {
     console.error('Error in DELETE /api/payroll/job-descriptions/[id]:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }

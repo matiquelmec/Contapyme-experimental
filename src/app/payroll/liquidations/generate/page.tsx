@@ -1,25 +1,26 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+
 import { useRouter, useSearchParams } from 'next/navigation';
-import { PayrollHeader } from '@/components/layout';
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { LivePayrollPreview } from '@/modules/remuneraciones/components/liquidaciones/LivePayrollPreview';
-import { useLivePayrollCalculation } from '@/modules/remuneraciones/hooks/useCalculadora';
-import PreviredAdditionalDataForm from '@/components/payroll/PreviredAdditionalDataForm';
+
 import { 
   Calculator, 
   Users, 
   FileText, 
-  Download, 
-  Save, 
-  Eye,
+  Save,
   DollarSign,
   Calendar,
   Clock,
-  TrendingUp
+  TrendingUp,
 } from 'lucide-react';
-import { EmployeeData } from '@/lib/services/payrollCalculator';
+
+import { PayrollHeader } from '@/components/layout';
+import PreviredAdditionalDataForm from '@/components/payroll/PreviredAdditionalDataForm';
+import { Card, CardContent } from '@/components/ui';
+import type { EmployeeData } from '@/lib/services/payrollCalculator';
+import { LivePayrollPreview } from '@/modules/remuneraciones/components/liquidaciones/LivePayrollPreview';
+import { useLivePayrollCalculation } from '@/modules/remuneraciones/hooks/useCalculadora';
 
 interface Employee {
   id: string;
@@ -77,7 +78,7 @@ export default function GenerateLiquidationPage() {
     other_deductions: 0,
     
     // ✅ NUEVO: Control de gratificación Art. 50
-    apply_legal_gratification: false
+    apply_legal_gratification: false,
   });
 
   // ✅ NUEVO: Estado para datos adicionales Previred
@@ -95,13 +96,13 @@ export default function GenerateLiquidationPage() {
     previred_notes: '',
     movement_code: '0',
     worker_type_code: '0',
-    has_special_regime: false
+    has_special_regime: false,
   });
 
   // Obtener empleado seleccionado
   const selectedEmployee = useMemo(() => {
     const emp = employees.find(e => e.id === selectedEmployeeId);
-    if (!emp || !emp.employment_contracts?.[0]) return null;
+    if (!emp?.employment_contracts?.[0]) return null;
 
     const contract = emp.employment_contracts[0];
     const payrollConfig = emp.payroll_config; // ✅ ARREGLADO: Es objeto directo, no array
@@ -127,7 +128,7 @@ export default function GenerateLiquidationPage() {
       // ✅ NUEVO: Override dinámico - usa checkbox del formulario si está marcado
       legal_gratification_type: formData.apply_legal_gratification ? 'article_50' : 'none',
       // Guardar el tipo original para referencia
-      _original_gratification_type: payrollConfig?.legal_gratification_type || 'none'
+      _original_gratification_type: payrollConfig?.legal_gratification_type || 'none',
     } as EmployeeData;
   }, [employees, selectedEmployeeId, formData.apply_legal_gratification]);
 
@@ -139,7 +140,7 @@ export default function GenerateLiquidationPage() {
       month: formData.period_month,
       days_worked: formData.days_worked,
       worked_hours: formData.worked_hours,
-      overtime_hours: formData.overtime_hours
+      overtime_hours: formData.overtime_hours,
     },
     additionalIncome: {
       bonuses: formData.bonuses,
@@ -148,14 +149,14 @@ export default function GenerateLiquidationPage() {
       overtime_amount: formData.overtime_amount,
       food_allowance: formData.food_allowance,
       transport_allowance: formData.transport_allowance,
-      cash_allowance: formData.cash_allowance
+      cash_allowance: formData.cash_allowance,
     },
     additionalDeductions: {
       loan_deductions: formData.loan_deductions,
       advance_payments: formData.advance_payments,
       apv_amount: formData.apv_amount,
-      other_deductions: formData.other_deductions
-    }
+      other_deductions: formData.other_deductions,
+    },
   }), [selectedEmployee, formData]);
 
   // Hook de cálculo en tiempo real con configuración dinámica
@@ -185,7 +186,7 @@ export default function GenerateLiquidationPage() {
       // Solo auto-marcar si no se ha interactuado manualmente con el checkbox
       setFormData(prev => ({
         ...prev,
-        apply_legal_gratification: hasGratificationConfigured
+        apply_legal_gratification: hasGratificationConfigured,
       }));
     }
   }, [selectedEmployeeId, employees]);
@@ -197,7 +198,7 @@ export default function GenerateLiquidationPage() {
         isEditMode,
         employeeRut,
         editLiquidationId,
-        totalEmployees: employees.length
+        totalEmployees: employees.length,
       });
 
       // Buscar empleado por RUT
@@ -207,7 +208,7 @@ export default function GenerateLiquidationPage() {
         console.log('✅ EMPLEADO ENCONTRADO PARA EDICIÓN:', {
           id: employeeFound.id,
           rut: employeeFound.rut,
-          name: `${employeeFound.first_name} ${employeeFound.last_name}`
+          name: `${employeeFound.first_name} ${employeeFound.last_name}`,
         });
 
         // Preseleccionar empleado automáticamente
@@ -223,13 +224,13 @@ export default function GenerateLiquidationPage() {
           setFormData(prev => ({
             ...prev,
             period_year: periodYear,
-            period_month: periodMonth
+            period_month: periodMonth,
           }));
         }
       } else {
         console.error('❌ EMPLEADO NO ENCONTRADO:', {
           rutBuscado: employeeRut,
-          empleadosDisponibles: employees.map(e => ({ id: e.id, rut: e.rut, nombre: `${e.first_name} ${e.last_name}` }))
+          empleadosDisponibles: employees.map(e => ({ id: e.id, rut: e.rut, nombre: `${e.first_name} ${e.last_name}` })),
         });
         setError(`No se encontró empleado con RUT ${employeeRut} para editar la liquidación`);
       }
@@ -268,7 +269,7 @@ export default function GenerateLiquidationPage() {
               advance_payments: liquidation.advance_payments || 0,
               apv_amount: liquidation.apv_amount || 0,
               other_deductions: liquidation.other_deductions || 0,
-              apply_legal_gratification: (liquidation.legal_gratification_art50 || 0) > 0
+              apply_legal_gratification: (liquidation.legal_gratification_art50 || 0) > 0,
             }));
 
             // Pre-llenar datos Previred si existen
@@ -288,7 +289,7 @@ export default function GenerateLiquidationPage() {
                 previred_notes: liquidation.previred_notes || '',
                 movement_code: liquidation.movement_code || '0',
                 worker_type_code: liquidation.worker_type_code || '0',
-                has_special_regime: liquidation.has_special_regime || false
+                has_special_regime: liquidation.has_special_regime || false,
               }));
             }
 
@@ -317,20 +318,20 @@ export default function GenerateLiquidationPage() {
         console.log('🔍 AUTO-PRECARGA PARA EMPLEADO:', {
           name: `${emp.first_name} ${emp.last_name}`,
           start_date: activeContract.start_date,
-          period: `${formData.period_month}/${formData.period_year}`
+          period: `${formData.period_month}/${formData.period_year}`,
         });
 
         // Precargar fecha en datos Previred
         setPreviredData(prev => ({
           ...prev,
-          start_work_date: activeContract.start_date
+          start_work_date: activeContract.start_date,
         }));
 
         // Calcular días trabajados automáticamente
         const calculatedDays = calculateWorkedDays(
           activeContract.start_date,
           formData.period_year,
-          formData.period_month
+          formData.period_month,
         );
 
         console.log('🔍 DÍAS CALCULADOS AUTO-PRECARGA:', calculatedDays);
@@ -338,7 +339,7 @@ export default function GenerateLiquidationPage() {
         // Actualizar días trabajados
         setFormData(prev => ({
           ...prev,
-          days_worked: calculatedDays
+          days_worked: calculatedDays,
         }));
       }
     }
@@ -450,7 +451,7 @@ export default function GenerateLiquidationPage() {
       28: 0.0125,
       25: 0.014,
       22: 0.0159091,
-      20: 0.0175
+      20: 0.0175,
     };
     
     // Buscar el factor exacto o calcular para horas no estándar
@@ -490,12 +491,12 @@ export default function GenerateLiquidationPage() {
       const updatedFormData = { ...formData, [name]: newValue };
       const validation = validatePeriod(
         updatedFormData.period_year, 
-        updatedFormData.period_month
+        updatedFormData.period_month,
       );
       
       if (!validation.isValid) {
         setError(validation.message || 'Período inválido');
-        setTimeout(() => setError(null), 5000);
+        setTimeout(() => { setError(null); }, 5000);
         return; // No actualizar si es inválido
       } else {
         setError(null); // Limpiar error si ahora es válido
@@ -519,14 +520,14 @@ export default function GenerateLiquidationPage() {
       setFormData(prev => ({
         ...prev,
         [name]: newValue,
-        overtime_amount: calculatedAmount
+        overtime_amount: calculatedAmount,
       }));
       return;
     }
     
     setFormData(prev => ({
       ...prev,
-      [name]: newValue
+      [name]: newValue,
     }));
   };
 
@@ -539,7 +540,7 @@ export default function GenerateLiquidationPage() {
       const calculatedDays = calculateWorkedDays(
         newPreviredData.start_work_date, 
         formData.period_year, 
-        formData.period_month
+        formData.period_month,
       );
       
       console.log('🔍 ACTUALIZANDO DÍAS TRABAJADOS AUTOMÁTICAMENTE:');
@@ -547,7 +548,7 @@ export default function GenerateLiquidationPage() {
       
       setFormData(prev => ({
         ...prev,
-        days_worked: calculatedDays
+        days_worked: calculatedDays,
       }));
     }
   };
@@ -558,7 +559,7 @@ export default function GenerateLiquidationPage() {
       const calculatedDays = calculateWorkedDays(
         previredData.start_work_date,
         formData.period_year,
-        formData.period_month
+        formData.period_month,
       );
       
       // Solo actualizar si es diferente para evitar loops infinitos
@@ -569,7 +570,7 @@ export default function GenerateLiquidationPage() {
         
         setFormData(prev => ({
           ...prev,
-          days_worked: calculatedDays
+          days_worked: calculatedDays,
         }));
       }
     }
@@ -688,8 +689,8 @@ export default function GenerateLiquidationPage() {
           previred_notes: previredData.previred_notes || '',
           movement_code: previredData.movement_code || '5', // Default: Incorporación lugar trabajo
           worker_type_code: previredData.worker_type_code || '0',
-          has_special_regime: previredData.has_special_regime || false
-        } : {})
+          has_special_regime: previredData.has_special_regime || false,
+        } : {}),
       };
 
       // Guardar o actualizar en la base de datos
@@ -703,7 +704,7 @@ export default function GenerateLiquidationPage() {
         isEditMode,
         method,
         apiUrl,
-        liquidationId: isEditMode ? editLiquidationId : 'nueva'
+        liquidationId: isEditMode ? editLiquidationId : 'nueva',
       });
 
       const response = await fetch(apiUrl, {
@@ -711,7 +712,7 @@ export default function GenerateLiquidationPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(liquidationData)
+        body: JSON.stringify(liquidationData),
       });
 
       const data = await response.json();
@@ -746,7 +747,6 @@ export default function GenerateLiquidationPage() {
     }
   };
 
-
   // Función para limpiar caracteres especiales malformados
   const cleanText = (text: string) => {
     if (!text) return '';
@@ -779,11 +779,11 @@ export default function GenerateLiquidationPage() {
         <PayrollHeader 
           title="Generar Liquidación"
           subtitle="Creación de liquidaciones con previsualización en tiempo real"
-          showBackButton={true}
+          showBackButton
         />
         <div className="max-w-7xl mx-auto py-8 px-4 flex justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
             <p className="text-gray-600">Cargando empleados...</p>
           </div>
         </div>
@@ -796,7 +796,7 @@ export default function GenerateLiquidationPage() {
       <PayrollHeader 
         title="Generar Liquidación"
         subtitle="Creación de liquidaciones con previsualización en tiempo real"
-        showBackButton={true}
+        showBackButton
       />
 
       {/* Hero Section modernizado */}
@@ -822,7 +822,7 @@ export default function GenerateLiquidationPage() {
               {/* Indicador de cálculo en tiempo real */}
               <div className="flex flex-wrap gap-3">
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20 flex items-center gap-2">
-                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                   <span className="text-xs font-medium">Cálculo en Tiempo Real</span>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20 flex items-center gap-2">
@@ -901,7 +901,7 @@ export default function GenerateLiquidationPage() {
                   <div className="relative">
                     <select
                       value={selectedEmployeeId}
-                      onChange={(e) => setSelectedEmployeeId(e.target.value)}
+                      onChange={(e) => { setSelectedEmployeeId(e.target.value); }}
                       className="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200 appearance-none"
                     >
                       <option value="">Seleccionar empleado...</option>
@@ -1230,7 +1230,7 @@ export default function GenerateLiquidationPage() {
                           {new Intl.NumberFormat('es-CL', { 
                             style: 'currency', 
                             currency: 'CLP',
-                            minimumFractionDigits: 0 
+                            minimumFractionDigits: 0, 
                           }).format(result.legal_gratification_art50 || 0)}
                         </div>
                       </div>
@@ -1240,7 +1240,7 @@ export default function GenerateLiquidationPage() {
                           25% de {new Intl.NumberFormat('es-CL', { 
                             style: 'currency', 
                             currency: 'CLP',
-                            minimumFractionDigits: 0 
+                            minimumFractionDigits: 0, 
                           }).format(selectedEmployee.base_salary)}
                         </div>
                       </div>
@@ -1370,7 +1370,7 @@ export default function GenerateLiquidationPage() {
               >
                 {saving ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
                     <span>Generando...</span>
                   </>
                 ) : (
@@ -1415,7 +1415,7 @@ export default function GenerateLiquidationPage() {
               configurationStatus={configurationStatus} // ✅ NUEVO: Estado de configuración
               employeeName={selectedEmployee ? getEmployeeDisplayName({
                 ...selectedEmployee,
-                employment_contracts: []
+                employment_contracts: [],
               } as Employee) : undefined}
             />
           </div>

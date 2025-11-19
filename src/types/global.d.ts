@@ -110,6 +110,9 @@ export interface CompanySettings {
   company_id: string;
 
   // Basic info
+  company_name: string;
+  company_rut: string;
+  email: string;
   phone?: string;
   address?: string;
 
@@ -117,6 +120,61 @@ export interface CompanySettings {
   default_working_hours?: number;
   afp_default?: string;
   health_default?: string;
+
+  // Payroll configurations
+  payroll_configs?: Array<{
+    id: string;
+    minimum_wage: number;
+    uf_value: number;
+    utm_value: number;
+    family_allowance_limit: number;
+    tramo_a: number;
+    tramo_b: number;
+    tramo_c: number;
+    sis_percentage: number;
+    unemployment_insurance_fixed: number;
+    unemployment_insurance_indefinite: number;
+    active: boolean;
+  }>;
+
+  // AFP configurations
+  afp_configs?: Array<{
+    id: string;
+    name: string;
+    commission_percentage: number;
+    sis_percentage: number;
+    active: boolean;
+  }>;
+
+  // Health configurations
+  health_configs?: Array<{
+    id: string;
+    name: string;
+    code: string;
+    plan_percentage: number;
+    active: boolean;
+  }>;
+
+  // Income limits
+  income_limits?: {
+    uf_limit: number;
+    minimum_wage: number;
+    family_allowance_limit: number;
+  };
+
+  // Family allowances
+  family_allowances?: {
+    tramo_a: number;
+    tramo_b: number;
+    tramo_c: number;
+  };
+
+  // Contributions
+  contributions?: {
+    unemployment_insurance_fixed: number;
+    unemployment_insurance_indefinite: number;
+    social_security_percentage: number;
+  };
 
   // Other settings
   created_at: string;

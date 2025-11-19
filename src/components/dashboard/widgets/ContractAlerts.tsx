@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
+
 import {
   AlertTriangle,
   Clock,
@@ -11,8 +11,10 @@ import {
   Calendar,
   Users,
   Bell,
-  Eye
+  Eye,
 } from 'lucide-react'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 
 interface ContractAlert {
   id: string
@@ -71,7 +73,7 @@ export function ContractAlerts() {
             dueDate: '2024-11-30',
             daysRemaining: 15,
             actionRequired: 'Decidir renovación o término',
-            status: 'pending'
+            status: 'pending',
           },
           {
             id: '2',
@@ -85,7 +87,7 @@ export function ContractAlerts() {
             dueDate: '2024-11-12',
             daysRemaining: -3,
             actionRequired: 'Regularizar situación contractual',
-            status: 'overdue'
+            status: 'overdue',
           },
           {
             id: '3',
@@ -99,7 +101,7 @@ export function ContractAlerts() {
             dueDate: '2024-12-15',
             daysRemaining: 30,
             actionRequired: 'Evaluar desempeño y renovar',
-            status: 'in_progress'
+            status: 'in_progress',
           },
           {
             id: '4',
@@ -113,7 +115,7 @@ export function ContractAlerts() {
             dueDate: '2024-12-01',
             daysRemaining: 16,
             actionRequired: 'Revisar cláusulas y condiciones',
-            status: 'pending'
+            status: 'pending',
           },
           {
             id: '5',
@@ -127,7 +129,7 @@ export function ContractAlerts() {
             dueDate: '2024-11-25',
             daysRemaining: 10,
             actionRequired: 'Generar anexo contractual',
-            status: 'in_progress'
+            status: 'in_progress',
           },
           {
             id: '6',
@@ -141,7 +143,7 @@ export function ContractAlerts() {
             dueDate: '2024-11-28',
             daysRemaining: 13,
             actionRequired: 'Evaluar continuidad laboral',
-            status: 'pending'
+            status: 'pending',
           },
           {
             id: '7',
@@ -155,9 +157,9 @@ export function ContractAlerts() {
             dueDate: '2024-12-10',
             daysRemaining: 25,
             actionRequired: 'Verificar avance de obra',
-            status: 'pending'
-          }
-        ]
+            status: 'pending',
+          },
+        ],
       }
 
       setData(mockData)
@@ -168,13 +170,11 @@ export function ContractAlerts() {
     }
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL', {
+  const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('es-CL', {
       day: 'numeric',
       month: 'short',
-      year: 'numeric'
+      year: 'numeric',
     })
-  }
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -229,7 +229,7 @@ export function ContractAlerts() {
       indefinido: 'Indefinido',
       plazo_fijo: 'Plazo Fijo',
       obra: 'Por Obra',
-      honorarios: 'Honorarios'
+      honorarios: 'Honorarios',
     }
     return labels[type as keyof typeof labels] || type
   }
@@ -258,10 +258,10 @@ export function ContractAlerts() {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-16 bg-gray-200 rounded"></div>
+            <div className="h-16 bg-gray-200 rounded" />
             <div className="space-y-2">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="h-12 bg-gray-200 rounded"></div>
+                <div key={i} className="h-12 bg-gray-200 rounded" />
               ))}
             </div>
           </div>
@@ -270,7 +270,7 @@ export function ContractAlerts() {
     )
   }
 
-  if (!data || !data.alerts.length) {
+  if (!data?.alerts.length) {
     return (
       <Card className="h-full">
         <CardContent className="flex items-center justify-center h-full">
@@ -294,7 +294,7 @@ export function ContractAlerts() {
           <div className="flex items-center space-x-1">
             <select
               value={filter}
-              onChange={(e) => setFilter(e.target.value as typeof filter)}
+              onChange={(e) => { setFilter(e.target.value as typeof filter); }}
               className="text-xs border rounded px-2 py-1"
             >
               <option value="all">Todas ({data.totalAlerts})</option>

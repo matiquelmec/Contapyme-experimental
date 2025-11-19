@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import Link from 'next/link';
-import { PayrollHeader } from '@/components/layout';
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { Plus, Users, Search, Filter, Eye, Edit, Trash2, DollarSign, Activity, ArrowRight, Mail, Briefcase, FileText } from 'lucide-react';
+
+import { Plus, Users, Search, Eye, Edit, Trash2, FileText } from 'lucide-react';
+
 import EmployeeEditModal from '@/components/payroll/EmployeeEditModal';
 import { useCompany } from '@/contexts/CompanyContext';
 
@@ -33,12 +34,12 @@ export default function EmployeesPage() {
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; employee: Employee | null; permanent: boolean }>({
     show: false,
     employee: null,
-    permanent: false
+    permanent: false,
   });
   const [deleting, setDeleting] = useState(false);
   const [editModal, setEditModal] = useState<{ show: boolean; employee: Employee | null }>({
     show: false,
-    employee: null
+    employee: null,
   });
 
   useEffect(() => {
@@ -57,8 +58,8 @@ export default function EmployeesPage() {
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
-          'Expires': '0'
-        }
+          'Expires': '0',
+        },
       });
       
       const data = await response.json();
@@ -159,13 +160,11 @@ export default function EmployeesPage() {
       .trim();
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   if (loading) {
     return (
@@ -174,7 +173,7 @@ export default function EmployeesPage() {
           <div className="px-4 py-6 sm:px-0">
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
                 <p className="mt-4 text-gray-600">Cargando empleados...</p>
               </div>
             </div>
@@ -320,19 +319,19 @@ export default function EmployeesPage() {
                           </button>
                         </Link>
                         <button
-                          onClick={() => setEditModal({ show: true, employee })}
+                          onClick={() => { setEditModal({ show: true, employee }); }}
                           className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleViewContract(employee)}
+                          onClick={() => { handleViewContract(employee); }}
                           className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
                         >
                           <FileText className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDeleteClick(employee)}
+                          onClick={() => { handleDeleteClick(employee); }}
                           className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -406,7 +405,7 @@ export default function EmployeesPage() {
               >
                 {deleting ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
                     <span>Procesando...</span>
                   </>
                 ) : (
@@ -423,7 +422,7 @@ export default function EmployeesPage() {
               >
                 {deleting ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
                     <span>Eliminando...</span>
                   </>
                 ) : (
@@ -442,7 +441,7 @@ export default function EmployeesPage() {
       {editModal.show && editModal.employee && (
         <EmployeeEditModal
           isOpen={editModal.show}
-          onClose={() => setEditModal({ show: false, employee: null })}
+          onClose={() => { setEditModal({ show: false, employee: null }); }}
           employeeId={editModal.employee.id}
           onSave={() => {
             setEditModal({ show: false, employee: null });

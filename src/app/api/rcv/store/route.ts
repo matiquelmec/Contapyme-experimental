@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -43,7 +45,7 @@ export async function POST(request: NextRequest) {
       transacciones: body.rcv_data.totalTransacciones,
       file_name: body.file_metadata.file_name,
       periodoInicio: body.rcv_data.periodoInicio,
-      periodoFin: body.rcv_data.periodoFin
+      periodoFin: body.rcv_data.periodoFin,
     });
 
     const { company_id, rcv_data, file_metadata, rcv_type } = body;
@@ -53,13 +55,13 @@ export async function POST(request: NextRequest) {
       has_rcv_data: !!rcv_data,
       has_file_metadata: !!file_metadata,
       has_rcv_type: !!rcv_type,
-      rcv_type_value: rcv_type
+      rcv_type_value: rcv_type,
     });
 
     if (!company_id || !rcv_data || !file_metadata || !rcv_type) {
       return NextResponse.json(
         { success: false, error: 'Faltan campos requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -79,7 +81,7 @@ export async function POST(request: NextRequest) {
         file_metadata,
         periodIdentifier,
         periodStart,
-        periodEnd
+        periodEnd,
       );
     } else {
       ledgerId = await storeSalesData(
@@ -88,7 +90,7 @@ export async function POST(request: NextRequest) {
         file_metadata,
         periodIdentifier,
         periodStart,
-        periodEnd
+        periodEnd,
       );
     }
 
@@ -99,17 +101,17 @@ export async function POST(request: NextRequest) {
       data: {
         ledger_id: ledgerId,
         period_identifier: periodIdentifier,
-        rcv_type: rcv_type,
-        total_transactions: rcv_data.totalTransacciones
+        rcv_type,
+        total_transactions: rcv_data.totalTransacciones,
       },
-      message: `RCV de ${rcv_type === 'purchase' ? 'compras' : 'ventas'} almacenado exitosamente`
+      message: `RCV de ${rcv_type === 'purchase' ? 'compras' : 'ventas'} almacenado exitosamente`,
     });
 
   } catch (error) {
     console.error('❌ Error almacenando RCV:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -123,7 +125,7 @@ async function storePurchaseData(
   fileMetadata: any,
   periodIdentifier: string,
   periodStart: string,
-  periodEnd: string
+  periodEnd: string,
 ): Promise<string> {
   
   // ✅ CREAR O ACTUALIZAR PURCHASE_LEDGER
@@ -152,7 +154,7 @@ async function storePurchaseData(
         processing_method: rcvData.method,
         file_name: fileMetadata.file_name,
         file_size: fileMetadata.file_size,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', existingLedger.id)
       .select('id')
@@ -175,7 +177,7 @@ async function storePurchaseData(
       period_end: periodEnd,
       period_identifier: periodIdentifier,
       periodStart_type: typeof periodStart,
-      periodEnd_type: typeof periodEnd
+      periodEnd_type: typeof periodEnd,
     });
     
     const { data: newLedger, error: createError } = await supabase
@@ -195,7 +197,7 @@ async function storePurchaseData(
         confidence_score: rcvData.confidence,
         processing_method: rcvData.method,
         file_name: fileMetadata.file_name,
-        file_size: fileMetadata.file_size
+        file_size: fileMetadata.file_size,
       })
       .select('id')
       .single();
@@ -234,7 +236,7 @@ async function storePurchaseData(
     nce_nde_invoice: transaction.nceNdeFactura || 0,
     other_tax_code: transaction.codigoOtroImpuesto || '',
     other_tax_value: transaction.valorOtroImpuesto || 0,
-    other_tax_rate: transaction.tasaOtroImpuesto || 0
+    other_tax_rate: transaction.tasaOtroImpuesto || 0,
   }));
 
   const { error: documentsError } = await supabase
@@ -257,7 +259,7 @@ async function storeSalesData(
   fileMetadata: any,
   periodIdentifier: string,
   periodStart: string,
-  periodEnd: string
+  periodEnd: string,
 ): Promise<string> {
   
   // ✅ CREAR O ACTUALIZAR SALES_LEDGER
@@ -286,7 +288,7 @@ async function storeSalesData(
         processing_method: rcvData.method,
         file_name: fileMetadata.file_name,
         file_size: fileMetadata.file_size,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', existingLedger.id)
       .select('id')
@@ -320,7 +322,7 @@ async function storeSalesData(
         confidence_score: rcvData.confidence,
         processing_method: rcvData.method,
         file_name: fileMetadata.file_name,
-        file_size: fileMetadata.file_size
+        file_size: fileMetadata.file_size,
       })
       .select('id')
       .single();
@@ -359,7 +361,7 @@ async function storeSalesData(
     nce_nde_invoice: transaction.nceNdeFactura || 0,
     other_tax_code: transaction.codigoOtroImpuesto || '',
     other_tax_value: transaction.valorOtroImpuesto || 0,
-    other_tax_rate: transaction.tasaOtroImpuesto || 0
+    other_tax_rate: transaction.tasaOtroImpuesto || 0,
   }));
 
   const { error: documentsError } = await supabase

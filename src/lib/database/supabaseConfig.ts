@@ -65,7 +65,7 @@ export async function insertF29FormSupabase(data: any) {
         confidence_score: data.confidence_score,
         validation_status: data.validation_status,
         year: data.year,
-        month: data.month
+        month: data.month,
       }])
       .select();
 
@@ -115,7 +115,7 @@ export async function upsertAnalysisSupabase(data: any) {
         seasonality: data.seasonality,
         anomalies: data.anomalies,
         generated_at: data.generated_at,
-        expires_at: data.expires_at
+        expires_at: data.expires_at,
       });
 
     return { error };

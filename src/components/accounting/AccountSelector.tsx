@@ -24,7 +24,7 @@ export default function AccountSelector({
   onSelect, 
   placeholder = "Seleccionar cuenta...", 
   className = "",
-  disabled = false
+  disabled = false,
 }: AccountSelectorProps) {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -65,7 +65,7 @@ export default function AccountSelector({
   // Filter accounts based on search term
   const filteredAccounts = accounts.filter(account => 
     account.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    account.name.toLowerCase().includes(searchTerm.toLowerCase())
+    account.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleAccountSelect = (account: Account) => {
@@ -124,7 +124,7 @@ export default function AccountSelector({
               type="text"
               placeholder="Buscar por código o nombre..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => { setSearchTerm(e.target.value); }}
               className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500"
               autoFocus
             />
@@ -134,7 +134,7 @@ export default function AccountSelector({
           {loading && (
             <div className="p-4 text-center text-gray-500">
               <div className="inline-flex items-center">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2" />
                 Cargando cuentas...
               </div>
             </div>
@@ -151,7 +151,7 @@ export default function AccountSelector({
                 filteredAccounts.map((account) => (
                   <div
                     key={account.code}
-                    onClick={() => handleAccountSelect(account)}
+                    onClick={() => { handleAccountSelect(account); }}
                     className={`
                       px-3 py-2 cursor-pointer hover:bg-blue-50 border-b border-gray-100 last:border-b-0
                       ${selectedAccount?.code === account.code ? 'bg-blue-100' : ''}
@@ -182,7 +182,7 @@ export default function AccountSelector({
       {isOpen && (
         <div
           className="fixed inset-0 z-40"
-          onClick={() => setIsOpen(false)}
+          onClick={() => { setIsOpen(false); }}
         />
       )}
     </div>

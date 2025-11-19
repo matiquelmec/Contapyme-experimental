@@ -28,7 +28,7 @@ export const useSmartIndicators = (options: UseSmartIndicatorsOptions = {}) => {
   const {
     cacheTime = 5, // 5 minutos por defecto
     backgroundRefresh = true,
-    autoRefreshInterval = 10 // 10 minutos
+    autoRefreshInterval = 10, // 10 minutos
   } = options;
 
   const [indicators, setIndicators] = useState<IndicatorData[]>([]);
@@ -77,7 +77,7 @@ export const useSmartIndicators = (options: UseSmartIndicatorsOptions = {}) => {
       const cacheData: CachedIndicators = {
         data,
         timestamp: Date.now(),
-        expires: Date.now() + (cacheTime * 60 * 1000)
+        expires: Date.now() + (cacheTime * 60 * 1000),
       };
       
       localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
@@ -97,8 +97,8 @@ export const useSmartIndicators = (options: UseSmartIndicatorsOptions = {}) => {
       const response = await fetch('/api/indicators', {
         method: 'GET',
         headers: {
-          'Cache-Control': options.force ? 'no-cache' : 'max-age=300'
-        }
+          'Cache-Control': options.force ? 'no-cache' : 'max-age=300',
+        },
       });
 
       if (!response.ok) {
@@ -264,7 +264,7 @@ export const useSmartIndicators = (options: UseSmartIndicatorsOptions = {}) => {
       }
     }, autoRefreshInterval * 60 * 1000);
 
-    return () => clearInterval(backgroundRefreshInterval);
+    return () => { clearInterval(backgroundRefreshInterval); };
   }, [backgroundRefresh, autoRefreshInterval, fetchIndicators, loading]);
 
   // Limpiar cache cuando se cierra la ventana
@@ -277,7 +277,7 @@ export const useSmartIndicators = (options: UseSmartIndicatorsOptions = {}) => {
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    return () => { window.removeEventListener('beforeunload', handleBeforeUnload); };
   }, []);
 
   // Trigger update cuando la ventana vuelve a tener foco
@@ -292,7 +292,7 @@ export const useSmartIndicators = (options: UseSmartIndicatorsOptions = {}) => {
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    return () => { document.removeEventListener('visibilitychange', handleVisibilityChange); };
   }, [fetchIndicators, needsUpdate]);
 
   return {
@@ -302,6 +302,6 @@ export const useSmartIndicators = (options: UseSmartIndicatorsOptions = {}) => {
     lastUpdate,
     manualRefresh,
     canManualRefresh,
-    needsUpdate: needsUpdate()
+    needsUpdate: needsUpdate(),
   };
 };

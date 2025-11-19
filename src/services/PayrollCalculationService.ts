@@ -45,13 +45,13 @@ export class PayrollCalculationService {
       liquidation.bonos || 0,
       liquidation.comisiones || 0,
       liquidation.horas_extras || 0,
-      liquidation.other_income || 0
+      liquidation.other_income || 0,
     ];
 
-    const total = components.reduce((sum, amount) => {
+    const total = components.reduce((sum, amount) => 
       // Redondear cada componente para evitar errores de punto flotante
-      return sum + Math.round(amount * 100) / 100;
-    }, 0);
+       sum + Math.round(amount * 100) / 100
+    , 0);
 
     return Math.round(total * 100) / 100;
   }
@@ -120,9 +120,9 @@ export class PayrollCalculationService {
       differences: {
         haberes: calculatedHaberes - storedHaberes,
         descuentos: calculatedDescuentos - storedDescuentos,
-        liquido: calculatedLiquido - storedLiquido
+        liquido: calculatedLiquido - storedLiquido,
       },
-      errors: errors.length > 0 ? errors : undefined
+      errors: errors.length > 0 ? errors : undefined,
     };
   }
 
@@ -135,7 +135,7 @@ export class PayrollCalculationService {
       ...liquidation,
       total_gross_income: this.calculateTotalHaberes(liquidation),
       total_descuentos: this.calculateTotalDescuentos(liquidation),
-      total_liquido: this.calculateLiquido(liquidation)
+      total_liquido: this.calculateLiquido(liquidation),
     };
   }
 
@@ -155,7 +155,7 @@ export class PayrollCalculationService {
     return {
       totalHaberes: Math.round(totalHaberes * 100) / 100,
       totalDescuentos: Math.round(totalDescuentos * 100) / 100,
-      totalLiquido: Math.round(totalLiquido * 100) / 100
+      totalLiquido: Math.round(totalLiquido * 100) / 100,
     };
   }
 
@@ -180,16 +180,16 @@ export class PayrollCalculationService {
           comisiones: liquidation.comisiones || 0,
           horas_extras: liquidation.horas_extras || 0,
           other_income: liquidation.other_income || 0,
-          total: this.calculateTotalHaberes(liquidation)
+          total: this.calculateTotalHaberes(liquidation),
         },
         descuentos: {
           afp: liquidation.afp_amount || 0,
           salud: liquidation.health_amount || 0,
           cesantia: liquidation.unemployment_amount || 0,
           impuesto: liquidation.income_tax_amount || 0,
-          total: this.calculateTotalDescuentos(liquidation)
-        }
-      }
+          total: this.calculateTotalDescuentos(liquidation),
+        },
+      },
     };
   }
 }

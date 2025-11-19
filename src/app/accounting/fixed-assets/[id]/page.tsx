@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+
 import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+
 import { 
   ArrowLeft, 
   Edit2, 
@@ -11,13 +13,13 @@ import {
   Calendar,
   DollarSign,
   TrendingDown,
-  FileText,
   Building,
-  Settings
+  Settings,
 } from 'lucide-react';
-import { Button, Card } from '@/components/ui';
-import { FixedAsset } from '@/types';
+
 import EditFixedAssetForm from '@/components/fixed-assets/EditFixedAssetForm';
+import { Button, Card } from '@/components/ui';
+import type { FixedAsset } from '@/types';
 
 export default function FixedAssetDetailPage() {
   const params = useParams();
@@ -61,24 +63,20 @@ export default function FixedAssetDetailPage() {
   };
 
   // Formatear moneda
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   // Formatear fecha
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL');
-  };
+  const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('es-CL');
 
   // Calcular valor libro actual
   const calculateBookValue = (asset: FixedAsset) => {
     try {
       const monthsSinceDepreciation = Math.max(0, Math.floor(
-        (new Date().getTime() - new Date(asset.start_depreciation_date).getTime()) / (1000 * 60 * 60 * 24 * 30)
+        (new Date().getTime() - new Date(asset.start_depreciation_date).getTime()) / (1000 * 60 * 60 * 24 * 30),
       ));
       
       const depreciableValue = asset.purchase_value - (asset.residual_value || 0);
@@ -87,12 +85,12 @@ export default function FixedAssetDetailPage() {
       
       const accumulatedDepreciation = Math.min(
         monthsSinceDepreciation * monthlyDepreciation,
-        depreciableValue
+        depreciableValue,
       );
       
       return Math.max(
         asset.purchase_value - accumulatedDepreciation, 
-        asset.residual_value || 0
+        asset.residual_value || 0,
       );
     } catch (error) {
       return asset.purchase_value;
@@ -114,7 +112,7 @@ export default function FixedAssetDetailPage() {
     if (confirm(`¿Estás seguro de eliminar el activo "${asset.name}"?`)) {
       try {
         const response = await fetch(`/api/fixed-assets/${asset.id}`, {
-          method: 'DELETE'
+          method: 'DELETE',
         });
 
         if (response.ok) {
@@ -178,7 +176,7 @@ export default function FixedAssetDetailPage() {
               <Button
                 variant="outline"
                 leftIcon={<Edit2 className="w-4 h-4" />}
-                onClick={() => setShowEditForm(true)}
+                onClick={() => { setShowEditForm(true); }}
               >
                 Editar
               </Button>
@@ -406,7 +404,7 @@ export default function FixedAssetDetailPage() {
       {asset && (
         <EditFixedAssetForm
           isOpen={showEditForm}
-          onClose={() => setShowEditForm(false)}
+          onClose={() => { setShowEditForm(false); }}
           onSuccess={handleAssetUpdated}
           asset={asset}
         />

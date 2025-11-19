@@ -25,7 +25,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 19198659,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '1.01.05.01',
@@ -37,7 +37,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '1.01.06.01',
@@ -49,7 +49,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '1.01.06.02',
@@ -61,7 +61,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '1.01.09.01',
@@ -73,7 +73,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 113479068,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '1.01.10.01',
@@ -85,7 +85,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '1.01.10.02',
@@ -97,7 +97,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 3715785,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '1.01.10.03',
@@ -109,7 +109,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '1.01.10.04',
@@ -121,7 +121,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '1.01.10.05',
@@ -133,7 +133,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '1.02.04.01',
@@ -145,7 +145,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 149000,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '1.02.04.02',
@@ -157,7 +157,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 347394,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '1.02.04.03',
@@ -169,7 +169,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 297000,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   
   // PASIVOS (2.01.xx - 2.03.xx)
@@ -183,7 +183,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 15690,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '2.01.07.03',
@@ -195,7 +195,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '2.01.08.01',
@@ -207,7 +207,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 9375924,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '2.01.08.02',
@@ -219,7 +219,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '2.01.12.01',
@@ -231,7 +231,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 2646617,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '2.01.12.02',
@@ -243,7 +243,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '2.01.12.03',
@@ -255,7 +255,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '2.01.12.04',
@@ -267,7 +267,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '2.01.12.05',
@@ -279,7 +279,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 7276851,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '2.03.01.01',
@@ -291,7 +291,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 500000,
     perdida: 0,
-    ganancia: 0
+    ganancia: 0,
   },
   
   // INGRESOS (3.01.xx - 3.02.xx)
@@ -305,7 +305,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 211714454
+    ganancia: 211714454,
   },
   {
     code: '3.02.03.02',
@@ -317,7 +317,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 891640
+    ganancia: 891640,
   },
   
   // GASTOS OPERACIONALES (4.01.03.xx)
@@ -331,7 +331,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 1503949,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.02',
@@ -343,7 +343,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 150000,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.04',
@@ -355,7 +355,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 3077764,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.05',
@@ -367,7 +367,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 657655,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.07',
@@ -379,7 +379,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 350000,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.09',
@@ -391,7 +391,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 50000,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.12',
@@ -403,7 +403,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 1737249,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.14',
@@ -415,7 +415,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 7477749,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.15',
@@ -427,7 +427,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 80000,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.16',
@@ -439,7 +439,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 262372,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.17',
@@ -451,7 +451,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 3048207,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.18',
@@ -463,7 +463,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 122005,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.19',
@@ -475,7 +475,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 2650000,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.21',
@@ -487,7 +487,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 729282,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.22',
@@ -499,7 +499,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 1838005,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.26',
@@ -511,7 +511,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 550819,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.27',
@@ -523,7 +523,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 132000,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.01.03.28',
@@ -535,7 +535,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 3711331,
-    ganancia: 0
+    ganancia: 0,
   },
   
   // GASTOS DE PERSONAL (4.02.04.xx)
@@ -549,7 +549,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 62077018,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.02.04.02',
@@ -561,7 +561,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 3254373,
-    ganancia: 0
+    ganancia: 0,
   },
   
   // GASTOS FINANCIEROS (4.02.07.xx)
@@ -575,7 +575,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 62085,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.02.07.06',
@@ -587,7 +587,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 1691147,
-    ganancia: 0
+    ganancia: 0,
   },
   
   // OTROS GASTOS (4.02.10.xx - 4.02.11.xx)
@@ -601,7 +601,7 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 22383,
-    ganancia: 0
+    ganancia: 0,
   },
   {
     code: '4.02.11.01',
@@ -613,8 +613,8 @@ const sampleBalance: ExternalBalanceAccount[] = [
     activo: 0,
     pasivo: 0,
     perdida: 0,
-    ganancia: 1123
-  }
+    ganancia: 1123,
+  },
 ];
 
 // VERIFICACIÓN DE CUADRE

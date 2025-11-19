@@ -11,13 +11,18 @@
  * POST /api/payroll/libro-remuneraciones/coherence (auto-fix)
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
+
+import type {
+  PayrollDataSource,
+  LiquidationData,
+} from '@/services/PayrollDataCoherenceEngine';
 import {
   PayrollDataCoherenceEngine,
   SmartCompanyIdResolver,
-  PayrollDataSource,
-  LiquidationData
 } from '@/services/PayrollDataCoherenceEngine';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -41,7 +46,7 @@ export async function GET(request: NextRequest) {
       requestedCompanyId,
       year,
       month,
-      supabase
+      supabase,
     );
 
     console.log('🎯 Company ID resolved:', { requested: requestedCompanyId, actual: actualCompanyId });
@@ -69,7 +74,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: 'No se encontraron liquidaciones para análisis',
         company_id_used: actualCompanyId,
-        liquidations_error: liquidationsError?.message
+        liquidations_error: liquidationsError?.message,
       }, { status: 404 });
     }
 
@@ -82,7 +87,7 @@ export async function GET(request: NextRequest) {
     const storedTotals = liquidations.reduce((acc, liq) => ({
       haberes: acc.haberes + (liq.total_gross_income || 0),
       descuentos: acc.descuentos + (liq.total_deductions || 0),
-      liquido: acc.liquido + (liq.net_salary || 0)
+      liquido: acc.liquido + (liq.net_salary || 0),
     }), { haberes: 0, descuentos: 0, liquido: 0 });
 
     dataSources.push({
@@ -95,7 +100,7 @@ export async function GET(request: NextRequest) {
       total_descuentos: Math.round(storedTotals.descuentos * 100) / 100,
       total_liquido: Math.round(storedTotals.liquido * 100) / 100,
       liquidations_count: liquidations.length,
-      last_updated: new Date().toISOString()
+      last_updated: new Date().toISOString(),
     });
 
     // Fuente 2: Datos calculados con PayrollUnifiedCalculator
@@ -104,7 +109,7 @@ export async function GET(request: NextRequest) {
       actualCompanyId,
       year,
       month,
-      'calculation'
+      'calculation',
     );
     dataSources.push(calculatedSource);
 
@@ -121,7 +126,7 @@ export async function GET(request: NextRequest) {
         total_descuentos: 151109,
         total_liquido: 372891,
         liquidations_count: 1,
-        last_updated: new Date().toISOString()
+        last_updated: new Date().toISOString(),
       });
     }
 
@@ -130,13 +135,13 @@ export async function GET(request: NextRequest) {
       actualCompanyId,
       year,
       month,
-      dataSources
+      dataSources,
     );
 
     // 🎯 PASO 5: Generar reporte de coherencia
     const coherenceReport = PayrollDataCoherenceEngine.generateCoherenceReport(
       coherenceValidation,
-      dataSources
+      dataSources,
     );
 
     // 🎯 PASO 6: Análisis de auto-corrección (si hay inconsistencias)
@@ -144,7 +149,7 @@ export async function GET(request: NextRequest) {
     if (!coherenceValidation.is_coherent && coherenceValidation.auto_fixable) {
       autoFixAnalysis = await PayrollDataCoherenceEngine.autoFixIncoherentData(
         liquidations as LiquidationData[],
-        'database'
+        'database',
       );
     }
 
@@ -154,7 +159,7 @@ export async function GET(request: NextRequest) {
         company_id_resolution: {
           requested: requestedCompanyId,
           actual_used: actualCompanyId,
-          auto_resolved: requestedCompanyId !== actualCompanyId
+          auto_resolved: requestedCompanyId !== actualCompanyId,
         },
         liquidations_analyzed: liquidations.length,
         data_sources: dataSources,
@@ -165,17 +170,17 @@ export async function GET(request: NextRequest) {
           immediate_action: coherenceValidation.recommended_action,
           can_auto_fix: coherenceValidation.auto_fixable,
           should_update_interface: requestedCompanyId !== actualCompanyId,
-          confidence_level: coherenceReport.confidence_level
-        }
+          confidence_level: coherenceReport.confidence_level,
+        },
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     console.log('🎯 COHERENCE ANALYSIS COMPLETE:', {
       coherent: coherenceValidation.is_coherent,
       confidence: coherenceValidation.confidence_score,
       discrepancies: coherenceValidation.discrepancies.length,
-      auto_fixable: coherenceValidation.auto_fixable
+      auto_fixable: coherenceValidation.auto_fixable,
     });
 
     return NextResponse.json(response, { status: 200 });
@@ -185,7 +190,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error en análisis de coherencia',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }
@@ -201,7 +206,7 @@ export async function POST(request: NextRequest) {
     if (!company_id || !year || !month) {
       return NextResponse.json({
         success: false,
-        error: 'Parámetros requeridos: company_id, year, month'
+        error: 'Parámetros requeridos: company_id, year, month',
       }, { status: 400 });
     }
 
@@ -212,7 +217,7 @@ export async function POST(request: NextRequest) {
       company_id,
       year,
       month,
-      supabase
+      supabase,
     );
 
     // Obtener liquidaciones
@@ -236,14 +241,14 @@ export async function POST(request: NextRequest) {
     if (liquidationsError || !liquidations || liquidations.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'No se encontraron liquidaciones para corregir'
+        error: 'No se encontraron liquidaciones para corregir',
       }, { status: 404 });
     }
 
     // Ejecutar auto-corrección
     const fixResult = await PayrollDataCoherenceEngine.autoFixIncoherentData(
       liquidations as LiquidationData[],
-      'database'
+      'database',
     );
 
     // Si hay correcciones y force_fix es true, aplicar cambios a la DB
@@ -264,9 +269,9 @@ export async function POST(request: NextRequest) {
           actualCompanyId,
           year,
           month,
-          'calculation'
-        )
-      ]
+          'calculation',
+        ),
+      ],
     );
 
     return NextResponse.json({
@@ -274,7 +279,7 @@ export async function POST(request: NextRequest) {
       auto_fix_result: fixResult,
       post_fix_analysis: postFixAnalysis,
       applied_to_database: force_fix,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }, { status: 200 });
 
   } catch (error) {
@@ -282,7 +287,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error en auto-corrección',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }

@@ -1,27 +1,21 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
 import Link from 'next/link'
-import { Button, Card } from '@/components/ui'
-import { useCompany } from '@/contexts/CompanyContext'
+
 import {
   Calculator,
   Users,
   TrendingUp,
   FileText,
-  Settings,
-  Bell,
-  ChevronRight,
-  Activity,
-  DollarSign,
-  BarChart3,
   Package,
-  Clock,
   AlertCircle,
   Building2,
-  ChevronDown,
-  Check
+  Check,
 } from 'lucide-react'
+
+import { useCompany } from '@/contexts/CompanyContext'
 
 /**
  * Portal Dashboard (Application Hub) - Modernizado
@@ -43,14 +37,14 @@ export default function PortalDashboard() {
       id: 'demo-1',
       name: 'Empresa Demo S.A.',
       rut: '12.345.678-9',
-      color: 'blue'
+      color: 'blue',
     },
     {
       id: 'demo-2',
       name: 'Mi Pyme Ltda.',
       rut: '98.765.432-1',
-      color: 'purple'
-    }
+      color: 'purple',
+    },
   ]
 
   // Get current active company based on CompanyContext (SSR Safe)
@@ -99,36 +93,36 @@ export default function PortalDashboard() {
         accounting: {
           pendingF29: 2,
           activeAssets: 45,
-          monthlyIVA: 3400000
+          monthlyIVA: 3400000,
         },
         payroll: {
           activeEmployees: 12,
           nextPayroll: '2024-11-30',
-          monthlyTotal: 8500000
+          monthlyTotal: 8500000,
         },
         executive: {
           cashFlow: 45000000,
           efficiency: 87,
-          alerts: 5
-        }
+          alerts: 5,
+        },
       },
       'demo-2': { // Mi Pyme Ltda.
         accounting: {
           pendingF29: 1,
           activeAssets: 28,
-          monthlyIVA: 1800000
+          monthlyIVA: 1800000,
         },
         payroll: {
           activeEmployees: 8,
           nextPayroll: '2024-11-30',
-          monthlyTotal: 5200000
+          monthlyTotal: 5200000,
         },
         executive: {
           cashFlow: 28000000,
           efficiency: 92,
-          alerts: 2
-        }
-      }
+          alerts: 2,
+        },
+      },
     }
     return metricsData[companyId as keyof typeof metricsData] || metricsData['demo-1']
   }
@@ -143,18 +137,18 @@ export default function PortalDashboard() {
       accounting: {
         status: data.accounting.pendingF29 > 2 ? 'critical' : data.accounting.pendingF29 > 0 ? 'warning' : 'healthy',
         message: data.accounting.pendingF29 > 2 ? 'Revisar F29 urgente' : data.accounting.pendingF29 > 0 ? 'F29 pendientes por revisar' : 'Cumplimiento al día',
-        priority: data.accounting.pendingF29 > 2 ? 'high' : data.accounting.pendingF29 > 0 ? 'medium' : 'low'
+        priority: data.accounting.pendingF29 > 2 ? 'high' : data.accounting.pendingF29 > 0 ? 'medium' : 'low',
       },
       payroll: {
         status: data.payroll.monthlyTotal > 10000000 ? 'warning' : 'healthy',
         message: data.payroll.monthlyTotal > 10000000 ? 'Revisar costos laborales' : 'Nómina bajo control',
-        priority: data.payroll.monthlyTotal > 10000000 ? 'medium' : 'low'
+        priority: data.payroll.monthlyTotal > 10000000 ? 'medium' : 'low',
       },
       financial: {
         status: data.executive.efficiency < 70 ? 'critical' : data.executive.efficiency < 85 ? 'warning' : 'healthy',
         message: data.executive.efficiency < 70 ? 'Eficiencia crítica - revisar operaciones' : data.executive.efficiency < 85 ? 'Oportunidad de mejora detectada' : 'Operación eficiente',
-        priority: data.executive.efficiency < 70 ? 'high' : data.executive.efficiency < 85 ? 'medium' : 'low'
-      }
+        priority: data.executive.efficiency < 70 ? 'high' : data.executive.efficiency < 85 ? 'medium' : 'low',
+      },
     }
   }
 
@@ -173,19 +167,19 @@ export default function PortalDashboard() {
         {
           label: 'Estado Tributario',
           status: healthIndicators.accounting.status,
-          value: healthIndicators.accounting.message
+          value: healthIndicators.accounting.message,
         },
         {
           label: 'Próximo F29',
           status: 'info',
-          value: '15 días restantes'
+          value: '15 días restantes',
         },
         {
           label: 'Cumplimiento',
           status: metrics.accounting.pendingF29 === 0 ? 'healthy' : 'warning',
-          value: metrics.accounting.pendingF29 === 0 ? 'Al día' : `${metrics.accounting.pendingF29} pendientes`
-        }
-      ]
+          value: metrics.accounting.pendingF29 === 0 ? 'Al día' : `${metrics.accounting.pendingF29} pendientes`,
+        },
+      ],
     },
     {
       id: 'payroll',
@@ -199,19 +193,19 @@ export default function PortalDashboard() {
         {
           label: 'Nómina Mensual',
           status: healthIndicators.payroll.status,
-          value: healthIndicators.payroll.message
+          value: healthIndicators.payroll.message,
         },
         {
           label: 'Empleados Activos',
           status: 'healthy',
-          value: `${metrics.payroll.activeEmployees} personas`
+          value: `${metrics.payroll.activeEmployees} personas`,
         },
         {
           label: 'Próxima Liquidación',
           status: 'info',
-          value: 'En 5 días'
-        }
-      ]
+          value: 'En 5 días',
+        },
+      ],
     },
     {
       id: 'executive',
@@ -225,27 +219,27 @@ export default function PortalDashboard() {
         {
           label: 'Salud Financiera',
           status: healthIndicators.financial.status,
-          value: healthIndicators.financial.message
+          value: healthIndicators.financial.message,
         },
         {
           label: 'Score Empresarial',
           status: metrics.executive.efficiency > 85 ? 'healthy' : 'warning',
-          value: `${metrics.executive.efficiency}/100 puntos`
+          value: `${metrics.executive.efficiency}/100 puntos`,
         },
         {
           label: 'Alertas Activas',
           status: metrics.executive.alerts > 3 ? 'warning' : 'healthy',
-          value: `${metrics.executive.alerts} alertas`
-        }
-      ]
-    }
+          value: `${metrics.executive.alerts} alertas`,
+        },
+      ],
+    },
   ]
 
   const recentActivity = [
     { type: 'accounting', message: 'F29 Octubre procesado correctamente', time: '5 min', icon: FileText },
     { type: 'payroll', message: 'Liquidación de María García aprobada', time: '15 min', icon: Users },
     { type: 'executive', message: 'Alerta: Flujo de caja proyectado bajo', time: '1 hora', icon: AlertCircle },
-    { type: 'accounting', message: 'Nuevo activo fijo registrado', time: '2 horas', icon: Package }
+    { type: 'accounting', message: 'Nuevo activo fijo registrado', time: '2 horas', icon: Package },
   ]
 
   const getModuleColor = (type: string) => {
@@ -264,28 +258,28 @@ export default function PortalDashboard() {
           bg: 'bg-gradient-to-r from-blue-500 to-blue-600',
           text: 'text-blue-600',
           border: 'border-blue-200',
-          hover: 'hover:border-blue-300'
+          hover: 'hover:border-blue-300',
         }
       case 'green':
         return {
           bg: 'bg-gradient-to-r from-green-500 to-green-600',
           text: 'text-green-600',
           border: 'border-green-200',
-          hover: 'hover:border-green-300'
+          hover: 'hover:border-green-300',
         }
       case 'purple':
         return {
           bg: 'bg-gradient-to-r from-purple-500 to-purple-600',
           text: 'text-purple-600',
           border: 'border-purple-200',
-          hover: 'hover:border-purple-300'
+          hover: 'hover:border-purple-300',
         }
       default:
         return {
           bg: 'bg-gradient-to-r from-gray-500 to-gray-600',
           text: 'text-gray-600',
           border: 'border-gray-200',
-          hover: 'hover:border-gray-300'
+          hover: 'hover:border-gray-300',
         }
     }
   }
@@ -338,7 +332,7 @@ export default function PortalDashboard() {
                 return (
                   <div
                     key={company.id}
-                    onClick={() => handleCompanyChange(company)}
+                    onClick={() => { handleCompanyChange(company); }}
                     className={`bg-white rounded-lg shadow-sm border-2 p-6 cursor-pointer transition-all duration-200 hover:shadow-md ${
                       isActive ? colorClasses : 'border-gray-200 hover:border-gray-300'
                     }`}

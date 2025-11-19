@@ -1,10 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection, isSupabaseConfigured } from '@/lib/database/databaseSimple';
 
 // GET - Obtener modificaciones contractuales
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const companyId = searchParams.get('company_id');
     const employeeId = searchParams.get('employee_id');
     const modificationType = searchParams.get('modification_type');
@@ -12,7 +14,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -22,7 +24,7 @@ export async function GET(request: NextRequest) {
       console.error('❌ Supabase no configurado correctamente');
       return NextResponse.json(
         { error: 'Base de datos no configurada' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -30,7 +32,7 @@ export async function GET(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { error: 'Error de configuración de base de datos' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -61,7 +63,7 @@ export async function GET(request: NextRequest) {
       console.error('❌ Error obteniendo modificaciones contractuales:', error);
       return NextResponse.json(
         { error: 'Error obteniendo modificaciones contractuales' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -70,14 +72,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: modifications || [],
-      count: modifications?.length || 0
+      count: modifications?.length || 0,
     });
 
   } catch (error) {
     console.error('Error en GET /api/payroll/contract-modifications:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -98,13 +100,13 @@ export async function POST(request: NextRequest) {
       new_values,
       reason,
       document_reference,
-      created_by
+      created_by,
     } = body;
 
     if (!company_id || !employee_id || !modification_type || !effective_date || !old_values || !new_values) {
       return NextResponse.json(
         { error: 'Faltan campos requeridos: company_id, employee_id, modification_type, effective_date, old_values, new_values' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -113,14 +115,14 @@ export async function POST(request: NextRequest) {
     if (!validTypes.includes(modification_type)) {
       return NextResponse.json(
         { error: `Tipo de modificación inválido. Debe ser uno de: ${validTypes.join(', ')}` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!isSupabaseConfigured()) {
       return NextResponse.json(
         { error: 'Base de datos no configurada' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -128,7 +130,7 @@ export async function POST(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { error: 'Error de configuración de base de datos' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -145,7 +147,7 @@ export async function POST(request: NextRequest) {
         reason,
         document_reference,
         created_by,
-        created_date: new Date().toISOString().split('T')[0] // Solo fecha
+        created_date: new Date().toISOString().split('T')[0], // Solo fecha
       })
       .select(`
         id, modification_type, effective_date, created_date,
@@ -158,7 +160,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ Error creando modificación contractual:', modificationError);
       return NextResponse.json(
         { error: 'Error creando modificación contractual en base de datos' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -173,14 +175,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: modification,
-      message: 'Modificación contractual creada exitosamente'
+      message: 'Modificación contractual creada exitosamente',
     }, { status: 201 });
 
   } catch (error) {
     console.error('Error en POST /api/payroll/contract-modifications:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -194,7 +196,7 @@ export async function PUT(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { error: 'ID de la modificación es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -203,7 +205,7 @@ export async function PUT(request: NextRequest) {
     if (!isSupabaseConfigured()) {
       return NextResponse.json(
         { error: 'Base de datos no configurada' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -211,7 +213,7 @@ export async function PUT(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { error: 'Error de configuración de base de datos' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -219,7 +221,7 @@ export async function PUT(request: NextRequest) {
       .from('contract_modifications')
       .update({
         ...updateData,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -229,14 +231,14 @@ export async function PUT(request: NextRequest) {
       console.error('❌ Error actualizando modificación contractual:', updateError);
       return NextResponse.json(
         { error: 'Error actualizando modificación contractual' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (!updatedModification) {
       return NextResponse.json(
         { error: 'Modificación contractual no encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -245,14 +247,14 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: updatedModification,
-      message: 'Modificación contractual actualizada exitosamente'
+      message: 'Modificación contractual actualizada exitosamente',
     });
 
   } catch (error) {
     console.error('Error en PUT /api/payroll/contract-modifications:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection } from '@/lib/database/databaseSimple';
 
 export const dynamic = 'force-dynamic';
@@ -11,13 +13,13 @@ export async function POST(request: NextRequest) {
       mapping_results, 
       opening_date, 
       company_id,
-      source_description 
+      source_description, 
     } = await request.json();
 
     if (!company_id || !external_balance || !mapping_results || !opening_date) {
       return NextResponse.json({
         success: false,
-        error: 'Faltan parámetros requeridos: company_id, external_balance, mapping_results, opening_date'
+        error: 'Faltan parámetros requeridos: company_id, external_balance, mapping_results, opening_date',
       }, { status: 400 });
     }
 
@@ -25,14 +27,14 @@ export async function POST(request: NextRequest) {
       company_id,
       opening_date,
       mappings: mapping_results.length,
-      source: source_description
+      source: source_description,
     });
 
     const supabase = getDatabaseConnection();
     if (!supabase) {
       return NextResponse.json({
         success: false,
-        error: 'Error de conexión con la base de datos'
+        error: 'Error de conexión con la base de datos',
       }, { status: 500 });
     }
 
@@ -49,7 +51,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: `El asiento no cuadra: Debe=${totalDebit}, Haber=${totalCredit}`,
-        details: { totalDebit, totalCredit, difference: totalDebit - totalCredit }
+        details: { totalDebit, totalCredit, difference: totalDebit - totalCredit },
       }, { status: 400 });
     }
 
@@ -66,7 +68,7 @@ export async function POST(request: NextRequest) {
         total_debit: totalDebit,
         total_credit: totalCredit,
         status: 'draft',
-        created_by: 'balance-analyzer'
+        created_by: 'balance-analyzer',
       })
       .select('id')
       .single();
@@ -75,7 +77,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ Error creando asiento:', entryError);
       return NextResponse.json({
         success: false,
-        error: 'Error creando asiento de apertura: ' + entryError.message
+        error: `Error creando asiento de apertura: ${  entryError.message}`,
       }, { status: 500 });
     }
 
@@ -87,7 +89,7 @@ export async function POST(request: NextRequest) {
       account_name: mapping.mapped_name,
       description: `Apertura - ${mapping.external_account}`,
       debit_amount: mapping.side === 'debit' ? mapping.amount : 0,
-      credit_amount: mapping.side === 'credit' ? mapping.amount : 0
+      credit_amount: mapping.side === 'credit' ? mapping.amount : 0,
     }));
 
     const { error: linesError } = await supabase
@@ -104,7 +106,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ Error creando líneas del asiento:', linesError);
       return NextResponse.json({
         success: false,
-        error: 'Error creando líneas del asiento: ' + linesError.message
+        error: `Error creando líneas del asiento: ${  linesError.message}`,
       }, { status: 500 });
     }
 
@@ -117,7 +119,7 @@ export async function POST(request: NextRequest) {
       source_description,
       analysis_date: new Date().toISOString(),
       total_accounts_mapped: mapping_results.length,
-      average_confidence: mapping_results.reduce((sum: number, m: any) => sum + m.confidence, 0) / mapping_results.length
+      average_confidence: mapping_results.reduce((sum: number, m: any) => sum + m.confidence, 0) / mapping_results.length,
     });
 
     console.log(`✅ Asiento de apertura creado exitosamente: ID=${journalEntry.id}, Líneas=${journalLines.length}`);
@@ -135,16 +137,16 @@ export async function POST(request: NextRequest) {
           accounts_processed: external_balance.length,
           accounts_mapped: mapping_results.length,
           average_confidence: Math.round(mapping_results.reduce((sum: number, m: any) => sum + m.confidence, 0) / mapping_results.length),
-          source: source_description
-        }
-      }
+          source: source_description,
+        },
+      },
     });
 
   } catch (error: any) {
     console.error('❌ Error en POST /api/accounting/balance-analyzer:', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Error interno del servidor'
+      error: error.message || 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -158,7 +160,7 @@ export async function GET(request: NextRequest) {
     if (!company_id) {
       return NextResponse.json({
         success: false,
-        error: 'company_id es requerido'
+        error: 'company_id es requerido',
       }, { status: 400 });
     }
 
@@ -166,7 +168,7 @@ export async function GET(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json({
         success: false,
-        error: 'Error de conexión con la base de datos'
+        error: 'Error de conexión con la base de datos',
       }, { status: 500 });
     }
 
@@ -199,7 +201,7 @@ export async function GET(request: NextRequest) {
       console.error('❌ Error obteniendo historial:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error obteniendo historial: ' + error.message
+        error: `Error obteniendo historial: ${  error.message}`,
       }, { status: 500 });
     }
 
@@ -207,15 +209,15 @@ export async function GET(request: NextRequest) {
       success: true,
       data: {
         opening_entries: openingEntries || [],
-        total_entries: openingEntries?.length || 0
-      }
+        total_entries: openingEntries?.length || 0,
+      },
     });
 
   } catch (error: any) {
     console.error('❌ Error en GET /api/accounting/balance-analyzer:', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Error interno del servidor'
+      error: error.message || 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -257,7 +259,7 @@ async function saveAnalysisAudit(supabase: any, analysisData: any) {
       entry_id: analysisData.entry_id,
       accounts_mapped: analysisData.total_accounts_mapped,
       avg_confidence: analysisData.average_confidence,
-      source: analysisData.source_description
+      source: analysisData.source_description,
     });
   } catch (error) {
     console.warn('⚠️ Error guardando auditoría del análisis:', error);

@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,18 +28,18 @@ export async function GET(request: NextRequest) {
         accounting: {
           activeUsers: Math.floor(baseActivity * 0.6),
           processingQueue: Math.floor(Math.random() * 3),
-          lastActivity: `hace ${Math.floor(Math.random() * 30) + 1} min`
+          lastActivity: `hace ${Math.floor(Math.random() * 30) + 1} min`,
         },
         payroll: {
           activeUsers: Math.floor(baseActivity * 0.4),
           processingQueue: Math.floor(Math.random() * 2),
-          lastActivity: `hace ${Math.floor(Math.random() * 45) + 5} min`
+          lastActivity: `hace ${Math.floor(Math.random() * 45) + 5} min`,
         },
         fixedAssets: {
           activeUsers: Math.floor(baseActivity * 0.2),
           processingQueue: 0,
-          lastActivity: `hace ${Math.floor(Math.random() * 120) + 30} min`
-        }
+          lastActivity: `hace ${Math.floor(Math.random() * 120) + 30} min`,
+        },
       },
 
       // Alertas del sistema
@@ -52,8 +53,8 @@ export async function GET(request: NextRequest) {
         cpuUsage: Number((Math.random() * 25 + 10).toFixed(1)),
         diskUsage: Number((Math.random() * 10 + 45).toFixed(1)),
         networkLatency: Math.floor(Math.random() * 20) + 5,
-        databaseConnections: Math.floor(Math.random() * 5) + 2
-      }
+        databaseConnections: Math.floor(Math.random() * 5) + 2,
+      },
     }
 
     return NextResponse.json({
@@ -63,8 +64,8 @@ export async function GET(request: NextRequest) {
         timestamp: now.toISOString(),
         serverTime: now.toLocaleTimeString('es-CL'),
         uptime: generateUptime(),
-        nextUpdate: new Date(now.getTime() + 30000).toISOString() // Próxima actualización en 30s
-      }
+        nextUpdate: new Date(now.getTime() + 30000).toISOString(), // Próxima actualización en 30s
+      },
     })
 
   } catch (error) {
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error al obtener estadísticas en tiempo real',
-      details: error instanceof Error ? error.message : 'Error desconocido'
+      details: error instanceof Error ? error.message : 'Error desconocido',
     }, { status: 500 })
   }
 }
@@ -85,7 +86,7 @@ function generateSystemAlerts(hour: number, minute: number) {
     alerts.push({
       type: 'info',
       message: 'Backup automático en progreso',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     })
   }
 
@@ -94,7 +95,7 @@ function generateSystemAlerts(hour: number, minute: number) {
     alerts.push({
       type: 'success',
       message: 'Pico de actividad detectado - sistema operando normalmente',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     })
   }
 
@@ -103,7 +104,7 @@ function generateSystemAlerts(hour: number, minute: number) {
     alerts.push({
       type: 'warning',
       message: 'Mantenimiento programado en 15 minutos',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     })
   }
 
@@ -119,7 +120,7 @@ function generateRecentActivity() {
     'Nuevo empleado registrado',
     'Indicadores económicos actualizados',
     'Asiento contable creado',
-    'Reporte de depreciación generado'
+    'Reporte de depreciación generado',
   ]
 
   const recentActivities = []
@@ -133,7 +134,7 @@ function generateRecentActivity() {
       action: activity,
       timestamp: new Date(Date.now() - minutesAgo * 60 * 1000).toISOString(),
       timeAgo: `hace ${minutesAgo} min`,
-      user: 'Empresa Demo'
+      user: 'Empresa Demo',
     })
   }
 
@@ -151,6 +152,6 @@ function generateUptime() {
     hours,
     minutes,
     totalHours: days * 24 + hours + (minutes / 60),
-    percentage: Number((99.5 + Math.random() * 0.48).toFixed(2)) // 99.5-99.98%
+    percentage: Number((99.5 + Math.random() * 0.48).toFixed(2)), // 99.5-99.98%
   }
 }

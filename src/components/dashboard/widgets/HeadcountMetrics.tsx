@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, Badge } from '@/components/ui'
+
 import {
   Users,
   TrendingUp,
@@ -13,8 +13,10 @@ import {
   Building2,
   Target,
   RefreshCw,
-  Sparkles
+  Sparkles,
 } from 'lucide-react'
+
+import { Card, CardContent, Badge } from '@/components/ui'
 
 interface HeadcountData {
   totalEmployees: number
@@ -69,15 +71,15 @@ export function HeadcountMetrics() {
               { name: 'Operaciones', count: 12, percentage: 48, growth: 2 },
               { name: 'Ventas', count: 6, percentage: 24, growth: 1 },
               { name: 'Administración', count: 4, percentage: 16, growth: 0 },
-              { name: 'TI', count: 3, percentage: 12, growth: 0 }
+              { name: 'TI', count: 3, percentage: 12, growth: 0 },
             ],
             monthlyTrend: [
               { month: 'Ago', headcount: 23, cost: 21850000 },
               { month: 'Sep', headcount: 25, cost: 23750000 },
               { month: 'Oct', headcount: 26, cost: 24700000 },
-              { month: 'Nov', headcount: 27, cost: 25650000 }
+              { month: 'Nov', headcount: 27, cost: 25650000 },
             ],
-            lastUpdate: currentDate
+            lastUpdate: currentDate,
           })
         }
       } catch (error) {
@@ -95,14 +97,14 @@ export function HeadcountMetrics() {
           departmentBreakdown: [
             { name: 'Operaciones', count: 12, percentage: 50, growth: 1 },
             { name: 'Administración', count: 8, percentage: 33, growth: 1 },
-            { name: 'Otros', count: 4, percentage: 17, growth: 0 }
+            { name: 'Otros', count: 4, percentage: 17, growth: 0 },
           ],
           monthlyTrend: [
             { month: 'Sep', headcount: 22, cost: 19800000 },
             { month: 'Oct', headcount: 24, cost: 21600000 },
-            { month: 'Nov', headcount: 25, cost: 22500000 }
+            { month: 'Nov', headcount: 25, cost: 22500000 },
           ],
-          lastUpdate: new Date().toISOString()
+          lastUpdate: new Date().toISOString(),
         })
       } finally {
         setIsLoading(false)
@@ -113,17 +115,15 @@ export function HeadcountMetrics() {
 
     // Auto-refresh cada 30 minutos
     const interval = setInterval(loadHeadcountData, 1800000)
-    return () => clearInterval(interval)
+    return () => { clearInterval(interval); }
   }, [])
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount)
-  }
 
   const getTrendIcon = (value: number) => {
     if (value > 0) return <TrendingUp className="w-4 h-4 text-green-600" />
@@ -137,7 +137,7 @@ export function HeadcountMetrics() {
         <CardContent className="p-6">
           <div className="text-center">
             <div className="relative w-16 h-16 mx-auto mb-4">
-              <div className="w-full h-full bg-gradient-to-br from-green-100 to-blue-100 rounded-full animate-pulse"></div>
+              <div className="w-full h-full bg-gradient-to-br from-green-100 to-blue-100 rounded-full animate-pulse" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <RefreshCw className="w-6 h-6 text-green-600 animate-spin" />
               </div>
@@ -267,8 +267,8 @@ export function HeadcountMetrics() {
               <div key={index} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 rounded-full" style={{
-                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'][index] || '#6b7280'
-                  }}></div>
+                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'][index] || '#6b7280',
+                  }} />
                   <span className="text-sm font-medium text-gray-700">{dept.name}</span>
                   <Badge variant="outline" className="text-xs">
                     {dept.percentage}%
@@ -311,7 +311,7 @@ export function HeadcountMetrics() {
                 day: '2-digit',
                 month: 'short',
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
               })}
             </span>
             <span>
@@ -329,7 +329,7 @@ export function HeadcountMetrics() {
                   'bg-gradient-to-r from-red-400 to-red-600'
                 }`}
                 style={{ width: `${Math.min(data.productivityScore, 100)}%` }}
-              ></div>
+               />
             </div>
           </div>
         </div>

@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection } from '@/lib/database/databaseSimple';
 
 /**
@@ -12,13 +14,13 @@ export async function POST(request: NextRequest) {
       company_id,
       period_year,
       period_month,
-      preview = false 
+      preview = false, 
     } = body;
 
     if (!company_id || !period_year || !period_month) {
       return NextResponse.json(
         { success: false, error: 'company_id, period_year y period_month son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -27,7 +29,7 @@ export async function POST(request: NextRequest) {
       company_id,
       period_year,
       period_month,
-      preview
+      preview,
     });
 
     const supabase = getDatabaseConnection();
@@ -51,7 +53,7 @@ export async function POST(request: NextRequest) {
     if (liquidationsError || !liquidations || liquidations.length === 0) {
       return NextResponse.json(
         { success: false, error: 'No se encontraron liquidaciones aprobadas para el período especificado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -69,27 +71,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: 'Asiento contable desbalanceado',
-        debug: { totalDebit, totalCredit, difference: totalDebit - totalCredit }
+        debug: { totalDebit, totalCredit, difference: totalDebit - totalCredit },
       }, { status: 400 });
     }
 
     const result = {
       entry_type: 'payroll',
-      period: period,
+      period,
       description: `Provisión Remuneraciones ${formatPeriod(period)} - ${liquidations.length} empleados`,
       lines: journalLines,
       totals: {
         debit_total: totalDebit,
         credit_total: totalCredit,
-        is_balanced: Math.abs(totalDebit - totalCredit) < 0.01
+        is_balanced: Math.abs(totalDebit - totalCredit) < 0.01,
       },
       payroll_data: {
         employee_count: liquidations.length,
         period_year,
         period_month,
         total_haberes: liquidations.reduce((sum, liq) => sum + (liq.total_gross_income || 0), 0),
-        total_descuentos: liquidations.reduce((sum, liq) => sum + (liq.total_deductions || 0), 0)
-      }
+        total_descuentos: liquidations.reduce((sum, liq) => sum + (liq.total_deductions || 0), 0),
+      },
     };
 
     // Si no es preview, guardar el asiento
@@ -105,7 +107,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: 'Error al guardar el asiento en el libro diario. El asiento se generó pero no se pudo guardar.',
           debug: error instanceof Error ? error.message : 'Error desconocido',
-          data: result
+          data: result,
         }, { status: 500 });
       }
     }
@@ -114,12 +116,12 @@ export async function POST(request: NextRequest) {
       lines: journalLines.length,
       total_debit: totalDebit,
       total_credit: totalCredit,
-      is_balanced: result.totals.is_balanced
+      is_balanced: result.totals.is_balanced,
     });
 
     return NextResponse.json({
       success: true,
-      data: result
+      data: result,
     });
 
   } catch (error) {
@@ -127,7 +129,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Error desconocido'
+      details: error instanceof Error ? error.message : 'Error desconocido',
     }, { status: 500 });
   }
 }
@@ -155,7 +157,7 @@ function createPayrollJournalLines(liquidations: any[], period: string) {
         account_name: 'Sueldo Base',
         description: `${rut} | ${apellidos} ${nombres} | ${cargo} | Sueldo Base`,
         debit_amount: liquidation.base_salary,
-        credit_amount: 0
+        credit_amount: 0,
       });
     }
 
@@ -167,7 +169,7 @@ function createPayrollJournalLines(liquidations: any[], period: string) {
         account_name: 'Gratificaciones',
         description: `${rut} | ${apellidos} ${nombres} | ${cargo} | Gratificación`,
         debit_amount: liquidation.gratification,
-        credit_amount: 0
+        credit_amount: 0,
       });
     }
 
@@ -179,7 +181,7 @@ function createPayrollJournalLines(liquidations: any[], period: string) {
         account_name: 'Horas Extras',
         description: `${rut} | ${apellidos} ${nombres} | ${cargo} | Horas Extras`,
         debit_amount: liquidation.overtime_amount,
-        credit_amount: 0
+        credit_amount: 0,
       });
     }
 
@@ -193,7 +195,7 @@ function createPayrollJournalLines(liquidations: any[], period: string) {
         account_name: 'AFP por Pagar',
         description: `${rut} | ${apellidos} ${nombres} | ${cargo} | AFP`,
         debit_amount: 0,
-        credit_amount: liquidation.afp_amount
+        credit_amount: liquidation.afp_amount,
       });
     }
 
@@ -205,7 +207,7 @@ function createPayrollJournalLines(liquidations: any[], period: string) {
         account_name: 'Salud por Pagar',
         description: `${rut} | ${apellidos} ${nombres} | ${cargo} | Salud`,
         debit_amount: 0,
-        credit_amount: liquidation.health_amount
+        credit_amount: liquidation.health_amount,
       });
     }
 
@@ -217,7 +219,7 @@ function createPayrollJournalLines(liquidations: any[], period: string) {
         account_name: 'Cesantía por Pagar',
         description: `${rut} | ${apellidos} ${nombres} | ${cargo} | Cesantía`,
         debit_amount: 0,
-        credit_amount: liquidation.unemployment_amount
+        credit_amount: liquidation.unemployment_amount,
       });
     }
 
@@ -229,7 +231,7 @@ function createPayrollJournalLines(liquidations: any[], period: string) {
         account_name: 'Impuesto 2da Categoría por Pagar',
         description: `${rut} | ${apellidos} ${nombres} | ${cargo} | Impuesto Único`,
         debit_amount: 0,
-        credit_amount: liquidation.income_tax_amount
+        credit_amount: liquidation.income_tax_amount,
       });
     }
 
@@ -241,7 +243,7 @@ function createPayrollJournalLines(liquidations: any[], period: string) {
         account_name: 'Líquidos por Pagar',
         description: `${rut} | ${apellidos} ${nombres} | ${cargo} | Líquido a Recibir`,
         debit_amount: 0,
-        credit_amount: liquidation.net_salary
+        credit_amount: liquidation.net_salary,
       });
     }
   }
@@ -257,7 +259,7 @@ function formatPeriod(periodo: string): string {
   
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
   ];
   
   const monthName = monthNames[parseInt(month) - 1];
@@ -282,7 +284,7 @@ async function savePayrollJournalEntry(companyId: string, entryData: any) {
     status: 'approved',
     total_debit: entryData.totals.debit_total,
     total_credit: entryData.totals.credit_total,
-    created_by: 'system'
+    created_by: 'system',
   };
 
   const { data: journalEntry, error: entryError } = await supabase

@@ -4,8 +4,9 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+
+import { mergeWithDynamicConfig } from './chileanPayrollConfig';
 import { PayrollCalculator } from './payrollCalculator';
-import { CHILEAN_PAYROLL_CONFIG, mergeWithDynamicConfig } from './chileanPayrollConfig';
 
 // Configuración Supabase 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -20,9 +21,9 @@ const supabase = createClient(
   supabaseServiceKey ? {
     auth: {
       autoRefreshToken: false,
-      persistSession: false
-    }
-  } : {}
+      persistSession: false,
+    },
+  } : {},
 );
 
 export interface LiquidationRequest {
@@ -57,7 +58,7 @@ export interface LiquidationResponse {
 }
 
 export class LiquidationService {
-  private companyId: string;
+  private readonly companyId: string;
 
   constructor(companyId: string) {
     this.companyId = companyId;
@@ -121,7 +122,7 @@ export class LiquidationService {
       console.log('Employee query result:', { 
         found: !!employee, 
         error: employeeError?.message,
-        keyType: supabaseServiceKey ? 'SERVICE' : 'ANON'
+        keyType: supabaseServiceKey ? 'SERVICE' : 'ANON',
       });
 
       // Si todavía falla, intentar consulta más simple
@@ -138,7 +139,7 @@ export class LiquidationService {
           console.error('Simple employee fetch error:', simpleResult.error);
           return {
             success: false,
-            error: `Empleado no encontrado: ${simpleResult.error?.message || employeeError?.message || 'RLS blocking access'}`
+            error: `Empleado no encontrado: ${simpleResult.error?.message || employeeError?.message || 'RLS blocking access'}`,
           };
         }
         
@@ -178,7 +179,7 @@ export class LiquidationService {
         payrollConfig = {
           afp_code: 'HABITAT',
           health_institution_code: 'FONASA',
-          family_allowances: 0
+          family_allowances: 0,
         };
       }
 
@@ -186,7 +187,7 @@ export class LiquidationService {
         console.error('Employee fetch error:', employeeError);
         return {
           success: false,
-          error: `Empleado no encontrado: ${employeeError?.message || 'Unknown error'}`
+          error: `Empleado no encontrado: ${employeeError?.message || 'Unknown error'}`,
         };
       }
 
@@ -195,7 +196,7 @@ export class LiquidationService {
       if (!activeContract) {
         return {
           success: false,
-          error: 'Empleado no tiene contrato activo'
+          error: 'Empleado no tiene contrato activo',
         };
       }
 
@@ -223,7 +224,7 @@ export class LiquidationService {
       
       // Usar configuración combinada
       settingsData = {
-        settings: mergedConfig
+        settings: mergedConfig,
       };
 
       // 3. Preparar datos para el calculador
@@ -236,7 +237,7 @@ export class LiquidationService {
         contract_type: activeContract.contract_type,
         afp_code: payrollConfig?.afp_code || 'HABITAT',
         health_institution_code: payrollConfig?.health_institution_code || 'FONASA',
-        family_allowances: payrollConfig?.family_allowances || 0
+        family_allowances: payrollConfig?.family_allowances || 0,
       };
 
       const periodData = {
@@ -244,7 +245,7 @@ export class LiquidationService {
         month: request.period_month,
         days_worked: request.days_worked || 30,
         worked_hours: request.worked_hours || 0,
-        overtime_hours: request.overtime_hours || 0
+        overtime_hours: request.overtime_hours || 0,
       };
 
       // 4. Inicializar calculador con configuración de la empresa
@@ -255,7 +256,7 @@ export class LiquidationService {
         employeeData,
         periodData,
         request.additional_income || {},
-        request.additional_deductions || {}
+        request.additional_deductions || {},
       );
 
       // 6. Guardar liquidación si se solicita (opcional por ahora)
@@ -308,9 +309,9 @@ export class LiquidationService {
               
               calculation_config: liquidationResult.calculation_config,
               status: 'draft',
-              updated_at: new Date().toISOString()
+              updated_at: new Date().toISOString(),
             }, {
-              onConflict: 'company_id,employee_id,period_year,period_month'
+              onConflict: 'company_id,employee_id,period_year,period_month',
             })
             .select()
             .single();
@@ -328,15 +329,15 @@ export class LiquidationService {
         data: {
           liquidation: liquidationResult,
           saved: savedLiquidation,
-          warnings: liquidationResult.warnings
-        }
+          warnings: liquidationResult.warnings,
+        },
       };
 
     } catch (error) {
       console.error('Error in frontend liquidation service:', error);
       return {
         success: false,
-        error: `Error interno: ${error instanceof Error ? error.message : 'Unknown error'}`
+        error: `Error interno: ${error instanceof Error ? error.message : 'Unknown error'}`,
       };
     }
   }
@@ -370,19 +371,19 @@ export class LiquidationService {
       if (error) {
         return {
           success: false,
-          error: `Error al obtener liquidaciones: ${error.message}`
+          error: `Error al obtener liquidaciones: ${error.message}`,
         };
       }
 
       return {
         success: true,
-        data: liquidations || []
+        data: liquidations || [],
       };
 
     } catch (error) {
       return {
         success: false,
-        error: `Error interno: ${error instanceof Error ? error.message : 'Unknown error'}`
+        error: `Error interno: ${error instanceof Error ? error.message : 'Unknown error'}`,
       };
     }
   }

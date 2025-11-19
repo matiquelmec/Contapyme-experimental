@@ -28,13 +28,13 @@ export function useAuth(): AuthContextType {
       email: 'demo@contapyme.cl',
       name: 'Usuario Demo',
       role: 'admin',
-      companyId: 'demo-company'
+      companyId: 'demo-company',
     },
     login: async () => {},
     logout: async () => {},
     loading: false,
     isAuthenticated: true,
-    updateUser: () => {}
+    updateUser: () => {},
   }
 }
 

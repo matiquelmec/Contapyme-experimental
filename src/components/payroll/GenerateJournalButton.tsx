@@ -1,15 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/Button';
+
 import { 
   Loader2, 
   CheckCircle, 
   AlertCircle, 
   Eye,
   Calculator,
-  Zap
+  Zap,
 } from 'lucide-react';
+
+import { Button } from '@/components/ui/Button';
 
 interface GenerateJournalButtonProps {
   period: string;
@@ -30,7 +32,7 @@ export default function GenerateJournalButton({
   onError,
   className = '',
   size = 'md',
-  variant = 'primary'
+  variant = 'primary',
 }: GenerateJournalButtonProps) {
   const [generating, setGenerating] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -48,7 +50,7 @@ export default function GenerateJournalButton({
         period, 
         year: parseInt(year), 
         month: parseInt(month),
-        autoIntegrate 
+        autoIntegrate, 
       });
 
       const response = await fetch('/api/payroll/libro-remuneraciones/generate-journal', {
@@ -60,7 +62,7 @@ export default function GenerateJournalButton({
           period_year: parseInt(year),
           period_month: parseInt(month),
           company_id: companyId,
-          auto_integrate: autoIntegrate
+          auto_integrate: autoIntegrate,
         }),
       });
 
@@ -113,7 +115,7 @@ export default function GenerateJournalButton({
   };
 
   // Estado de éxito
-  if (result && result.success) {
+  if (result?.success) {
     return (
       <div className="space-y-2">
         <div className="flex items-center space-x-2 text-green-600 text-sm font-medium">

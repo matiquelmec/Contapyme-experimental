@@ -1,7 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { databaseSimple } from '@/lib/database/databaseSimple';
-import { CreateFixedAssetData, FixedAsset } from '@/types';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { DEMO_USER_ID } from '@/lib/constants';
+import { databaseSimple } from '@/lib/database/databaseSimple';
+import type { CreateFixedAssetData } from '@/types';
 
 // Hacer la ruta dinámica explícitamente
 export const dynamic = 'force-dynamic';
@@ -27,12 +29,12 @@ export async function GET(request: NextRequest) {
     const params: any[] = [DEMO_USER_ID];  // Inicializar con DEMO_USER_ID
     
     if (status && status !== 'all') {
-      query += ' AND fa.status = $' + (params.length + 1);
+      query += ` AND fa.status = $${  params.length + 1}`;
       params.push(status);
     }
     
     if (category && category !== 'all') {
-      query += ' AND fa.category = $' + (params.length + 1);
+      query += ` AND fa.category = $${  params.length + 1}`;
       params.push(category);
     }
 
@@ -46,13 +48,13 @@ export async function GET(request: NextRequest) {
       if (error.message?.includes('does not exist') || error.code === '42P01') {
         return NextResponse.json({ 
           assets: [],
-          message: 'Tabla de activos fijos no existe - ejecutar migración SQL' 
+          message: 'Tabla de activos fijos no existe - ejecutar migración SQL', 
         });
       }
       // Otros errores
       return NextResponse.json({ 
         assets: [],
-        message: 'Error al cargar activos: ' + error.message 
+        message: `Error al cargar activos: ${  error.message}`, 
       });
     }
 
@@ -62,7 +64,7 @@ export async function GET(request: NextRequest) {
     // En modo demo, retornar array vacío en lugar de error 500
     return NextResponse.json({ 
       assets: [],
-      message: 'Funcionalidad de activos fijos en desarrollo' 
+      message: 'Funcionalidad de activos fijos en desarrollo', 
     });
   }
 }
@@ -78,21 +80,21 @@ export async function POST(request: NextRequest) {
     if (!body.name || !body.category || !body.purchase_value || !body.useful_life_years) {
       return NextResponse.json(
         { error: 'Campos requeridos: name, category, purchase_value, useful_life_years' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (body.purchase_value <= 0 || body.useful_life_years <= 0) {
       return NextResponse.json(
         { error: 'El valor de compra y años de vida útil deben ser positivos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (body.residual_value < 0 || body.residual_value >= body.purchase_value) {
       return NextResponse.json(
         { error: 'El valor residual debe ser mayor o igual a 0 y menor al valor de compra' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -143,21 +145,21 @@ export async function POST(request: NextRequest) {
       body.brand || null,
       body.model || null,
       body.location || null,
-      body.responsible_person || null
+      body.responsible_person || null,
     ]);
 
     if (error) {
       console.error('Error creating fixed asset:', error);
       return NextResponse.json(
         { error: 'Error al crear activo fijo' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (!data || data.length === 0) {
       return NextResponse.json(
         { error: 'No se pudo crear el activo fijo' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -186,14 +188,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ 
       asset: newAsset,
-      message: 'Activo fijo creado exitosamente' 
+      message: 'Activo fijo creado exitosamente', 
     }, { status: 201 });
 
   } catch (error) {
     console.error('Unexpected error:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

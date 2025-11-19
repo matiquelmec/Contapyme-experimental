@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import Link from 'next/link';
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, Badge } from '@/components/ui';
-import { Users, FileText, Clock, Calendar, BarChart3, Plus, ChevronRight, Settings, FileSpreadsheet, DollarSign, Activity, TrendingUp, ArrowRight, Database, Sparkles, FileX, Calculator, AlertTriangle, Shield } from 'lucide-react';
+
+import { Users, FileText, Clock, BarChart3, Plus, Settings, FileSpreadsheet, DollarSign, TrendingUp, Sparkles, Calculator, AlertTriangle, Shield } from 'lucide-react';
 
 interface PayrollStats {
   totalEmployees: number;
@@ -17,7 +18,7 @@ export default function PayrollPage() {
     totalEmployees: 0,
     activeContracts: 0,
     monthlyPayroll: 0,
-    upcomingEvents: 0
+    upcomingEvents: 0,
   });
   const [loadingStats, setLoadingStats] = useState(true);
 
@@ -35,9 +36,7 @@ export default function PayrollPage() {
 
       if (response.ok && data.success) {
         const employees = data.data || [];
-        const activeContracts = employees.reduce((count: number, emp: any) => {
-          return count + (emp.employment_contracts?.length || 0);
-        }, 0);
+        const activeContracts = employees.reduce((count: number, emp: any) => count + (emp.employment_contracts?.length || 0), 0);
 
         const monthlyPayroll = employees.reduce((total: number, emp: any) => {
           const activeContract = emp.employment_contracts?.find((contract: any) => contract.status === 'active');
@@ -46,9 +45,9 @@ export default function PayrollPage() {
 
         setStats({
           totalEmployees: employees.length,
-          activeContracts: activeContracts,
-          monthlyPayroll: monthlyPayroll,
-          upcomingEvents: 3 // Simulado para demostración
+          activeContracts,
+          monthlyPayroll,
+          upcomingEvents: 3, // Simulado para demostración
         });
       }
     } catch (error) {
@@ -58,13 +57,11 @@ export default function PayrollPage() {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -85,7 +82,7 @@ export default function PayrollPage() {
               <div className="px-6 py-4 text-center">
                 <div className="text-lg font-semibold text-gray-900">
                   {loadingStats ? (
-                    <div className="animate-pulse bg-gray-200 rounded h-5 w-8 mx-auto"></div>
+                    <div className="animate-pulse bg-gray-200 rounded h-5 w-8 mx-auto" />
                   ) : (
                     stats.totalEmployees
                   )}
@@ -95,9 +92,9 @@ export default function PayrollPage() {
               <div className="px-6 py-4 text-center">
                 <div className="text-lg font-semibold text-gray-900">
                   {loadingStats ? (
-                    <div className="animate-pulse bg-gray-200 rounded h-5 w-8 mx-auto"></div>
+                    <div className="animate-pulse bg-gray-200 rounded h-5 w-8 mx-auto" />
                   ) : (
-                    formatCurrency(stats.monthlyPayroll / 1000000).replace('$', '$') + 'M'
+                    `${formatCurrency(stats.monthlyPayroll / 1000000).replace('$', '$')  }M`
                   )}
                 </div>
                 <div className="text-sm text-gray-600">Nómina Mensual</div>
@@ -105,7 +102,7 @@ export default function PayrollPage() {
               <div className="px-6 py-4 text-center">
                 <div className="text-lg font-semibold text-gray-900">
                   {loadingStats ? (
-                    <div className="animate-pulse bg-gray-200 rounded h-5 w-8 mx-auto"></div>
+                    <div className="animate-pulse bg-gray-200 rounded h-5 w-8 mx-auto" />
                   ) : (
                     stats.activeContracts
                   )}

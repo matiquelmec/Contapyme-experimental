@@ -45,7 +45,7 @@ export interface EmployeeData {
  */
 export function generateEmployeeJournalLines(
   employee: EmployeeData,
-  startLineNumber: number
+  startLineNumber: number,
 ): PayrollLine[] {
   const lines: PayrollLine[] = [];
   let lineNumber = startLineNumber;
@@ -62,7 +62,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: employee.baseSalary,
       credit_amount: 0,
-      line_description: `${employeeDesc} | Sueldo Base`
+      line_description: `${employeeDesc} | Sueldo Base`,
     });
   }
   
@@ -74,7 +74,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: employee.overtimeAmount,
       credit_amount: 0,
-      line_description: `${employeeDesc} | Horas Extras`
+      line_description: `${employeeDesc} | Horas Extras`,
     });
   }
   
@@ -86,7 +86,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: employee.bonuses,
       credit_amount: 0,
-      line_description: `${employeeDesc} | Bonificaciones`
+      line_description: `${employeeDesc} | Bonificaciones`,
     });
   }
   
@@ -98,7 +98,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: 20000,
       credit_amount: 0,
-      line_description: `${employeeDesc} | Asignación Colación`
+      line_description: `${employeeDesc} | Asignación Colación`,
     });
   }
   
@@ -110,7 +110,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: 20000,
       credit_amount: 0,
-      line_description: `${employeeDesc} | Asignación Movilización`
+      line_description: `${employeeDesc} | Asignación Movilización`,
     });
   }
   
@@ -122,7 +122,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: employee.gratificationArt50,
       credit_amount: 0,
-      line_description: `${employeeDesc} | Gratificación Legal Art. 50`
+      line_description: `${employeeDesc} | Gratificación Legal Art. 50`,
     });
   }
   
@@ -136,7 +136,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: employee.socialAfp,
       credit_amount: 0,
-      line_description: `${employeeDesc} | 1% Social AFP 0.1%`
+      line_description: `${employeeDesc} | 1% Social AFP 0.1%`,
     });
   }
   
@@ -148,7 +148,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: employee.socialEsperanza,
       credit_amount: 0,
-      line_description: `${employeeDesc} | 1% Social Esperanza Vida 0.9%`
+      line_description: `${employeeDesc} | 1% Social Esperanza Vida 0.9%`,
     });
   }
   
@@ -160,7 +160,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: employee.sisEmployer,
       credit_amount: 0,
-      line_description: `${employeeDesc} | SIS Empleador 1.88%`
+      line_description: `${employeeDesc} | SIS Empleador 1.88%`,
     });
   }
   
@@ -173,7 +173,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: employee.mutualEmployer,
       credit_amount: 0,
-      line_description: `${employeeDesc} | ACHS Empleador 0.93% (Base: $${baseImponible.toLocaleString('es-CL')})`
+      line_description: `${employeeDesc} | ACHS Empleador 0.93% (Base: $${baseImponible.toLocaleString('es-CL')})`,
     });
   }
   
@@ -187,7 +187,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: employee.unemploymentEmployer,
       credit_amount: 0,
-      line_description: `${employeeDesc} | Cesantía Empleador ${cesantiaRate} (${cesantiaType})`
+      line_description: `${employeeDesc} | Cesantía Empleador ${cesantiaRate} (${cesantiaType})`,
     });
   }
   
@@ -201,7 +201,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: 0,
       credit_amount: employee.afpAmount,
-      line_description: `${employeeDesc} | Previsión AFP`
+      line_description: `${employeeDesc} | Previsión AFP`,
     });
   }
   
@@ -213,7 +213,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: 0,
       credit_amount: employee.afpCommission,
-      line_description: `${employeeDesc} | Comisión AFP`
+      line_description: `${employeeDesc} | Comisión AFP`,
     });
   }
   
@@ -225,7 +225,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: 0,
       credit_amount: employee.healthAmount,
-      line_description: `${employeeDesc} | Cotización Salud`
+      line_description: `${employeeDesc} | Cotización Salud`,
     });
   }
   
@@ -239,7 +239,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: 0,
       credit_amount: employee.unemploymentEmployee,
-      line_description: `${employeeDesc} | Cesantía Trabajador ${cesantiaRate} (${cesantiaType})`
+      line_description: `${employeeDesc} | Cesantía Trabajador ${cesantiaRate} (${cesantiaType})`,
     });
   }
   
@@ -251,7 +251,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: 0,
       credit_amount: employee.incomeTax,
-      line_description: `${employeeDesc} | Impuesto Único`
+      line_description: `${employeeDesc} | Impuesto Único`,
     });
   }
   
@@ -263,7 +263,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: 0,
       credit_amount: employee.liquidAmount,
-      line_description: `${employeeDesc} | Líquido a Recibir`
+      line_description: `${employeeDesc} | Líquido a Recibir`,
     });
   }
   
@@ -277,7 +277,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: 0,
       credit_amount: employee.socialAfp,
-      line_description: `${employeeDesc} | 1% Social AFP por Pagar`
+      line_description: `${employeeDesc} | 1% Social AFP por Pagar`,
     });
   }
   
@@ -289,7 +289,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: 0,
       credit_amount: employee.socialEsperanza,
-      line_description: `${employeeDesc} | Esperanza Vida por Pagar`
+      line_description: `${employeeDesc} | Esperanza Vida por Pagar`,
     });
   }
   
@@ -301,7 +301,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: 0,
       credit_amount: employee.sisEmployer,
-      line_description: `${employeeDesc} | SIS por Pagar 1.88%`
+      line_description: `${employeeDesc} | SIS por Pagar 1.88%`,
     });
   }
   
@@ -313,7 +313,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: 0,
       credit_amount: employee.mutualEmployer,
-      line_description: `${employeeDesc} | ACHS por Pagar 0.93%`
+      line_description: `${employeeDesc} | ACHS por Pagar 0.93%`,
     });
   }
   
@@ -327,7 +327,7 @@ export function generateEmployeeJournalLines(
       line_number: lineNumber++,
       debit_amount: 0,
       credit_amount: employee.unemploymentEmployer,
-      line_description: `${employeeDesc} | Cesantía Empleador ${cesantiaRate} por Pagar (${cesantiaType})`
+      line_description: `${employeeDesc} | Cesantía Empleador ${cesantiaRate} por Pagar (${cesantiaType})`,
     });
   }
   
@@ -340,7 +340,7 @@ export function generateEmployeeJournalLines(
 export function generatePayrollJournalEntry(
   employees: EmployeeData[],
   period: string,
-  companyId: string
+  companyId: string,
 ): any {
   const lines: PayrollLine[] = [];
   let lineNumber = 1;
@@ -373,6 +373,6 @@ export function generatePayrollJournalEntry(
     entry_type: 'manual',
     source_type: 'payroll_liquidation',
     source_period: period,
-    lines
+    lines,
   };
 }

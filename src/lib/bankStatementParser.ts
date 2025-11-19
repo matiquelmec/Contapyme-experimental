@@ -35,10 +35,10 @@ interface ParsedBankData {
 }
 
 export class UniversalBankStatementParser {
-  private content: string;
-  private lines: string[];
+  private readonly content: string;
+  private readonly lines: string[];
   private delimiter: string = ',';
-  private dateFormats = [
+  private readonly dateFormats = [
     /(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/,    // DD/MM/YYYY
     /(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})/,    // YYYY-MM-DD
     /(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2})/,    // DD/MM/YY
@@ -111,7 +111,7 @@ export class UniversalBankStatementParser {
       period,
       totalCredits,
       totalDebits,
-      confidence
+      confidence,
     };
   }
 
@@ -238,7 +238,7 @@ export class UniversalBankStatementParser {
       'monto', 'amount', 'valor', 'importe',
       'cargo', 'abono', 'debito', 'credito', 'debit', 'credit',
       'saldo', 'balance',
-      'referencia', 'reference', 'ref'
+      'referencia', 'reference', 'ref',
     ];
     
     let matchCount = 0;
@@ -263,7 +263,7 @@ export class UniversalBankStatementParser {
       balance: -1,
       reference: -1,
       destinationMessage: -1,
-      rutColumn: -1
+      rutColumn: -1,
     };
 
     console.log('🗂️ Analyzing headers for column mapping:', headers);
@@ -462,7 +462,7 @@ export class UniversalBankStatementParser {
         balance,
         reference,
         destinationMessage,
-        rut
+        rut,
       };
 
     } catch (error) {
@@ -490,7 +490,7 @@ export class UniversalBankStatementParser {
       date,
       description,
       amount: Math.abs(amounts[0]),
-      type
+      type,
     };
   }
 
@@ -534,7 +534,7 @@ export class UniversalBankStatementParser {
       date,
       description,
       amount: Math.abs(amounts[0]),
-      type
+      type,
     };
   }
 
@@ -591,7 +591,7 @@ export class UniversalBankStatementParser {
       'sep': 9, 'septiembre': 9,
       'oct': 10, 'octubre': 10,
       'nov': 11, 'noviembre': 11,
-      'dic': 12, 'diciembre': 12
+      'dic': 12, 'diciembre': 12,
     };
     
     return months[monthName.toLowerCase()] || 0;
@@ -618,7 +618,7 @@ export class UniversalBankStatementParser {
     const patterns = [
       /\$?\s?([\d,]+\.?\d*)/g,
       /\$?\s?([\d.]+,?\d*)/g,
-      /([\d]+)/g
+      /([\d]+)/g,
     ];
     
     for (const pattern of patterns) {
@@ -642,12 +642,12 @@ export class UniversalBankStatementParser {
     
     const creditKeywords = [
       'abono', 'deposito', 'transferencia recibida', 'ingreso',
-      'credito', 'pago recibido', 'reembolso', 'devolucion'
+      'credito', 'pago recibido', 'reembolso', 'devolucion',
     ];
     
     const debitKeywords = [
       'cargo', 'pago', 'compra', 'giro', 'retiro',
-      'debito', 'transferencia enviada', 'comision', 'mantencion'
+      'debito', 'transferencia enviada', 'comision', 'mantencion',
     ];
     
     for (const keyword of creditKeywords) {
@@ -697,7 +697,7 @@ export class UniversalBankStatementParser {
       'Banco BICE': ['bice', 'banco bice'],
       'Banco Security': ['security', 'banco security'],
       'Banco Itaú': ['itau', 'itaú', 'banco itau'],
-      'Banco Consorcio': ['consorcio', 'banco consorcio']
+      'Banco Consorcio': ['consorcio', 'banco consorcio'],
     };
     
     for (const [bankName, keywords] of Object.entries(banks)) {
@@ -718,12 +718,12 @@ export class UniversalBankStatementParser {
       /cuenta\s*[:nN°#]?\s*([\d\-]+)/i,
       /n[úu]mero\s*[:nN°#]?\s*([\d\-]+)/i,
       /account\s*[:nN°#]?\s*([\d\-]+)/i,
-      /cta\s*[:nN°#]?\s*([\d\-]+)/i
+      /cta\s*[:nN°#]?\s*([\d\-]+)/i,
     ];
     
     for (const pattern of patterns) {
       const match = this.content.match(pattern);
-      if (match && match[1]) {
+      if (match?.[1]) {
         const account = match[1].replace(/\D/g, '');
         if (account.length >= 4) {
           return `****${account.slice(-4)}`;
@@ -745,9 +745,7 @@ export class UniversalBankStatementParser {
     const firstDate = dates[0];
     const lastDate = dates[dates.length - 1];
     
-    const formatMonth = (date: Date) => {
-      return `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-    };
+    const formatMonth = (date: Date) => `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
     
     if (firstDate.getMonth() === lastDate.getMonth() && 
         firstDate.getFullYear() === lastDate.getFullYear()) {
@@ -760,7 +758,7 @@ export class UniversalBankStatementParser {
   // Enrich transaction with RUT and accounting suggestions
   private async enrichTransaction(transaction: BankTransaction, companyId?: string): Promise<BankTransaction> {
     // Only extract RUT from description if no RUT was already extracted from a specific column
-    let rut = transaction.rut; // Preserve existing RUT from column extraction
+    let { rut } = transaction; // Preserve existing RUT from column extraction
     if (!rut) {
       rut = this.extractRutFromDescription(transaction.description);
     }
@@ -778,7 +776,7 @@ export class UniversalBankStatementParser {
       ...transaction,
       rut,
       suggestedEntry,
-      entityInfo // Add entity information to the transaction
+      entityInfo, // Add entity information to the transaction
     };
   }
 
@@ -789,7 +787,7 @@ export class UniversalBankStatementParser {
       /\b(\d{1,2}\.\d{3}\.\d{3}-[\dkK])\b/,  // Format: 12.345.678-9
       /\b(\d{7,8}-[\dkK])\b/,                  // Format: 12345678-9
       /RUT\s*[:]*\s*(\d{1,2}\.\d{3}\.\d{3}-[\dkK])/i,
-      /RUT\s*[:]*\s*(\d{7,8}-[\dkK])/i
+      /RUT\s*[:]*\s*(\d{7,8}-[\dkK])/i,
     ];
     
     for (const pattern of rutPatterns) {
@@ -808,7 +806,7 @@ export class UniversalBankStatementParser {
   // Verify entity with RCV database
   private async verifyEntityWithRCV(
     rut: string, 
-    companyId: string
+    companyId: string,
   ): Promise<{ type?: string; name?: string; accountCode?: string } | null> {
     try {
       console.log(`🔍 Verificando entidad RCV para RUT: ${rut}`);
@@ -828,7 +826,7 @@ export class UniversalBankStatementParser {
         return {
           type: data.data.entity_type,
           name: data.data.entity_name,
-          accountCode: data.data.account_code
+          accountCode: data.data.account_code,
         };
       }
       
@@ -840,7 +838,7 @@ export class UniversalBankStatementParser {
   }
 
   private generateAccountingSuggestion(transaction: BankTransaction, rut?: string, entityInfo?: { type?: string; name?: string; accountCode?: string } | null): JournalEntrySuggestion {
-    const amount = transaction.amount;
+    const { amount } = transaction;
     
     // For CREDIT transactions (money coming IN)
     if (transaction.type === 'credit') {
@@ -854,7 +852,7 @@ export class UniversalBankStatementParser {
           creditAccountName: entityInfo.name || 'Cliente Específico',
           amount,
           description: `Cobro a ${entityInfo.name || 'cliente'} - ${transaction.description}`,
-          type: 'cliente'
+          type: 'cliente',
         };
       }
       
@@ -866,14 +864,14 @@ export class UniversalBankStatementParser {
         creditAccountName: 'Clientes',
         amount,
         description: `Cobro a cliente - ${transaction.description}`,
-        type: 'cliente'
+        type: 'cliente',
       };
     }
     
     // For DEBIT transactions (money going OUT)
     else {
       // Priority 1: Use entity info if available
-      if (entityInfo && entityInfo.accountCode) {
+      if (entityInfo?.accountCode) {
         const entityTypeName = entityInfo.type === 'supplier' ? 'proveedor' : 
                               entityInfo.type === 'customer' ? 'cliente' : 
                               entityInfo.type;
@@ -886,7 +884,7 @@ export class UniversalBankStatementParser {
           creditAccountName: 'Banco',
           amount,
           description: `Pago a ${entityInfo.name || entityTypeName} - ${transaction.description}`,
-          type: entityInfo.type === 'supplier' ? 'proveedor' : 'otro'
+          type: entityInfo.type === 'supplier' ? 'proveedor' : 'otro',
         };
       }
       
@@ -903,7 +901,7 @@ export class UniversalBankStatementParser {
             creditAccountName: 'Banco',
             amount,
             description: `Pago de remuneraciones - ${transaction.description}`,
-            type: 'remuneracion'
+            type: 'remuneracion',
           };
         }
         // RUT >= 40 million = Supplier (company)
@@ -915,7 +913,7 @@ export class UniversalBankStatementParser {
             creditAccountName: 'Banco',
             amount,
             description: `Pago a proveedor - ${transaction.description}`,
-            type: 'proveedor'
+            type: 'proveedor',
           };
         }
       }
@@ -933,7 +931,7 @@ export class UniversalBankStatementParser {
           creditAccountName: 'Banco',
           amount,
           description: `Pago de remuneraciones - ${transaction.description}`,
-          type: 'remuneracion'
+          type: 'remuneracion',
         };
       }
       
@@ -945,7 +943,7 @@ export class UniversalBankStatementParser {
         creditAccountName: 'Banco',
         amount,
         description: `Pago a proveedor - ${transaction.description}`,
-        type: 'proveedor'
+        type: 'proveedor',
       };
     }
   }
@@ -967,7 +965,7 @@ export class UniversalBankStatementParser {
     // Check if it's already a valid RUT format
     const rutPatterns = [
       /^\d{1,2}\.\d{3}\.\d{3}-[\dkK]$/,  // 12.345.678-9
-      /^\d{7,8}-[\dkK]$/                  // 12345678-9
+      /^\d{7,8}-[\dkK]$/,                  // 12345678-9
     ];
     
     for (const pattern of rutPatterns) {

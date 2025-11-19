@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { supabase } from '@/lib/database/supabaseConfig';
 
 export const dynamic = 'force-dynamic';
@@ -6,7 +8,7 @@ export const dynamic = 'force-dynamic';
 // GET - Obtener configuración específica por ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -14,7 +16,7 @@ export async function GET(
     if (!id) {
       return NextResponse.json({ 
         success: false, 
-        error: 'ID de configuración es requerido' 
+        error: 'ID de configuración es requerido', 
       }, { status: 400 });
     }
 
@@ -32,39 +34,39 @@ export async function GET(
         return NextResponse.json({ 
           success: true, 
           data: {
-            id: id,
+            id,
             tax_name: 'IVA 19%',
             tax_type: 'iva_19',
             tax_rate: 19.0,
             is_active: true,
-            message: 'Configuración por defecto (tabla no creada aún)'
-          }
+            message: 'Configuración por defecto (tabla no creada aún)',
+          },
         });
       }
       
       return NextResponse.json({ 
         success: false, 
-        error: 'Error al obtener configuración: ' + error.message 
+        error: `Error al obtener configuración: ${  error.message}`, 
       }, { status: 500 });
     }
 
     if (!configuration) {
       return NextResponse.json({ 
         success: false, 
-        error: 'Configuración no encontrada' 
+        error: 'Configuración no encontrada', 
       }, { status: 404 });
     }
 
     return NextResponse.json({ 
       success: true, 
-      data: configuration 
+      data: configuration, 
     });
 
   } catch (error) {
     console.error('Error in GET tax configuration:', error);
     return NextResponse.json({ 
       success: false, 
-      error: 'Error interno del servidor' 
+      error: 'Error interno del servidor', 
     }, { status: 500 });
   }
 }
@@ -72,7 +74,7 @@ export async function GET(
 // PUT - Actualizar configuración específica
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -81,7 +83,7 @@ export async function PUT(
     if (!id) {
       return NextResponse.json({ 
         success: false, 
-        error: 'ID de configuración es requerido' 
+        error: 'ID de configuración es requerido', 
       }, { status: 400 });
     }
 
@@ -96,7 +98,7 @@ export async function PUT(
       purchases_debit_account_name,
       purchases_credit_account_code,
       purchases_credit_account_name,
-      is_active
+      is_active,
     } = body;
 
     // Usar los nombres de campo que realmente existen en la tabla actual
@@ -111,7 +113,7 @@ export async function PUT(
         ...(sales_debit_account_code && { sales_account_code: sales_debit_account_code }),
         ...(sales_debit_account_name && { sales_account_name: sales_debit_account_name }),
         ...(purchases_debit_account_code && { purchases_account_code: purchases_debit_account_code }),
-        ...(purchases_debit_account_name && { purchases_account_name: purchases_debit_account_name })
+        ...(purchases_debit_account_name && { purchases_account_name: purchases_debit_account_name }),
       })
       .eq('id', id)
       .select()
@@ -125,40 +127,40 @@ export async function PUT(
         return NextResponse.json({ 
           success: true, 
           data: {
-            id: id,
+            id,
             tax_name: tax_name || 'IVA 19%',
             tax_rate: tax_rate || 19.0,
             is_active: is_active !== undefined ? is_active : true,
-            message: 'Simulación de actualización (tabla no creada aún)'
+            message: 'Simulación de actualización (tabla no creada aún)',
           },
-          message: 'Configuración simulada exitosamente - crear tabla para persistir cambios'
+          message: 'Configuración simulada exitosamente - crear tabla para persistir cambios',
         });
       }
       
       return NextResponse.json({ 
         success: false, 
-        error: 'Error al actualizar configuración: ' + error.message 
+        error: `Error al actualizar configuración: ${  error.message}`, 
       }, { status: 500 });
     }
 
     if (!updatedConfig) {
       return NextResponse.json({ 
         success: false, 
-        error: 'Configuración no encontrada' 
+        error: 'Configuración no encontrada', 
       }, { status: 404 });
     }
 
     return NextResponse.json({ 
       success: true, 
       data: updatedConfig,
-      message: `Configuración actualizada exitosamente` 
+      message: `Configuración actualizada exitosamente`, 
     });
 
   } catch (error) {
     console.error('Error in PUT tax configuration:', error);
     return NextResponse.json({ 
       success: false, 
-      error: 'Error interno del servidor' 
+      error: 'Error interno del servidor', 
     }, { status: 500 });
   }
 }
@@ -166,7 +168,7 @@ export async function PUT(
 // DELETE - Eliminar configuración específica
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -176,7 +178,7 @@ export async function DELETE(
     if (!id) {
       return NextResponse.json({ 
         success: false, 
-        error: 'ID de configuración es requerido' 
+        error: 'ID de configuración es requerido', 
       }, { status: 400 });
     }
 
@@ -191,7 +193,7 @@ export async function DELETE(
         console.error('Error deleting tax configuration:', error);
         return NextResponse.json({ 
           success: false, 
-          error: 'Error al eliminar configuración: ' + error.message 
+          error: `Error al eliminar configuración: ${  error.message}`, 
         }, { status: 500 });
       }
     } else {
@@ -205,21 +207,21 @@ export async function DELETE(
         console.error('Error deactivating tax configuration:', error);
         return NextResponse.json({ 
           success: false, 
-          error: 'Error al desactivar configuración: ' + error.message 
+          error: `Error al desactivar configuración: ${  error.message}`, 
         }, { status: 500 });
       }
     }
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Configuración eliminada exitosamente' 
+      message: 'Configuración eliminada exitosamente', 
     });
 
   } catch (error) {
     console.error('Error in DELETE tax configuration:', error);
     return NextResponse.json({ 
       success: false, 
-      error: 'Error interno del servidor' 
+      error: 'Error interno del servidor', 
     }, { status: 500 });
   }
 }

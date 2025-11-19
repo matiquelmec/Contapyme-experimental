@@ -3,8 +3,8 @@
  * Sin APIs externas, sin consultas complejas Supabase
  */
 
-import { PayrollCalculator } from './payrollCalculator';
 import { CHILEAN_PAYROLL_CONFIG } from './chileanPayrollConfig';
+import { PayrollCalculator } from './payrollCalculator';
 
 export interface SimpleLiquidationRequest {
   employee: {
@@ -61,17 +61,17 @@ export class SimpleLiquidationService {
       console.log('🚀 Simple Liquidation Service - Cálculo local');
       
       // Validaciones básicas
-      if (!request.employee || !request.employee.base_salary) {
+      if (!request.employee?.base_salary) {
         return {
           success: false,
-          error: 'Datos del empleado incompletos'
+          error: 'Datos del empleado incompletos',
         };
       }
 
-      if (!request.period || !request.period.year || !request.period.month) {
+      if (!request.period?.year || !request.period.month) {
         return {
           success: false,
-          error: 'Período no especificado'
+          error: 'Período no especificado',
         };
       }
 
@@ -88,7 +88,7 @@ export class SimpleLiquidationService {
         health_institution_code: request.employee.health_institution_code || 'FONASA',
         family_allowances: request.employee.family_allowances || 0,
         legal_gratification_type: request.employee.legal_gratification_type || 'none',
-        has_unemployment_insurance: request.employee.has_unemployment_insurance !== false
+        has_unemployment_insurance: request.employee.has_unemployment_insurance !== false,
       };
 
       const periodData = {
@@ -96,7 +96,7 @@ export class SimpleLiquidationService {
         month: request.period.month,
         days_worked: request.period.days_worked || 30,
         worked_hours: 0,
-        overtime_hours: 0
+        overtime_hours: 0,
       };
 
       // ✅ Usar configuración centralizada chilena oficial 2025
@@ -107,7 +107,7 @@ export class SimpleLiquidationService {
         employeeData,
         periodData,
         request.additional_income || {},
-        request.additional_deductions || {}
+        request.additional_deductions || {},
       );
 
       console.log('✅ Liquidación calculada exitosamente (modo simple)');
@@ -119,15 +119,15 @@ export class SimpleLiquidationService {
           calculation_mode: 'simple_local',
           employee_name: `${request.employee.first_name} ${request.employee.last_name}`,
           period_display: `${getMonthName(request.period.month)} ${request.period.year}`,
-          warnings: liquidationResult.warnings || []
-        }
+          warnings: liquidationResult.warnings || [],
+        },
       };
 
     } catch (error) {
       console.error('❌ Error en cálculo simple:', error);
       return {
         success: false,
-        error: `Error de cálculo: ${error instanceof Error ? error.message : 'Error desconocido'}`
+        error: `Error de cálculo: ${error instanceof Error ? error.message : 'Error desconocido'}`,
       };
     }
   }
@@ -137,7 +137,7 @@ export class SimpleLiquidationService {
 function getMonthName(month: number): string {
   const months = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
   ];
   return months[month - 1] || 'Mes inválido';
 }

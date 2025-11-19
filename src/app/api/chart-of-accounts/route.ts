@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { databaseSimple } from '@/lib/database/databaseSimple';
 
 export const dynamic = 'force-dynamic';
@@ -49,20 +51,20 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching chart of accounts:', error);
       return NextResponse.json({ 
         accounts: [],
-        message: 'Error al cargar plan de cuentas: ' + error.message 
+        message: `Error al cargar plan de cuentas: ${  error.message}`, 
       });
     }
 
     return NextResponse.json({ 
       accounts: data || [],
-      total: data?.length || 0
+      total: data?.length || 0,
     });
 
   } catch (error: any) {
     console.error('Unexpected error:', error);
     return NextResponse.json({
       accounts: [],
-      message: 'Error interno del servidor'
+      message: 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -76,7 +78,7 @@ export async function POST(request: NextRequest) {
     if (!body.code || !body.name || !body.level_type || !body.account_type) {
       return NextResponse.json(
         { success: false, error: 'Campos requeridos: code, name, level_type, account_type' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -87,7 +89,7 @@ export async function POST(request: NextRequest) {
     if (existing && existing.length > 0) {
       return NextResponse.json(
         { success: false, error: `Ya existe una cuenta activa con el código ${body.code}` },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -99,7 +101,7 @@ export async function POST(request: NextRequest) {
       if (!parent || parent.length === 0) {
         return NextResponse.json(
           { success: false, error: `Cuenta padre con código ${body.parent_code} no existe` },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -117,28 +119,28 @@ export async function POST(request: NextRequest) {
       body.level_type,
       body.account_type,
       body.parent_code || null,
-      body.is_active !== undefined ? body.is_active : true
+      body.is_active !== undefined ? body.is_active : true,
     ]);
 
     if (error) {
       console.error('Error creating account:', error);
       return NextResponse.json(
-        { success: false, error: 'Error al crear cuenta contable: ' + error.message },
-        { status: 500 }
+        { success: false, error: `Error al crear cuenta contable: ${  error.message}` },
+        { status: 500 },
       );
     }
 
     return NextResponse.json({ 
       success: true,
       data: data?.[0],
-      message: `Cuenta ${body.code} - ${body.name} creada exitosamente` 
+      message: `Cuenta ${body.code} - ${body.name} creada exitosamente`, 
     }, { status: 201 });
 
   } catch (error: any) {
     console.error('Unexpected error:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -151,7 +153,7 @@ export async function PUT(request: NextRequest) {
     if (!body.id) {
       return NextResponse.json(
         { success: false, error: 'ID de cuenta es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -163,7 +165,7 @@ export async function PUT(request: NextRequest) {
       if (existing && existing.length > 0) {
         return NextResponse.json(
           { success: false, error: `Ya existe otra cuenta con el código ${body.code}` },
-          { status: 409 }
+          { status: 409 },
         );
       }
     }
@@ -201,7 +203,7 @@ export async function PUT(request: NextRequest) {
     if (updateFields.length === 0) {
       return NextResponse.json(
         { success: false, error: 'No hay campos para actualizar' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -219,29 +221,29 @@ export async function PUT(request: NextRequest) {
     if (error) {
       console.error('Error updating account:', error);
       return NextResponse.json(
-        { success: false, error: 'Error al actualizar cuenta: ' + error.message },
-        { status: 500 }
+        { success: false, error: `Error al actualizar cuenta: ${  error.message}` },
+        { status: 500 },
       );
     }
 
     if (!data || data.length === 0) {
       return NextResponse.json(
         { success: false, error: 'Cuenta no encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json({
       success: true,
       data: data[0],
-      message: `Cuenta ${data[0].code} - ${data[0].name} actualizada exitosamente`
+      message: `Cuenta ${data[0].code} - ${data[0].name} actualizada exitosamente`,
     });
 
   } catch (error: any) {
     console.error('Unexpected error:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -256,7 +258,7 @@ export async function DELETE(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'ID de cuenta es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -270,7 +272,7 @@ export async function DELETE(request: NextRequest) {
       console.error('❌ Error obteniendo cuenta:', fetchError);
       return NextResponse.json(
         { success: false, error: 'Cuenta no encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
     
@@ -289,7 +291,7 @@ export async function DELETE(request: NextRequest) {
     if (children && children.length > 0 && !force) {
       return NextResponse.json(
         { success: false, error: `No se puede eliminar la cuenta ${accountInfo.code} porque tiene ${children.length} cuentas hijas. Use force=true para eliminar todas.` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -305,15 +307,15 @@ export async function DELETE(request: NextRequest) {
       if (deleteError) {
         console.error('❌ Error eliminando cuenta:', deleteError);
         return NextResponse.json(
-          { success: false, error: 'Error al eliminar cuenta: ' + deleteError.message },
-          { status: 500 }
+          { success: false, error: `Error al eliminar cuenta: ${  deleteError.message}` },
+          { status: 500 },
         );
       }
       
       console.log(`✅ Cuenta eliminada permanentemente`);
       return NextResponse.json({
         success: true,
-        message: `Cuenta ${accountInfo.code} - ${accountInfo.name} eliminada definitivamente`
+        message: `Cuenta ${accountInfo.code} - ${accountInfo.name} eliminada definitivamente`,
       });
     } else {
       // Soft delete para cuentas de nivel superior
@@ -324,15 +326,15 @@ export async function DELETE(request: NextRequest) {
       if (updateError) {
         console.error('❌ Error desactivando cuenta:', updateError);
         return NextResponse.json(
-          { success: false, error: 'Error al desactivar cuenta: ' + updateError.message },
-          { status: 500 }
+          { success: false, error: `Error al desactivar cuenta: ${  updateError.message}` },
+          { status: 500 },
         );
       }
       
       console.log(`✅ Cuenta desactivada exitosamente`);
       return NextResponse.json({
         success: true,
-        message: `Cuenta ${accountInfo.code} - ${accountInfo.name} desactivada exitosamente`
+        message: `Cuenta ${accountInfo.code} - ${accountInfo.name} desactivada exitosamente`,
       });
     }
 
@@ -340,7 +342,7 @@ export async function DELETE(request: NextRequest) {
     console.error('Unexpected error:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

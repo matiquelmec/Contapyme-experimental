@@ -1,6 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getDatabaseConnection, isSupabaseConfigured } from '@/lib/database/databaseSimple';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import * as XLSX from 'xlsx';
+
+import { getDatabaseConnection, isSupabaseConfigured } from '@/lib/database/databaseSimple';
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,7 +16,7 @@ export async function GET(request: NextRequest) {
     if (!companyId || !period) {
       return NextResponse.json(
         { success: false, error: 'company_id y period son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -24,9 +27,9 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: 'Base de datos no configurada. Verifica SUPABASE_SERVICE_ROLE_KEY en variables de entorno.',
-          code: 'SUPABASE_NOT_CONFIGURED'
+          code: 'SUPABASE_NOT_CONFIGURED',
         },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -34,7 +37,7 @@ export async function GET(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { success: false, error: 'Error de configuración de base de datos', code: 'DB_CONNECTION_ERROR' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -43,7 +46,7 @@ export async function GET(request: NextRequest) {
     if (!year || !month) {
       return NextResponse.json(
         { success: false, error: 'Formato de período inválido. Use YYYY-MM' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -76,14 +79,14 @@ export async function GET(request: NextRequest) {
       console.error('❌ Error obteniendo liquidaciones:', liquidationsError);
       return NextResponse.json(
         { success: false, error: 'Error al obtener liquidaciones', details: liquidationsError.message },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (!liquidations || liquidations.length === 0) {
       return NextResponse.json(
         { success: false, error: `No se encontraron liquidaciones para el período ${period}` },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -173,7 +176,7 @@ export async function GET(request: NextRequest) {
                  liquidation.status === 'paid' ? 'Pagada' : liquidation.status,
         'Fecha Creación': new Date(liquidation.created_at).toLocaleDateString('es-CL'),
         'Última Modificación': new Date(liquidation.updated_at).toLocaleDateString('es-CL'),
-        'ID Liquidación': liquidation.id
+        'ID Liquidación': liquidation.id,
       };
     });
 
@@ -219,7 +222,7 @@ export async function GET(request: NextRequest) {
       { wch: 12 }, // Estado
       { wch: 15 }, // Fecha Creación
       { wch: 18 }, // Última Modificación
-      { wch: 40 }  // ID Liquidación
+      { wch: 40 },  // ID Liquidación
     ];
 
     worksheet['!cols'] = columnWidths;
@@ -253,7 +256,7 @@ export async function GET(request: NextRequest) {
       { 'Concepto': 'ESTADOS', 'Valor': '' },
       { 'Concepto': 'Borradores', 'Valor': excelData.filter(row => row['Estado'] === 'Borrador').length },
       { 'Concepto': 'Aprobadas', 'Valor': excelData.filter(row => row['Estado'] === 'Aprobada').length },
-      { 'Concepto': 'Pagadas', 'Valor': excelData.filter(row => row['Estado'] === 'Pagada').length }
+      { 'Concepto': 'Pagadas', 'Valor': excelData.filter(row => row['Estado'] === 'Pagada').length },
     ];
 
     const summaryWorksheet = XLSX.utils.json_to_sheet(summaryData);
@@ -264,7 +267,7 @@ export async function GET(request: NextRequest) {
     const excelBuffer = XLSX.write(workbook, {
       type: 'buffer',
       bookType: 'xlsx',
-      compression: true
+      compression: true,
     });
 
     console.log(`✅ Excel generado exitosamente: ${totalLiquidaciones} liquidaciones, ${excelBuffer.length} bytes`);
@@ -283,7 +286,7 @@ export async function GET(request: NextRequest) {
     console.error('❌ Error in GET /api/payroll/liquidations/export-batch:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

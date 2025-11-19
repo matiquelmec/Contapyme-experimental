@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { databaseSimple } from '@/lib/database/databaseSimple';
 
 /**
@@ -13,7 +15,7 @@ export async function GET(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'company_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -26,14 +28,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: [],
-      message: 'Centralized account configuration table not available yet'
+      message: 'Centralized account configuration table not available yet',
     });
 
   } catch (error) {
     console.error('❌ Error obteniendo configuraciones centralizadas:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -57,13 +59,13 @@ export async function POST(request: NextRequest) {
       revenue_account_name,
       asset_account_code,
       asset_account_name,
-      is_active = true
+      is_active = true,
     } = body;
 
     if (!company_id || !module_name || !transaction_type || !display_name) {
       return NextResponse.json(
         { success: false, error: 'Faltan campos requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -89,7 +91,7 @@ export async function POST(request: NextRequest) {
         tax_account_code, tax_account_name,
         revenue_account_code, revenue_account_name,
         asset_account_code, asset_account_name,
-        is_active, id, company_id
+        is_active, id, company_id,
       ]);
 
       if (error) throw error;
@@ -112,7 +114,7 @@ export async function POST(request: NextRequest) {
         tax_account_code, tax_account_name,
         revenue_account_code, revenue_account_name,
         asset_account_code, asset_account_name,
-        is_active
+        is_active,
       ]);
 
       if (error) throw error;
@@ -122,14 +124,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: result,
-      message: `Configuración ${id ? 'actualizada' : 'creada'} exitosamente`
+      message: `Configuración ${id ? 'actualizada' : 'creada'} exitosamente`,
     });
 
   } catch (error) {
     console.error('❌ Error guardando configuración centralizada:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

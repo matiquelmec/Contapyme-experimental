@@ -3,7 +3,7 @@
 // Exportar, importar y gestionar cuentas
 // ==========================================
 
-import { Account } from '@/types';
+import type { Account } from '@/types';
 
 // Exportar plan de cuentas a CSV
 export function exportToCSV(accounts: Account[]): string {
@@ -17,7 +17,7 @@ export function exportToCSV(accounts: Account[]): string {
         liability: 'Pasivo',
         equity: 'Patrimonio',
         income: 'Ingreso',
-        expense: 'Gasto'
+        expense: 'Gasto',
       }[account.account_type];
 
       rows.push([
@@ -26,7 +26,7 @@ export function exportToCSV(accounts: Account[]): string {
         tipo,
         account.level.toString(),
         account.is_detail ? 'Sí' : 'No',
-        account.is_active ? 'Sí' : 'No'
+        account.is_active ? 'Sí' : 'No',
       ]);
 
       if (account.children) {
@@ -65,7 +65,7 @@ export function parseCSV(csvContent: string): Account[] {
       'Pasivo': 'liability',
       'Patrimonio': 'equity',
       'Ingreso': 'income',
-      'Gasto': 'expense'
+      'Gasto': 'expense',
     }[values[2]] as Account['account_type'];
     
     const account: Account = {
@@ -76,7 +76,7 @@ export function parseCSV(csvContent: string): Account[] {
       level: parseInt(values[3]) || 1,
       is_detail: values[4] === 'Sí',
       is_active: values[5] === 'Sí',
-      children: []
+      children: [],
     };
     
     accountMap[account.code] = account;
@@ -140,11 +140,11 @@ export function validateChartOfAccounts(accounts: Account[]): {
     }
   };
   
-  accounts.forEach(account => validateAccount(account));
+  accounts.forEach(account => { validateAccount(account); });
   
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -153,7 +153,7 @@ export function generateNextCode(parentCode: string, existingCodes: string[]): s
   const childCodes = existingCodes
     .filter(code => {
       if (parentCode) {
-        return code.startsWith(parentCode + '.') && 
+        return code.startsWith(`${parentCode  }.`) && 
                code.split('.').length === parentCode.split('.').length + 1;
       } else {
         return !code.includes('.');
@@ -196,7 +196,7 @@ export function generateCSVTemplate(): string {
     ['3.1.01', 'Costos de Venta', 'Gasto', '3', 'Sí', 'Sí'],
     ['4', 'INGRESOS', 'Ingreso', '1', 'No', 'Sí'],
     ['4.1', 'INGRESOS OPERACIONALES', 'Ingreso', '2', 'No', 'Sí'],
-    ['4.1.01', 'Ventas', 'Ingreso', '3', 'Sí', 'Sí']
+    ['4.1.01', 'Ventas', 'Ingreso', '3', 'Sí', 'Sí'],
   ];
 
   const rows = [
@@ -204,7 +204,7 @@ export function generateCSVTemplate(): string {
     // Agregar fila de instrucciones
     ['# INSTRUCCIONES:', 'Complete las cuentas necesarias siguiendo los ejemplos', 'Tipos válidos: Activo, Pasivo, Patrimonio, Gasto, Ingreso', 'Nivel según jerarquía (1-4)', 'Sí=cuenta de detalle, No=cuenta grupo', 'Sí=activa, No=inactiva'],
     // Agregar ejemplos
-    ...ejemplos
+    ...ejemplos,
   ];
   
   return rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');

@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createServerClient } from '@/lib/database/supabase';
 
 export async function POST(request: NextRequest) {
@@ -8,7 +10,7 @@ export async function POST(request: NextRequest) {
     if (!liquidation_id) {
       return NextResponse.json(
         { error: 'liquidation_id es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -24,7 +26,7 @@ export async function POST(request: NextRequest) {
     if (fetchError || !liquidation) {
       return NextResponse.json(
         { error: 'Liquidación no encontrada', details: fetchError },
-        { status: 404 }
+        { status: 404 },
       );
     }
     
@@ -59,7 +61,7 @@ export async function POST(request: NextRequest) {
         unemployment_amount: cesantiaMonto,
         total_deductions: totalDescuentos,
         net_salary: liquidoAPagar,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', liquidation_id)
       .select()
@@ -69,7 +71,7 @@ export async function POST(request: NextRequest) {
       console.error('Error actualizando descuentos:', updateError);
       return NextResponse.json(
         { error: 'Error al actualizar descuentos', details: updateError },
-        { status: 500 }
+        { status: 500 },
       );
     }
     
@@ -84,7 +86,7 @@ export async function POST(request: NextRequest) {
           afp_comision: { porcentaje: afpComisionPorcentaje, monto: afpComisionBase },
           salud: { porcentaje: saludPorcentaje, monto: saludMonto },
           cesantia: { porcentaje: cesantiaPorcentaje, monto: cesantiaMonto },
-          total: totalDescuentos
+          total: totalDescuentos,
         },
         liquido_a_pagar: liquidoAPagar,
         valores_exactos_aplicados: {
@@ -92,16 +94,16 @@ export async function POST(request: NextRequest) {
           salud: `$${saludMonto.toLocaleString('es-CL')} (7%)`, 
           cesantia: `$${cesantiaMonto.toLocaleString('es-CL')} (0.6%)`,
           total: `$${totalDescuentos.toLocaleString('es-CL')}`,
-          nota: "PDF calculará dinámicamente sumando todos los descuentos existentes"
-        }
-      }
+          nota: "PDF calculará dinámicamente sumando todos los descuentos existentes",
+        },
+      },
     });
     
   } catch (error) {
     console.error('Error en fix-descuentos:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor', details: error },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,9 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 export const dynamic = 'force-dynamic';
@@ -45,7 +47,7 @@ function formatRUT(rut: string): string {
   let formattedNumber = '';
   for (let i = rutNumber.length - 1, counter = 0; i >= 0; i--, counter++) {
     if (counter > 0 && counter % 3 === 0) {
-      formattedNumber = '.' + formattedNumber;
+      formattedNumber = `.${  formattedNumber}`;
     }
     formattedNumber = rutNumber[i] + formattedNumber;
   }
@@ -62,14 +64,14 @@ export async function POST(request: NextRequest) {
     if (!company_id) {
       return NextResponse.json({
         success: false,
-        error: 'ID de empresa es requerido'
+        error: 'ID de empresa es requerido',
       }, { status: 400 });
     }
 
-    if (!rcv_analysis || !rcv_analysis.proveedoresPrincipales) {
+    if (!rcv_analysis?.proveedoresPrincipales) {
       return NextResponse.json({
         success: false,
-        error: 'Datos de análisis RCV requeridos'
+        error: 'Datos de análisis RCV requeridos',
       }, { status: 400 });
     }
 
@@ -90,8 +92,8 @@ export async function POST(request: NextRequest) {
           total_missing: 0,
           total_analyzed: 0,
           coverage_percentage: '0.0',
-          message: 'No se encontraron RUTs válidos en el análisis RCV'
-        }
+          message: 'No se encontraron RUTs válidos en el análisis RCV',
+        },
       });
     }
 
@@ -115,7 +117,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ Error consultando entidades:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error consultando base de datos'
+        error: 'Error consultando base de datos',
       }, { status: 500 });
     }
     
@@ -144,7 +146,7 @@ export async function POST(request: NextRequest) {
         // Buscar coincidencia más flexible (sin puntos/guiones)
         const cleanRcvRut = rcvRut.replace(/[.\-]/g, '');
         const foundMatch = allExistingRuts.find(existingRut => 
-          existingRut.replace(/[.\-]/g, '') === cleanRcvRut
+          existingRut.replace(/[.\-]/g, '') === cleanRcvRut,
         );
         if (foundMatch) {
           console.log(`⚠️ COINCIDENCIA FORMATO DIFERENTE: ${rcvRut} vs ${foundMatch}`);
@@ -167,7 +169,7 @@ export async function POST(request: NextRequest) {
       // Buscar coincidencia flexible (sin puntos/guiones)
       const cleanRcvRut = rcvRut.replace(/[.\-]/g, '');
       const foundMatch = allExistingRuts.find(existingRut => 
-        existingRut.replace(/[.\-]/g, '') === cleanRcvRut
+        existingRut.replace(/[.\-]/g, '') === cleanRcvRut,
       );
       
       return !foundMatch; // Solo incluir si NO se encuentra coincidencia
@@ -184,8 +186,8 @@ export async function POST(request: NextRequest) {
           total_missing: 0,
           total_analyzed: rcvRuts.length,
           coverage_percentage: '100.0',
-          message: 'Todas las entidades del RCV ya están configuradas'
-        }
+          message: 'Todas las entidades del RCV ya están configuradas',
+        },
       });
     }
 
@@ -220,13 +222,13 @@ export async function POST(request: NextRequest) {
         }
 
         missingEntities.push({
-          rut: rut,
+          rut,
           razon_social: proveedorData.razonSocial || `Entidad ${rut}`,
           transaction_count: proveedorData.totalTransacciones || 1,
           total_amount: proveedorData.montoCalculado || 0,
           suggested_type: suggestedType,
           suggested_account_code: suggestedAccountCode,
-          suggested_account_name: suggestedAccountName
+          suggested_account_name: suggestedAccountName,
         });
       }
     }
@@ -248,15 +250,15 @@ export async function POST(request: NextRequest) {
         missing_entities: missingEntities,
         total_missing: totalMissing,
         total_analyzed: totalAnalyzed,
-        coverage_percentage: coveragePercentage.toFixed(1)
-      }
+        coverage_percentage: coveragePercentage.toFixed(1),
+      },
     });
 
   } catch (error) {
     console.error('Error identificando entidades faltantes:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }

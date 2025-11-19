@@ -55,7 +55,7 @@ interface ResultadoF29 {
 export class F29PrecisionParser {
   public name: string;
   public version: string;
-  private codigosF29: Record<string, CodigoF29>;
+  private readonly codigosF29: Record<string, CodigoF29>;
 
   constructor() {
     this.name = "F29 Precision Parser";
@@ -87,7 +87,7 @@ export class F29PrecisionParser {
       '563': { nombre: 'BASE IMPONIBLE', tipo: 'ventas' },
       '584': { nombre: 'CANT.INT.EX.NO GRAV.SIN DER. CRED.FISCAL', tipo: 'cantidad' },
       '595': { nombre: 'SUB TOTAL IMP. DETERMINADO ANVERSO', tipo: 'subtotal' },
-      '779': { nombre: 'Monto de IVA postergado 6 o 12 cuotas', tipo: 'credito' }
+      '779': { nombre: 'Monto de IVA postergado 6 o 12 cuotas', tipo: 'credito' },
     };
   }
 
@@ -134,9 +134,9 @@ export class F29PrecisionParser {
           ...infoBasica,
           codigos: codigosEncontrados,
           calculos,
-          textoCompleto: textoExtraido
+          textoCompleto: textoExtraido,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
     } catch (error) {
@@ -147,7 +147,7 @@ export class F29PrecisionParser {
         metodo: 'Precision Parser (error)',
         confianza: 0,
         error: error instanceof Error ? error.message : 'Error desconocido',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -178,7 +178,7 @@ export class F29PrecisionParser {
       // Otros caracteres especiales
       '°': '°', '¿': '¿', '¡': '¡',
       // Diéresis
-      'Ü': 'Ü', 'ü': 'ü'
+      'Ü': 'Ü', 'ü': 'ü',
     };
 
     let textoLimpio = texto;
@@ -232,7 +232,7 @@ export class F29PrecisionParser {
       rut: 'No encontrado',
       periodo: 'No encontrado',
       folio: 'No encontrado',
-      razonSocial: 'No encontrado'
+      razonSocial: 'No encontrado',
     };
 
     // RUT: formato exacto del SII
@@ -298,7 +298,7 @@ export class F29PrecisionParser {
               valorTexto: valor.texto,
               metodo: 'Precisión SII',
               posicion: i,
-              contexto: linea
+              contexto: linea,
             };
 
             console.log(`   ✅ ${codigo}: ${valor.numero} <- "${linea}"`);
@@ -335,7 +335,7 @@ export class F29PrecisionParser {
 
       return {
         numero: valorNumero,
-        texto: valorTexto
+        texto: valorTexto,
       };
     }
 
@@ -397,7 +397,7 @@ export class F29PrecisionParser {
       totalAPagar: totalDeterminado,
       margenBruto: baseImponible > 0 && totalDebitos > 0 ?
         Math.round(((baseImponible - (totalDebitos / 0.19)) / baseImponible * 100) * 100) / 100 : 0,
-      confianza: Object.keys(codigos).length >= 8 ? 100 : 85
+      confianza: Object.keys(codigos).length >= 8 ? 100 : 85,
     };
   }
 

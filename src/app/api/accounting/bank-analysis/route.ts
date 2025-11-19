@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { UniversalBankStatementParser } from '@/lib/bankStatementParser';
 
 interface BankTransaction {
@@ -46,14 +48,14 @@ export async function POST(request: NextRequest) {
     if (!file) {
       return NextResponse.json({
         success: false,
-        error: 'No file provided'
+        error: 'No file provided',
       }, { status: 400 });
     }
 
     console.log('📄 File received:', {
       name: file.name,
       size: file.size,
-      type: file.type
+      type: file.type,
     });
 
     // Read file content
@@ -85,19 +87,19 @@ export async function POST(request: NextRequest) {
       transactions: analysis.transactionCount,
       totalCredits: analysis.totalCredits,
       totalDebits: analysis.totalDebits,
-      netFlow: analysis.netFlow
+      netFlow: analysis.netFlow,
     });
 
     return NextResponse.json({
       success: true,
-      data: analysis
+      data: analysis,
     });
 
   } catch (error) {
     console.error('❌ Error in bank analysis:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error analyzing bank statement'
+      error: 'Error analyzing bank statement',
     }, { status: 500 });
   }
 }
@@ -117,7 +119,7 @@ async function parseCSVBankStatement(content: string, filename: string, companyI
     bank: parsedData.bank,
     period: parsedData.period,
     totalCredits: parsedData.totalCredits,
-    totalDebits: parsedData.totalDebits
+    totalDebits: parsedData.totalDebits,
   });
   
   console.log(`✅ Parsed ${parsedData.transactions.length} transactions with ${parsedData.confidence}% confidence`);
@@ -126,7 +128,7 @@ async function parseCSVBankStatement(content: string, filename: string, companyI
   const insights = generateAccountingInsights(
     parsedData.transactions, 
     parsedData.totalCredits, 
-    parsedData.totalDebits
+    parsedData.totalDebits,
   );
   
   return {
@@ -139,7 +141,7 @@ async function parseCSVBankStatement(content: string, filename: string, companyI
     transactionCount: parsedData.transactions.length,
     transactions: parsedData.transactions,
     insights,
-    confidence: parsedData.confidence
+    confidence: parsedData.confidence,
   };
 }
 
@@ -189,7 +191,7 @@ async function parsePDFBankStatement(buffer: ArrayBuffer, filename: string): Pro
           netFlow: result.totalCredits - result.totalDebits,
           transactionCount: result.transactions.length,
           transactions: result.transactions,
-          insights
+          insights,
         };
       }
     }
@@ -219,8 +221,8 @@ async function parsePDFBankStatement(buffer: ArrayBuffer, filename: string): Pro
         '   - Santander: Banca Online -> Consultas -> Exportar',
         '',
         'Una vez convertido a CSV/Excel, sube nuevamente el archivo',
-        '   y veras todas las transacciones con RUTs y clasificacion automatica'
-      ]
+        '   y veras todas las transacciones con RUTs y clasificacion automatica',
+      ],
     };
     
   } catch (error) {
@@ -239,8 +241,8 @@ async function parsePDFBankStatement(buffer: ArrayBuffer, filename: string): Pro
         'Para resolver:',
         '- Verifica que el archivo no este dañado',
         '- Convierte a formato CSV o Excel',
-        '- Intenta con una cartola mas reciente'
-      ]
+        '- Intenta con una cartola mas reciente',
+      ],
     };
   }
 }
@@ -256,7 +258,7 @@ async function parseTextBankStatement(content: string, filename: string, company
   const insights = generateAccountingInsights(
     parsedData.transactions,
     parsedData.totalCredits,
-    parsedData.totalDebits
+    parsedData.totalDebits,
   );
   
   return {
@@ -268,7 +270,7 @@ async function parseTextBankStatement(content: string, filename: string, company
     netFlow: parsedData.totalCredits - parsedData.totalDebits,
     transactionCount: parsedData.transactions.length,
     transactions: parsedData.transactions,
-    insights
+    insights,
   };
 }
 

@@ -1,15 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+import { Edit, Download, User, DollarSign, FileText, Building, CreditCard,
+  AlertCircle, CheckCircle, XCircle, Clock3,
+} from 'lucide-react';
+
 import { PayrollHeader } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
-import { 
-  ArrowLeft, Edit, Download, Calendar, User, DollarSign, 
-  MapPin, Clock, FileText, Building, Phone, Mail, CreditCard,
-  AlertCircle, CheckCircle, XCircle, Clock3
-} from 'lucide-react';
 import { formatDate as utilFormatDate, formatCurrency as utilFormatCurrency } from '@/lib/utils';
 
 interface ContractDetails {
@@ -149,7 +150,7 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
       const response = await fetch('/api/payroll/contracts/generate-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contract_id: params.id, format: 'html' })
+        body: JSON.stringify({ contract_id: params.id, format: 'html' }),
       });
 
       if (!response.ok) {
@@ -179,7 +180,7 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
           showBackButton
         />
         <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
           <span className="ml-3 text-gray-600">Cargando detalles del contrato...</span>
         </div>
       </div>
@@ -241,7 +242,7 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
             <div className="flex space-x-3 mt-4 sm:mt-0">
               <Button
                 variant="outline"
-                onClick={() => router.push(`/payroll/contracts/${params.id}/edit`)}
+                onClick={() => { router.push(`/payroll/contracts/${params.id}/edit`); }}
               >
                 <Edit className="h-4 w-4 mr-2" />
                 Editar

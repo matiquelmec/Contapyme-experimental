@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { databaseSimple } from '@/lib/database/databaseSimple';
 
 export const dynamic = 'force-dynamic';
@@ -47,14 +49,14 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching accounts for export:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error al obtener cuentas para exportar: ' + error.message
+        error: `Error al obtener cuentas para exportar: ${  error.message}`,
       }, { status: 500 });
     }
 
     if (!accounts || accounts.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'No hay cuentas para exportar'
+        error: 'No hay cuentas para exportar',
       }, { status: 404 });
     }
 
@@ -63,15 +65,15 @@ export async function GET(request: NextRequest) {
       const jsonData = {
         export_date: new Date().toISOString(),
         total_accounts: accounts.length,
-        accounts: accounts
+        accounts,
       };
 
       return new NextResponse(JSON.stringify(jsonData, null, 2), {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
-          'Content-Disposition': `attachment; filename="plan_cuentas_${new Date().toISOString().split('T')[0]}.json"`
-        }
+          'Content-Disposition': `attachment; filename="plan_cuentas_${new Date().toISOString().split('T')[0]}.json"`,
+        },
       });
     } else {
       // Exportar como CSV (por defecto)
@@ -82,7 +84,7 @@ export async function GET(request: NextRequest) {
         'Tipo de Cuenta',
         'Código Padre',
         'Activa',
-        'Fecha Creación'
+        'Fecha Creación',
       ];
 
       const csvRows = [
@@ -94,8 +96,8 @@ export async function GET(request: NextRequest) {
           `"${account.account_type}"`,
           `"${account.parent_code || ''}"`,
           `"${account.is_active ? 'Sí' : 'No'}"`,
-          `"${new Date(account.created_at).toLocaleDateString('es-CL')}"`
-        ].join(','))
+          `"${new Date(account.created_at).toLocaleDateString('es-CL')}"`,
+        ].join(',')),
       ];
 
       const csvContent = csvRows.join('\n');
@@ -104,8 +106,8 @@ export async function GET(request: NextRequest) {
         status: 200,
         headers: {
           'Content-Type': 'text/csv; charset=utf-8',
-          'Content-Disposition': `attachment; filename="plan_cuentas_${new Date().toISOString().split('T')[0]}.csv"`
-        }
+          'Content-Disposition': `attachment; filename="plan_cuentas_${new Date().toISOString().split('T')[0]}.csv"`,
+        },
       });
     }
 
@@ -113,7 +115,7 @@ export async function GET(request: NextRequest) {
     console.error('Error in export chart of accounts:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }
@@ -127,7 +129,7 @@ export async function POST(request: NextRequest) {
     if (!account_ids || !Array.isArray(account_ids) || account_ids.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'Se requiere un array de IDs de cuentas'
+        error: 'Se requiere un array de IDs de cuentas',
       }, { status: 400 });
     }
 
@@ -152,14 +154,14 @@ export async function POST(request: NextRequest) {
       console.error('Error fetching selected accounts:', error);
       return NextResponse.json({
         success: false,
-        error: 'Error al obtener cuentas seleccionadas: ' + error.message
+        error: `Error al obtener cuentas seleccionadas: ${  error.message}`,
       }, { status: 500 });
     }
 
     if (!accounts || accounts.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'No se encontraron cuentas con los IDs proporcionados'
+        error: 'No se encontraron cuentas con los IDs proporcionados',
       }, { status: 404 });
     }
 
@@ -167,13 +169,13 @@ export async function POST(request: NextRequest) {
       const jsonData = {
         export_date: new Date().toISOString(),
         total_accounts: accounts.length,
-        accounts: accounts
+        accounts,
       };
 
       return NextResponse.json({
         success: true,
         data: jsonData,
-        filename: `cuentas_seleccionadas_${new Date().toISOString().split('T')[0]}.json`
+        filename: `cuentas_seleccionadas_${new Date().toISOString().split('T')[0]}.json`,
       });
     } else {
       const headers = [
@@ -182,7 +184,7 @@ export async function POST(request: NextRequest) {
         'Tipo de Nivel',
         'Tipo de Cuenta',
         'Código Padre',
-        'Activa'
+        'Activa',
       ];
 
       const csvRows = [
@@ -193,8 +195,8 @@ export async function POST(request: NextRequest) {
           `"${account.level_type}"`,
           `"${account.account_type}"`,
           `"${account.parent_code || ''}"`,
-          `"${account.is_active ? 'Sí' : 'No'}"`
-        ].join(','))
+          `"${account.is_active ? 'Sí' : 'No'}"`,
+        ].join(',')),
       ];
 
       const csvContent = csvRows.join('\n');
@@ -202,7 +204,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         data: csvContent,
-        filename: `cuentas_seleccionadas_${new Date().toISOString().split('T')[0]}.csv`
+        filename: `cuentas_seleccionadas_${new Date().toISOString().split('T')[0]}.csv`,
       });
     }
 
@@ -210,7 +212,7 @@ export async function POST(request: NextRequest) {
     console.error('Error in export selected accounts:', error);
     return NextResponse.json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
     }, { status: 500 });
   }
 }

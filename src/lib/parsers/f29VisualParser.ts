@@ -100,7 +100,7 @@ async function analyzeWithClaude(imageBase64: string): Promise<F29Data | null> {
       headers: {
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
-        'content-type': 'application/json'
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20241022',
@@ -148,19 +148,19 @@ Responde ÚNICAMENTE con este JSON:
   "codigo077": numero,
   "codigo089": numero,
   "codigo151": numero
-}`
+}`,
             },
             {
               type: 'document',
               source: {
                 type: 'base64',
                 media_type: 'application/pdf',
-                data: imageBase64
-              }
-            }
-          ]
-        }]
-      })
+                data: imageBase64,
+              },
+            },
+          ],
+        }],
+      }),
     });
     
     console.log(`📊 Respuesta de Claude: ${response.status}`);
@@ -179,7 +179,7 @@ Responde ÚNICAMENTE con este JSON:
       return null;
     }
     
-    console.log('📝 Respuesta de Claude:', content.substring(0, 200) + '...');
+    console.log('📝 Respuesta de Claude:', `${content.substring(0, 200)  }...`);
     
     // Extraer JSON de la respuesta
     const jsonMatch = content.match(/\{[\s\S]*?\}/);
@@ -211,7 +211,7 @@ Responde ÚNICAMENTE con este JSON:
       totalAPagar: 0,
       margenBruto: 0,
       confidence: 99, // Alta confianza en análisis visual
-      method: 'claude-vision-analysis'
+      method: 'claude-vision-analysis',
     };
     
     // Calcular campos derivados
@@ -222,7 +222,7 @@ Responde ÚNICAMENTE con este JSON:
       codigo537: result.codigo537.toLocaleString(),
       codigo538: result.codigo538.toLocaleString(),
       ivaDeterminado: result.ivaDeterminado.toLocaleString(),
-      totalAPagar: result.totalAPagar.toLocaleString()
+      totalAPagar: result.totalAPagar.toLocaleString(),
     });
     
     return result;
@@ -275,6 +275,6 @@ function calculateFields(result: F29Data) {
     comprasNetas: result.comprasNetas.toLocaleString(),
     ivaDeterminado: result.ivaDeterminado.toLocaleString(),
     totalAPagar: result.totalAPagar.toLocaleString(),
-    margenBruto: result.margenBruto.toLocaleString()
+    margenBruto: result.margenBruto.toLocaleString(),
   });
 }

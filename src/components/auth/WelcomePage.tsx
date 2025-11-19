@@ -1,12 +1,16 @@
 'use client'
 
 import React, { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
+
+import { CheckCircle } from 'lucide-react'
+
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 import { useAuth } from '@/contexts/AuthContext'
+
 import LoginForm from './LoginForm'
 import RegisterForm from './RegisterForm'
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
-import { Building2, TrendingUp, Shield, Zap, Users, CheckCircle } from 'lucide-react'
 
 export default function WelcomePage() {
   const [activeTab, setActiveTab] = useState<'login' | 'register' | 'welcome'>('welcome')
@@ -37,7 +41,7 @@ export default function WelcomePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
       </div>
     )
   }
@@ -64,7 +68,7 @@ export default function WelcomePage() {
               {activeTab !== 'login' && (
                 <Button
                   variant="ghost"
-                  onClick={() => setActiveTab('login')}
+                  onClick={() => { setActiveTab('login'); }}
                 >
                   Iniciar Sesión
                 </Button>
@@ -72,7 +76,7 @@ export default function WelcomePage() {
               {activeTab !== 'register' && (
                 <Button
                   variant="primary"
-                  onClick={() => setActiveTab('register')}
+                  onClick={() => { setActiveTab('register'); }}
                 >
                   Comenzar Gratis
                 </Button>
@@ -107,7 +111,7 @@ export default function WelcomePage() {
                 <Button
                   variant="outline"
                   size="lg"
-                  onClick={() => setActiveTab('login')}
+                  onClick={() => { setActiveTab('login'); }}
                 >
                   Iniciar Sesión
                 </Button>
@@ -367,7 +371,7 @@ export default function WelcomePage() {
                 ¿No tienes cuenta?{' '}
                 <button
                   className="text-blue-600 hover:text-blue-700 font-medium"
-                  onClick={() => setActiveTab('register')}
+                  onClick={() => { setActiveTab('register'); }}
                 >
                   Regístrate gratis
                 </button>
@@ -388,7 +392,7 @@ export default function WelcomePage() {
                 ¿Ya tienes cuenta?{' '}
                 <button
                   className="text-blue-600 hover:text-blue-700 font-medium"
-                  onClick={() => setActiveTab('login')}
+                  onClick={() => { setActiveTab('login'); }}
                 >
                   Inicia sesión
                 </button>

@@ -1,14 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+
 import Link from 'next/link';
-import { PayrollHeader } from '@/components/layout';
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
+import { useRouter } from 'next/navigation';
+
 import { 
   Plus, FileText, Edit, Eye, Download, Calendar, 
-  User, DollarSign, MapPin, Clock, Filter, Search 
+  User, DollarSign, Clock, Search, 
 } from 'lucide-react';
+
+import { PayrollHeader } from '@/components/layout';
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
 import { useCompanyId } from '@/contexts/CompanyContext';
 import { formatDate as utilFormatDate, formatCurrency as utilFormatCurrency } from '@/lib/utils';
 
@@ -82,7 +85,7 @@ export default function ContractsPage() {
               total_gross_salary: contract.base_salary,
               workplace_address: contract.workplace_address,
               weekly_hours: contract.weekly_hours,
-              company_name: 'ContaPyme Puq'
+              company_name: 'ContaPyme Puq',
             });
           });
         });
@@ -123,9 +126,7 @@ export default function ContractsPage() {
   };
 
   // Formatear moneda usando utilidad centralizada
-  const formatCurrency = (amount: number) => {
-    return utilFormatCurrency(amount);
-  };
+  const formatCurrency = (amount: number) => utilFormatCurrency(amount);
 
   // Obtener color del estado
   const getStatusColor = (status: string) => {
@@ -168,7 +169,7 @@ export default function ContractsPage() {
     total: contracts.length,
     active: contracts.filter(c => c.status === 'active').length,
     draft: contracts.filter(c => c.status === 'draft').length,
-    terminated: contracts.filter(c => c.status === 'terminated').length
+    terminated: contracts.filter(c => c.status === 'terminated').length,
   };
 
   return (
@@ -245,7 +246,7 @@ export default function ContractsPage() {
                     type="text"
                     placeholder="Buscar por nombre, RUT o cargo..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => { setSearchTerm(e.target.value); }}
                     className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full"
                   />
                 </div>
@@ -254,7 +255,7 @@ export default function ContractsPage() {
                 <div className="flex gap-3">
                   <select
                     value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
+                    onChange={(e) => { setStatusFilter(e.target.value); }}
                     className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="all">Todos los estados</option>
@@ -266,7 +267,7 @@ export default function ContractsPage() {
 
                   <select
                     value={typeFilter}
-                    onChange={(e) => setTypeFilter(e.target.value)}
+                    onChange={(e) => { setTypeFilter(e.target.value); }}
                     className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="all">Todos los tipos</option>
@@ -301,7 +302,7 @@ export default function ContractsPage() {
             <CardContent>
               {loading ? (
                 <div className="flex justify-center items-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
                   <span className="ml-3 text-gray-600">Cargando contratos...</span>
                 </div>
               ) : error ? (
@@ -383,7 +384,7 @@ export default function ContractsPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => router.push(`/payroll/contracts/${contract.id}`)}
+                            onClick={() => { router.push(`/payroll/contracts/${contract.id}`); }}
                           >
                             <Eye className="h-4 w-4 mr-1" />
                             Ver
@@ -392,7 +393,7 @@ export default function ContractsPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => router.push(`/payroll/contracts/${contract.id}/edit`)}
+                            onClick={() => { router.push(`/payroll/contracts/${contract.id}/edit`); }}
                           >
                             <Edit className="h-4 w-4 mr-1" />
                             Editar

@@ -1,10 +1,10 @@
 'use client'
 
-import { ReactNode } from 'react'
-import { AuthProvider } from './AuthContext'
+import type { ReactNode } from 'react'
+
+import { AuthProvider , useAuth } from './AuthContext'
 import { CompanyProvider } from './CompanyContext'
 import { DashboardProvider } from './DashboardContext'
-import { useAuth } from './AuthContext'
 
 /**
  * Wrapper para DashboardProvider que consume AuthContext de forma segura

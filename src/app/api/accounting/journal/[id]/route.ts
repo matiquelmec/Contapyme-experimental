@@ -1,11 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createSupabaseServerClient } from '@/lib/database/databaseSimple';
 
 const COMPANY_ID = '8033ee69-b420-4d91-ba0e-482f46cd6fce';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -27,7 +29,7 @@ export async function GET(
       console.error('❌ Entry not found:', entryError);
       return NextResponse.json(
         { success: false, error: 'Journal entry not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -62,7 +64,7 @@ export async function GET(
           console.error('❌ Error loading lines (basic query):', basicError);
           return NextResponse.json(
             { success: false, error: 'Error loading journal lines' },
-            { status: 500 }
+            { status: 500 },
           );
         }
 
@@ -76,7 +78,7 @@ export async function GET(
       const processedLines = lines?.map((line: any) => ({
         ...line,
         // Usar nombre actualizado del plan de cuentas si está disponible
-        account_name: line.chart_of_accounts?.name || line.account_name || 'Cuenta no encontrada'
+        account_name: line.chart_of_accounts?.name || line.account_name || 'Cuenta no encontrada',
       })) || [];
       
       response_data = { ...entry, lines: processedLines };
@@ -84,21 +86,21 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      data: response_data
+      data: response_data,
     });
 
   } catch (error) {
     console.error('❌ Error in GET /api/accounting/journal/[id]:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -107,7 +109,7 @@ export async function PUT(
       company_id = COMPANY_ID,
       description,
       entry_date,
-      lines = []
+      lines = [],
     } = body;
 
     console.log('💾 Updating journal entry:', id, 'with', lines.length, 'lines');
@@ -118,7 +120,7 @@ export async function PUT(
     if (!lines || lines.length < 2) {
       return NextResponse.json(
         { success: false, error: 'Se requieren al menos 2 líneas' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -129,7 +131,7 @@ export async function PUT(
     if (Math.abs(total_debit - total_credit) > 0.01) {
       return NextResponse.json(
         { success: false, error: 'El asiento debe estar balanceado' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -138,7 +140,7 @@ export async function PUT(
       description,
       total_debit,
       total_credit,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
     
     // Solo actualizar entry_date si se proporciona
@@ -156,7 +158,7 @@ export async function PUT(
       console.error('❌ Error updating entry:', entryError);
       return NextResponse.json(
         { success: false, error: 'Error updating journal entry' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -170,7 +172,7 @@ export async function PUT(
       console.error('❌ Error deleting old lines:', deleteError);
       return NextResponse.json(
         { success: false, error: 'Error updating journal lines' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -183,7 +185,7 @@ export async function PUT(
       line_description: line.description || description,
       debit_amount: line.debit_amount || 0,
       credit_amount: line.credit_amount || 0,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     }));
 
     const { error: insertError } = await supabase
@@ -194,7 +196,7 @@ export async function PUT(
       console.error('❌ Error inserting new lines:', insertError);
       return NextResponse.json(
         { success: false, error: 'Error updating journal lines' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -202,21 +204,21 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      message: 'Journal entry updated successfully'
+      message: 'Journal entry updated successfully',
     });
 
   } catch (error) {
     console.error('❌ Error in PUT /api/accounting/journal/[id]:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -237,7 +239,7 @@ export async function DELETE(
       console.error('❌ Error deleting lines:', linesError);
       return NextResponse.json(
         { success: false, error: 'Error deleting journal lines' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -252,7 +254,7 @@ export async function DELETE(
       console.error('❌ Error deleting entry:', entryError);
       return NextResponse.json(
         { success: false, error: 'Error deleting journal entry' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -260,14 +262,14 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Journal entry deleted successfully'
+      message: 'Journal entry deleted successfully',
     });
 
   } catch (error) {
     console.error('❌ Error in DELETE /api/accounting/journal/[id]:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

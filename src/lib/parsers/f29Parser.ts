@@ -3,7 +3,8 @@
 // Sistema de análisis visual de formularios F29
 // ==========================================
 
-import { parseF29Visual, F29Data } from './f29VisualParser';
+import type { F29Data } from './f29VisualParser';
+import { parseF29Visual } from './f29VisualParser';
 
 // Re-exportar tipos
 export type { F29Data };

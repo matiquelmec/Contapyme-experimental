@@ -1,17 +1,18 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
+
 import {
   Users,
   TrendingUp,
   TrendingDown,
   DollarSign,
-  AlertCircle,
   Calendar,
   Target,
-  Calculator
+  Calculator,
 } from 'lucide-react'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 
 interface PayrollBreakdown {
   baseSalaries: number
@@ -70,7 +71,7 @@ export function PayrollCostWidget() {
           familyAllowance: 145000, // Asignación familiar
           bonuses: 280000, // Bonos varios
           overtime: 75000, // Horas extras
-          total: 6740000
+          total: 6740000,
         },
         previousMonth: {
           baseSalaries: 5200000,
@@ -80,28 +81,28 @@ export function PayrollCostWidget() {
           familyAllowance: 145000,
           bonuses: 420000,
           overtime: 156000,
-          total: 6961000
+          total: 6961000,
         },
         upcomingPayments: [
           {
             description: 'Pago sueldos Noviembre',
             amount: 6740000,
             dueDate: '2024-11-30',
-            category: 'salary'
+            category: 'salary',
           },
           {
             description: 'Cotizaciones previsionales',
             amount: 1040000,
             dueDate: '2024-12-10',
-            category: 'social'
+            category: 'social',
           },
           {
             description: 'Impuesto único trabajadores',
             amount: 285000,
             dueDate: '2024-12-12',
-            category: 'tax'
-          }
-        ]
+            category: 'tax',
+          },
+        ],
       }
 
       setData(mockData)
@@ -112,21 +113,17 @@ export function PayrollCostWidget() {
     }
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(amount)
-  }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL', {
+  const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('es-CL', {
       day: 'numeric',
-      month: 'short'
+      month: 'short',
     })
-  }
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -160,11 +157,11 @@ export function PayrollCostWidget() {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-20 bg-gray-200 rounded"></div>
+            <div className="h-20 bg-gray-200 rounded" />
             <div className="space-y-2">
-              <div className="h-4 bg-gray-200 rounded"></div>
-              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div className="h-4 bg-gray-200 rounded" />
+              <div className="h-4 bg-gray-200 rounded w-3/4" />
+              <div className="h-4 bg-gray-200 rounded w-1/2" />
             </div>
           </div>
         </CardContent>
@@ -197,7 +194,7 @@ export function PayrollCostWidget() {
             {['overview', 'breakdown', 'schedule'].map((mode) => (
               <button
                 key={mode}
-                onClick={() => setViewMode(mode as typeof viewMode)}
+                onClick={() => { setViewMode(mode as typeof viewMode); }}
                 className={`px-2 py-1 text-xs rounded ${
                   viewMode === mode
                     ? 'bg-blue-100 text-blue-700'
@@ -271,7 +268,7 @@ export function PayrollCostWidget() {
                 'Cesantía': data.currentMonth.unemployment,
                 'Asig. familiar': data.currentMonth.familyAllowance,
                 'Bonos': data.currentMonth.bonuses,
-                'H. extras': data.currentMonth.overtime
+                'H. extras': data.currentMonth.overtime,
               }).map(([label, amount]) => {
                 const percentage = (amount / data.currentMonth.total * 100).toFixed(1)
                 return (
@@ -285,9 +282,9 @@ export function PayrollCostWidget() {
                                          label === 'Salud' ? '#06B6D4' :
                                          label === 'Cesantía' ? '#F59E0B' :
                                          label === 'Asig. familiar' ? '#10B981' :
-                                         label === 'Bonos' ? '#EF4444' : '#6B7280'
+                                         label === 'Bonos' ? '#EF4444' : '#6B7280',
                         }}
-                      ></div>
+                       />
                       <span className="text-sm text-gray-700">{label}</span>
                     </div>
                     <div className="text-right">

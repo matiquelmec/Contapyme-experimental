@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -53,14 +55,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       data: data || [],
-      count: data?.length || 0
+      count: data?.length || 0,
     });
 
   } catch (error) {
     console.error('Error in GET /api/payroll/job-descriptions:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }
@@ -82,20 +84,20 @@ export async function POST(request: NextRequest) {
       confidence_score,
       requirements = [],
       improvements_made = [],
-      compliance_notes = []
+      compliance_notes = [],
     } = body;
 
     // Validaciones básicas
     if (!company_id || !title || !position) {
       return NextResponse.json({ 
         error: 'Campos requeridos faltantes',
-        required: ['company_id', 'title', 'position']
+        required: ['company_id', 'title', 'position'],
       }, { status: 400 });
     }
 
     if (job_functions.length === 0 && obligations.length === 0 && prohibitions.length === 0) {
       return NextResponse.json({ 
-        error: 'Debe incluir al menos funciones, obligaciones o prohibiciones'
+        error: 'Debe incluir al menos funciones, obligaciones o prohibiciones',
       }, { status: 400 });
     }
 
@@ -112,7 +114,7 @@ export async function POST(request: NextRequest) {
     if (existing) {
       return NextResponse.json({ 
         error: 'Ya existe un descriptor con este título',
-        suggestion: 'Usa un título diferente o actualiza el existente'
+        suggestion: 'Usa un título diferente o actualiza el existente',
       }, { status: 409 });
     }
 
@@ -130,7 +132,7 @@ export async function POST(request: NextRequest) {
       confidence_score,
       requirements,
       improvements_made,
-      compliance_notes
+      compliance_notes,
     };
 
     const { data: newDescription, error: insertError } = await supabase
@@ -147,14 +149,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       data: newDescription,
-      message: 'Descriptor de cargo guardado exitosamente'
+      message: 'Descriptor de cargo guardado exitosamente',
     });
 
   } catch (error) {
     console.error('Error in POST /api/payroll/job-descriptions:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }
@@ -168,7 +170,7 @@ export async function DELETE(request: NextRequest) {
 
     if (!id || !companyId) {
       return NextResponse.json({ 
-        error: 'ID y company_id son requeridos' 
+        error: 'ID y company_id son requeridos', 
       }, { status: 400 });
     }
 
@@ -190,20 +192,20 @@ export async function DELETE(request: NextRequest) {
 
     if (!data) {
       return NextResponse.json({ 
-        error: 'Descriptor no encontrado o no tienes permisos para eliminarlo' 
+        error: 'Descriptor no encontrado o no tienes permisos para eliminarlo', 
       }, { status: 404 });
     }
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Descriptor eliminado exitosamente'
+      message: 'Descriptor eliminado exitosamente',
     });
 
   } catch (error) {
     console.error('Error in DELETE /api/payroll/job-descriptions:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }

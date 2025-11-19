@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createSupabaseServerClient } from '@/lib/database/databaseSimple';
 
 const COMPANY_ID = '8033ee69-b420-4d91-ba0e-482f46cd6fce';
@@ -23,7 +25,7 @@ export async function GET(request: NextRequest) {
       status,
       include_lines,
       page,
-      limit
+      limit,
     });
 
     const supabase = createSupabaseServerClient();
@@ -69,12 +71,12 @@ export async function GET(request: NextRequest) {
       console.error('❌ Error fetching entries:', entriesError);
       return NextResponse.json(
         { success: false, error: 'Error fetching journal entries' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     // Si include_lines es true, cargar líneas con nombres actualizados de cuentas
-    let entriesWithLines = entries;
+    const entriesWithLines = entries;
     if (include_lines && entries && entries.length > 0) {
       console.log('🔄 Cargando líneas con nombres actualizados de cuentas...');
       
@@ -121,7 +123,7 @@ export async function GET(request: NextRequest) {
           const processedLines = lines.map((line: any) => ({
             ...line,
             // Usar nombre actualizado del plan de cuentas si está disponible
-            account_name: line.chart_of_accounts?.name || line.account_name || 'Cuenta no encontrada'
+            account_name: line.chart_of_accounts?.name || line.account_name || 'Cuenta no encontrada',
           }));
           
           // Agregar líneas procesadas al asiento
@@ -140,13 +142,13 @@ export async function GET(request: NextRequest) {
       .select('id, entry_type, status, total_debit, total_credit, entry_date')
       .eq('company_id', company_id);
 
-    let statistics = {
+    const statistics = {
       total_entries: 0,
       total_debit: 0,
       total_credit: 0,
       entries_by_type: {} as Record<string, number>,
       entries_by_status: {} as Record<string, number>,
-      monthly_trend: []
+      monthly_trend: [],
     };
 
     if (!statsError && statsData) {
@@ -177,16 +179,16 @@ export async function GET(request: NextRequest) {
           page,
           limit,
           total: statistics.total_entries,
-          hasMore: (entriesWithLines?.length || 0) === limit
-        }
-      }
+          hasMore: (entriesWithLines?.length || 0) === limit,
+        },
+      },
     });
 
   } catch (error) {
     console.error('❌ Error in GET /api/accounting/journal:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -201,7 +203,7 @@ export async function POST(request: NextRequest) {
       description,
       reference,
       entry_type = 'manual',
-      lines = []
+      lines = [],
     } = body;
 
     console.log('📝 Creating journal entry:', { company_id, entry_type, lines: lines.length });
@@ -212,7 +214,7 @@ export async function POST(request: NextRequest) {
     if (!lines || lines.length < 2) {
       return NextResponse.json(
         { success: false, error: 'Se requieren al menos 2 líneas' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -223,7 +225,7 @@ export async function POST(request: NextRequest) {
     if (Math.abs(total_debit - total_credit) > 0.01) {
       return NextResponse.json(
         { success: false, error: 'El asiento debe estar balanceado' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -253,7 +255,7 @@ export async function POST(request: NextRequest) {
         status: 'approved',
         created_by: 'user',
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -262,7 +264,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ Error creating entry:', entryError);
       return NextResponse.json(
         { success: false, error: 'Error creating journal entry' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -275,7 +277,7 @@ export async function POST(request: NextRequest) {
       line_description: line.line_description || line.description || description,
       debit_amount: line.debit_amount || 0,
       credit_amount: line.credit_amount || 0,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     }));
 
     const { error: linesError } = await supabase
@@ -288,7 +290,7 @@ export async function POST(request: NextRequest) {
       await supabase.from('journal_entries').delete().eq('id', entry.id);
       return NextResponse.json(
         { success: false, error: 'Error creating journal lines' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -296,14 +298,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: { entry_id: entry.id, entry_number }
+      data: { entry_id: entry.id, entry_number },
     });
 
   } catch (error) {
     console.error('❌ Error in POST /api/accounting/journal:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -317,7 +319,7 @@ export async function DELETE(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -335,7 +337,7 @@ export async function DELETE(request: NextRequest) {
       console.error('❌ Error deleting lines:', linesError);
       return NextResponse.json(
         { success: false, error: 'Error deleting journal lines' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -350,7 +352,7 @@ export async function DELETE(request: NextRequest) {
       console.error('❌ Error deleting entry:', entryError);
       return NextResponse.json(
         { success: false, error: 'Error deleting journal entry' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -358,14 +360,14 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Journal entry deleted successfully'
+      message: 'Journal entry deleted successfully',
     });
 
   } catch (error) {
     console.error('❌ Error in DELETE /api/accounting/journal:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

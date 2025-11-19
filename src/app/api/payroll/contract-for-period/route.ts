@@ -1,10 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { getDatabaseConnection, isSupabaseConfigured } from '@/lib/database/databaseSimple';
 
 // GET - Obtener contrato vigente para un empleado en un período específico
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const employeeId = searchParams.get('employee_id');
     const year = searchParams.get('year');
     const month = searchParams.get('month');
@@ -12,7 +14,7 @@ export async function GET(request: NextRequest) {
     if (!employeeId || !year || !month) {
       return NextResponse.json(
         { error: 'employee_id, year y month son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -22,7 +24,7 @@ export async function GET(request: NextRequest) {
     if (yearInt < 2020 || yearInt > 2030 || monthInt < 1 || monthInt > 12) {
       return NextResponse.json(
         { error: 'Año debe estar entre 2020-2030 y mes entre 1-12' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -32,7 +34,7 @@ export async function GET(request: NextRequest) {
       console.error('❌ Supabase no configurado correctamente');
       return NextResponse.json(
         { error: 'Base de datos no configurada' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -40,7 +42,7 @@ export async function GET(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { error: 'Error de configuración de base de datos' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -49,21 +51,21 @@ export async function GET(request: NextRequest) {
       .rpc('get_contract_for_period', {
         p_employee_id: employeeId,
         p_year: yearInt,
-        p_month: monthInt
+        p_month: monthInt,
       });
 
     if (contractError) {
       console.error('❌ Error obteniendo contrato para período:', contractError);
       return NextResponse.json(
         { error: 'Error obteniendo contrato para período' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (!contractResult || contractResult.length === 0) {
       return NextResponse.json(
         { error: 'No se encontró contrato para el empleado y período especificado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -75,7 +77,7 @@ export async function GET(request: NextRequest) {
       baseSalary: contract.base_salary,
       weeklyHours: contract.weekly_hours,
       contractType: contract.contract_type,
-      modificationsCount: contract.modifications_applied?.length || 0
+      modificationsCount: contract.modifications_applied?.length || 0,
     });
 
     // ✅ VERIFICAR REGLA DE CESANTÍA
@@ -83,7 +85,7 @@ export async function GET(request: NextRequest) {
       .rpc('should_pay_unemployment_insurance', {
         p_employee_id: employeeId,
         p_year: yearInt,
-        p_month: monthInt
+        p_month: monthInt,
       });
 
     const shouldPayUnemployment = unemploymentResult && !unemploymentError;
@@ -94,19 +96,19 @@ export async function GET(request: NextRequest) {
         employee_id: employeeId,
         period: {
           year: yearInt,
-          month: monthInt
+          month: monthInt,
         },
         contract: {
           base_salary: parseFloat(contract.base_salary || 0),
           weekly_hours: parseInt(contract.weekly_hours || 44),
           contract_type: contract.contract_type || 'indefinido',
           position: contract.position || '',
-          department: contract.department || ''
+          department: contract.department || '',
         },
         unemployment_insurance: {
           should_pay: shouldPayUnemployment,
           employee_rate: shouldPayUnemployment ? 0.006 : 0, // 0.6%
-          employer_rate: shouldPayUnemployment ? 0.024 : 0  // 2.4%
+          employer_rate: shouldPayUnemployment ? 0.024 : 0,  // 2.4%
         },
         modifications_applied: contract.modifications_applied || [],
         calculation_notes: [
@@ -115,16 +117,16 @@ export async function GET(request: NextRequest) {
             : '⚠️ Sin cesantía (contrato plazo fijo)',
           contract.modifications_applied?.length > 0 
             ? `📋 ${contract.modifications_applied.length} modificaciones aplicadas`
-            : '📋 Sin modificaciones contractuales'
-        ]
-      }
+            : '📋 Sin modificaciones contractuales',
+        ],
+      },
     });
 
   } catch (error) {
     console.error('Error en GET /api/payroll/contract-for-period:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -138,19 +140,19 @@ export async function POST(request: NextRequest) {
     if (!employee_ids || !periods || !Array.isArray(employee_ids) || !Array.isArray(periods)) {
       return NextResponse.json(
         { error: 'employee_ids (array) y periods (array) son requeridos' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.log('🔍 POST contract-for-period bulk:', { 
       employeeCount: employee_ids.length, 
-      periodCount: periods.length 
+      periodCount: periods.length, 
     });
 
     if (!isSupabaseConfigured()) {
       return NextResponse.json(
         { error: 'Base de datos no configurada' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -158,7 +160,7 @@ export async function POST(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { error: 'Error de configuración de base de datos' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -175,7 +177,7 @@ export async function POST(request: NextRequest) {
             .rpc('get_contract_for_period', {
               p_employee_id: employeeId,
               p_year: year,
-              p_month: month
+              p_month: month,
             });
 
           // Verificar cesantía
@@ -183,7 +185,7 @@ export async function POST(request: NextRequest) {
             .rpc('should_pay_unemployment_insurance', {
               p_employee_id: employeeId,
               p_year: year,
-              p_month: month
+              p_month: month,
             });
 
           if (contractResult && contractResult.length > 0) {
@@ -198,14 +200,14 @@ export async function POST(request: NextRequest) {
                 weekly_hours: parseInt(contract.weekly_hours || 44),
                 contract_type: contract.contract_type || 'indefinido',
                 position: contract.position || '',
-                department: contract.department || ''
+                department: contract.department || '',
               },
               unemployment_insurance: {
                 should_pay: shouldPayUnemployment,
                 employee_rate: shouldPayUnemployment ? 0.006 : 0,
-                employer_rate: shouldPayUnemployment ? 0.024 : 0
+                employer_rate: shouldPayUnemployment ? 0.024 : 0,
               },
-              modifications_applied: contract.modifications_applied || []
+              modifications_applied: contract.modifications_applied || [],
             });
           }
         } catch (periodError) {
@@ -213,7 +215,7 @@ export async function POST(request: NextRequest) {
           results.push({
             employee_id: employeeId,
             period: { year, month },
-            error: 'Error obteniendo datos del período'
+            error: 'Error obteniendo datos del período',
           });
         }
       }
@@ -227,15 +229,15 @@ export async function POST(request: NextRequest) {
       summary: {
         total_processed: employee_ids.length * periods.length,
         successful: results.filter(r => !r.error).length,
-        errors: results.filter(r => r.error).length
-      }
+        errors: results.filter(r => r.error).length,
+      },
     });
 
   } catch (error) {
     console.error('Error en POST /api/payroll/contract-for-period:', error);
     return NextResponse.json(
       { error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

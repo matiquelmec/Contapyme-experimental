@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -12,7 +14,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const entityId = params.id;
@@ -20,7 +22,7 @@ export async function GET(
     if (!entityId) {
       return NextResponse.json(
         { success: false, error: 'ID de entidad es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,20 +38,20 @@ export async function GET(
       console.error('❌ Error fetching RCV entity:', error);
       return NextResponse.json(
         { success: false, error: 'Entidad no encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json({
       success: true,
-      data: entity
+      data: entity,
     });
 
   } catch (error) {
     console.error('❌ Error in RCV entity GET:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -60,7 +62,7 @@ export async function GET(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const entityId = params.id;
@@ -68,7 +70,7 @@ export async function DELETE(
     if (!entityId) {
       return NextResponse.json(
         { success: false, error: 'ID de entidad es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -79,7 +81,7 @@ export async function DELETE(
       .from('rcv_entities')
       .update({ 
         is_active: false, 
-        updated_at: new Date().toISOString() 
+        updated_at: new Date().toISOString(), 
       })
       .eq('id', entityId)
       .select()
@@ -89,7 +91,7 @@ export async function DELETE(
       console.error('❌ Error deleting RCV entity:', error);
       return NextResponse.json(
         { success: false, error: 'Error eliminando entidad RCV' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -97,14 +99,14 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Entidad RCV eliminada exitosamente'
+      message: 'Entidad RCV eliminada exitosamente',
     });
 
   } catch (error) {
     console.error('❌ Error in RCV entity DELETE:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -115,7 +117,7 @@ export async function DELETE(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const entityId = params.id;
@@ -132,13 +134,13 @@ export async function PUT(
       contact_email,
       contact_phone,
       address,
-      notes
+      notes,
     } = body;
 
     if (!entityId) {
       return NextResponse.json(
         { success: false, error: 'ID de entidad es requerido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -158,7 +160,7 @@ export async function PUT(
         contact_phone,
         address,
         notes,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', entityId)
       .select()
@@ -168,7 +170,7 @@ export async function PUT(
       console.error('❌ Error updating RCV entity:', error);
       return NextResponse.json(
         { success: false, error: 'Error actualizando entidad RCV' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -177,14 +179,14 @@ export async function PUT(
     return NextResponse.json({
       success: true,
       data: updatedEntity,
-      message: 'Entidad RCV actualizada exitosamente'
+      message: 'Entidad RCV actualizada exitosamente',
     });
 
   } catch (error) {
     console.error('❌ Error in RCV entity PUT:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

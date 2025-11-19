@@ -1,5 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
+
 import { generateAnnex, type AnnexData } from '@/lib/templates/contractAnnexTemplates';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -36,7 +39,7 @@ async function saveContractModifications(supabase: any, employeeId: string, anne
         old_values: { base_salary: annexData.currentSalary },
         new_values: { base_salary: annexData.newSalary },
         reason: `Renovación contractual con cambio salarial - Anexo ${annexData.renovationType === 'indefinite' ? 'indefinido' : 'plazo fijo'}`,
-        document_reference: `ANEXO-RENO-${Date.now()}`
+        document_reference: `ANEXO-RENO-${Date.now()}`,
       });
     }
 
@@ -51,7 +54,7 @@ async function saveContractModifications(supabase: any, employeeId: string, anne
         old_values: { contract_type: 'plazo_fijo' },
         new_values: { contract_type: 'indefinido' },
         reason: 'Renovación contractual - Cambio a contrato indefinido',
-        document_reference: `ANEXO-TIPO-${Date.now()}`
+        document_reference: `ANEXO-TIPO-${Date.now()}`,
       });
     }
 
@@ -66,7 +69,7 @@ async function saveContractModifications(supabase: any, employeeId: string, anne
         old_values: { base_salary: annexData.currentSalary },
         new_values: { base_salary: annexData.newSalary },
         reason: 'Cambio salarial por anexo contractual',
-        document_reference: `ANEXO-SUEL-${Date.now()}`
+        document_reference: `ANEXO-SUEL-${Date.now()}`,
       });
     }
 
@@ -81,7 +84,7 @@ async function saveContractModifications(supabase: any, employeeId: string, anne
         old_values: { position: annexData.employeePosition },
         new_values: { position: annexData.newPosition },
         reason: 'Cambio de cargo por anexo contractual',
-        document_reference: `ANEXO-CARGO-${Date.now()}`
+        document_reference: `ANEXO-CARGO-${Date.now()}`,
       });
 
       // Cambio salarial asociado al cambio de cargo
@@ -95,7 +98,7 @@ async function saveContractModifications(supabase: any, employeeId: string, anne
           old_values: { base_salary: annexData.currentSalary },
           new_values: { base_salary: annexData.newSalary },
           reason: 'Cambio salarial asociado a cambio de cargo',
-          document_reference: `ANEXO-CARGO-SUEL-${Date.now()}`
+          document_reference: `ANEXO-CARGO-SUEL-${Date.now()}`,
         });
       }
     }
@@ -111,7 +114,7 @@ async function saveContractModifications(supabase: any, employeeId: string, anne
         old_values: { schedule: 'Horario anterior' },
         new_values: { schedule: annexData.newSchedule },
         reason: 'Cambio de horario por anexo contractual',
-        document_reference: `ANEXO-HORA-${Date.now()}`
+        document_reference: `ANEXO-HORA-${Date.now()}`,
       });
     }
 
@@ -140,13 +143,13 @@ async function saveContractModifications(supabase: any, employeeId: string, anne
 // GET: Generar anexo basado en datos del empleado
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const employee_id = searchParams.get('employee_id');
     const annex_type = searchParams.get('type') as AnnexData['annexType'];
     
     if (!employee_id || !annex_type) {
       return NextResponse.json({ 
-        error: 'employee_id y type son requeridos' 
+        error: 'employee_id y type son requeridos', 
       }, { status: 400 });
     }
 
@@ -183,7 +186,7 @@ export async function GET(request: NextRequest) {
     if (employeeError || !employeeData) {
       console.error('Error fetching employee:', employeeError);
       return NextResponse.json({ 
-        error: 'Empleado no encontrado' 
+        error: 'Empleado no encontrado', 
       }, { status: 404 });
     }
 
@@ -219,20 +222,20 @@ export async function GET(request: NextRequest) {
       
       // Tipo de anexo
       annexType: annex_type,
-      annexDate: new Date().toISOString().split('T')[0]
+      annexDate: new Date().toISOString().split('T')[0],
     };
 
     // Devolver HTML base para que el frontend pueda editarlo
     return NextResponse.json({
       success: true,
       baseData: baseAnnexData,
-      message: 'Datos base del anexo listos para edición'
+      message: 'Datos base del anexo listos para edición',
     });
 
   } catch (error) {
     console.error('Error in GET /api/payroll/contracts/generate-annex:', error);
     return NextResponse.json({ 
-      error: 'Error interno del servidor' 
+      error: 'Error interno del servidor', 
     }, { status: 500 });
   }
 }
@@ -273,7 +276,7 @@ export async function POST(request: NextRequest) {
 
       if (employeeError || !employeeData) {
         return NextResponse.json({ 
-          error: 'Empleado no encontrado' 
+          error: 'Empleado no encontrado', 
         }, { status: 404 });
       }
 
@@ -301,13 +304,13 @@ export async function POST(request: NextRequest) {
         legalRepresentativeRut: companyInfo?.legal_representative?.rut || employeeData.companies?.legal_representative_rut,
         currentSalary: employeeData.employment_contracts?.[0]?.base_salary || 0,
         originalContractDate: employeeData.employment_contracts?.[0]?.start_date,
-        annexDate: body.annexDate || new Date().toISOString().split('T')[0]
+        annexDate: body.annexDate || new Date().toISOString().split('T')[0],
       };
     }
 
     if (!annexData.annexType) {
       return NextResponse.json({ 
-        error: 'annexType es requerido' 
+        error: 'annexType es requerido', 
       }, { status: 400 });
     }
 
@@ -315,13 +318,13 @@ export async function POST(request: NextRequest) {
     if (annexData.annexType === 'renovation') {
       if (!annexData.renovationType) {
         return NextResponse.json({ 
-          error: 'renovationType es requerido para renovación' 
+          error: 'renovationType es requerido para renovación', 
         }, { status: 400 });
       }
       
       if (annexData.renovationType === 'fixed_term' && !annexData.newEndDate) {
         return NextResponse.json({ 
-          error: 'newEndDate es requerido para contrato a plazo fijo' 
+          error: 'newEndDate es requerido para contrato a plazo fijo', 
         }, { status: 400 });
       }
     }
@@ -329,7 +332,7 @@ export async function POST(request: NextRequest) {
     if (annexData.annexType === 'vacation') {
       if (!annexData.vacationStartDate || !annexData.vacationEndDate) {
         return NextResponse.json({ 
-          error: 'Fechas de inicio y fin son requeridas para feriado' 
+          error: 'Fechas de inicio y fin son requeridas para feriado', 
         }, { status: 400 });
       }
     }
@@ -358,15 +361,15 @@ export async function POST(request: NextRequest) {
     return new NextResponse(html, {
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
-        'Content-Disposition': `inline; filename="anexo_${annexData.annexType}_${annexData.employeeRut?.replace(/[.-]/g, '')}.html"`
-      }
+        'Content-Disposition': `inline; filename="anexo_${annexData.annexType}_${annexData.employeeRut?.replace(/[.-]/g, '')}.html"`,
+      },
     });
 
   } catch (error) {
     console.error('Error in POST /api/payroll/contracts/generate-annex:', error);
     return NextResponse.json({ 
       error: 'Error interno del servidor',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 });
   }
 }

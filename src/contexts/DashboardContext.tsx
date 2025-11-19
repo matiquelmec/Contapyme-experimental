@@ -1,16 +1,17 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import {
+import type { ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react'
+
+import type {
   DashboardContextType,
   DashboardState,
   DashboardView,
   DashboardViewConfig,
   UserRole,
   WidgetConfig,
-  DashboardLayout,
-  WidgetType
-} from '@/types/dashboard'
+  DashboardLayout } from '@/types/dashboard';
+
 // Predefined dashboard configurations based on blueprint
 const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
   vision_360: {
@@ -23,12 +24,12 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
       'tax_health_alerts',
       'income_vs_expenses',
       'contract_alerts',
-      'top_clients'
+      'top_clients',
     ],
     lowPriorityWidgets: [
       'f29_comparative_analysis',
       'reconciliation_actions',
-      'financial_ratios'
+      'financial_ratios',
     ],
     defaultLayout: [
       // Cash Flow - Position of honor (top left)
@@ -41,7 +42,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 0, y: 0, w: 8, h: 4 },
         visible: true,
         refreshInterval: 300,
-        status: 'active'
+        status: 'active',
       },
       // Tax Health - Critical for compliance
       {
@@ -53,7 +54,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 8, y: 0, w: 4, h: 4 },
         visible: true,
         refreshInterval: 1800,
-        status: 'active'
+        status: 'active',
       },
       // IVA Meter - Chilean specific
       {
@@ -65,7 +66,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 0, y: 4, w: 4, h: 3 },
         visible: true,
         refreshInterval: 600,
-        status: 'active'
+        status: 'active',
       },
       // Income vs Expenses
       {
@@ -77,7 +78,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 4, y: 4, w: 4, h: 3 },
         visible: true,
         refreshInterval: 900,
-        status: 'active'
+        status: 'active',
       },
       // Top Clients
       {
@@ -89,9 +90,9 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 8, y: 4, w: 4, h: 3 },
         visible: true,
         refreshInterval: 1200,
-        status: 'active'
-      }
-    ]
+        status: 'active',
+      },
+    ],
   },
 
   compliance_cockpit: {
@@ -103,12 +104,12 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
       'iva_meter',
       'tax_health_alerts',
       'reconciliation_actions',
-      'f29_comparative_analysis'
+      'f29_comparative_analysis',
     ],
     lowPriorityWidgets: [
       'top_clients',
       'sales_performance',
-      'contract_alerts'
+      'contract_alerts',
     ],
     defaultLayout: [
       // IVA Meter - Priority for accountants
@@ -121,7 +122,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 0, y: 0, w: 4, h: 4 },
         visible: true,
         refreshInterval: 300,
-        status: 'active'
+        status: 'active',
       },
       // Tax Health - Detailed view
       {
@@ -133,7 +134,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 4, y: 0, w: 4, h: 4 },
         visible: true,
         refreshInterval: 900,
-        status: 'active'
+        status: 'active',
       },
       // Reconciliation - Banking focus
       {
@@ -145,7 +146,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 8, y: 0, w: 4, h: 4 },
         visible: true,
         refreshInterval: 600,
-        status: 'active'
+        status: 'active',
       },
       // F29 Analysis - Comparative view
       {
@@ -157,9 +158,9 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 0, y: 4, w: 8, h: 3 },
         visible: true,
         refreshInterval: 3600,
-        status: 'active'
-      }
-    ]
+        status: 'active',
+      },
+    ],
   },
 
   human_capital: {
@@ -171,12 +172,12 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
       'contract_alerts',
       'payroll_cost',
       'ai_suggestions',
-      'headcount_metrics'
+      'headcount_metrics',
     ],
     lowPriorityWidgets: [
       'cash_flow_projection',
       'iva_meter',
-      'banking_position'
+      'banking_position',
     ],
     defaultLayout: [
       // Contract Alerts - Critical for HR
@@ -189,7 +190,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 0, y: 0, w: 6, h: 4 },
         visible: true,
         refreshInterval: 3600,
-        status: 'active'
+        status: 'active',
       },
       // Payroll Cost
       {
@@ -201,7 +202,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 6, y: 0, w: 6, h: 4 },
         visible: true,
         refreshInterval: 1800,
-        status: 'active'
+        status: 'active',
       },
       // AI Suggestions - HR specific
       {
@@ -213,7 +214,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 0, y: 4, w: 8, h: 3 },
         visible: true,
         refreshInterval: 1800,
-        status: 'active'
+        status: 'active',
       },
       // Headcount metrics
       {
@@ -225,10 +226,10 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 8, y: 4, w: 4, h: 3 },
         visible: true,
         refreshInterval: 3600,
-        status: 'active'
-      }
-    ]
-  }
+        status: 'active',
+      },
+    ],
+  },
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
@@ -253,10 +254,10 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
     globalFilters: {
       dateRange: {
         start: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
-        end: new Date().toISOString()
+        end: new Date().toISOString(),
       },
-      companyId: '' // Will be set from company context
-    }
+      companyId: '', // Will be set from company context
+    },
   })
 
   // Initialize default layouts on mount
@@ -271,17 +272,17 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
           id: `widget_${widget.type}_${index}`,
           ...widget,
           status: 'active' as const,
-          lastUpdated: new Date().toISOString()
+          lastUpdated: new Date().toISOString(),
         })),
         isDefault: true,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       }))
 
       setState(prev => ({
         ...prev,
         layouts: defaultLayouts,
-        activeLayout: defaultLayouts[0]?.id || ''
+        activeLayout: defaultLayouts[0]?.id || '',
       }))
     }
 
@@ -306,21 +307,21 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
           ...prev.user,
           role: userRole,
           preferredView: userRole === 'accountant' ? 'compliance_cockpit' :
-                        userRole === 'hr_manager' ? 'human_capital' : 'vision_360'
-        }
+                        userRole === 'hr_manager' ? 'human_capital' : 'vision_360',
+        },
       }))
     }
   }, [user])
 
   const switchView = (view: DashboardView) => {
     const targetLayout = state.layouts.find(layout =>
-      layout.isDefault && layout.role === DASHBOARD_VIEWS[view].role
+      layout.isDefault && layout.role === DASHBOARD_VIEWS[view].role,
     )
 
     setState(prev => ({
       ...prev,
       currentView: view,
-      activeLayout: targetLayout?.id || prev.activeLayout
+      activeLayout: targetLayout?.id || prev.activeLayout,
     }))
   }
 
@@ -333,9 +334,9 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
             widgets: layout.widgets.map(widget =>
               widget.id === widgetId
                 ? { ...widget, ...updates, lastUpdated: new Date().toISOString() }
-                : widget
+                : widget,
             ),
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
           }
         }
         return layout
@@ -350,7 +351,7 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
       ...widget,
       id: `widget_${widget.type}_${Date.now()}`,
       status: 'active',
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     }
 
     setState(prev => {
@@ -359,7 +360,7 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
           return {
             ...layout,
             widgets: [...layout.widgets, newWidget],
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
           }
         }
         return layout
@@ -376,7 +377,7 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
           return {
             ...layout,
             widgets: layout.widgets.filter(widget => widget.id !== widgetId),
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
           }
         }
         return layout
@@ -391,12 +392,12 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
       ...layout,
       id: `layout_${Date.now()}`,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     }
 
     setState(prev => ({
       ...prev,
-      layouts: [...prev.layouts, newLayout]
+      layouts: [...prev.layouts, newLayout],
     }))
   }
 
@@ -404,21 +405,21 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
     setState(prev => ({
       ...prev,
       activeLayout: layoutId,
-      isCustomizing: false
+      isCustomizing: false,
     }))
   }
 
   const toggleCustomization = () => {
     setState(prev => ({
       ...prev,
-      isCustomizing: !prev.isCustomizing
+      isCustomizing: !prev.isCustomizing,
     }))
   }
 
   const refreshWidget = async (widgetId: string) => {
     updateWidget(widgetId, {
       status: 'loading',
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     })
 
     // Simulate API call
@@ -426,13 +427,13 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
       await new Promise(resolve => setTimeout(resolve, 1000))
       updateWidget(widgetId, {
         status: 'active',
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       })
     } catch (error) {
       updateWidget(widgetId, {
         status: 'error',
         error: 'Failed to refresh widget',
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       })
     }
   }
@@ -458,7 +459,7 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
     loadLayout,
     toggleCustomization,
     refreshWidget,
-    refreshAllWidgets
+    refreshAllWidgets,
   }
 
   return (

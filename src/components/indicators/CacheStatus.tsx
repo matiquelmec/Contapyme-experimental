@@ -5,8 +5,10 @@
 'use client'
 
 import { useState } from 'react'
+
+import { RefreshCw, Clock, Zap, Activity, CheckCircle } from 'lucide-react'
+
 import { Button } from '@/components/ui'
-import { RefreshCw, Database, Clock, Zap, Activity, CheckCircle } from 'lucide-react'
 
 interface CacheStatusProps {
   cacheStatus: 'hit' | 'miss' | 'expired'
@@ -21,14 +23,14 @@ export default function CacheStatus({
   dataSource,
   lastUpdated,
   loading,
-  onForceRefresh
+  onForceRefresh,
 }: CacheStatusProps) {
   const [refreshing, setRefreshing] = useState(false)
 
   const handleRefresh = async () => {
     setRefreshing(true)
     await onForceRefresh()
-    setTimeout(() => setRefreshing(false), 1000)
+    setTimeout(() => { setRefreshing(false); }, 1000)
   }
 
   const getStatusInfo = () => {
@@ -38,21 +40,21 @@ export default function CacheStatus({
           color: 'green',
           icon: Zap,
           text: 'Cache Hit',
-          description: 'Datos servidos desde cache para máximo rendimiento'
+          description: 'Datos servidos desde cache para máximo rendimiento',
         }
       case 'expired':
         return {
           color: 'yellow',
           icon: Clock,
           text: 'Cache Expirado',
-          description: 'Cache expiró, obteniendo datos frescos'
+          description: 'Cache expiró, obteniendo datos frescos',
         }
       case 'miss':
         return {
           color: 'blue',
           icon: Activity,
           text: 'Cache Miss',
-          description: 'Obteniendo datos directamente desde fuentes'
+          description: 'Obteniendo datos directamente desde fuentes',
         }
     }
   }
