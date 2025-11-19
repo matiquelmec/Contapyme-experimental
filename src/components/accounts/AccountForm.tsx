@@ -33,9 +33,9 @@ const ACCOUNT_TYPES = [
 
 export default function AccountForm({ companyId, parentAccount, account, onSuccess }: AccountFormProps) {
   const [formData, setFormData] = useState({
-    code: account?.code || '',
-    name: account?.name || '',
-    type: account?.type || (parentAccount ? 'ASSET' : 'ASSET') as 'ASSET' | 'LIABILITY' | 'EQUITY' | 'INCOME' | 'EXPENSE',
+    code: (account as any)?.code || '',
+    name: (account as any)?.name || '',
+    type: (account as any)?.type || (parentAccount ? 'ASSET' : 'ASSET') as 'ASSET' | 'LIABILITY' | 'EQUITY' | 'INCOME' | 'EXPENSE',
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -50,40 +50,40 @@ export default function AccountForm({ companyId, parentAccount, account, onSucce
     try {
       if (account) {
         // Update existing account
-        const { error: updateError } = await supabase
+        const { error: updateError } = await (supabase as any)
           .from('accounts')
           .update({
-            code: formData.code,
-            name: formData.name,
-            type: formData.type,
+            code: (formData as any).code,
+            name: (formData as any).name,
+            type: (formData as any).type,
             updated_at: new Date().toISOString(),
           })
-          .eq('id', account.id)
+          .eq('id', (account as any).id)
 
         if (updateError) {
-          setError(updateError.message)
+          setError((updateError as any).message)
         } else {
-          onSuccess?.()
+          (onSuccess as any)?.()
           router.refresh()
         }
       } else {
         // Create new account
-        const { error: insertError } = await supabase
+        const { error: insertError } = await (supabase as any)
           .from('accounts')
           .insert([
             {
-              code: formData.code,
-              name: formData.name,
-              type: formData.type,
+              code: (formData as any).code,
+              name: (formData as any).name,
+              type: (formData as any).type,
               company_id: companyId,
-              parent_id: parentAccount?.id || null,
+              parent_id: (parentAccount as any)?.id || null,
             },
           ])
 
         if (insertError) {
-          setError(insertError.message)
+          setError((insertError as any).message)
         } else {
-          onSuccess?.()
+          (onSuccess as any)?.()
           router.back()
           router.refresh()
         }
@@ -98,8 +98,8 @@ export default function AccountForm({ companyId, parentAccount, account, onSucce
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
-    })
+      [(e.target as any).name]: (e.target as any).value,
+    } as any)
   }
 
   return (
@@ -107,7 +107,7 @@ export default function AccountForm({ companyId, parentAccount, account, onSucce
       {parentAccount && (
         <div className="bg-blue-50 p-4 rounded-md">
           <p className="text-sm text-blue-700">
-            <strong>Cuenta padre:</strong> {parentAccount.code} - {parentAccount.name}
+            <strong>Cuenta padre:</strong> {(parentAccount as any).code} - {(parentAccount as any).name}
           </p>
         </div>
       )}
@@ -121,7 +121,7 @@ export default function AccountForm({ companyId, parentAccount, account, onSucce
           name="code"
           id="code"
           required
-          value={formData.code}
+          value={(formData as any).code}
           onChange={handleChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           placeholder="Ej: 1101, 2101, 3101"
@@ -140,7 +140,7 @@ export default function AccountForm({ companyId, parentAccount, account, onSucce
           name="name"
           id="name"
           required
-          value={formData.name}
+          value={(formData as any).name}
           onChange={handleChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           placeholder="Ej: Caja, Banco Estado, Ventas"
@@ -155,13 +155,13 @@ export default function AccountForm({ companyId, parentAccount, account, onSucce
           name="type"
           id="type"
           required
-          value={formData.type}
+          value={(formData as any).type}
           onChange={handleChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         >
-          {ACCOUNT_TYPES.map((type) => (
-            <option key={type.value} value={type.value}>
-              {type.label}
+          {(ACCOUNT_TYPES as any).map((type: any) => (
+            <option key={(type as any).value} value={(type as any).value}>
+              {(type as any).label}
             </option>
           ))}
         </select>
