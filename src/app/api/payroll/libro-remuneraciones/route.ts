@@ -169,10 +169,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Solo usar datos demo en caso de error de configuración (comentado para producción)
+    /*
     if (false && (booksError || !books || books.length === 0)) {
       console.log('📋 Usando datos demo como fallback (DESACTIVADO)');
       let demoBooks = demoPayrollBooks.filter(book => book.company_id === actualCompanyId);
-      
+
       if (period) {
         demoBooks = demoBooks.filter(book => book.period === period);
       }
@@ -181,11 +182,11 @@ export async function GET(request: NextRequest) {
       if (format === 'csv' && demoBooks.length > 0) {
         const book = demoBooks[0];
         const csvContent = generateCSV(book);
-        
+
         // ✅ AGREGAR BOM PARA ENCODING UTF-8 CORRECTO
         const bom = '\uFEFF';
         const csvWithBom = bom + csvContent;
-        
+
         return new NextResponse(csvWithBom, {
           status: 200,
           headers: {
@@ -202,6 +203,7 @@ export async function GET(request: NextRequest) {
         source: 'demo',
       });
     }
+    */
 
     // Si se solicita formato CSV con datos reales
     if (format === 'csv' && books.length > 0) {
@@ -381,20 +383,20 @@ export async function POST(request: NextRequest) {
         period_month: liq.period_month,
         sueldo_base: liq.base_salary || 0,
         sobresueldo: 0, // Sobresueldo es diferente a horas extras
-        gratificacion: (liq.gratification || 0) + (liq.legal_gratification_art50 || 0),
-        bonos: liq.bonuses || 0,
-        comisiones: liq.commissions || 0,
-        horas_extras: liq.overtime_amount || 0, // ✅ USAR overtime_amount para horas extras
+        gratificacion: ((liq as any).gratification || 0) + ((liq as any).legal_gratification_art50 || 0),
+        bonos: (liq as any).bonuses || 0,
+        comisiones: (liq as any).commissions || 0,
+        horas_extras: (liq as any).overtime_amount || 0, // ✅ USAR overtime_amount para horas extras
         other_income: (liq.food_allowance || 0) + (liq.transport_allowance || 0) + (liq.family_allowance || 0),
         afp_amount: liq.afp_amount || 0,
         afp_commission_amount: liq.afp_commission_amount || 0,
         health_amount: liq.health_amount || 0,
         unemployment_amount: liq.unemployment_amount || 0,
         income_tax_amount: liq.income_tax_amount || 0,
-        loan_deductions: liq.loan_deductions || 0,
-        advance_payments: liq.advance_payments || 0,
-        apv_amount: liq.apv_amount || 0,
-        other_deductions: liq.other_deductions || 0,
+        loan_deductions: (liq as any).loan_deductions || 0,
+        advance_payments: (liq as any).advance_payments || 0,
+        apv_amount: (liq as any).apv_amount || 0,
+        other_deductions: (liq as any).other_deductions || 0,
       };
 
       const calculatedResult = PayrollUnifiedCalculator.calculateWithValidation(unifiedData);
