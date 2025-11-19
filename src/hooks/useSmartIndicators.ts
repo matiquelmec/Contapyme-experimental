@@ -10,6 +10,8 @@ interface IndicatorData {
   variation?: number;
   updated_at: string;
   category: string;
+  change?: number; // Cambio porcentual del indicador
+  date?: string; // Fecha del indicador en formato legible
 }
 
 interface CachedIndicators {

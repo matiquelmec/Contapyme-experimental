@@ -21,6 +21,7 @@ interface UploadResult {
   period?: string;
   confidence_score?: number;
   error?: string;
+  data?: any; // Datos procesados del F29 - contiene códigos como codigo563, codigo538, etc.
 }
 
 interface AnalysisData {

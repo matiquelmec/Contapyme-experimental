@@ -18,7 +18,6 @@ import {
 import { PayrollHeader } from '@/components/layout';
 import PreviredAdditionalDataForm from '@/components/payroll/PreviredAdditionalDataForm';
 import { Card, CardContent } from '@/components/ui';
-import type { EmployeeData } from '@/lib/services/payrollCalculator';
 import { LivePayrollPreview } from '@/modules/remuneraciones/components/liquidaciones/LivePayrollPreview';
 import { useLivePayrollCalculation } from '@/modules/remuneraciones/hooks/useCalculadora';
 
