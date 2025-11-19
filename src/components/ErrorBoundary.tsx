@@ -18,7 +18,7 @@ interface Props {
 }
 
 interface State extends ErrorBoundaryState {
-  error: Error | null;
+  error: (Error | null) as any;
   errorInfo: ErrorInfo | null;
   showDetails: boolean;
   errorId: string;

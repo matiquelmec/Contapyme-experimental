@@ -93,9 +93,9 @@ export default function EditFixedAssetForm({ isOpen, onClose, onSuccess, asset }
       } else {
         console.error('Failed to load accounts');
         const basicAccounts: Account[] = [
-          { id: '1.2.1.001', code: '1.2.1.001', name: 'Equipos de Computación', level: 4, account_type: 'activo', is_detail: true, is_active: true },
-          { id: '1.2.1.002', code: '1.2.1.002', name: 'Muebles y Enseres', level: 4, account_type: 'activo', is_detail: true, is_active: true },
-          { id: '1.2.1.003', code: '1.2.1.003', name: 'Equipos de Oficina', level: 4, account_type: 'activo', is_detail: true, is_active: true },
+          { id: '1.2.1.001', code: '1.2.1.001', name: 'Equipos de Computación', level: 4, account_type: 'activo' as any, is_detail: true, is_active: true },
+          { id: '1.2.1.002', code: '1.2.1.002', name: 'Muebles y Enseres', level: 4, account_type: 'activo' as any, is_detail: true, is_active: true },
+          { id: '1.2.1.003', code: '1.2.1.003', name: 'Equipos de Oficina', level: 4, account_type: 'activo' as any, is_detail: true, is_active: true },
         ];
         setAccounts(basicAccounts);
       }

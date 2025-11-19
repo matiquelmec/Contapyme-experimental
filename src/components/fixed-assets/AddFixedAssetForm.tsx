@@ -111,19 +111,19 @@ export default function AddFixedAssetForm({ isOpen, onClose, onSuccess, createAs
     }
 
     if (formData.purchase_value <= 0) {
-      newErrors.purchase_value = 'El valor de compra debe ser mayor a 0';
+      (newErrors as any).purchase_value = 'El valor de compra debe ser mayor a 0';
     }
 
     if (formData.residual_value < 0) {
-      newErrors.residual_value = 'El valor residual no puede ser negativo';
+      (newErrors as any).residual_value = 'El valor residual no puede ser negativo';
     }
 
     if (formData.residual_value >= formData.purchase_value) {
-      newErrors.residual_value = 'El valor residual debe ser menor al valor de compra';
+      (newErrors as any).residual_value = 'El valor residual debe ser menor al valor de compra';
     }
 
     if (formData.useful_life_years <= 0) {
-      newErrors.useful_life_years = 'Los años de vida útil deben ser mayor a 0';
+      (newErrors as any).useful_life_years = 'Los años de vida útil deben ser mayor a 0';
     }
 
     if (!formData.purchase_date) {
