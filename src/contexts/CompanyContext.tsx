@@ -101,11 +101,46 @@ export function CompanyProvider({
   }, [demoMode]);
 
   const switchCompany = (companyPortalId: string) => {
-    console.log('Switching to company:', companyPortalId);
+    console.log('🔄 Switching to company:', companyPortalId);
     if (demoMode) {
       const mappedCompany = getCompanyByPortalId(companyPortalId);
+
+      // 🚨 CRÍTICO: Invalidar cache y estados antes del cambio
+      console.log('🧹 Invalidating cache and states for company switch...');
+
+      // Limpiar cache específico de empresa anterior
+      if (typeof window !== 'undefined') {
+        // Limpiar localStorage relacionado con datos de empresa
+        const keysToRemove = [
+          'employees_cache',
+          'accounts_cache',
+          'transactions_cache',
+          'payroll_cache',
+          'f29_cache',
+          'indicators_cache'
+        ];
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+
+        // Limpiar sessionStorage también
+        sessionStorage.clear();
+      }
+
+      // Actualizar empresa actual
       setCurrentCompany(mappedCompany);
       localStorage.setItem('activeCompanyId', companyPortalId);
+
+      // 🎯 CRÍTICO: Disparar evento global para invalidar estados
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('companyChanged', {
+          detail: {
+            newCompanyId: mappedCompany.id,
+            newCompanyPortalId: companyPortalId,
+            companyData: mappedCompany
+          }
+        }));
+
+        console.log('✅ Company switch completed - Cache invalidated');
+      }
     } else {
       // En modo producción: implementar lógica de cambio de empresa
       console.log('Production mode company switching not implemented yet');

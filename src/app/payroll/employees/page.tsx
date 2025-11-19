@@ -8,6 +8,7 @@ import { Plus, Users, Search, Eye, Edit, Trash2, FileText } from 'lucide-react';
 
 import EmployeeEditModal from '@/components/payroll/EmployeeEditModal';
 import { useCompany } from '@/contexts/CompanyContext';
+import { useCompanyAwareState, useCompanyAwareData } from '@/hooks/useCompanyAwareState';
 
 interface Employee {
   id: string;
@@ -28,32 +29,18 @@ interface Employee {
 
 export default function EmployeesPage() {
   const { company } = useCompany();
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [deleteModal, setDeleteModal] = useState<{ show: boolean; employee: Employee | null; permanent: boolean }>({
-    show: false,
-    employee: null,
-    permanent: false,
-  });
-  const [deleting, setDeleting] = useState(false);
-  const [editModal, setEditModal] = useState<{ show: boolean; employee: Employee | null }>({
-    show: false,
-    employee: null,
-  });
 
-  useEffect(() => {
-    if (company?.id) {
-      fetchEmployees();
-    }
-  }, [company?.id]);
+  // 🚀 SOLUCIÓN: Usar hook company-aware para auto-fetch y limpieza
+  const {
+    data: employees,
+    isLoading: loading,
+    error,
+    refresh: fetchEmployees
+  } = useCompanyAwareData(
+    'employees',
+    async () => {
+      console.log('🔄 [EmployeesPage] Fetching employees for company:', company.id);
 
-  const fetchEmployees = async () => {
-    try {
-      setLoading(true);
-      setError('');
-      
-      // Headers para evitar cache al refrescar datos
       const response = await fetch(`/api/payroll/employees?company_id=${company.id}&t=${Date.now()}`, {
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -61,21 +48,31 @@ export default function EmployeesPage() {
           'Expires': '0',
         },
       });
-      
+
       const data = await response.json();
 
-      if (response.ok) {
-        setEmployees(data.data || []);
-      } else {
-        setError(data.error || 'Error al cargar empleados');
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al cargar empleados');
       }
-    } catch (err) {
-      setError('Error de conexión');
-      console.error('Error fetching employees:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+
+      return data.data || [];
+    },
+    [company.id] // Re-fetch si cambia company.id
+  );
+
+  // 🎯 Estados que se limpian automáticamente al cambiar empresa
+  const [deleteModal, setDeleteModal] = useCompanyAwareState<{ show: boolean; employee: Employee | null; permanent: boolean }>({
+    show: false,
+    employee: null,
+    permanent: false,
+  }, { debugKey: 'deleteModal' });
+
+  const [deleting, setDeleting] = useCompanyAwareState(false, { debugKey: 'deleting' });
+
+  const [editModal, setEditModal] = useCompanyAwareState<{ show: boolean; employee: Employee | null }>({
+    show: false,
+    employee: null,
+  }, { debugKey: 'editModal' });
 
   const handleDeleteClick = (employee: Employee) => {
     setDeleteModal({ show: true, employee, permanent: false });
