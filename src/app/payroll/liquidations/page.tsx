@@ -142,8 +142,8 @@ export default function LiquidationsPage() {
           `${l.period_year}-${l.period_month.toString().padStart(2, '0')}`,
         ))].sort().reverse();
         
-        setAvailableRuts(uniqueRuts);
-        setAvailablePeriods(uniquePeriods);
+        setAvailableRuts(uniqueRuts as string[]);
+        setAvailablePeriods(uniquePeriods as string[]);
         setLiquidations(validLiquidations);
         calculateStats(validLiquidations);
       } else {
@@ -286,7 +286,7 @@ export default function LiquidationsPage() {
 
       if (response.ok && result.success) {
         // Calcular estadísticas para mensaje informativo
-        const totalEmployees = [...new Set(liquidations.map(liq => liq.employee_id))].length;
+        const totalEmployees = [...new Set(liquidations.map(liq => (liq as any).employee_id))].length;
         const employeesWithLiquidation = periodLiquidations.length;
         const missingLiquidations = Math.max(0, totalEmployees - employeesWithLiquidation);
         const percentage = Math.round((employeesWithLiquidation/totalEmployees)*100);
