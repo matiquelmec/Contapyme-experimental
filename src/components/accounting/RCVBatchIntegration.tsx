@@ -16,22 +16,14 @@ import {
   RefreshCw,
 } from 'lucide-react';
 
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription, 
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
   CardContent,
   Button,
   Badge,
-  Alert,
-  AlertDescription,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Progress,
-  Checkbox,
 } from '@/components/ui';
 
 interface EntityValidation {
@@ -322,9 +314,9 @@ export default function RCVBatchIntegration({
 
                   {/* Resultados de validación si existen */}
                   {validationResult && (
-                    <Alert variant={validationResult.isValid ? "default" : "destructive"}>
+                    <div className={`border rounded-lg p-4 flex items-start space-x-2 ${validationResult.isValid ? 'bg-blue-50 border-blue-200' : 'bg-red-50 border-red-200'}`}>
                       <AlertCircle className="h-4 w-4" />
-                      <AlertDescription>
+                      <div className={`text-sm ${validationResult.isValid ? 'text-blue-800' : 'text-red-800'}`}>
                         {validationResult.errors.length > 0 && (
                           <div className="space-y-1">
                             <strong>Errores:</strong>
@@ -346,8 +338,8 @@ export default function RCVBatchIntegration({
                             )}
                           </div>
                         )}
-                      </AlertDescription>
-                    </Alert>
+                      </div>
+                    </div>
                   )}
                 </>
               )}
@@ -426,13 +418,13 @@ export default function RCVBatchIntegration({
 
               {/* Advertencia si force process está activo */}
               {forceProcess && (
-                <Alert>
+                <div className="border rounded-lg p-4 flex items-start space-x-2 bg-amber-50 border-amber-200">
                   <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
+                  <div className="text-sm text-amber-800">
                     Al activar esta opción, las entidades sin cuenta configurada usarán las cuentas por defecto.
                     Esto puede generar asientos menos precisos.
-                  </AlertDescription>
-                </Alert>
+                  </div>
+                </div>
               )}
             </CardContent>
           </Card>
