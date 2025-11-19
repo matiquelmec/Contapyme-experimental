@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
             success: true,
             confidence_score: extracted.confidence,
             data: extracted, // Agregar datos extraídos para el frontend
-            diagnostic: extracted.debugInfo || {}, // Agregar info de diagnóstico si existe
+            diagnostic: (extracted as any).debugInfo || {}, // Agregar info de diagnóstico si existe
             extracted_data: {
               raw_data: extracted,
               calculated_data: {
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
                 totalAPagar: extracted.totalAPagar,
                 confidence: extracted.confidence,
                 method: extracted.method,
-                debugInfo: extracted.debugInfo,
+                debugInfo: (extracted as any).debugInfo,
               },
               file_size: file.size,
               period,

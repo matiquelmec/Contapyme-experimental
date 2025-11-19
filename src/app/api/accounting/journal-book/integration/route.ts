@@ -2071,7 +2071,7 @@ async function createPayrollJournalEntry(transaction: any, companyId: string) {
       totalTaxableIncome: liquidation.total_taxable_income || 0,
       contractType: liquidation.employment_contracts?.contract_type || 'indefinido',
       afpAmount: liquidation.afp_amount || 0,
-      afpCommission: liquidation.afp_commission || 0,
+      afpCommission: (liquidation as any).afp_commission || 0,
       healthAmount: liquidation.health_amount || 0,
       unemploymentEmployee: liquidation.unemployment_amount || 0,
       incomeTax: liquidation.income_tax_amount || 0,

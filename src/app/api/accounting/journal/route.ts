@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
             console.log(`✅ Basic query successful for entry ${entry.entry_number}: ${basicLines.length} líneas`);
           } else {
             console.error(`❌ Both queries failed for entry ${entry.id}:`, basicError);
-            entriesWithLines[i] = { ...entry, lines: [] };
+            entriesWithLines[i] = { ...entry, lines: [] } as any;
             continue;
           }
         } else {
@@ -127,10 +127,10 @@ export async function GET(request: NextRequest) {
           }));
           
           // Agregar líneas procesadas al asiento
-          entriesWithLines[i] = { ...entry, lines: processedLines };
+          entriesWithLines[i] = { ...entry, lines: processedLines } as any;
         } else {
           // Mantener asiento sin líneas en caso de error
-          entriesWithLines[i] = { ...entry, lines: [] };
+          entriesWithLines[i] = { ...entry, lines: [] } as any;
         }
       }
     }

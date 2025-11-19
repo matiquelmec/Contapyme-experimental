@@ -18,9 +18,8 @@ export async function POST(request: NextRequest) {
     console.log('🔍 PREVIEW - Generating journal entry preview for transaction:', transactionId);
     
     // Import the same logic used in integration
-    const { 
-      createRCVJournalEntry, 
-      createPayrollJournalEntry, 
+    const {
+      createRCVJournalEntry,
     } = await import('../integration/route');
     
     // Get transaction data
