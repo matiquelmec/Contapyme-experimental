@@ -20,11 +20,11 @@ interface CompanyFormProps {
 
 export default function CompanyForm({ company, onSuccess }: CompanyFormProps) {
   const [formData, setFormData] = useState({
-    name: company?.name || '',
-    rut: company?.rut || '',
-    address: company?.address || '',
-    phone: company?.phone || '',
-    email: company?.email || '',
+    name: (company as any)?.name || '',
+    rut: (company as any)?.rut || '',
+    address: (company as any)?.address || '',
+    phone: (company as any)?.phone || '',
+    email: (company as any)?.email || '',
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -37,7 +37,7 @@ export default function CompanyForm({ company, onSuccess }: CompanyFormProps) {
     setError('')
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { user } } = await (supabase as any).auth.getUser()
       if (!user) {
         setError('Usuario no autenticado')
         return
@@ -45,43 +45,43 @@ export default function CompanyForm({ company, onSuccess }: CompanyFormProps) {
 
       if (company) {
         // Update existing company
-        const { error: updateError } = await supabase
+        const { error: updateError } = await (supabase as any)
           .from('companies')
           .update({
-            name: formData.name,
-            rut: formData.rut,
-            address: formData.address || null,
-            phone: formData.phone || null,
-            email: formData.email || null,
+            name: (formData as any).name,
+            rut: (formData as any).rut,
+            address: (formData as any).address || null,
+            phone: (formData as any).phone || null,
+            email: (formData as any).email || null,
             updated_at: new Date().toISOString(),
           })
-          .eq('id', company.id)
+          .eq('id', (company as any).id)
 
         if (updateError) {
-          setError(updateError.message)
+          setError((updateError as any).message)
         } else {
-          onSuccess?.()
+          (onSuccess as any)?.()
           router.refresh()
         }
       } else {
         // Create new company
-        const { error: insertError } = await supabase
+        const { error: insertError } = await (supabase as any)
           .from('companies')
           .insert([
             {
-              name: formData.name,
-              rut: formData.rut,
-              address: formData.address || null,
-              phone: formData.phone || null,
-              email: formData.email || null,
-              user_id: user.id,
+              name: (formData as any).name,
+              rut: (formData as any).rut,
+              address: (formData as any).address || null,
+              phone: (formData as any).phone || null,
+              email: (formData as any).email || null,
+              user_id: (user as any).id,
             },
           ])
 
         if (insertError) {
-          setError(insertError.message)
+          setError((insertError as any).message)
         } else {
-          onSuccess?.()
+          (onSuccess as any)?.()
           router.push('/explore')
           router.refresh()
         }
@@ -96,8 +96,8 @@ export default function CompanyForm({ company, onSuccess }: CompanyFormProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
-    })
+      [(e.target as any).name]: (e.target as any).value,
+    } as any)
   }
 
   return (
@@ -111,7 +111,7 @@ export default function CompanyForm({ company, onSuccess }: CompanyFormProps) {
           name="name"
           id="name"
           required
-          value={formData.name}
+          value={(formData as any).name}
           onChange={handleChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           placeholder="Ej: Mi Empresa Ltda."
@@ -127,7 +127,7 @@ export default function CompanyForm({ company, onSuccess }: CompanyFormProps) {
           name="rut"
           id="rut"
           required
-          value={formData.rut}
+          value={(formData as any).rut}
           onChange={handleChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           placeholder="Ej: 12.345.678-9"
@@ -142,7 +142,7 @@ export default function CompanyForm({ company, onSuccess }: CompanyFormProps) {
           type="email"
           name="email"
           id="email"
-          value={formData.email}
+          value={(formData as any).email}
           onChange={handleChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           placeholder="contacto@miempresa.cl"
@@ -157,7 +157,7 @@ export default function CompanyForm({ company, onSuccess }: CompanyFormProps) {
           type="tel"
           name="phone"
           id="phone"
-          value={formData.phone}
+          value={(formData as any).phone}
           onChange={handleChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           placeholder="+56 9 1234 5678"
@@ -172,7 +172,7 @@ export default function CompanyForm({ company, onSuccess }: CompanyFormProps) {
           type="text"
           name="address"
           id="address"
-          value={formData.address}
+          value={(formData as any).address}
           onChange={handleChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           placeholder="Calle, número, comuna, ciudad"

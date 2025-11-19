@@ -22,7 +22,7 @@ export default function RegisterForm() {
     setError('')
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await (supabase as any).auth.signUp({
         email,
         password,
         options: {
@@ -33,15 +33,15 @@ export default function RegisterForm() {
       })
 
       if (error) {
-        setError(error.message)
-      } else if (data.user) {
+        setError((error as any).message)
+      } else if ((data as any).user) {
         // Insert user profile into our users table
-        const { error: profileError } = await supabase
+        const { error: profileError } = await (supabase as any)
           .from('users')
           .insert([
             {
-              id: data.user.id,
-              email: data.user.email!,
+              id: (data as any).user.id,
+              email: (data as any).user.email!,
               name,
               role: 'CLIENT',
             },

@@ -20,13 +20,13 @@ export default function LoginForm() {
     setError('')
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await (supabase as any).auth.signInWithPassword({
         email,
         password,
       })
 
       if (error) {
-        setError(error.message)
+        setError((error as any).message)
       } else {
         router.push('/explore')
         router.refresh()
