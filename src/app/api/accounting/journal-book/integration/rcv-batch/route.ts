@@ -382,7 +382,7 @@ async function generateJournalEntry(
       rcv_type: rcvType,
       individual_expense_accounts: expenseAccountGroups.size,
       individual_entity_accounts: entityAccountGroups.size,
-    },
+    } as any,
   };
 
   return journalEntry;

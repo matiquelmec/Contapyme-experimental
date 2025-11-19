@@ -1285,7 +1285,7 @@ async function recreateTransactionsFromFile(fileName: string, totalAmount: numbe
           tipoDoc: '33',
           fecha: '2025-08-01',
           numeroDocumento: 'AJUSTE-001',
-        });
+        } as any);
         
         console.log(`✅ MERCADERÍA CUADRADA: Neto $${finalAdjustmentNet.toLocaleString()}, IVA $${finalAdjustmentIVA.toLocaleString()}, Total $${finalDifference.toLocaleString()}`);
         
@@ -2058,16 +2058,16 @@ async function createPayrollJournalEntry(transaction: any, companyId: string) {
   // Generar líneas para cada empleado usando el sistema existente
   for (const liquidation of liquidationData) {
     const employeeData = {
-      rut: liquidation.payroll_employees?.rut || '',
-      name: liquidation.payroll_employees?.name || 'EMPLEADO',
-      position: liquidation.payroll_employees?.position || 'EMPLEADO',
-      department: liquidation.payroll_employees?.department || 'GENERAL',
+      rut: (liquidation as any).payroll_employees?.rut || '',
+      name: (liquidation as any).payroll_employees?.name || 'EMPLEADO',
+      position: (liquidation as any).payroll_employees?.position || 'EMPLEADO',
+      department: (liquidation as any).payroll_employees?.department || 'GENERAL',
       baseSalary: liquidation.base_salary || 0,
       overtimeAmount: liquidation.overtime_amount || 0,
       bonuses: liquidation.bonuses || 0,
       gratificationArt50: liquidation.legal_gratification_art50 || 0,
-      hasColacion: liquidation.payroll_employees?.name !== 'RIquelme Mati',
-      hasMovilizacion: liquidation.payroll_employees?.name !== 'RIquelme Mati',
+      hasColacion: (liquidation as any).payroll_employees?.name !== 'RIquelme Mati',
+      hasMovilizacion: (liquidation as any).payroll_employees?.name !== 'RIquelme Mati',
       totalTaxableIncome: liquidation.total_taxable_income || 0,
       contractType: liquidation.employment_contracts?.contract_type || 'indefinido',
       afpAmount: liquidation.afp_amount || 0,

@@ -92,6 +92,8 @@ export async function POST(request: NextRequest) {
         total_haberes: liquidations.reduce((sum, liq) => sum + (liq.total_gross_income || 0), 0),
         total_descuentos: liquidations.reduce((sum, liq) => sum + (liq.total_deductions || 0), 0),
       },
+      journal_entry_id: null as any,
+      entry_number: null as any,
     };
 
     // Si no es preview, guardar el asiento
