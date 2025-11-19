@@ -158,7 +158,7 @@ export function CashFlowProjection() {
   const getRiskBadge = (riskLevel: string) => {
     switch (riskLevel) {
       case 'high':
-        return { variant: 'danger' as const, text: 'Alto Riesgo', icon: AlertTriangle }
+        return { variant: 'error' as const, text: 'Alto Riesgo', icon: AlertTriangle }
       case 'medium':
         return { variant: 'warning' as const, text: 'Riesgo Medio', icon: TrendingDown }
       default:
@@ -208,7 +208,7 @@ export function CashFlowProjection() {
             <h3 className="text-lg font-bold text-gray-900">Flujo de Caja Proyectado</h3>
             <p className="text-sm text-gray-600">Proyección Integrada (Nómina + IVA + Operativo)</p>
           </div>
-          <Badge variant={riskInfo.variant} className="px-3 py-1">
+          <Badge variant={(riskInfo as any).variant} className="px-3 py-1">
             <RiskIcon className="w-3 h-3 mr-1" />
             {riskInfo.text}
           </Badge>

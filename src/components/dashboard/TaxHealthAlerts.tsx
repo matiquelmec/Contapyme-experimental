@@ -177,7 +177,7 @@ export function TaxHealthAlerts() {
       case 'warning':
         return { variant: 'warning' as const, text: 'Atención', icon: AlertTriangle }
       case 'critical':
-        return { variant: 'danger' as const, text: 'Crítico', icon: XCircle }
+        return { variant: 'error' as const, text: 'Crítico', icon: XCircle }
       default:
         return { variant: 'default' as const, text: 'Revisando', icon: Clock }
     }

@@ -20,7 +20,7 @@ import { Badge, Button } from '@/components/ui'
 import { useAuth } from '@/contexts/AuthContext'
 
 export function DashboardHeader() {
-  const { user, signOut } = useAuth()
+  const { user, signOut } = useAuth() as any
   const [notifications, setNotifications] = useState(3)
   const [currentTime, setCurrentTime] = useState(new Date())
 
@@ -34,7 +34,7 @@ export function DashboardHeader() {
   }, [])
 
   const handleSignOut = async () => {
-    await signOut()
+    await (signOut as any)()
   }
 
   return (
@@ -105,7 +105,7 @@ export function DashboardHeader() {
                 <Bell className="w-5 h-5 text-gray-600" />
                 {notifications > 0 && (
                   <Badge
-                    variant="danger"
+                    variant="error"
                     className="absolute -top-1 -right-1 w-5 h-5 text-xs flex items-center justify-center p-0 min-w-[20px]"
                   >
                     {notifications}

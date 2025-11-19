@@ -176,7 +176,7 @@ export function IVAMeter() {
             </div>
           </div>
           <Badge
-            variant={ivaData.estado === 'favor' ? 'success' : ivaData.estado === 'pagar' ? 'danger' : 'warning'}
+            variant={(ivaData as any).estado === 'favor' ? 'success' : (ivaData as any).estado === 'pagar' ? 'error' : 'warning' as any}
             className="px-4 py-2 text-sm font-medium"
           >
             {getEstadoText(ivaData.estado)}

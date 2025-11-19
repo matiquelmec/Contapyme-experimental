@@ -217,7 +217,7 @@ export function ModularDashboard() {
                 {currentViewConfig.description}
               </p>
             </div>
-            <Badge variant="outline" className="ml-auto">
+            <Badge variant="default" className="ml-auto">
               {activeLayout?.widgets.filter(w => w.visible).length || 0} widgets activos
             </Badge>
           </div>
