@@ -179,7 +179,7 @@ export function WidgetRenderer({ widget, isCustomizing }: WidgetRendererProps) {
             {/* Priority badge */}
             {isCustomizing && (
               <Badge
-                variant={widget.priority === 'high' ? 'danger' : widget.priority === 'medium' ? 'warning' : 'outline'}
+                variant={widget.priority === 'high' ? 'error' : widget.priority === 'medium' ? 'warning' : 'default'}
                 className="text-xs px-2 py-1"
               >
                 {widget.priority}

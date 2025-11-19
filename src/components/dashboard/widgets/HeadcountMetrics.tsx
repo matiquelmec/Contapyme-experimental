@@ -189,7 +189,7 @@ export function HeadcountMetrics() {
           </div>
           <div className="flex items-center gap-2">
             <Badge
-              variant={data.turnoverRate < 10 ? 'success' : data.turnoverRate < 20 ? 'warning' : 'danger'}
+              variant={data.turnoverRate < 10 ? 'success' : data.turnoverRate < 20 ? 'warning' : 'error'}
               className="px-3 py-1"
             >
               {data.turnoverRate}% Rotación
@@ -270,7 +270,7 @@ export function HeadcountMetrics() {
                     backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'][index] || '#6b7280',
                   }} />
                   <span className="text-sm font-medium text-gray-700">{dept.name}</span>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="default" className="text-xs">
                     {dept.percentage}%
                   </Badge>
                 </div>
