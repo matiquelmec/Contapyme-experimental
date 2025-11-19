@@ -201,9 +201,9 @@ export default function NewContractPage() {
         firstName: employee.first_name || '',
         lastName: employee.last_name || '',
         middleName: employee.middle_name || '',
-        birthDate: employee.birth_date || '',
-        gender: employee.gender || '',
-        maritalStatus: employee.marital_status || '',
+        birthDate: (employee as any).birth_date || '',
+        gender: (employee as any).gender || '',
+        maritalStatus: (employee as any).marital_status || '',
         nationality: employee.nationality || '',
         
         // Datos de contacto

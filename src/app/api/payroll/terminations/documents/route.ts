@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
     let documentTitle = '';
 
     if (document_type === 'notice_letter') {
-      documentContent = calculator.generateNoticeLetterText(calculationResult, company);
+      documentContent = calculator.generateNoticeLetterText(calculationResult as any, company);
       documentTitle = `Carta Aviso - ${employee.first_name} ${employee.last_name}`;
       
       // Actualizar flag de carta generada
@@ -207,7 +207,7 @@ export async function POST(request: NextRequest) {
         .eq('id', termination_id);
         
     } else if (document_type === 'settlement') {
-      documentContent = calculator.generateSettlementText(calculationResult, company);
+      documentContent = calculator.generateSettlementText(calculationResult as any, company);
       documentTitle = `Finiquito - ${employee.first_name} ${employee.last_name}`;
       
       // Actualizar flag de finiquito generado
