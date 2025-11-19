@@ -1262,12 +1262,12 @@ async function generateRealCSV(book: any, companyId: string): Promise<string> {
       '0',                                                 // 1142: IPS (ExINP)
       getHealthCode((employee as any)?.health_insurance_id || 16), // 1143: FONASA - ISAPRE (Tabla Nº11)
       '1',                                                 // 1151: AFC
-      getCcafCode(employee?.ccaf_id || 1),                // 1110: CCAF (Tabla Nº13)
-      getMutualCode(employee?.mutual_id || 3),            // 1152: Org. administrador ley 16.744 (Tabla Nº14)
-      (employee?.family_members || 0).toString(),         // 1111: Nro cargas familiares legales autorizadas
-      '0',                                                 // 1112: Nro de cargas familiares maternales  
+      getCcafCode((employee as any)?.ccaf_id || 1),                // 1110: CCAF (Tabla Nº13)
+      getMutualCode((employee as any)?.mutual_id || 3),            // 1152: Org. administrador ley 16.744 (Tabla Nº14)
+      ((employee as any)?.family_members || 0).toString(),         // 1111: Nro cargas familiares legales autorizadas
+      '0',                                                 // 1112: Nro de cargas familiares maternales
       '0',                                                 // 1113: Nro de cargas familiares invalidez
-      getTramoAsignacionFamiliar(employee?.family_allowance_section || 'S'), // 1114: Tramo asignación familiar (Tabla Nº15) - Default S (Sin Información)
+      getTramoAsignacionFamiliar((employee as any)?.family_allowance_section || 'S'), // 1114: Tramo asignación familiar (Tabla Nº15) - Default S (Sin Información)
       '',                                                  // 1171: Rut org sindical 1
       '',                                                  // 1172: Rut org sindical 2
       '',                                                  // 1173: Rut org sindical 3

@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
         salary: periodContract.base_salary,
         hours: periodContract.weekly_hours,
         type: periodContract.contract_type,
-        modifications: periodContract.modifications_applied?.length || 0,
+        modifications: (periodContract as any).modifications_applied?.length || 0,
       });
     }
 
@@ -179,7 +179,7 @@ export async function POST(request: NextRequest) {
       contractType: periodContract.contract_type,
       shouldPay: shouldPayUnemployment,
       period: `${period_month}/${period_year}`,
-      modificationsApplied: contractForPeriod ? periodContract.modifications_applied?.length : 0,
+      modificationsApplied: contractForPeriod ? (periodContract as any).modifications_applied?.length : 0,
     });
 
     // 2. Obtener configuración previsional de la empresa

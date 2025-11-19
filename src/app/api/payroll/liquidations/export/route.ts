@@ -450,9 +450,9 @@ export async function POST(request: NextRequest) {
       
       finalCompanyData = {
         ...finalCompanyData,
-        name: companyInfo.company_name || finalCompanyData.name,
-        rut: companyInfo.company_rut || finalCompanyData.rut,
-        address: companyInfo.company_address || finalCompanyData.address,
+        name: companyInfo.company_name || (finalCompanyData as any).name,
+        rut: companyInfo.company_rut || (finalCompanyData as any).rut,
+        address: companyInfo.company_address || (finalCompanyData as any).address,
         city: companyInfo.company_city,
         phone: companyInfo.company_phone,
         email: companyInfo.company_email,
