@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
     const { data: employee, error: employeeError } = await supabase
       .from('employees')
       .select('id, rut, first_name, last_name, address')
-      .eq('id', termination.employee_id)
+      .eq('id', (termination as any).employee_id)
       .single();
 
     if (employeeError || !employee) {
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
     const { data: contracts } = await supabase
       .from('employment_contracts')
       .select('position, base_salary, weekly_hours, start_date, contract_type')
-      .eq('employee_id', termination.employee_id)
+      .eq('employee_id', (termination as any).employee_id)
       .eq('status', 'active')
       .limit(1);
 
@@ -141,51 +141,51 @@ export async function POST(request: NextRequest) {
     // 4. Crear objeto de resultado de cálculo a partir de los datos guardados
     const calculationResult = {
       employee: {
-        employee_id: termination.employee_id,
-        employee_rut: employee.rut,
-        employee_name: `${employee.first_name} ${employee.last_name}`,
-        employee_address: employee.address,
-        position: contract.position,
-        contract_start_date: new Date(contract.start_date),
-        contract_type: contract.contract_type,
-        monthly_salary: contract.base_salary,
-        weekly_hours: contract.weekly_hours || 45,
-        termination_date: new Date(termination.termination_date),
-        termination_cause_code: termination.termination_cause_code,
-        last_work_date: new Date(termination.termination_date), // Asumimos mismo día si no se especifica
+        employee_id: (termination as any).employee_id,
+        employee_rut: (employee as any).rut,
+        employee_name: `${(employee as any).first_name} ${(employee as any).last_name}`,
+        employee_address: (employee as any).address,
+        position: (contract as any).position,
+        contract_start_date: new Date((contract as any).start_date),
+        contract_type: (contract as any).contract_type,
+        monthly_salary: (contract as any).base_salary,
+        weekly_hours: (contract as any).weekly_hours || 45,
+        termination_date: new Date((termination as any).termination_date),
+        termination_cause_code: (termination as any).termination_cause_code,
+        last_work_date: new Date((termination as any).termination_date), // Asumimos mismo día si no se especifica
       },
       termination_cause: {
-        article_code: termination.termination_cause_code,
-        article_name: termination.termination_cause_description,
-        requires_notice: termination.notice_given,
-        notice_days: termination.notice_days,
-        requires_severance: termination.severance_amount > 0,
+        article_code: (termination as any).termination_cause_code,
+        article_name: (termination as any).termination_cause_description,
+        requires_notice: (termination as any).notice_given,
+        notice_days: (termination as any).notice_days,
+        requires_severance: (termination as any).severance_amount > 0,
         severance_calculation_type: null,
         is_with_just_cause: false,
         category: 'employer_initiative',
       },
-      years_of_service: termination.severance_years_service || 0,
+      years_of_service: (termination as any).severance_years_service || 0,
       months_of_service: 0,
-      days_worked_last_month: termination.worked_days_last_month,
-      pending_salary_days: termination.pending_salary_days,
-      pending_salary_amount: termination.pending_salary_amount,
-      total_vacation_days_earned: termination.total_vacation_days_earned,
-      vacation_days_taken: termination.vacation_days_taken,
-      pending_vacation_days: termination.pending_vacation_days,
-      vacation_daily_rate: termination.vacation_daily_rate,
-      pending_vacation_amount: termination.pending_vacation_amount,
-      proportional_vacation_days: termination.proportional_vacation_days,
-      proportional_vacation_amount: termination.proportional_vacation_amount,
-      severance_entitled: termination.severance_amount > 0,
-      severance_calculation_basis: `Según ${termination.termination_cause_description}`,
-      severance_amount: termination.severance_amount,
-      notice_indemnification_amount: termination.notice_indemnification_amount,
-      christmas_bonus_amount: termination.christmas_bonus_amount,
-      pending_overtime_amount: termination.pending_overtime_amount,
-      other_bonuses_amount: termination.other_bonuses_amount,
-      total_compensations: termination.total_to_pay,
-      total_deductions: termination.total_deductions,
-      final_net_amount: termination.final_net_amount,
+      days_worked_last_month: (termination as any).worked_days_last_month,
+      pending_salary_days: (termination as any).pending_salary_days,
+      pending_salary_amount: (termination as any).pending_salary_amount,
+      total_vacation_days_earned: (termination as any).total_vacation_days_earned,
+      vacation_days_taken: (termination as any).vacation_days_taken,
+      pending_vacation_days: (termination as any).pending_vacation_days,
+      vacation_daily_rate: (termination as any).vacation_daily_rate,
+      pending_vacation_amount: (termination as any).pending_vacation_amount,
+      proportional_vacation_days: (termination as any).proportional_vacation_days,
+      proportional_vacation_amount: (termination as any).proportional_vacation_amount,
+      severance_entitled: (termination as any).severance_amount > 0,
+      severance_calculation_basis: `Según ${(termination as any).termination_cause_description}`,
+      severance_amount: (termination as any).severance_amount,
+      notice_indemnification_amount: (termination as any).notice_indemnification_amount,
+      christmas_bonus_amount: (termination as any).christmas_bonus_amount,
+      pending_overtime_amount: (termination as any).pending_overtime_amount,
+      other_bonuses_amount: (termination as any).other_bonuses_amount,
+      total_compensations: (termination as any).total_to_pay,
+      total_deductions: (termination as any).total_deductions,
+      final_net_amount: (termination as any).final_net_amount,
       calculation_warnings: [],
       legal_references: [],
       calculation_date: new Date(termination.created_at),
@@ -198,7 +198,7 @@ export async function POST(request: NextRequest) {
 
     if (document_type === 'notice_letter') {
       documentContent = calculator.generateNoticeLetterText(calculationResult as any, company);
-      documentTitle = `Carta Aviso - ${employee.first_name} ${employee.last_name}`;
+      documentTitle = `Carta Aviso - ${(employee as any).first_name} ${(employee as any).last_name}`;
       
       // Actualizar flag de carta generada
       await supabase
@@ -208,7 +208,7 @@ export async function POST(request: NextRequest) {
         
     } else if (document_type === 'settlement') {
       documentContent = calculator.generateSettlementText(calculationResult as any, company);
-      documentTitle = `Finiquito - ${employee.first_name} ${employee.last_name}`;
+      documentTitle = `Finiquito - ${(employee as any).first_name} ${(employee as any).last_name}`;
       
       // Actualizar flag de finiquito generado
       await supabase
@@ -233,10 +233,10 @@ export async function POST(request: NextRequest) {
         document_title: documentTitle,
         html_content: htmlContent,
         text_content: documentContent,
-        employee_name: `${employee.first_name} ${employee.last_name}`,
-        employee_rut: employee.rut,
+        employee_name: `${(employee as any).first_name} ${(employee as any).last_name}`,
+        employee_rut: (employee as any).rut,
         company_name: company.name,
-        termination_date: termination.termination_date,
+        termination_date: (termination as any).termination_date,
       },
     });
 
