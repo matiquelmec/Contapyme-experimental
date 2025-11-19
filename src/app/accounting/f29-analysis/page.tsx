@@ -796,10 +796,10 @@ export default function F29AnalysisPage() {
                     <div className="bg-purple-50 rounded-lg p-4">
                       <p className="text-sm text-purple-700 font-medium">Ratio Crédito/Débito</p>
                       <p className="text-xl font-bold text-purple-900">
-                        {result.codigo538 > 0 ? `${(result.codigo511 / result.codigo538).toFixed(2)}` : 'N/A'}
+                        {result.codigo538 > 0 ? `${(result.codigo151 / result.codigo538).toFixed(2)}` : 'N/A'}
                       </p>
                       <p className="text-xs text-purple-600">
-                        {result.codigo511 > result.codigo538 ? 'Mayor crédito' : 'Mayor débito'}
+                        {result.codigo151 > result.codigo538 ? 'Mayor crédito' : 'Mayor débito'}
                       </p>
                     </div>
                     
