@@ -338,7 +338,7 @@ export default function MissingEntitiesManager({
 
     // Si viene como número
     if (typeof missingData.coverage_percentage === 'number') {
-      return isNaN(missingData.coverage_percentage) ? '0' : missingData.coverage_percentage.toFixed(1);
+      return isNaN((missingData as any).coverage_percentage) ? '0' : (missingData as any).coverage_percentage.toFixed(1);
     }
 
     // Calcular manualmente como fallback
