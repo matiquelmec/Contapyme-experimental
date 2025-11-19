@@ -7,7 +7,7 @@ import { getDatabaseConnection, isSupabaseConfigured } from '@/lib/database/data
 // GET - Obtener todos los empleados de una empresa
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = request.nextUrl;
+    const { searchParams } = new URL(request.url);
     const companyId = searchParams.get('company_id');
     const searchRut = searchParams.get('search_rut'); // 🎯 NUEVO: Búsqueda por RUT
     const employeeId = searchParams.get('employee_id'); // 🎯 NUEVO: Búsqueda por ID de empleado
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
     console.log('🔍 API POST empleados - datos recibidos:', JSON.stringify(body, null, 2));
     
     // Validaciones básicas
-    if (!body.company_id || !body.rut || !body.first_name || !body.last_name || !body.email) {
+    if (!(body as any).company_id || !(body as any).rut || !(body as any).first_name || !(body as any).last_name || !(body as any).email) {
       return NextResponse.json(
         { error: 'Faltan campos requeridos: company_id, rut, first_name, last_name, email' },
         { status: 400 },
@@ -121,13 +121,13 @@ export async function POST(request: NextRequest) {
     const { data: existingEmployee } = await supabase
       .from('employees')
       .select('id, rut')
-      .eq('rut', body.rut)
+      .eq('rut', (body as any).rut)
       .single();
 
     if (existingEmployee) {
       return NextResponse.json({
         error: 'Ya existe un empleado con este RUT',
-        rut: body.rut,
+        rut: (body as any).rut,
       }, { status: 409 });
     }
 
@@ -135,9 +135,9 @@ export async function POST(request: NextRequest) {
     let workedDaysThisMonth = 0;
     let startDay = 0;
     
-    if (body.start_date) {
+    if ((body as any).start_date) {
       // 🔧 CORREGIR PARSEO DE FECHA: Usar formato YYYY-MM-DD directamente
-      const dateParts = body.start_date.split('-');
+      const dateParts = (body as any).start_date.split('-');
       if (dateParts.length === 3) {
         const year = parseInt(dateParts[0]);
         const month = parseInt(dateParts[1]) - 1; // JavaScript months are 0-indexed
@@ -161,27 +161,27 @@ export async function POST(request: NextRequest) {
     const { data: employee, error: employeeError } = await supabase
       .from('employees')
       .insert({
-        company_id: body.company_id,
-        rut: body.rut,
-        first_name: body.first_name,
-        last_name: body.last_name,
-        middle_name: body.middle_name || null,
-        birth_date: body.birth_date,
-        gender: body.gender,
-        marital_status: body.marital_status,
-        nationality: body.nationality,
-        email: body.email,
-        phone: body.phone,
-        mobile_phone: body.mobile_phone,
-        address: body.address,
-        city: body.city,
-        region: body.region,
-        postal_code: body.postal_code,
-        emergency_contact_name: body.emergency_contact_name,
-        emergency_contact_phone: body.emergency_contact_phone,
-        emergency_contact_relationship: body.emergency_contact_relationship,
+        company_id: (body as any).company_id,
+        rut: (body as any).rut,
+        first_name: (body as any).first_name,
+        last_name: (body as any).last_name,
+        middle_name: (body as any).middle_name || null,
+        birth_date: (body as any).birth_date,
+        gender: (body as any).gender,
+        marital_status: (body as any).marital_status,
+        nationality: (body as any).nationality,
+        email: (body as any).email,
+        phone: (body as any).phone,
+        mobile_phone: (body as any).mobile_phone,
+        address: (body as any).address,
+        city: (body as any).city,
+        region: (body as any).region,
+        postal_code: (body as any).postal_code,
+        emergency_contact_name: (body as any).emergency_contact_name,
+        emergency_contact_phone: (body as any).emergency_contact_phone,
+        emergency_contact_relationship: (body as any).emergency_contact_relationship,
         status: 'active',
-        created_by: body.created_by,
+        created_by: (body as any).created_by,
       })
       .select()
       .single();
@@ -210,11 +210,11 @@ export async function POST(request: NextRequest) {
     if (body.position && body.base_salary) {
       const contractData = {
         employee_id: employee.id,
-        company_id: body.company_id,
+        company_id: (body as any).company_id,
         position: body.position,
         department: body.department,
         contract_type: body.contract_type || 'indefinido',
-        start_date: body.start_date,
+        start_date: (body as any).start_date,
         end_date: body.contract_type === 'indefinido' ? null : body.end_date,
         base_salary: parseFloat(body.base_salary) || 0,
         salary_type: body.salary_type || 'monthly',
@@ -224,7 +224,7 @@ export async function POST(request: NextRequest) {
         exit_time: body.exit_time || '18:00', 
         lunch_break_duration: parseInt(body.lunch_break_duration) || 60,
         status: 'active',
-        created_by: body.created_by,
+        created_by: (body as any).created_by,
         // 🔧 AÑADIR FUNCIONES DEL CARGO (desde asistente IA)
         job_functions: body.job_functions || [],
         obligations: body.obligations || [],
@@ -293,7 +293,7 @@ export async function POST(request: NextRequest) {
       message,
       worked_days_info: workedDaysThisMonth > 0 ? {
         worked_days_this_month: workedDaysThisMonth,
-        start_date: body.start_date,
+        start_date: (body as any).start_date,
         start_day: startDay,
         calculation_note: `Empleado inicia el ${startDay} del mes, trabajará ${workedDaysThisMonth} días de este período`,
       } : null,
@@ -380,7 +380,7 @@ export async function PATCH(request: NextRequest) {
 // DELETE - Desactivar o eliminar empleado
 export async function DELETE(request: NextRequest) {
   try {
-    const { searchParams } = request.nextUrl;
+    const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const companyId = searchParams.get('company_id');
     const permanent = searchParams.get('permanent') === 'true'; // Nuevo parámetro
