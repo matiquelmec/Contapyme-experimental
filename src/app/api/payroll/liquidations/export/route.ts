@@ -43,19 +43,19 @@ function generateLiquidationHTML(liquidation: any, employee: any, company: any) 
   };
 
   // ✅ FUNCIÓN PARA CALCULAR TOTAL DESCUENTOS DINÁMICAMENTE
-  const calculateTotalDeductions = (liq: any) => (liq.afp_amount || 0) + 
-           (liq.afp_commission_amount || 0) +
-           (liq.health_amount || 0) + 
-           (liq.additional_health_amount || 0) +
-           (liq.unemployment_amount || 0) + 
-           (liq.income_tax_amount || 0) +
-           (liq.loan_deductions || 0) +
-           (liq.advance_payments || 0) +
-           (liq.apv_amount || 0) +
-           (liq.other_deductions || 0);
+  const calculateTotalDeductions = (liq: any) => ((liq as any).afp_amount || 0) +
+           ((liq as any).afp_commission_amount || 0) +
+           ((liq as any).health_amount || 0) +
+           ((liq as any).additional_health_amount || 0) +
+           ((liq as any).unemployment_amount || 0) +
+           ((liq as any).income_tax_amount || 0) +
+           ((liq as any).loan_deductions || 0) +
+           ((liq as any).advance_payments || 0) +
+           ((liq as any).apv_amount || 0) +
+           ((liq as any).other_deductions || 0);
 
   // ✅ CALCULAR LÍQUIDO A PAGAR DINÁMICAMENTE
-  const calculateNetSalary = (liq: any) => liq.total_gross_income - calculateTotalDeductions(liq);
+  const calculateNetSalary = (liq: any) => (liq as any).total_gross_income - calculateTotalDeductions(liq);
 
   return `
 <!DOCTYPE html>
@@ -63,7 +63,7 @@ function generateLiquidationHTML(liquidation: any, employee: any, company: any) 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liquidación de Sueldo - ${cleanText(employee.first_name)} ${cleanText(employee.last_name)}</title>
+    <title>Liquidación de Sueldo - ${cleanText((employee as any).first_name)} ${cleanText((employee as any).last_name)}</title>
     <style>
         * {
             margin: 0;
