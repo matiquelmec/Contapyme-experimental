@@ -493,6 +493,13 @@ export default function F29ComparativePage() {
     });
   };
 
+  // Función de análisis avanzado (placeholder - implementar con lógica real más adelante)
+  const performFullAnalysis = async (f29Data: any[]) => {
+    // TODO: Implementar análisis real usando f29Data
+    console.log('🧠 Ejecutando análisis avanzado placeholder con', f29Data.length, 'registros');
+    return generateDemoAdvancedAnalysis();
+  };
+
   // Generar análisis avanzado de demostración si el Worker falla
   const generateDemoAdvancedAnalysis = () => ({
       seasonal: {

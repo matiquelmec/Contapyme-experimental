@@ -2557,3 +2557,27 @@ async function markTransactionAsProcessed(
     return false;
   }
 }
+
+/**
+ * Crea una distribución sintética de RCV cuando no hay datos detallados disponibles
+ * TODO: Implementar lógica real de distribución sintética
+ */
+async function createSyntheticRCVDistribution(companyId: string, rcvData: any) {
+  console.log(`🔄 Creating synthetic RCV distribution for ${rcvData.file_name}`);
+
+  // Por ahora, retorna una estructura básica para evitar errores
+  // TODO: Implementar lógica real basada en rcvData.total_amount y rcvData.type
+  return {
+    lines: [
+      {
+        account_code: '1001', // Cuenta placeholder
+        account_name: 'Cuenta Synthetic RCV',
+        debit_amount: rcvData.total_amount || 0,
+        credit_amount: 0,
+        description: `Synthetic distribution for ${rcvData.file_name}`,
+      }
+    ],
+    total_debit: rcvData.total_amount || 0,
+    total_credit: rcvData.total_amount || 0,
+  };
+}
