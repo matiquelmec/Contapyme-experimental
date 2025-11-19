@@ -125,8 +125,15 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// Interfaz para configuración de cuentas F29
+interface F29AccountsConfig {
+  caja: { code: string; name: string } | null;
+  iva_debito: { code: string; name: string } | null;
+  ventas: { code: string; name: string } | null;
+}
+
 // Función para obtener configuración de cuentas F29
-async function getF29AccountsConfig(companyId: string) {
+async function getF29AccountsConfig(companyId: string): Promise<F29AccountsConfig> {
   console.log('🔍 Obteniendo configuración de cuentas F29...');
   
   // Buscar cuentas típicas para F29
@@ -137,7 +144,11 @@ async function getF29AccountsConfig(companyId: string) {
 
   if (error) {
     console.error('❌ Error obteniendo plan de cuentas:', error);
-    return {};
+    return {
+      caja: null,
+      iva_debito: null,
+      ventas: null,
+    };
   }
 
   // Mapear cuentas típicas para F29

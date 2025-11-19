@@ -4,13 +4,17 @@ import { useCallback } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-export type UserIntention = 
+export type UserIntention =
   | 'analyze_f29'
-  | 'manage_company' 
+  | 'manage_company'
   | 'explore_features'
   | 'view_indicators'
   | 'manage_assets'
   | 'configure_system'
+  | 'accounting_module'
+  | 'payroll_module'
+  | 'fixed_assets'
+  | 'employees'
 
 interface IntentionAction {
   intention: UserIntention
@@ -65,7 +69,23 @@ export function useUserIntention() {
         case 'configure_system':
           router.push('/accounting/configuration')
           break
-          
+
+        case 'accounting_module':
+          router.push('/accounting')
+          break
+
+        case 'payroll_module':
+          router.push('/payroll')
+          break
+
+        case 'fixed_assets':
+          router.push('/accounting/fixed-assets')
+          break
+
+        case 'employees':
+          router.push('/payroll/employees')
+          break
+
         default:
           router.push('/explore')
       }

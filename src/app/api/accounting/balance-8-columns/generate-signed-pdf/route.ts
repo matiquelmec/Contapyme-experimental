@@ -165,7 +165,7 @@ export async function GET(request: NextRequest) {
       const sampleData = BalancePDFGenerator.generateSampleData();
       const pdfBytes = await BalancePDFGenerator.generateBalancePDF(sampleData);
 
-      return new NextResponse(pdfBytes, {
+      return new NextResponse(Buffer.from(pdfBytes), {
         headers: {
           'Content-Type': 'application/pdf',
           'Content-Disposition': 'attachment; filename="balance-8-columnas-prueba.pdf"',

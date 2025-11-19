@@ -148,7 +148,7 @@ export async function GET(request: NextRequest) {
 
     const fileName = `Libro_Remuneraciones_${monthNames[parseInt(month) - 1]}_${year}.xlsx`;
 
-    return new NextResponse(excelBuffer, {
+    return new NextResponse(Buffer.from(excelBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
