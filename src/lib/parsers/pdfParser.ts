@@ -21,17 +21,16 @@ export async function extractTextFromPDF(file: File): Promise<PDFExtractedData> 
     const arrayBuffer = await file.arrayBuffer();
     
     // Configurar opciones de carga del PDF - MÁXIMA compatibilidad
-    const loadingTask = pdfjsLib.getDocument({ 
+    const loadingTask = pdfjsLib.getDocument({
       data: arrayBuffer,
       verbosity: 0, // Silenciar warnings
-      disableWorker: true, // SIEMPRE sin worker
       isEvalSupported: false, // Seguridad
       disableCreateObjectURL: false,
       useSystemFonts: true, // Usar fuentes del sistema
       standardFontDataUrl: null, // No cargar fuentes externas
       cMapUrl: null, // No cargar mapas de caracteres externos
       cMapPacked: false,
-    });
+    } as any);
     
     // Agregar timeout para evitar que se cuelgue
     const timeoutPromise = new Promise((_, reject) => {

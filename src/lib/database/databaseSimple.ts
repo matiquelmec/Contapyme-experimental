@@ -42,8 +42,10 @@ const supabaseOptions = {
     autoRefreshToken: false, // Desactiva auto-refresh para APIs
   },
   realtime: {
-    enabled: false, // Desactiva realtime para mejorar performance
-  },
+    params: {
+      eventsPerSecond: 2, // Desactiva realtime para mejorar performance
+    },
+  } as any,
   global: {
     headers: {
       'Cache-Control': 'public, max-age=60', // Cache de 1 minuto

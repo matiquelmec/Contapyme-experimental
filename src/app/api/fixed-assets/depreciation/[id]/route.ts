@@ -44,16 +44,16 @@ export async function GET(
       WHERE fad.fixed_asset_id = $1
     `;
 
-    const params: any[] = [id];
+    const queryParams: any[] = [id];
 
     if (year) {
       depreciationQuery += ' AND fad.period_year = $2';
-      params.push(parseInt(year));
+      queryParams.push(parseInt(year));
     }
 
     depreciationQuery += ' ORDER BY fad.period_year ASC, fad.period_month ASC';
 
-    const { data, error } = await databaseSimple.query(depreciationQuery, params);
+    const { data, error } = await databaseSimple.query(depreciationQuery, queryParams);
 
     if (error) {
       console.error('Error fetching depreciation schedule:', error);

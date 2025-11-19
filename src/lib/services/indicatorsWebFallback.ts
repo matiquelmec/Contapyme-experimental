@@ -165,6 +165,7 @@ async function tryPrimaryAPIs(): Promise<IndicatorResult> {
     success: results.length > 0,
     data: results,
     error: errors.length > 0 ? errors.join(', ') : undefined,
+    source: 'banco-central',
   };
 }
 
@@ -221,6 +222,7 @@ async function tryWebSearchFallback(): Promise<IndicatorResult> {
   return {
     success: results.length > 0,
     data: results,
+    source: 'web-search',
   };
 }
 
@@ -286,7 +288,7 @@ function getSmartMockData(): IndicatorResult {
     }
   }
 
-  return { success: true, data: results };
+  return { success: true, data: results, source: 'fallback-values' };
 }
 
 // Utilidades de cache

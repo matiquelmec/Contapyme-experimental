@@ -135,7 +135,7 @@ function generateContractHTML(contractData: any): string {
 
   // Calcular totales
   const totalBonuses = bonuses.reduce((sum: number, bonus: any) => sum + (bonus.amount || 0), 0);
-  const totalAllowances = Object.values(allowances).reduce((sum: number, val: any) => sum + (Number(val) || 0), 0);
+  const totalAllowances = Object.values(allowances).reduce((sum: number, val: any) => sum + (Number(val) || 0), 0) as number;
   const totalGross = Number(base_salary) + Number(gratification_amount) + totalBonuses;
 
   // Formatear horarios (usar los campos correctos del contrato)
