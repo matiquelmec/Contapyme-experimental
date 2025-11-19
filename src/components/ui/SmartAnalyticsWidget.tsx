@@ -243,7 +243,7 @@ export function SmartAnalyticsWidget() {
                 <div className="text-right">
                   <div className="text-xs text-gray-500">{insight.confidence}% confianza</div>
                   {insight.actionable && (
-                    <Badge variant="outline" size="sm" className="mt-1">
+                    <Badge variant="default" size="sm" className="mt-1">
                       Accionable
                     </Badge>
                   )}

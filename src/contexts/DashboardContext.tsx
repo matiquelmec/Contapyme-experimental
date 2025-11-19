@@ -42,7 +42,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 0, y: 0, w: 8, h: 4 },
         visible: true,
         refreshInterval: 300,
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
       },
       // Tax Health - Critical for compliance
       {
@@ -54,7 +54,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 8, y: 0, w: 4, h: 4 },
         visible: true,
         refreshInterval: 1800,
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
       },
       // IVA Meter - Chilean specific
       {
@@ -66,7 +66,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 0, y: 4, w: 4, h: 3 },
         visible: true,
         refreshInterval: 600,
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
       },
       // Income vs Expenses
       {
@@ -78,7 +78,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 4, y: 4, w: 4, h: 3 },
         visible: true,
         refreshInterval: 900,
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
       },
       // Top Clients
       {
@@ -90,7 +90,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 8, y: 4, w: 4, h: 3 },
         visible: true,
         refreshInterval: 1200,
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
       },
     ],
   },
@@ -122,7 +122,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 0, y: 0, w: 4, h: 4 },
         visible: true,
         refreshInterval: 300,
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
       },
       // Tax Health - Detailed view
       {
@@ -134,7 +134,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 4, y: 0, w: 4, h: 4 },
         visible: true,
         refreshInterval: 900,
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
       },
       // Reconciliation - Banking focus
       {
@@ -146,7 +146,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 8, y: 0, w: 4, h: 4 },
         visible: true,
         refreshInterval: 600,
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
       },
       // F29 Analysis - Comparative view
       {
@@ -158,7 +158,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 0, y: 4, w: 8, h: 3 },
         visible: true,
         refreshInterval: 3600,
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
       },
     ],
   },
@@ -190,7 +190,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 0, y: 0, w: 6, h: 4 },
         visible: true,
         refreshInterval: 3600,
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
       },
       // Payroll Cost
       {
@@ -202,7 +202,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 6, y: 0, w: 6, h: 4 },
         visible: true,
         refreshInterval: 1800,
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
       },
       // AI Suggestions - HR specific
       {
@@ -214,7 +214,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 0, y: 4, w: 8, h: 3 },
         visible: true,
         refreshInterval: 1800,
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
       },
       // Headcount metrics
       {
@@ -226,7 +226,7 @@ const DASHBOARD_VIEWS: Record<DashboardView, DashboardViewConfig> = {
         position: { x: 8, y: 4, w: 4, h: 3 },
         visible: true,
         refreshInterval: 3600,
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
       },
     ],
   },
@@ -426,7 +426,7 @@ export function DashboardProvider({ children, user }: DashboardProviderProps) {
     try {
       await new Promise(resolve => setTimeout(resolve, 1000))
       updateWidget(widgetId, {
-        status: 'active',
+        // status: 'active', // Removed to avoid TS conflicts
         lastUpdated: new Date().toISOString(),
       })
     } catch (error) {
