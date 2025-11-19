@@ -805,7 +805,7 @@ async function createAutomaticJournalEntry(companyId: string, transaction: any) 
       // Retornar el asiento completo con entry_number
       return { ...entryData, jbid: entryData.id };
     } else {
-      throw new Error(result.error || 'Error creando asiento contable');
+      throw new Error((result as any).error || 'Error creando asiento contable');
     }
 
   } catch (error) {

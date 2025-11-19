@@ -352,7 +352,7 @@ export async function GET(request: NextRequest) {
           total_amount: processedData.reduce((sum, record) => sum + record.total_amount, 0),
           unique_suppliers: new Set(
             processedData.flatMap(record => 
-              record.transactions?.map((t: any) => t.entity_rut) || [],
+              (record as any).transactions?.map((t: any) => t.entity_rut) || [],
             ),
           ).size,
         },

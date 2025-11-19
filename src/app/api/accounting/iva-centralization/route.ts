@@ -87,6 +87,8 @@ export async function POST(request: NextRequest) {
         total_a_pagar: f29_data.total_a_pagar || ((f29_data.codigo538 - (f29_data.codigo537 || 0)) + (f29_data.codigo048 || 0) + (f29_data.codigo062 || 0)),
         tipo_resultado: f29_data.codigo538 > (f29_data.codigo537 || 0) ? 'por_pagar' : 'remanente',
       },
+      journal_entry_id: null as any,
+      entry_number: null as any,
     };
 
     // Si no es preview, guardar el asiento en el libro diario
@@ -132,7 +134,15 @@ export async function POST(request: NextRequest) {
 }
 
 // Función para obtener configuración de cuentas IVA
-async function getIVACentralizationAccountsConfig(companyId: string) {
+// Interfaz para configuración de cuentas IVA Centralización
+interface IVACentralizationAccountsConfig {
+  iva_debito: { code: string; name: string } | null;
+  iva_credito: { code: string; name: string } | null;
+  impuesto_por_pagar: { code: string; name: string } | null;
+  remanente_credito: { code: string; name: string } | null;
+}
+
+async function getIVACentralizationAccountsConfig(companyId: string): Promise<IVACentralizationAccountsConfig> {
   console.log('🔍 Obteniendo configuración de cuentas Centralización IVA...');
   
   // Buscar cuentas típicas para centralización IVA
@@ -143,7 +153,12 @@ async function getIVACentralizationAccountsConfig(companyId: string) {
 
   if (error) {
     console.error('❌ Error obteniendo plan de cuentas:', error);
-    return {};
+    return {
+      iva_debito: null,
+      iva_credito: null,
+      impuesto_por_pagar: null,
+      remanente_credito: null,
+    };
   }
 
   // Mapear cuentas típicas para centralización IVA

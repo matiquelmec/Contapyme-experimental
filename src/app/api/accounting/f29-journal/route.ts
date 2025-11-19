@@ -82,6 +82,8 @@ export async function POST(request: NextRequest) {
         periodo: f29_data.periodo,
         rut: f29_data.rut,
       },
+      journal_entry_id: null as any,
+      entry_number: null as any,
     };
 
     // Si no es preview, guardar el asiento
