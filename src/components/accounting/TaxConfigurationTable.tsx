@@ -130,16 +130,12 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
           tax_type: '',
           tax_name: '',
           tax_rate: '',
-          sales_debit_account_code: '',
-          sales_debit_account_name: '',
-          sales_credit_account_code: '',
-          sales_credit_account_name: '',
-          purchases_debit_account_code: '',
-          purchases_debit_account_name: '',
-          purchases_credit_account_code: '',
-          purchases_credit_account_name: '',
+          sales_account_code: '',
+          sales_account_name: '',
+          purchases_account_code: '',
+          purchases_account_name: '',
           notes: '',
-        });
+        } as any);
         alert('✅ Configuración creada exitosamente');
       } else {
         alert(`❌ Error: ${  data.error}`);
@@ -326,7 +322,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                   </td>
                   <td className="px-4 py-3">
                     <select
-                      value={newConfig.sales_debit_account_code}
+                      value={(newConfig as any).sales_debit_account_code || ''}
                       onChange={(e) => { handleAccountSelect('sales_debit_account_code', e.target.value, true); }}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                     >
@@ -340,7 +336,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                   </td>
                   <td className="px-4 py-3">
                     <select
-                      value={newConfig.sales_credit_account_code}
+                      value={(newConfig as any).sales_credit_account_code || ''}
                       onChange={(e) => { handleAccountSelect('sales_credit_account_code', e.target.value, true); }}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                     >
@@ -354,7 +350,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                   </td>
                   <td className="px-4 py-3">
                     <select
-                      value={newConfig.purchases_debit_account_code}
+                      value={(newConfig as any).purchases_debit_account_code || ''}
                       onChange={(e) => { handleAccountSelect('purchases_debit_account_code', e.target.value, true); }}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                     >
@@ -368,7 +364,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                   </td>
                   <td className="px-4 py-3">
                     <select
-                      value={newConfig.purchases_credit_account_code}
+                      value={(newConfig as any).purchases_credit_account_code || ''}
                       onChange={(e) => { handleAccountSelect('purchases_credit_account_code', e.target.value, true); }}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                     >
@@ -433,7 +429,7 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                   <td className="px-4 py-3">
                     {editingId === config.id ? (
                       <select
-                        value={config.sales_debit_account_code || ''}
+                        value={(config as any).sales_debit_account_code || ''}
                         onChange={(e) => { handleAccountSelect('sales_debit_account_code', e.target.value); }}
                         className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                       >
@@ -446,15 +442,15 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                       </select>
                     ) : (
                       <div className="text-sm">
-                        <div className="font-mono text-gray-900">{config.sales_debit_account_code}</div>
-                        <div className="text-xs text-gray-500">{config.sales_debit_account_name}</div>
+                        <div className="font-mono text-gray-900">{(config as any).sales_debit_account_code}</div>
+                        <div className="text-xs text-gray-500">{(config as any).sales_debit_account_name}</div>
                       </div>
                     )}
                   </td>
                   <td className="px-4 py-3">
                     {editingId === config.id ? (
                       <select
-                        value={config.sales_credit_account_code || ''}
+                        value={(config as any).sales_credit_account_code || ''}
                         onChange={(e) => { handleAccountSelect('sales_credit_account_code', e.target.value); }}
                         className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                       >
@@ -467,15 +463,15 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                       </select>
                     ) : (
                       <div className="text-sm">
-                        <div className="font-mono text-gray-900">{config.sales_credit_account_code}</div>
-                        <div className="text-xs text-gray-500">{config.sales_credit_account_name}</div>
+                        <div className="font-mono text-gray-900">{(config as any).sales_credit_account_code}</div>
+                        <div className="text-xs text-gray-500">{(config as any).sales_credit_account_name}</div>
                       </div>
                     )}
                   </td>
                   <td className="px-4 py-3">
                     {editingId === config.id ? (
                       <select
-                        value={config.purchases_debit_account_code || ''}
+                        value={(config as any).purchases_debit_account_code || ''}
                         onChange={(e) => { handleAccountSelect('purchases_debit_account_code', e.target.value); }}
                         className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                       >
@@ -488,15 +484,15 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                       </select>
                     ) : (
                       <div className="text-sm">
-                        <div className="font-mono text-gray-900">{config.purchases_debit_account_code}</div>
-                        <div className="text-xs text-gray-500">{config.purchases_debit_account_name}</div>
+                        <div className="font-mono text-gray-900">{(config as any).purchases_debit_account_code}</div>
+                        <div className="text-xs text-gray-500">{(config as any).purchases_debit_account_name}</div>
                       </div>
                     )}
                   </td>
                   <td className="px-4 py-3">
                     {editingId === config.id ? (
                       <select
-                        value={config.purchases_credit_account_code || ''}
+                        value={(config as any).purchases_credit_account_code || ''}
                         onChange={(e) => { handleAccountSelect('purchases_credit_account_code', e.target.value); }}
                         className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                       >
@@ -509,8 +505,8 @@ export default function TaxConfigurationTable({ companyId, accounts }: TaxConfig
                       </select>
                     ) : (
                       <div className="text-sm">
-                        <div className="font-mono text-gray-900">{config.purchases_credit_account_code}</div>
-                        <div className="text-xs text-gray-500">{config.purchases_credit_account_name}</div>
+                        <div className="font-mono text-gray-900">{(config as any).purchases_credit_account_code}</div>
+                        <div className="text-xs text-gray-500">{(config as any).purchases_credit_account_name}</div>
                       </div>
                     )}
                   </td>
