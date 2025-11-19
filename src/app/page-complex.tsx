@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { TrendingUp, Shield, Zap, ChevronRight, Play } from 'lucide-react'
 
 import { MinimalHeader } from '@/components/layout'
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, IndicatorsTicker, Badge } from '@/components/ui'
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, EconomicIndicatorsTicker, Badge } from '@/components/ui'
 import Preloader from '@/components/ui/Preloader'
 import { useUserIntention, type UserIntention } from '@/hooks/useUserIntention'
 
@@ -36,7 +36,7 @@ export default function Home() {
       <MinimalHeader variant="glass" />
 
       {/* Cinta de Indicadores Económicos */}
-      <IndicatorsTicker />
+      <EconomicIndicatorsTicker />
 
       <main className="relative z-10">
         {/* Hero Section */}
