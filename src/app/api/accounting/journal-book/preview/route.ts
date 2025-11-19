@@ -36,15 +36,17 @@ export async function POST(request: NextRequest) {
 
     let previewData;
 
+    // Declare year and month for potential use in transaction info
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1;
+
     if (rcvData) {
       // RCV transaction preview
       console.log('📊 Generating RCV preview for:', rcvData.file_name);
       previewData = await createRCVJournalEntry(companyId, rcvData, true); // true = preview mode
     } else {
       // Try payroll data
-      const currentDate = new Date();
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1;
       
       console.log('💼 Generating Payroll preview for:', `${year}-${String(month).padStart(2, '0')}`);
       previewData = await createPayrollJournalEntry(companyId, year, month, true); // true = preview mode

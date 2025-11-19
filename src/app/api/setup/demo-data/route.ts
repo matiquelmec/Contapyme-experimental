@@ -34,6 +34,8 @@ export async function POST(request: NextRequest) {
 
     console.log(`📋 Found ${sourceEntries?.length || 0} source entries`);
 
+    let insertedEntries = null;
+
     if (sourceEntries && sourceEntries.length > 0) {
       // Modify the entries for Company 2
       const newEntries = sourceEntries.map((entry, index) => ({
@@ -51,7 +53,7 @@ export async function POST(request: NextRequest) {
       }));
 
       // Insert new entries
-      const { data: insertedEntries, error: insertError } = await supabase
+      const { data, error: insertError } = await supabase
         .from('journal_entries')
         .insert(newEntries)
         .select();
@@ -61,6 +63,7 @@ export async function POST(request: NextRequest) {
         throw insertError;
       }
 
+      insertedEntries = data;
       console.log(`✅ Inserted ${insertedEntries?.length || 0} journal entries for Company 2`);
     }
 
