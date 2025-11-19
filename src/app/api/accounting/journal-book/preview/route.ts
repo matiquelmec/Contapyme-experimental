@@ -45,10 +45,9 @@ export async function POST(request: NextRequest) {
       console.log('📊 Generating RCV preview for:', rcvData.file_name);
       previewData = await createRCVJournalEntry(companyId, rcvData, true); // true = preview mode
     } else {
-      // Try payroll data
-      
-      console.log('💼 Generating Payroll preview for:', `${year}-${String(month).padStart(2, '0')}`);
-      previewData = await createPayrollJournalEntry(companyId, year, month, true); // true = preview mode
+      // Payroll preview not implemented yet
+      console.log('💼 Payroll preview not available for:', `${year}-${String(month).padStart(2, '0')}`);
+      previewData = null;
     }
 
     if (!previewData) {

@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
                 folio: extracted.folio,
                 razonSocial: extracted.razonSocial,
                 codigo538: extracted.codigo538,
-                codigo511: extracted.codigo511,
+                codigo151: extracted.codigo151,
                 codigo563: extracted.codigo563,
                 codigo062: extracted.codigo062,
                 codigo077: extracted.codigo077,
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
               rut: extracted.rut || '',
               folio: extracted.folio || '',
             },
-          };
+          } as any;
 
         } catch (error) {
           console.error(`❌ Error procesando ${file.name}:`, error);

@@ -90,8 +90,8 @@ export async function POST(request: NextRequest) {
     for (const liquidation of liquidations) {
       // Convertir a formato unificado
       const unifiedData: UnifiedLiquidationData = {
-        employee_rut: liquidation.employees?.rut || '',
-        employee_name: `${liquidation.employees?.first_name || ''} ${liquidation.employees?.last_name || ''}`.trim(),
+        employee_rut: (liquidation.employees as any)?.rut || '',
+        employee_name: `${(liquidation.employees as any)?.first_name || ''} ${(liquidation.employees as any)?.last_name || ''}`.trim(),
         period_year: liquidation.period_year,
         period_month: liquidation.period_month,
         sueldo_base: liquidation.base_salary || 0,

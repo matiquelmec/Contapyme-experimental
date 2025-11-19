@@ -375,8 +375,8 @@ export async function POST(request: NextRequest) {
       // 🎯 SOLUCIÓN ROBUSTA: Siempre validar contra PayrollUnifiedCalculator
       // Calcular los valores que DEBERÍAN ser según el calculador unificado
       const unifiedData = {
-        employee_rut: liq.employees?.rut || '',
-        employee_name: `${liq.employees?.first_name || ''} ${liq.employees?.last_name || ''}`.trim(),
+        employee_rut: (liq.employees as any)?.rut || '',
+        employee_name: `${(liq.employees as any)?.first_name || ''} ${(liq.employees as any)?.last_name || ''}`.trim(),
         period_year: liq.period_year,
         period_month: liq.period_month,
         sueldo_base: liq.base_salary || 0,
@@ -406,7 +406,7 @@ export async function POST(request: NextRequest) {
 
       // 🎯 ESTRATEGIA INTELIGENTE: Usar la mejor fuente para cada valor
       if (!haberesMatch || !descuentosMatch || !liquidoMatch) {
-        console.log(`🔧 Corrección selectiva para ${liq.employees?.rut}:`);
+        console.log(`🔧 Corrección selectiva para ${(liq.employees as any)?.rut}:`);
         console.log(`   Almacenado: ${finalHaberes}h, ${finalDescuentos}d, ${finalLiquido}l`);
         console.log(`   Calculado:  ${calculatedResult.total_haberes}h, ${calculatedResult.total_descuentos}d, ${calculatedResult.total_liquido}l`);
 
@@ -433,9 +433,9 @@ export async function POST(request: NextRequest) {
 
       // Log del resultado final
       if (!useStoredValues) {
-        console.log(`🔧 Corregido para ${liq.employees?.rut}: ${finalHaberes} haberes, ${finalDescuentos} descuentos, ${finalLiquido} líquido`);
+        console.log(`🔧 Corregido para ${(liq.employees as any)?.rut}: ${finalHaberes} haberes, ${finalDescuentos} descuentos, ${finalLiquido} líquido`);
       } else {
-        console.log(`✅ Usando valores almacenados para ${liq.employees?.rut}: ${finalHaberes} haberes, ${finalDescuentos} descuentos, ${finalLiquido} líquido`);
+        console.log(`✅ Usando valores almacenados para ${(liq.employees as any)?.rut}: ${finalHaberes} haberes, ${finalDescuentos} descuentos, ${finalLiquido} líquido`);
       }
 
       // Sumar a totales usando los valores finales (almacenados o recalculados)
@@ -445,8 +445,8 @@ export async function POST(request: NextRequest) {
 
       return {
         liquidation_id: liq.id,
-        employee_rut: liq.employees?.rut || '',
-        employee_name: `${liq.employees?.first_name || ''} ${liq.employees?.last_name || ''}`.trim(),
+        employee_rut: (liq.employees as any)?.rut || '',
+        employee_name: `${(liq.employees as any)?.first_name || ''} ${(liq.employees as any)?.last_name || ''}`.trim(),
         final_values: {
           haberes: finalHaberes,
           descuentos: finalDescuentos,

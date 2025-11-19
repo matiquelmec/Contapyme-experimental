@@ -13,7 +13,7 @@ export async function GET(
   { params }: { params: { id: string } },
 ) {
   try {
-    const { id } = params;
+    const { id } = params as { id: string };
     // Usar nextUrl.searchParams en lugar de new URL(request.url)
     const year = request.nextUrl.searchParams.get('year');
 
