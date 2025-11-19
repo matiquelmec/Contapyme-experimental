@@ -24,6 +24,12 @@ import {
   CardContent,
   Button,
   Badge,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  Progress,
+  Checkbox,
 } from '@/components/ui';
 
 interface EntityValidation {
@@ -266,7 +272,7 @@ export default function RCVBatchIntegration({
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm">Cobertura:</span>
-                        <Badge variant="outline">
+                        <Badge variant="secondary">
                           {validationStatus.entity_status.coverage_percentage.toFixed(1)}%
                         </Badge>
                       </div>
@@ -367,15 +373,15 @@ export default function RCVBatchIntegration({
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div className="flex justify-between">
                       <span>Máx. transacciones:</span>
-                      <Badge variant="outline">{batchConfig.max_transactions_per_batch}</Badge>
+                      <Badge variant="secondary">{batchConfig.max_transactions_per_batch}</Badge>
                     </div>
                     <div className="flex justify-between">
                       <span>Máx. líneas de detalle:</span>
-                      <Badge variant="outline">{batchConfig.max_details_per_entry}</Badge>
+                      <Badge variant="secondary">{batchConfig.max_details_per_entry}</Badge>
                     </div>
                     <div className="flex justify-between col-span-2">
                       <span>Máx. monto por lote:</span>
-                      <Badge variant="outline">
+                      <Badge variant="secondary">
                         ${(batchConfig.max_amount_per_batch / 1000000).toFixed(0)}M
                       </Badge>
                     </div>
@@ -482,7 +488,7 @@ export default function RCVBatchIntegration({
                   <div className="flex items-center justify-between">
                     <h4 className="font-medium">Asientos Generados</h4>
                     <Button 
-                      variant="outline" 
+                      variant="secondary" 
                       size="sm"
                       onClick={downloadJournalEntries}
                     >
@@ -501,7 +507,7 @@ export default function RCVBatchIntegration({
                               Ref: {entry.reference} | Fecha: {entry.entry_date}
                             </div>
                           </div>
-                          <Badge variant="outline">
+                          <Badge variant="secondary">
                             Lote {entry.metadata?.batch_number}/{entry.metadata?.total_batches}
                           </Badge>
                         </div>
@@ -552,13 +558,13 @@ export default function RCVBatchIntegration({
 
       {/* Botones de acción */}
       <div className="flex justify-between">
-        <Button variant="outline" onClick={onClose}>
+        <Button variant="secondary" onClick={onClose}>
           Cancelar
         </Button>
         
         <div className="flex gap-2">
           <Button 
-            variant="outline"
+            variant="secondary"
             onClick={loadValidationStatus}
             disabled={loading}
           >
