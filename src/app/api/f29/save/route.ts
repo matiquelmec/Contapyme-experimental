@@ -6,7 +6,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { createSupabaseAdminClient } from '@/lib/supabase/client';
-import { withValidation, SecurityContext } from '@/lib/api-security';
+import { withValidation, withAuth, SecurityContext } from '@/lib/api-security';
 
 // 📋 SCHEMA DE VALIDACIÓN PARA F29
 const F29SaveSchema = z.object({

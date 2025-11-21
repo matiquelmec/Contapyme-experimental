@@ -2,7 +2,7 @@
 // Soporta modo desarrollo (mockeado) y producción (real Supabase)
 
 import { createServerComponentClient, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { createClient } from '@supabase/supabase-js'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
 // 🔧 CONFIGURACIÓN DE MODO DE SEGURIDAD
@@ -37,7 +37,7 @@ function createRealSupabaseClient() {
     throw new Error('❌ Variables de entorno de Supabase no configuradas')
   }
 
-  return createClient(supabaseUrl, supabaseKey)
+  return createSupabaseClient(supabaseUrl, supabaseKey)
 }
 
 // 🎭 CLIENTE MOCK PARA DESARROLLO
