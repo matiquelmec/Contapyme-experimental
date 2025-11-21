@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { createClient } from '@/lib/auth'
+import { createBrowserClient } from '@/lib/auth-client'
 
 interface AccountFormProps {
   companyId: string
@@ -40,7 +40,7 @@ export default function AccountForm({ companyId, parentAccount, account, onSucce
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = createBrowserClient()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

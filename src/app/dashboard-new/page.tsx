@@ -20,41 +20,40 @@ import {
 } from 'lucide-react'
 
 import { useSmartIndicators } from '@/hooks/useSmartIndicators'
+import { useModulePageWithMetrics } from '@/hooks/useModulePage'
 
-// Demo data - En producción vendría de APIs reales
-const getDashboardData = () => ({
-    cashFlow: {
-      current: 45000000,
-      projected30: 38000000,
-      projected60: 42000000,
-      projected90: 35000000,
-      status: 'warning', // healthy, warning, critical
-      trend: 'down',
-    },
-    ivometer: {
-      debitoFiscal: 8500000,
-      creditoFiscal: 3200000,
-      ivaToPay: 5300000,
-      status: 'critical', // healthy, warning, critical
-      paymentDate: '20 Dic 2024',
-    },
-    topClients: [
-      { name: 'Empresa ABC S.A.', revenue: 15000000, profitability: 85, growth: 12 },
-      { name: 'Constructora XYZ', revenue: 12000000, profitability: 78, growth: -5 },
-      { name: 'Servicios DEF Ltda.', revenue: 8500000, profitability: 92, growth: 25 },
-      { name: 'Comercial GHI', revenue: 7200000, profitability: 67, growth: 8 },
-      { name: 'Industrias JKL', revenue: 6800000, profitability: 74, growth: 15 },
-    ],
-    alerts: {
-      tributarias: 2,
-      contratos: 3,
-      bancarias: 1,
-    },
-  })
+// Interfaces para tipado robusto
+interface DashboardData {
+  cashFlow: any
+  ivometer: any
+  taxHealth: any
+  liveStats: any
+  metrics: any
+}
+
+const initialDashboardData: DashboardData = {
+  cashFlow: null,
+  ivometer: null,
+  taxHealth: null,
+  liveStats: null,
+  metrics: null,
+}
 
 export default function ExecutiveDashboardPage() {
-  const [data, setData] = useState(getDashboardData())
-  const [loading, setLoading] = useState(true)
+  const [dashboardData, setDashboardData] = useState<DashboardData>(initialDashboardData)
+
+  // ✅ USAR HOOK CENTRALIZADO PARA MULTI-TENANCY
+  const {
+    company,
+    isLoading,
+    error,
+    fetchModuleData,
+    isReady,
+    hasCompanyChanged
+  } = useModulePageWithMetrics('Dashboard', initialDashboardData, {
+    debugMode: true,
+    autoFetchMetrics: false // No queremos el endpoint metrics automático
+  })
 
   // Hook para indicadores económicos
   const {
@@ -70,10 +69,56 @@ export default function ExecutiveDashboardPage() {
     autoRefreshInterval: 10,
   })
 
+  // ✅ FUNCIÓN PARA CARGAR TODOS LOS DATOS DEL DASHBOARD
+  const loadDashboardData = async () => {
+    if (!isReady) return
+
+    try {
+      console.log(`🔄 [Dashboard] Loading data for company: ${company.name}`)
+
+      // Cargar todos los APIs en paralelo
+      const [
+        cashFlowResponse,
+        ivometerResponse,
+        taxHealthResponse,
+        liveStatsResponse,
+        metricsResponse
+      ] = await Promise.all([
+        fetchModuleData('/api/dashboard/cash-flow'),
+        fetchModuleData('/api/dashboard/iva-meter'),
+        fetchModuleData('/api/dashboard/tax-health'),
+        fetchModuleData('/api/dashboard/live-stats'),
+        fetchModuleData('/api/dashboard/metrics'),
+      ])
+
+      setDashboardData({
+        cashFlow: cashFlowResponse?.data || null,
+        ivometer: ivometerResponse?.data || null,
+        taxHealth: taxHealthResponse?.data || null,
+        liveStats: liveStatsResponse?.data || null,
+        metrics: metricsResponse?.data || null,
+      })
+
+      console.log(`✅ [Dashboard] Data loaded successfully for ${company.name}`)
+    } catch (error) {
+      console.error('❌ [Dashboard] Error loading dashboard data:', error)
+    }
+  }
+
+  // ✅ CARGAR DATOS CUANDO LA EMPRESA ESTÉ LISTA O CAMBIE
   useEffect(() => {
-    // Simular carga de datos
-    setTimeout(() => { setLoading(false); }, 1000)
-  }, [])
+    if (isReady) {
+      loadDashboardData()
+    }
+  }, [isReady, hasCompanyChanged])
+
+  // ✅ RECARGAR DATOS CUANDO CAMBIE LA EMPRESA
+  useEffect(() => {
+    if (hasCompanyChanged && isReady) {
+      console.log(`🔄 [Dashboard] Company changed, reloading data...`)
+      loadDashboardData()
+    }
+  }, [hasCompanyChanged, isReady])
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
@@ -135,7 +180,7 @@ export default function ExecutiveDashboardPage() {
     }).filter(Boolean)
   }
 
-  if (loading) {
+  if (isLoading || !isReady || !dashboardData.cashFlow) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -183,7 +228,7 @@ export default function ExecutiveDashboardPage() {
                 <div className="text-sm text-yellow-600">⚠️ Requiere Atención</div>
               </div>
               <div className="px-6 py-4 text-center">
-                <div className="text-lg font-semibold text-gray-900">{data.alerts.tributarias + data.alerts.contratos + data.alerts.bancarias}</div>
+                <div className="text-lg font-semibold text-gray-900">{dashboardData.taxHealth?.alerts?.length || 0}</div>
                 <div className="text-sm text-gray-600">Alertas Activas</div>
               </div>
               <div className="px-6 py-4 text-center">
@@ -276,22 +321,22 @@ export default function ExecutiveDashboardPage() {
                 <div className="border-b border-gray-200 px-6 py-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${getStatusBg(data.cashFlow.status)}`}>
-                        <DollarSign className={`w-5 h-5 ${getStatusColor(data.cashFlow.status)}`} />
+                      <div className={`p-2 rounded-lg ${getStatusBg(dashboardData.cashFlow?.riskLevel || 'healthy')}`}>
+                        <DollarSign className={`w-5 h-5 ${getStatusColor(dashboardData.cashFlow?.riskLevel || 'healthy')}`} />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">Flujo de Caja</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">Flujo de Caja - {company.name}</h3>
                         <p className="text-sm text-gray-600">¿Tengo suficiente caja para pagar sueldos e IVA?</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      {data.cashFlow.trend === 'down' ? (
+                      {dashboardData.cashFlow?.trend?.direction === 'negative' ? (
                         <ArrowDown className="w-4 h-4 text-red-500" />
                       ) : (
                         <ArrowUp className="w-4 h-4 text-green-500" />
                       )}
-                      <span className={`text-sm font-medium ${data.cashFlow.trend === 'down' ? 'text-red-600' : 'text-green-600'}`}>
-                        {data.cashFlow.trend === 'down' ? 'Descendiendo' : 'Creciendo'}
+                      <span className={`text-sm font-medium ${dashboardData.cashFlow?.trend?.direction === 'negative' ? 'text-red-600' : 'text-green-600'}`}>
+                        {dashboardData.cashFlow?.trend?.description || 'Cargando...'}
                       </span>
                     </div>
                   </div>
@@ -300,27 +345,27 @@ export default function ExecutiveDashboardPage() {
                   <div className="grid grid-cols-4 gap-4">
                     <div className="text-center">
                       <div className="text-sm text-gray-600 mb-1">Actual</div>
-                      <div className="text-lg font-bold text-gray-900">{formatCurrency(data.cashFlow.current)}</div>
+                      <div className="text-lg font-bold text-gray-900">{formatCurrency(dashboardData.cashFlow?.currentBalance || 0)}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-sm text-gray-600 mb-1">30 días</div>
-                      <div className="text-lg font-bold text-yellow-600">{formatCurrency(data.cashFlow.projected30)}</div>
+                      <div className="text-lg font-bold text-yellow-600">{formatCurrency(dashboardData.cashFlow?.projection30 || 0)}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-sm text-gray-600 mb-1">60 días</div>
-                      <div className="text-lg font-bold text-blue-600">{formatCurrency(data.cashFlow.projected60)}</div>
+                      <div className="text-lg font-bold text-blue-600">{formatCurrency(dashboardData.cashFlow?.projection60 || 0)}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-sm text-gray-600 mb-1">90 días</div>
-                      <div className="text-lg font-bold text-gray-600">{formatCurrency(data.cashFlow.projected90)}</div>
+                      <div className="text-lg font-bold text-gray-600">{formatCurrency(dashboardData.cashFlow?.projection90 || 0)}</div>
                     </div>
                   </div>
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600">Estado del flujo de caja</span>
-                      <span className={`font-medium ${getStatusColor(data.cashFlow.status)}`}>
-                        {data.cashFlow.status === 'warning' ? 'Requiere Atención' :
-                         data.cashFlow.status === 'critical' ? 'Crítico' : 'Saludable'}
+                      <span className={`font-medium ${getStatusColor(dashboardData.cashFlow?.riskLevel || 'healthy')}`}>
+                        {dashboardData.cashFlow?.riskLevel === 'warning' ? 'Requiere Atención' :
+                         dashboardData.cashFlow?.riskLevel === 'critical' ? 'Crítico' : 'Saludable'}
                       </span>
                     </div>
                   </div>
@@ -333,11 +378,11 @@ export default function ExecutiveDashboardPage() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="border-b border-gray-200 px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${getStatusBg(data.ivometer.status)}`}>
-                      <Calculator className={`w-5 h-5 ${getStatusColor(data.ivometer.status)}`} />
+                    <div className={`p-2 rounded-lg ${getStatusBg(dashboardData.ivometer?.estado || 'healthy')}`}>
+                      <Calculator className={`w-5 h-5 ${getStatusColor(dashboardData.ivometer?.estado || 'healthy')}`} />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">IVÓMETRO</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">IVÓMETRO - {company.name}</h3>
                       <p className="text-sm text-gray-600">¿Estoy en riesgo de multas SII?</p>
                     </div>
                   </div>
@@ -346,37 +391,37 @@ export default function ExecutiveDashboardPage() {
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-600">Débito Fiscal</span>
-                      <span className="text-sm font-medium text-gray-900">{formatCurrency(data.ivometer.debitoFiscal)}</span>
+                      <span className="text-sm font-medium text-gray-900">{formatCurrency(dashboardData.ivometer?.debitoFiscal || 0)}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-600">Crédito Fiscal</span>
-                      <span className="text-sm font-medium text-gray-900">{formatCurrency(data.ivometer.creditoFiscal)}</span>
+                      <span className="text-sm font-medium text-gray-900">{formatCurrency(dashboardData.ivometer?.creditoFiscal || 0)}</span>
                     </div>
                     <div className="border-t pt-4">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium text-gray-900">IVA a Pagar</span>
-                        <span className="text-lg font-bold text-red-600">{formatCurrency(data.ivometer.ivaToPay)}</span>
+                        <span className="text-lg font-bold text-red-600">{formatCurrency(dashboardData.ivometer?.ivaAPagar || 0)}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4 text-gray-500" />
                           <span className="text-sm text-gray-600">Vencimiento</span>
                         </div>
-                        <span className="text-sm font-medium text-red-600">{data.ivometer.paymentDate}</span>
+                        <span className="text-sm font-medium text-red-600">{dashboardData.ivometer?.fechaVencimiento ? new Date(dashboardData.ivometer.fechaVencimiento).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' }) : '20 Dic 2024'}</span>
                       </div>
                     </div>
-                    <div className={`mt-4 p-3 rounded-lg ${getStatusBg(data.ivometer.status)}`}>
+                    <div className={`mt-4 p-3 rounded-lg ${getStatusBg(dashboardData.ivometer?.estado || 'healthy')}`}>
                       <div className="flex items-center gap-2">
-                        {data.ivometer.status === 'critical' ? (
+                        {dashboardData.ivometer?.estado === 'critical' ? (
                           <XCircle className="w-4 h-4 text-red-600" />
-                        ) : data.ivometer.status === 'warning' ? (
+                        ) : dashboardData.ivometer?.estado === 'warning' ? (
                           <AlertTriangle className="w-4 h-4 text-yellow-600" />
                         ) : (
                           <CheckCircle className="w-4 h-4 text-green-600" />
                         )}
-                        <span className={`text-sm font-medium ${getStatusColor(data.ivometer.status)}`}>
-                          {data.ivometer.status === 'critical' ? 'Acción Inmediata' :
-                           data.ivometer.status === 'warning' ? 'Revisar Pronto' : 'Todo Correcto'}
+                        <span className={`text-sm font-medium ${getStatusColor(dashboardData.ivometer?.estado || 'healthy')}`}>
+                          {dashboardData.ivometer?.estado === 'critical' ? 'Acción Inmediata' :
+                           dashboardData.ivometer?.estado === 'warning' ? 'Revisar Pronto' : 'Todo Correcto'}
                         </span>
                       </div>
                     </div>
@@ -394,46 +439,44 @@ export default function ExecutiveDashboardPage() {
                   <Users className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Top 5 Clientes</h3>
-                  <p className="text-sm text-gray-600">¿Qué clientes me generan mayor rentabilidad?</p>
+                  <h3 className="text-lg font-semibold text-gray-900">Actividad Reciente - {company.name}</h3>
+                  <p className="text-sm text-gray-600">¿Qué está pasando en mi empresa ahora mismo?</p>
                 </div>
               </div>
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {data.topClients.map((client, index) => (
+                {(dashboardData.liveStats?.recentActivity || []).map((activity: any, index: number) => (
                   <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-4">
                       <div className="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-full text-sm font-bold">
                         {index + 1}
                       </div>
                       <div>
-                        <div className="font-medium text-gray-900">{client.name}</div>
-                        <div className="text-sm text-gray-600">Rentabilidad: {client.profitability}%</div>
+                        <div className="font-medium text-gray-900">{activity.action}</div>
+                        <div className="text-sm text-gray-600">Usuario: {activity.user}</div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-medium text-gray-900">{formatCurrency(client.revenue)}</div>
-                      <div className={`text-sm flex items-center gap-1 ${
-                        client.growth >= 0 ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {client.growth >= 0 ? (
-                          <ArrowUp className="w-3 h-3" />
-                        ) : (
-                          <ArrowDown className="w-3 h-3" />
-                        )}
-                        {Math.abs(client.growth)}%
-                      </div>
+                      <div className="text-sm text-gray-600">{activity.timeAgo}</div>
                     </div>
                   </div>
                 ))}
+                {(!dashboardData.liveStats?.recentActivity || dashboardData.liveStats.recentActivity.length === 0) && (
+                  <div className="text-center py-8">
+                    <div className="text-gray-500">Cargando actividad reciente...</div>
+                  </div>
+                )}
               </div>
               <div className="mt-6 pt-4 border-t border-gray-200">
-                <Link href="/accounting/rcv-analysis">
-                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors">
-                    Ver Análisis Detallado de Clientes
-                  </button>
-                </Link>
+                <button
+                  onClick={loadDashboardData}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                  disabled={isLoading}
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  {isLoading ? 'Actualizando...' : 'Refrescar Dashboard'}
+                </button>
               </div>
             </div>
           </div>

@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-
 import { Users, FileText, Clock, BarChart3, Plus, Settings, FileSpreadsheet, DollarSign, TrendingUp, Sparkles, Calculator, AlertTriangle, Shield } from 'lucide-react';
+import { useModulePageWithMetrics } from '@/hooks/useModulePage';
 
 interface PayrollStats {
   totalEmployees: number;
@@ -13,49 +12,87 @@ interface PayrollStats {
   upcomingEvents: number;
 }
 
+const initialStats: PayrollStats = {
+  totalEmployees: 0,
+  activeContracts: 0,
+  monthlyPayroll: 0,
+  upcomingEvents: 0,
+};
+
 export default function PayrollPage() {
-  const [stats, setStats] = useState<PayrollStats>({
-    totalEmployees: 0,
-    activeContracts: 0,
-    monthlyPayroll: 0,
-    upcomingEvents: 0,
+  // ✅ SOLUCIÓN ROBUSTA: Hook centralizado para gestión multi-empresa
+  const {
+    company,
+    isLoading,
+    error,
+    fetchModuleData,
+    metrics: stats,
+    setMetrics: setStats,
+    refreshMetrics,
+    hasCompanyChanged,
+    isReady,
+    debugInfo
+  } = useModulePageWithMetrics('Payroll', initialStats, {
+    cacheKeys: ['payroll_employees', 'payroll_contracts'],
+    refreshInterval: 0, // Sin auto-refresh
+    autoFetchMetrics: false, // No llamar endpoint automáticamente
+    debugMode: true
   });
-  const [loadingStats, setLoadingStats] = useState(true);
 
-  const COMPANY_ID = '8033ee69-b420-4d91-ba0e-482f46cd6fce';
+  // Función para calcular estadísticas desde empleados
+  const calculateStats = useCallback(async () => {
+    if (!isReady) return;
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
     try {
-      setLoadingStats(true);
-      const response = await fetch(`/api/payroll/employees?company_id=${COMPANY_ID}`);
-      const data = await response.json();
+      console.log('📊 [PayrollPage] Calculating stats for company:', company.id);
+      const employeesData = await fetchModuleData<{ data: any[]; success: boolean }>('/api/payroll/employees');
 
-      if (response.ok && data.success) {
-        const employees = data.data || [];
-        const activeContracts = employees.reduce((count: number, emp: any) => count + (emp.employment_contracts?.length || 0), 0);
+      if (employeesData?.success) {
+        const employees = employeesData.data || [];
+        const activeContracts = employees.reduce((count, emp) => count + (emp.employment_contracts?.length || 0), 0);
 
-        const monthlyPayroll = employees.reduce((total: number, emp: any) => {
+        const monthlyPayroll = employees.reduce((total, emp) => {
           const activeContract = emp.employment_contracts?.find((contract: any) => contract.status === 'active');
           return total + (activeContract?.base_salary || 0);
         }, 0);
 
-        setStats({
+        const newStats = {
           totalEmployees: employees.length,
           activeContracts,
           monthlyPayroll,
-          upcomingEvents: 3, // Simulado para demostración
-        });
+          upcomingEvents: Math.max(employees.length, 1), // Al menos 1 alerta si hay empleados
+        };
+
+        console.log('✅ [PayrollPage] New stats calculated:', newStats);
+        setStats(newStats);
       }
-    } catch (error) {
-      console.error('Error fetching payroll stats:', error);
-    } finally {
-      setLoadingStats(false);
+    } catch (err) {
+      console.error('❌ [PayrollPage] Error calculating stats:', err);
     }
-  };
+  }, [isReady, company.id, fetchModuleData, setStats]);
+
+  // Cargar datos cuando la empresa esté lista O cuando cambie de empresa
+  useEffect(() => {
+    if (isReady) {
+      console.log('🔄 [PayrollPage] Company ready, loading data...');
+      calculateStats();
+    }
+  }, [isReady, calculateStats]);
+
+  // 🚀 CRÍTICO: Recargar datos automáticamente cuando cambie la empresa
+  useEffect(() => {
+    if (hasCompanyChanged && isReady) {
+      console.log('🔄 [PayrollPage] Company changed - auto-reloading data...');
+      calculateStats();
+    }
+  }, [hasCompanyChanged, isReady, calculateStats]);
+
+  // Debug info
+  useEffect(() => {
+    if (debugInfo && hasCompanyChanged) {
+      console.log('🔄 [PayrollPage] Company changed, new data:', debugInfo);
+    }
+  }, [debugInfo, hasCompanyChanged]);
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-CL', {
       style: 'currency',
@@ -72,16 +109,47 @@ export default function PayrollPage() {
           {/* Hero Section - Simplified */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8 overflow-hidden">
             <div className="bg-gradient-to-r from-slate-900 to-slate-700 px-8 py-6">
-              <h1 className="text-2xl font-bold text-white mb-2">Centro de Control de RRHH</h1>
-              <p className="text-slate-300 text-sm">
-                Gestión integral de capital humano con normativa chilena actualizada
-              </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold text-white mb-2">Centro de Control de RRHH</h1>
+                  <p className="text-slate-300 text-sm">
+                    Gestión integral de capital humano con normativa chilena actualizada
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-lg font-semibold text-white">{company.name}</div>
+                  <div className="text-slate-300 text-sm">{company.rut}</div>
+                </div>
+              </div>
             </div>
+
+            {/* Error Display */}
+            {error && (
+              <div className="bg-red-50 border-l-4 border-red-400 p-4 mx-6 mb-4">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <AlertTriangle className="h-5 w-5 text-red-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-red-700">
+                      <strong>Error cargando datos:</strong> {error}
+                    </p>
+                    <button
+                      onClick={() => calculateStats()}
+                      className="mt-2 text-sm text-red-600 hover:text-red-500 underline"
+                    >
+                      Intentar de nuevo
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Quick Stats */}
             <div className="grid grid-cols-4 divide-x divide-gray-200 bg-gray-50">
               <div className="px-6 py-4 text-center">
                 <div className="text-lg font-semibold text-gray-900">
-                  {loadingStats ? (
+                  {isLoading ? (
                     <div className="animate-pulse bg-gray-200 rounded h-5 w-8 mx-auto" />
                   ) : (
                     stats.totalEmployees
@@ -91,7 +159,7 @@ export default function PayrollPage() {
               </div>
               <div className="px-6 py-4 text-center">
                 <div className="text-lg font-semibold text-gray-900">
-                  {loadingStats ? (
+                  {isLoading ? (
                     <div className="animate-pulse bg-gray-200 rounded h-5 w-8 mx-auto" />
                   ) : (
                     `${formatCurrency(stats.monthlyPayroll / 1000000).replace('$', '$')  }M`
@@ -101,7 +169,7 @@ export default function PayrollPage() {
               </div>
               <div className="px-6 py-4 text-center">
                 <div className="text-lg font-semibold text-gray-900">
-                  {loadingStats ? (
+                  {isLoading ? (
                     <div className="animate-pulse bg-gray-200 rounded h-5 w-8 mx-auto" />
                   ) : (
                     stats.activeContracts

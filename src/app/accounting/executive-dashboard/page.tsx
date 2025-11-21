@@ -27,6 +27,8 @@ import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } fro
 import { useCrossModuleAnalytics } from '@/hooks/useCrossModuleAnalytics';
 import { useDepreciationWorker } from '@/hooks/useDepreciationWorker';
 import { useF29AnalyticsWorker } from '@/hooks/useF29AnalyticsWorker';
+import { useCompany } from '@/contexts/CompanyContext';
+import { getClientUser } from '@/lib/auth-client';
 
 export default function ExecutiveDashboardPage() {
   // Estados para los diferentes tipos de análisis
@@ -36,6 +38,10 @@ export default function ExecutiveDashboardPage() {
   const [crossModuleAnalysis, setCrossModuleAnalysis] = useState<any>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  // 🔒 USAR CONTEXTO DE EMPRESA EN LUGAR DE IDS HARDCODEADOS
+  const { company } = useCompany();
 
   // Hooks de Workers
   const {
@@ -52,9 +58,14 @@ export default function ExecutiveDashboardPage() {
     isWorkerReady: isAssetsWorkerReady,
   } = useDepreciationWorker();
 
-  // Datos de demostración para pruebas
-  const demoCompanyId = '550e8400-e29b-41d4-a716-446655440001';
-  const demoUserId = '550e8400-e29b-41d4-a716-446655440000';
+  // Obtener usuario actual (se ejecuta client-side)
+  useEffect(() => {
+    async function fetchUser() {
+      const user = await getClientUser();
+      setCurrentUser(user);
+    }
+    fetchUser();
+  }, []);
 
   // Generar datos de demostración
   const generateDemoData = useCallback(() => {
@@ -76,8 +87,8 @@ export default function ExecutiveDashboardPage() {
         debito_fiscal: Math.round(ventas_netas * 0.19),
         credito_fiscal: Math.round(compras_netas * 0.19),
         ppm: Math.round(ventas_netas * 0.01),
-        user_id: demoUserId,
-        company_id: demoCompanyId,
+        user_id: currentUser?.id || '',
+        company_id: company?.id || '',
       };
     });
 

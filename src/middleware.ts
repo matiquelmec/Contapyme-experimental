@@ -11,11 +11,11 @@ const isDevelopmentMode = process.env.NODE_ENV === 'development'
 const enableRealAuth = process.env.NEXT_PUBLIC_ENABLE_REAL_AUTH === 'true'
 const useAuthSecurity = enableRealAuth || !isDevelopmentMode
 
-// 🏢 USUARIOS DEMO (CONSISTENTE CON AUTH.TS)
+// 🏢 USUARIOS DEMO (SINCRONIZADO CON CONTEXTO Y BASE DE DATOS REAL)
 const DEMO_USER = {
   id: '550e8400-e29b-41d4-a716-446655440000',
   email: 'demo@contapyme.cl',
-  companies: ['550e8400-e29b-41d4-a716-446655440001']
+  companies: ['8033ee69-b420-4d91-ba0e-482f46cd6fce', '9144ff7a-c530-5e82-cb1f-593f57de7fde']
 }
 
 // 🛡️ RUTAS PROTEGIDAS
@@ -66,8 +66,8 @@ function extractCompanyId(request: NextRequest): string | null {
   const pathMatch = url.pathname.match(/\/api\/companies\/([^\/]+)/)
   if (pathMatch) return pathMatch[1]
 
-  // Default para desarrollo
-  return useAuthSecurity ? null : '550e8400-e29b-41d4-a716-446655440001'
+  // Default para desarrollo (empresa 1)
+  return useAuthSecurity ? null : '8033ee69-b420-4d91-ba0e-482f46cd6fce'
 }
 
 // 🔐 OBTENER USUARIO ACTUAL (COMPATIBLE CON MODO HÍBRIDO)
@@ -99,8 +99,8 @@ async function getCurrentUser(request: NextRequest) {
 // 🏢 VERIFICAR ACCESO A EMPRESA (PLACEHOLDER PARA DESARROLLO)
 async function verifyCompanyAccess(userId: string, companyId: string): Promise<boolean> {
   if (!useAuthSecurity) {
-    // En modo demo, siempre permitir acceso a la empresa demo
-    return companyId === '550e8400-e29b-41d4-a716-446655440001'
+    // En modo demo, verificar contra las empresas permitidas del usuario demo
+    return DEMO_USER.companies.includes(companyId)
   }
 
   // TODO: Implementar verificación real en base de datos
@@ -123,7 +123,7 @@ export async function middleware(request: NextRequest) {
   const fullPath = pathname + search
 
   // 📊 LOG DE ENTRADA
-  console.log(`🚦 Middleware: ${request.method} ${fullPath}`)
+  console.log(`🚦 Middleware [v2]: ${request.method} ${fullPath}`)
 
   // 🌐 PERMITIR RUTAS PÚBLICAS SIN VALIDACIÓN
   if (isPublicRoute(pathname)) {

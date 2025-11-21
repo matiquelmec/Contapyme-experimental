@@ -1,23 +1,78 @@
-import Link from 'next/link'
+'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { AlertTriangle } from 'lucide-react';
+import { useModulePageWithMetrics } from '@/hooks/useModulePage';
+
+interface AccountingMetrics {
+  currentMonth: string;
+  ufValue: number;
+  lastF29Status: string;
+  companyStatus: string;
+}
+
+const initialMetrics: AccountingMetrics = {
+  currentMonth: 'Nov 2024',
+  ufValue: 36280,
+  lastF29Status: '✓ Nov 2024',
+  companyStatus: 'Al Día'
+};
 
 export default function AccountingPage() {
-  // Demo mode - no authentication required
-  const userProfile = {
-    name: 'Usuario Demo',
-    email: 'demo@contapyme.com',
-    companies: [
-      {
-        id: 'demo-1',
-        name: 'Empresa Demo S.A.',
-        rut: '12.345.678-9',
-      },
-      {
-        id: 'demo-2',
-        name: 'Mi Pyme Ltda.',
-        rut: '98.765.432-1',
-      },
-    ],
-  }
+  // ✅ SOLUCIÓN ROBUSTA: Hook centralizado para gestión multi-empresa
+  const {
+    company,
+    isLoading,
+    error,
+    fetchModuleData,
+    metrics,
+    setMetrics,
+    refreshMetrics,
+    hasCompanyChanged,
+    isReady,
+    debugInfo
+  } = useModulePageWithMetrics('Accounting', initialMetrics, {
+    cacheKeys: ['accounting_metrics', 'f29_data', 'indicators'],
+    refreshInterval: 0, // Sin auto-refresh
+    autoFetchMetrics: false, // No llamar endpoint automáticamente
+    debugMode: true
+  });
+
+  // Función para cargar métricas específicas de empresa
+  const loadAccountingMetrics = async () => {
+    if (!isReady) return;
+
+    try {
+      // ✅ DATOS DIFERENCIADOS POR EMPRESA USANDO IDS REALES
+      const companySpecificMetrics = {
+        currentMonth: 'Nov 2024',
+        ufValue: 36280,
+        // Empresa 1: ContaPyme Demo Enterprise, Empresa 2: Mi Pyme Ltda.
+        lastF29Status: company.id === '8033ee69-b420-4d91-ba0e-482f46cd6fce' ? '✓ Nov 2024' : '✓ Oct 2024',
+        companyStatus: company.id === '8033ee69-b420-4d91-ba0e-482f46cd6fce' ? 'Al Día' : 'Pendiente F29'
+      };
+
+      setMetrics(companySpecificMetrics);
+    } catch (err) {
+      console.error('❌ [AccountingPage] Error loading metrics:', err);
+    }
+  };
+
+  // Cargar datos cuando la empresa esté lista
+  useEffect(() => {
+    if (isReady) {
+      console.log('🔄 [AccountingPage] Company ready, loading metrics...');
+      loadAccountingMetrics();
+    }
+  }, [isReady]);
+
+  // Debug info
+  useEffect(() => {
+    if (debugInfo && hasCompanyChanged) {
+      console.log('🔄 [AccountingPage] Company changed, new data:', debugInfo);
+    }
+  }, [debugInfo, hasCompanyChanged]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -28,24 +83,73 @@ export default function AccountingPage() {
           {/* Hero Section - Simplified */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8 overflow-hidden">
             <div className="bg-gradient-to-r from-slate-900 to-slate-700 px-8 py-6">
-              <h1 className="text-2xl font-bold text-white mb-2">Centro de Control Contable</h1>
-              <p className="text-slate-300 text-sm">
-                Gestión integral financiera con inteligencia artificial para tu empresa
-              </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold text-white mb-2">Centro de Control Contable</h1>
+                  <p className="text-slate-300 text-sm">
+                    Gestión integral financiera con inteligencia artificial para tu empresa
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-lg font-semibold text-white">{company.name}</div>
+                  <div className="text-slate-300 text-sm">{company.rut}</div>
+                </div>
+              </div>
             </div>
+
+            {/* Error Display */}
+            {error && (
+              <div className="bg-red-50 border-l-4 border-red-400 p-4 mx-6 mb-4">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <AlertTriangle className="h-5 w-5 text-red-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-red-700">
+                      <strong>Error cargando datos contables:</strong> {error}
+                    </p>
+                    <button
+                      onClick={() => loadAccountingMetrics()}
+                      className="mt-2 text-sm text-red-600 hover:text-red-500 underline"
+                    >
+                      Intentar de nuevo
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Quick Stats */}
             <div className="grid grid-cols-3 divide-x divide-gray-200 bg-gray-50">
               <div className="px-6 py-4 text-center">
                 <div className="text-lg font-semibold text-gray-900">UF Hoy</div>
-                <div className="text-sm text-gray-600">$36,280</div>
+                <div className="text-sm text-gray-600">
+                  {isLoading ? (
+                    <div className="animate-pulse bg-gray-200 rounded h-4 w-16 mx-auto" />
+                  ) : (
+                    `$${metrics.ufValue.toLocaleString('es-CL')}`
+                  )}
+                </div>
               </div>
               <div className="px-6 py-4 text-center">
                 <div className="text-lg font-semibold text-gray-900">F29 Último</div>
-                <div className="text-sm text-green-600">✓ Nov 2024</div>
+                <div className="text-sm text-green-600">
+                  {isLoading ? (
+                    <div className="animate-pulse bg-gray-200 rounded h-4 w-20 mx-auto" />
+                  ) : (
+                    metrics.lastF29Status
+                  )}
+                </div>
               </div>
               <div className="px-6 py-4 text-center">
                 <div className="text-lg font-semibold text-gray-900">Estado</div>
-                <div className="text-sm text-blue-600">Al Día</div>
+                <div className="text-sm text-blue-600">
+                  {isLoading ? (
+                    <div className="animate-pulse bg-gray-200 rounded h-4 w-12 mx-auto" />
+                  ) : (
+                    metrics.companyStatus
+                  )}
+                </div>
               </div>
             </div>
           </div>

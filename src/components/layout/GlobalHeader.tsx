@@ -22,7 +22,7 @@ import {
 } from 'lucide-react'
 
 import { useAuth } from '@/contexts/AuthContext'
-import { useCompany } from '@/contexts/CompanyContext'
+import { useCompany, getAllCompanies } from '@/contexts/CompanyContext'
 
 /**
  * Global Header Unificado
@@ -45,11 +45,59 @@ export function GlobalHeader() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isCompanyMenuOpen, setIsCompanyMenuOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
+  const [availableCompanies, setAvailableCompanies] = useState<Array<{id: string, name: string, rut: string, portalId?: string}>>([])
 
   // Handle hydration
   useEffect(() => {
     setIsMounted(true)
   }, [])
+
+  // Load available companies dynamically from API
+  useEffect(() => {
+    async function loadCompanies() {
+      try {
+        console.log('🏢 [GlobalHeader] Loading companies from API...')
+        const response = await fetch('/api/companies')
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+        }
+
+        const data = await response.json()
+        if (data.success && data.data && Array.isArray(data.data)) {
+          const companyList = data.data.map((company: any, index: number) => ({
+            id: company.id, // Use real database ID
+            name: company.razon_social,
+            rut: company.rut,
+            portalId: `demo-${index + 1}` // Keep portal ID for compatibility
+          }))
+          setAvailableCompanies(companyList)
+          console.log(`✅ [GlobalHeader] Loaded ${companyList.length} companies for dropdown`)
+        } else {
+          throw new Error('Invalid companies data received from API')
+        }
+      } catch (error) {
+        console.error('❌ [GlobalHeader] Error loading companies:', error)
+        // Fallback to static list with both known companies
+        setAvailableCompanies([
+          {
+            id: '8033ee69-b420-4d91-ba0e-482f46cd6fce',
+            name: 'ContaPyme Demo Enterprise',
+            rut: '78.223.873-6'
+          },
+          {
+            id: '9144ff7a-c530-5e82-cb1f-593f57de7fde',
+            name: 'Mi Pyme Limitada',
+            rut: '98.765.432-1'
+          }
+        ])
+        console.log('⚠️ [GlobalHeader] Using fallback companies list')
+      }
+    }
+
+    if (isMounted) {
+      loadCompanies()
+    }
+  }, [isMounted])
 
   // Update time every minute
   useEffect(() => {
@@ -99,31 +147,22 @@ export function GlobalHeader() {
     return name.charAt(0).toUpperCase()
   }
 
-  // Available demo companies
-  const availableCompanies = [
-    {
-      id: 'demo-1',
-      name: 'Empresa Demo S.A.',
-      rut: '78.223.873-6'
-    },
-    {
-      id: 'demo-2',
-      name: 'Mi Pyme Ltda.',
-      rut: '98.765.432-1'
-    }
-  ]
+  // Available companies are now loaded dynamically via state
 
   const handleCompanySwitch = (companyId: string) => {
     console.log('🔄 Switching to company:', companyId)
+
+    // Use the company ID directly - the context will handle the mapping
     switchCompany(companyId)
     setIsCompanyMenuOpen(false)
   }
 
   const getCurrentCompanyDisplayId = () => {
-    // Map back from database ID to display ID
-    if (company.id === '8033ee69-b420-4d91-ba0e-482f46cd6fce') return 'demo-1'
-    if (company.id === '9144ff7a-c530-5e82-cb1f-593f57de7fde') return 'demo-2'
-    return 'demo-1'
+    // Map back from company ID to display ID dynamically
+    const currentCompanyItem = availableCompanies.find(comp =>
+      comp.id === company.id
+    )
+    return currentCompanyItem?.id || company.id // fallback to actual ID
   }
 
   // Prevent hydration mismatch

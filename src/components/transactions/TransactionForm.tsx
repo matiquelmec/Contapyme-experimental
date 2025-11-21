@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { createClient } from '@/lib/auth'
+import { createBrowserClient } from '@/lib/auth-client'
 
 interface TransactionEntry {
   accountId: string
@@ -58,7 +58,7 @@ export default function TransactionForm({ companyId, accounts, transaction }: Tr
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = createBrowserClient()
 
   // Calculate totals
   const totalDebits = entries.reduce((sum, entry) => sum + entry.debit, 0)

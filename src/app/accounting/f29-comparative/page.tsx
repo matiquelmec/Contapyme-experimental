@@ -12,6 +12,8 @@ import { FileText, Upload, TrendingUp, AlertCircle, CheckCircle, X, BarChart3, Z
 import F29History from '@/components/f29/F29History';
 import { Header } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
+import { useCompany } from '@/contexts/CompanyContext';
+import { getClientUser } from '@/lib/auth-client';
 // Comentado para optimización - Web Worker puede causar overhead en móvil
 // import { useF29AnalyticsWorker } from '@/hooks/useF29AnalyticsWorker';
 
@@ -66,17 +68,36 @@ export default function F29ComparativePage() {
   // Estado para análisis avanzado optimizado (sin Worker)
   const [advancedAnalysis, setAdvancedAnalysis] = useState<any>(null);
   const [analyzingWithWorker, setAnalyzingWithWorker] = useState(false);
-  
+
   // Simulación optimizada sin Web Worker para evitar overhead
   const isWorkerReady = useMemo(() => true, []);
   const workerError = useMemo(() => null, []);
-  
+
   // Referencias estables para evitar dependency loops
   const analysisTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Datos de prueba para demo
-  const demoCompanyId = '550e8400-e29b-41d4-a716-446655440001';
-  const demoUserId = '550e8400-e29b-41d4-a716-446655440000';
+  // 🔒 USAR CONTEXTO DE EMPRESA EN LUGAR DE IDS HARDCODEADOS
+  const { company } = useCompany();
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  // Obtener usuario actual (se ejecuta client-side)
+  useEffect(() => {
+    async function fetchUser() {
+      const user = await getClientUser();
+      setCurrentUser(user);
+    }
+    fetchUser();
+  }, []);
+
+  // 🔄 Limpiar datos cuando cambie la empresa
+  useEffect(() => {
+    console.log(`🔄 F29 Comparative: Empresa cambió a ${company?.id} - ${company?.razon_social}`);
+    // Limpiar datos anteriores cuando cambia la empresa
+    setResults([]);
+    setAnalysis(null);
+    setAdvancedAnalysis(null);
+    setFiles([]);
+  }, [company?.id]);
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -407,8 +428,8 @@ export default function F29ComparativePage() {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              company_id: demoCompanyId,
-              user_id: demoUserId,
+              company_id: company?.id,
+              user_id: currentUser?.id,
             }),
           });
 
@@ -488,8 +509,8 @@ export default function F29ComparativePage() {
         debito_fiscal: Math.round(ventas_netas * 0.19),
         credito_fiscal: Math.round(compras_netas * 0.19),
         ppm: Math.round(ventas_netas * 0.01),
-        user_id: demoUserId,
-        company_id: demoCompanyId,
+        user_id: currentUser?.id || '',
+        company_id: company?.id || '',
       };
     });
   };
@@ -836,9 +857,9 @@ export default function F29ComparativePage() {
         </Card>
 
         {/* F29 Historical Records */}
-        <F29History 
-          companyId={demoCompanyId}
-          userId={demoUserId}
+        <F29History
+          companyId={company?.id}
+          userId={currentUser?.id}
           onF29Select={(selectedF29s) => {
             console.log('F29 seleccionados para análisis:', selectedF29s);
             // TODO: Usar F29 históricos para generar análisis comparativo
@@ -867,8 +888,8 @@ export default function F29ComparativePage() {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({
-                        companyId: demoCompanyId,
-                        userId: demoUserId,
+                        companyId: company?.id,
+                        userId: currentUser?.id,
                       }),
                     });
                     const data = await response.json();
