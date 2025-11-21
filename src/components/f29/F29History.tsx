@@ -6,6 +6,7 @@ import { FileText, Calendar, TrendingUp, Database, RefreshCw, CheckCircle, Alert
 
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { useCompany } from '@/contexts/CompanyContext';
 
 interface F29Record {
   id: string;
@@ -29,16 +30,23 @@ interface F29HistoryProps {
   maxRecords?: number;
 }
 
-export default function F29History({ 
-  companyId = '550e8400-e29b-41d4-a716-446655440001',
+export default function F29History({
+  companyId, // Ahora opcional, usaremos el context
   userId,
   onF29Select,
-  maxRecords = 24, 
+  maxRecords = 24,
 }: F29HistoryProps) {
+  const { company } = useCompany();
+
+  // Usar company ID del context si no se proporciona uno específico
+  const effectiveCompanyId = companyId || company?.id;
+
   const [f29Records, setF29Records] = useState<F29Record[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRecords, setSelectedRecords] = useState<string[]>([]);
   const [groupedRecords, setGroupedRecords] = useState<Record<string, F29Record[]>>({});
+
+  console.log(`🔄 F29History: Cargando datos para empresa ${effectiveCompanyId}`);
 
   // Formatters memoizados
   const formatCurrency = useMemo(() => (amount: number) => new Intl.NumberFormat('es-CL', {
@@ -67,7 +75,7 @@ export default function F29History({
       setLoading(true);
       
       const params = new URLSearchParams({
-        company_id: companyId,
+        company_id: effectiveCompanyId,
         limit: maxRecords.toString(),
       });
       
@@ -92,11 +100,19 @@ export default function F29History({
     } finally {
       setLoading(false);
     }
-  }, [companyId, userId, maxRecords]);
+  }, [effectiveCompanyId, userId, maxRecords]);
 
   useEffect(() => {
     fetchF29Records();
   }, [fetchF29Records]);
+
+  // ✅ Recargar automáticamente cuando cambie la empresa
+  useEffect(() => {
+    if (effectiveCompanyId) {
+      console.log(`🔄 F29History: Empresa cambió, recargando datos para ${effectiveCompanyId}`);
+      fetchF29Records();
+    }
+  }, [company?.id]); // Solo dependemos del ID de empresa del context
 
   // Toggle selección de F29
   const toggleSelection = useCallback((recordId: string) => {
@@ -185,7 +201,12 @@ export default function F29History({
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Database className="w-5 h-5 text-green-600" />
-            <span>F29 Históricos</span>
+            <div className="flex flex-col">
+              <span>F29 Históricos</span>
+              <span className="text-xs text-gray-500 font-normal">
+                {company?.razon_social || 'Sin empresa'}
+              </span>
+            </div>
             <span className="bg-white/60 px-2 py-1 rounded-full text-sm">
               {f29Records.length} formularios
             </span>

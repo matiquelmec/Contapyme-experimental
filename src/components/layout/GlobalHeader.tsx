@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 
 import { useAuth } from '@/contexts/AuthContext'
+import { useCompany } from '@/contexts/CompanyContext'
 
 /**
  * Global Header Unificado
@@ -36,11 +37,19 @@ import { useAuth } from '@/contexts/AuthContext'
  */
 export function GlobalHeader() {
   const { user, signOut } = useAuth() as any
+  const { company, switchCompany } = useCompany()
   const pathname = usePathname()
   const [notifications, setNotifications] = useState(3)
   const [currentTime, setCurrentTime] = useState(new Date())
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [isCompanyMenuOpen, setIsCompanyMenuOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
+
+  // Handle hydration
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Update time every minute
   useEffect(() => {
@@ -90,11 +99,68 @@ export function GlobalHeader() {
     return name.charAt(0).toUpperCase()
   }
 
+  // Available demo companies
+  const availableCompanies = [
+    {
+      id: 'demo-1',
+      name: 'Empresa Demo S.A.',
+      rut: '78.223.873-6'
+    },
+    {
+      id: 'demo-2',
+      name: 'Mi Pyme Ltda.',
+      rut: '98.765.432-1'
+    }
+  ]
+
+  const handleCompanySwitch = (companyId: string) => {
+    console.log('🔄 Switching to company:', companyId)
+    switchCompany(companyId)
+    setIsCompanyMenuOpen(false)
+  }
+
+  const getCurrentCompanyDisplayId = () => {
+    // Map back from database ID to display ID
+    if (company.id === '8033ee69-b420-4d91-ba0e-482f46cd6fce') return 'demo-1'
+    if (company.id === '9144ff7a-c530-5e82-cb1f-593f57de7fde') return 'demo-2'
+    return 'demo-1'
+  }
+
+  // Prevent hydration mismatch
+  if (!isMounted) {
+    return (
+      <div className="bg-white/90 backdrop-blur-sm border-b border-gray-200 shadow-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-20">
+            <div className="animate-pulse bg-gray-200 h-8 w-32 rounded"></div>
+            <div className="animate-pulse bg-gray-200 h-8 w-64 rounded"></div>
+            <div className="animate-pulse bg-gray-200 h-8 w-24 rounded"></div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // Hide header only on login/register pages
   const shouldShowHeader = !pathname.startsWith('/login') && !pathname.startsWith('/register')
 
   if (!shouldShowHeader) {
     return null
+  }
+
+  // Ensure contexts are loaded
+  if (!user || !company) {
+    return (
+      <div className="bg-white/90 backdrop-blur-sm border-b border-gray-200 shadow-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-20">
+            <div className="animate-pulse bg-gray-200 h-8 w-32 rounded"></div>
+            <div className="animate-pulse bg-gray-200 h-8 w-64 rounded"></div>
+            <div className="animate-pulse bg-gray-200 h-8 w-24 rounded"></div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const navigationItems = [
@@ -164,8 +230,60 @@ export function GlobalHeader() {
             })}
           </nav>
 
-          {/* Right: User Controls */}
+          {/* Right: Company Selector + User Controls */}
           <div className="flex items-center space-x-3">
+            {/* Company Selector */}
+            <div className="relative">
+              <button
+                onClick={() => setIsCompanyMenuOpen(!isCompanyMenuOpen)}
+                className="flex items-center space-x-2 px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                title="Cambiar empresa"
+              >
+                <Building2 className="w-4 h-4 text-gray-600" />
+                <div className="text-sm">
+                  <div className="font-medium text-gray-900">{company.razon_social}</div>
+                  <div className="text-xs text-gray-500">{company.rut}</div>
+                </div>
+                <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isCompanyMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Company Dropdown */}
+              {isCompanyMenuOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setIsCompanyMenuOpen(false)}
+                  />
+                  <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 z-50 py-2">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <h3 className="text-sm font-medium text-gray-900">Cambiar Empresa</h3>
+                    </div>
+                    {availableCompanies.map((comp) => {
+                      const isActive = getCurrentCompanyDisplayId() === comp.id
+                      return (
+                        <button
+                          key={comp.id}
+                          onClick={() => handleCompanySwitch(comp.id)}
+                          className={`flex items-center justify-between w-full px-4 py-3 text-sm transition-colors ${
+                            isActive
+                              ? 'bg-blue-50 text-blue-700'
+                              : 'text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          <div className="text-left">
+                            <div className="font-medium">{comp.name}</div>
+                            <div className="text-xs opacity-75">{comp.rut}</div>
+                          </div>
+                          {isActive && (
+                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
             {/* User Menu */}
             <div className="relative flex items-center space-x-2 pl-3 border-l border-gray-200">
               <div className="relative">

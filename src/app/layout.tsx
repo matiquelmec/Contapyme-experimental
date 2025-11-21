@@ -6,6 +6,7 @@ import './globals.css'
 import { GlobalHeader } from '@/components/layout/GlobalHeader'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { CompanyProvider } from '@/contexts/CompanyContext'
+import CompanyDebugInfo from '@/components/debug/CompanyDebugInfo'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,6 +27,7 @@ export default function RootLayout({
           <CompanyProvider>
             <GlobalHeader />
             {children}
+            <CompanyDebugInfo />
           </CompanyProvider>
         </AuthProvider>
       </body>

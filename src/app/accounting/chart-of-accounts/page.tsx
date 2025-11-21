@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react';
 
-import { 
+import {
   Search, Plus, Edit2, Trash2, Download, FileText, RefreshCw,
 } from 'lucide-react';
 
 import { Header } from '@/components/layout';
 import { Button } from '@/components/ui';
+import { useCompany } from '@/contexts/CompanyContext';
 
 interface ChartAccount {
   id: string;
@@ -40,6 +41,7 @@ interface Statistics {
 }
 
 export default function ChartOfAccountsPage() {
+  const { company } = useCompany();
   const [accounts, setAccounts] = useState<ChartAccount[]>([]);
   const [filteredAccounts, setFilteredAccounts] = useState<ChartAccount[]>([]);
   const [statistics, setStatistics] = useState<Statistics | null>(null);
@@ -55,7 +57,13 @@ export default function ChartOfAccountsPage() {
   const loadAccounts = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/chart-of-accounts');
+      // Agregar company_id a la URL si está disponible (company-aware)
+      const url = company?.id
+        ? `/api/chart-of-accounts?company_id=${company.id}`
+        : '/api/chart-of-accounts'; // Fallback por compatibilidad
+
+      console.log('🔍 Loading chart of accounts for company:', company?.id || 'ALL');
+      const response = await fetch(url);
       const data = await response.json();
 
       if (data.accounts) {
@@ -126,10 +134,12 @@ export default function ChartOfAccountsPage() {
     setFilteredAccounts(filtered);
   }, [accounts, searchTerm, levelFilter, typeFilter, activeFilter]);
 
-  // Cargar datos al montar
+  // Cargar datos al montar y cuando cambia la empresa
   useEffect(() => {
-    loadAccounts();
-  }, []);
+    if (company?.id) {
+      loadAccounts();
+    }
+  }, [company?.id]); // Recargar cuando cambie la empresa
 
   // Manejar creación/edición de cuenta
   const handleSaveAccount = async (accountData: Partial<ChartAccount>) => {
@@ -245,9 +255,9 @@ export default function ChartOfAccountsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header 
+      <Header
         title="Plan de Cuentas"
-        subtitle="Gestión completa del plan de cuentas contable"
+        subtitle={`Gestión completa del plan de cuentas contable${company ? ` • ${company.razon_social}` : ''}`}
         showBackButton
         backHref="/accounting"
         actions={

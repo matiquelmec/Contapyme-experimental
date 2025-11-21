@@ -6,6 +6,7 @@ import { FileText, Upload, AlertCircle, CheckCircle, X, TrendingUp, Download, Ba
 
 import { Header } from '@/components/layout';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui';
+import { useCompany } from '@/contexts/CompanyContext';
 
 interface UploadResult {
   file_name: string;
@@ -38,6 +39,7 @@ interface F29Results {
 }
 
 export default function F29AnalysisPage() {
+  const { company } = useCompany();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [result, setResult] = useState<F29Results | null>(null);
@@ -259,7 +261,7 @@ export default function F29AnalysisPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          company_id: '8033ee69-b420-4d91-ba0e-482f46cd6fce', // TODO: obtener dinámicamente
+          company_id: company.id, // ✅ Dinámico basado en empresa seleccionada
           f29_data: result,
           preview: false,
         }),
@@ -299,7 +301,7 @@ export default function F29AnalysisPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          company_id: '8033ee69-b420-4d91-ba0e-482f46cd6fce', // TODO: obtener dinámicamente
+          company_id: company.id, // ✅ Dinámico basado en empresa seleccionada
           f29_data: result,
           periodo: result.periodo,
           preview: false,

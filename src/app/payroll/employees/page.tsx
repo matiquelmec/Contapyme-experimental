@@ -8,7 +8,6 @@ import { Plus, Users, Search, Eye, Edit, Trash2, FileText } from 'lucide-react';
 
 import EmployeeEditModal from '@/components/payroll/EmployeeEditModal';
 import { useCompany } from '@/contexts/CompanyContext';
-import { useCompanyAwareState, useCompanyAwareData } from '@/hooks/useCompanyAwareState';
 
 interface Employee {
   id: string;
@@ -30,49 +29,65 @@ interface Employee {
 export default function EmployeesPage() {
   const { company } = useCompany();
 
-  // 🚀 SOLUCIÓN: Usar hook company-aware para auto-fetch y limpieza
-  const {
-    data: employees,
-    isLoading: loading,
-    error,
-    refresh: fetchEmployees
-  } = useCompanyAwareData(
-    'employees',
-    async () => {
-      console.log('🔄 [EmployeesPage] Fetching employees for company:', company.id);
+  // Estado simple para empleados
+  const [employees, setEmployees] = useState<Employee[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-      const response = await fetch(`/api/payroll/employees?company_id=${company.id}&t=${Date.now()}`, {
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        },
-      });
+  // Fetch initial data and when company changes
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        console.log('🔄 [EmployeesPage] Fetching employees for company:', company.id);
 
-      const data = await response.json();
+        const response = await fetch(`/api/payroll/employees?company_id=${company.id}&t=${Date.now()}`, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+          },
+        });
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Error al cargar empleados');
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Error al cargar empleados');
+        }
+
+        setEmployees(data.data || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error al cargar empleados');
+      } finally {
+        setLoading(false);
       }
+    };
 
-      return data.data || [];
-    },
-    [company.id] // Re-fetch si cambia company.id
-  );
+    // Clear previous data and states
+    setEmployees(null);
+    setDeleteModal({ show: false, employee: null, permanent: false });
+    setEditModal({ show: false, employee: null });
+    setDeleting(false);
+    setError(null);
 
-  // 🎯 Estados que se limpian automáticamente al cambiar empresa
-  const [deleteModal, setDeleteModal] = useCompanyAwareState<{ show: boolean; employee: Employee | null; permanent: boolean }>({
+    // Fetch data
+    fetchEmployees();
+  }, [company.id]); // ONLY depend on company.id
+
+  // Estados simples
+  const [deleteModal, setDeleteModal] = useState<{ show: boolean; employee: Employee | null; permanent: boolean }>({
     show: false,
     employee: null,
     permanent: false,
-  }, { debugKey: 'deleteModal' });
+  });
 
-  const [deleting, setDeleting] = useCompanyAwareState(false, { debugKey: 'deleting' });
+  const [deleting, setDeleting] = useState(false);
 
-  const [editModal, setEditModal] = useCompanyAwareState<{ show: boolean; employee: Employee | null }>({
+  const [editModal, setEditModal] = useState<{ show: boolean; employee: Employee | null }>({
     show: false,
     employee: null,
-  }, { debugKey: 'editModal' });
+  });
 
   const handleDeleteClick = (employee: Employee) => {
     setDeleteModal({ show: true, employee, permanent: false });
@@ -115,13 +130,8 @@ export default function EmployeesPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Recargar la lista de empleados
-        await fetchEmployees();
-        setDeleteModal({ show: false, employee: null, permanent: false });
-        const message = permanent 
-          ? '✅ Empleado eliminado permanentemente del sistema'
-          : '✅ Empleado desactivado exitosamente';
-        alert(message);
+        // Recargar la página para actualizar la lista
+        window.location.reload();
       } else {
         alert(`❌ Error: ${data.error || 'No se pudo eliminar el empleado'}`);
       }
@@ -207,15 +217,15 @@ export default function EmployeesPage() {
             {/* Quick Stats */}
             <div className="grid grid-cols-3 divide-x divide-gray-200 bg-gray-50">
               <div className="px-6 py-4 text-center">
-                <div className="text-lg font-semibold text-gray-900">{employees.length}</div>
+                <div className="text-lg font-semibold text-gray-900">{Array.isArray(employees) ? employees.length : 0}</div>
                 <div className="text-sm text-gray-600">Total Empleados</div>
               </div>
               <div className="px-6 py-4 text-center">
-                <div className="text-lg font-semibold text-gray-900">{employees.filter(e => e.status === 'active').length}</div>
+                <div className="text-lg font-semibold text-gray-900">{Array.isArray(employees) ? employees.filter(e => e?.status === 'active').length : 0}</div>
                 <div className="text-sm text-gray-600">Activos</div>
               </div>
               <div className="px-6 py-4 text-center">
-                <div className="text-lg font-semibold text-gray-900">{employees.filter(e => e.employment_contracts && e.employment_contracts.length > 0).length}</div>
+                <div className="text-lg font-semibold text-gray-900">{Array.isArray(employees) ? employees.filter(e => e?.employment_contracts && Array.isArray(e.employment_contracts) && e.employment_contracts.length > 0).length : 0}</div>
                 <div className="text-sm text-gray-600">Con Contratos</div>
               </div>
             </div>
@@ -224,7 +234,7 @@ export default function EmployeesPage() {
           <div className="mb-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">📋 Lista de Empleados</h2>
-              <div className="text-sm text-gray-500">{employees.length} empleado(s)</div>
+              <div className="text-sm text-gray-500">{Array.isArray(employees) ? employees.length : 0} empleado(s)</div>
             </div>
 
             <div className="flex gap-4">
@@ -250,7 +260,7 @@ export default function EmployeesPage() {
           )}
 
           {/* Lista de empleados */}
-          {employees.length === 0 ? (
+          {!Array.isArray(employees) || employees.length === 0 ? (
             <div className="bg-white rounded-lg p-8 text-center border border-gray-200 shadow-sm">
               <div className="w-16 h-16 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
                 <Users className="h-8 w-8 text-blue-600" />
@@ -442,10 +452,8 @@ export default function EmployeesPage() {
           employeeId={editModal.employee.id}
           onSave={() => {
             setEditModal({ show: false, employee: null });
-            // Solo recargar si no estamos en estado de carga
-            if (!loading) {
-              fetchEmployees();
-            }
+            // Recargar la página para mostrar cambios
+            window.location.reload();
           }}
         />
       )}

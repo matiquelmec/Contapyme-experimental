@@ -88,13 +88,20 @@ export function useCompanyAwareData<T>(
   deps: any[] = []
 ) {
   const { company } = useCompany();
-  const [data, setData] = useCompanyAwareState<T | null>(null, {
-    debugKey: `data-${key}`
-  });
+  const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [lastCompanyId, setLastCompanyId] = useState<string>(company.id);
 
-  const refresh = useCallback(async () => {
+  // Clear data when company changes
+  if (lastCompanyId !== company.id) {
+    console.log(`🧹 [useCompanyAwareData:${key}] Company changed, clearing data: ${lastCompanyId} → ${company.id}`);
+    setData(null);
+    setError(null);
+    setLastCompanyId(company.id);
+  }
+
+  const fetchData = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -109,23 +116,20 @@ export function useCompanyAwareData<T>(
     } finally {
       setIsLoading(false);
     }
-  }, [key, fetcher, company.id]);
+  }, [key, company.id, fetcher]);
 
-  // Auto-refresh cuando cambia la empresa o dependencias
+  // Only fetch once on mount and when company changes
+  const hasLoaded = useRef(false);
   useEffect(() => {
-    refresh();
-  }, [refresh, company.id, ...deps]);
+    if (!hasLoaded.current || lastCompanyId !== company.id) {
+      fetchData();
+      hasLoaded.current = true;
+    }
+  }, [company.id]); // Only depend on company.id
 
-  // Escuchar evento global de cambio de empresa para re-fetch inmediato
-  useEffect(() => {
-    const handleCompanyChange = (event: CustomEvent) => {
-      console.log(`🔄 [useCompanyAwareData:${key}] Company changed event received, re-fetching...`);
-      refresh();
-    };
-
-    window.addEventListener('companyChanged', handleCompanyChange as EventListener);
-    return () => window.removeEventListener('companyChanged', handleCompanyChange as EventListener);
-  }, [key, refresh]);
+  const refresh = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
 
   return { data, isLoading, error, refresh } as const;
 }

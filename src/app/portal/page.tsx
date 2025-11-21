@@ -30,6 +30,8 @@ import { useCompany } from '@/contexts/CompanyContext'
 export default function PortalDashboard() {
   const [notifications] = useState(3)
   const { company, switchCompany } = useCompany()
+  const [realMetrics, setRealMetrics] = useState<any>(null)
+  const [isLoadingMetrics, setIsLoadingMetrics] = useState(false)
 
   // Demo companies for premium version (Portal UI representation)
   const companies = [
@@ -75,6 +77,54 @@ export default function PortalDashboard() {
       }
     }
   }, [company])
+
+  // Fetch real metrics from APIs
+  const fetchRealMetrics = async () => {
+    if (!company.id || !mounted) return
+
+    try {
+      setIsLoadingMetrics(true)
+
+      // Fetch employees count
+      const employeesResponse = await fetch(`/api/payroll/employees?company_id=${company.id}`)
+      const employeesData = await employeesResponse.json()
+      const employeeCount = employeesData.success ? employeesData.count || 0 : 0
+
+      // For now, we'll combine real data with fallback static data
+      const metrics = {
+        accounting: {
+          pendingF29: 2, // TODO: Replace with real data when API exists
+          activeAssets: 45,
+          monthlyIVA: 3400000,
+        },
+        payroll: {
+          activeEmployees: employeeCount, // ✅ REAL DATA!
+          nextPayroll: '2024-11-30',
+          monthlyTotal: 8500000,
+        },
+        executive: {
+          cashFlow: 45000000,
+          efficiency: 87,
+          alerts: 5,
+        },
+      }
+
+      setRealMetrics(metrics)
+    } catch (error) {
+      console.error('Error fetching real metrics:', error)
+      // Use fallback hardcoded data on error
+      setRealMetrics(getCompanyMetrics(activeCompany.id))
+    } finally {
+      setIsLoadingMetrics(false)
+    }
+  }
+
+  // Fetch metrics when company changes
+  useEffect(() => {
+    if (mounted && company.id) {
+      fetchRealMetrics()
+    }
+  }, [company.id, mounted])
 
   // Handle company change using CompanyContext
   const handleCompanyChange = (portalCompany: typeof companies[0]) => {
@@ -127,11 +177,12 @@ export default function PortalDashboard() {
     return metricsData[companyId as keyof typeof metricsData] || metricsData['demo-1']
   }
 
-  const metrics = getCompanyMetrics(activeCompany.id)
+  // Use real metrics if available, otherwise fall back to hardcoded data
+  const metrics = realMetrics || getCompanyMetrics(activeCompany.id)
 
   // Función para generar indicadores tipo semáforo
   const getHealthIndicators = (companyId: string) => {
-    const data = getCompanyMetrics(companyId)
+    const data = realMetrics || getCompanyMetrics(companyId)
 
     return {
       accounting: {

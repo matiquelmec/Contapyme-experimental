@@ -11,8 +11,9 @@ export async function GET(request: NextRequest) {
     const account_type = request.nextUrl.searchParams.get('type');
     const level_type = request.nextUrl.searchParams.get('level');
     const parent = request.nextUrl.searchParams.get('parent');
+    const company_id = request.nextUrl.searchParams.get('company_id'); // NUEVO: Filtro opcional por empresa
 
-    console.log('Loading chart of accounts with filters:', { account_type, level_type, parent });
+    console.log('Loading chart of accounts with filters:', { account_type, level_type, parent, company_id });
 
     let query = `
       SELECT 
@@ -41,6 +42,12 @@ export async function GET(request: NextRequest) {
     if (parent) {
       query += ` AND parent_code = $${params.length + 1}`;
       params.push(parent);
+    }
+
+    // NUEVO: Filtro opcional por empresa (mantiene compatibilidad hacia atrás)
+    if (company_id) {
+      query += ` AND company_id = $${params.length + 1}`;
+      params.push(company_id);
     }
 
     query += ' ORDER BY code ASC';

@@ -61,7 +61,7 @@ export const DEMO_COMPANY: Company = DEMO_COMPANIES_MAP['demo-1'];
 interface CompanyContextType {
   company: Company;
   isDemoMode: boolean;
-  switchCompany?: (companyId: string) => void;
+  switchCompany: (companyId: string) => void;
   isLoading: boolean;
 }
 

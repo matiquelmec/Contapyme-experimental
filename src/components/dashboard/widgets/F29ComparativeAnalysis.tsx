@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
+import { useCompany } from '@/contexts/CompanyContext'
 
 interface F29Period {
   period: string // YYYYMM format
@@ -46,28 +47,48 @@ interface F29AnalysisData {
 }
 
 export function F29ComparativeAnalysis() {
+  const { company } = useCompany()
   const [data, setData] = useState<F29AnalysisData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedPeriods, setSelectedPeriods] = useState(6) // Show last 6 months by default
   const [viewMode, setViewMode] = useState<'overview' | 'detailed' | 'insights'>('overview')
 
   useEffect(() => {
-    loadF29Analysis()
-  }, [selectedPeriods])
+    if (company?.id) {
+      loadF29Analysis()
+    }
+  }, [selectedPeriods, company?.id]) // Recargar cuando cambie la empresa
 
   const loadF29Analysis = async () => {
     try {
       // TODO: Replace with real API call
-      // const response = await fetch(`/api/dashboard/f29-analysis?periods=${selectedPeriods}`)
+      // const response = await fetch(`/api/dashboard/f29-analysis?periods=${selectedPeriods}&company_id=${company.id}`)
       // const data = await response.json()
+
+      console.log(`🔄 F29ComparativeAnalysis: Generando datos para empresa ${company.id}`)
+
+      // Generar datos mock diferentes basándose en la empresa para demostrar separación
+      const isCompany1 = company.id === '8033ee69-b420-4d91-ba0e-482f46cd6fce'
+      const baseData = isCompany1 ? {
+        averageIVA: 1450000,
+        trend: 'improving' as const,
+        trendPercentage: 15.2,
+        companyPrefix: 'PyME Ejemplo'
+      } : {
+        averageIVA: 850000,
+        trend: 'stable' as const,
+        trendPercentage: 3.1,
+        companyPrefix: 'Mi Pyme'
+      }
 
       // Demo data with realistic F29 comparative analysis
       const mockData: F29AnalysisData = {
         totalPeriods: selectedPeriods,
-        averageIVA: 1450000,
-        trend: 'improving',
-        trendPercentage: 15.2,
-        periods: [
+        averageIVA: baseData.averageIVA,
+        trend: baseData.trend,
+        trendPercentage: baseData.trendPercentage,
+        periods: isCompany1 ? [
+          // Datos para PyME Ejemplo S.A. (Empresa 1) - Empresa grande con crecimiento
           {
             period: '202405',
             month: 'Mayo 2024',
@@ -152,8 +173,95 @@ export function F29ComparativeAnalysis() {
             comprasNetas: 13684210,
             status: 'reviewed',
           },
+        ] : [
+          // Datos para Mi Pyme Ltda. (Empresa 2) - Empresa menor, más estable
+          {
+            period: '202405',
+            month: 'Mayo 2024',
+            year: 2024,
+            debitoFiscal: 1800000,
+            creditoFiscal: 2200000,
+            ivaResultante: -400000,
+            ppm: 180000,
+            remanente: 400000,
+            totalPagar: 180000,
+            ventasNetas: 9473684,
+            comprasNetas: 11578947,
+            status: 'filed',
+          },
+          {
+            period: '202406',
+            month: 'Junio 2024',
+            year: 2024,
+            debitoFiscal: 1900000,
+            creditoFiscal: 2100000,
+            ivaResultante: -200000,
+            ppm: 190000,
+            remanente: 200000,
+            totalPagar: 190000,
+            ventasNetas: 10000000,
+            comprasNetas: 11052631,
+            status: 'filed',
+          },
+          {
+            period: '202407',
+            month: 'Julio 2024',
+            year: 2024,
+            debitoFiscal: 2100000,
+            creditoFiscal: 1900000,
+            ivaResultante: 200000,
+            ppm: 200000,
+            remanente: 0,
+            totalPagar: 400000,
+            ventasNetas: 11052631,
+            comprasNetas: 10000000,
+            status: 'filed',
+          },
+          {
+            period: '202408',
+            month: 'Agosto 2024',
+            year: 2024,
+            debitoFiscal: 2200000,
+            creditoFiscal: 1800000,
+            ivaResultante: 400000,
+            ppm: 210000,
+            remanente: 0,
+            totalPagar: 610000,
+            ventasNetas: 11578947,
+            comprasNetas: 9473684,
+            status: 'filed',
+          },
+          {
+            period: '202409',
+            month: 'Septiembre 2024',
+            year: 2024,
+            debitoFiscal: 2300000,
+            creditoFiscal: 1700000,
+            ivaResultante: 600000,
+            ppm: 220000,
+            remanente: 0,
+            totalPagar: 820000,
+            ventasNetas: 12105263,
+            comprasNetas: 8947368,
+            status: 'filed',
+          },
+          {
+            period: '202410',
+            month: 'Octubre 2024',
+            year: 2024,
+            debitoFiscal: 2400000,
+            creditoFiscal: 1650000,
+            ivaResultante: 750000,
+            ppm: 230000,
+            remanente: 0,
+            totalPagar: 980000,
+            ventasNetas: 12631578,
+            comprasNetas: 8684210,
+            status: 'reviewed',
+          },
         ],
-        insights: [
+        insights: isCompany1 ? [
+          // Insights para PyME Ejemplo S.A. - empresa en crecimiento
           {
             type: 'positive',
             title: 'Crecimiento sostenido en ventas',
@@ -172,11 +280,37 @@ export function F29ComparativeAnalysis() {
             description: 'Los pagos provisionales mensuales muestran crecimiento ordenado',
             impact: 'low',
           },
+        ] : [
+          // Insights para Mi Pyme Ltda. - empresa estable
+          {
+            type: 'info',
+            title: 'Operación estable y predecible',
+            description: 'Los montos de IVA se mantienen consistentes mes a mes con variaciones menores',
+            impact: 'medium',
+          },
+          {
+            type: 'positive',
+            title: 'Balance equilibrado débito/crédito',
+            description: 'Mantiene un balance saludable entre compras y ventas sin fluctuaciones bruscas',
+            impact: 'low',
+          },
+          {
+            type: 'warning',
+            title: 'Oportunidad de crecimiento',
+            description: 'Los números sugieren capacidad para incrementar operaciones sin riesgo',
+            impact: 'medium',
+          },
         ],
-        recommendations: [
+        recommendations: isCompany1 ? [
+          // Recomendaciones para empresa en crecimiento
           'Considerar planificación de compras para optimizar crédito fiscal',
           'Evaluar incremento en PPM para evitar diferencias grandes en operación renta',
           'Mantener registro detallado del crecimiento para proyecciones futuras',
+        ] : [
+          // Recomendaciones para empresa estable
+          'Evaluar oportunidades de crecimiento manteniendo la estabilidad actual',
+          'Considerar inversión en capital de trabajo para expansion controlada',
+          'Mantener la consistencia en los procesos que han generado esta estabilidad',
         ],
       }
 
