@@ -8,7 +8,8 @@ import { cookies } from 'next/headers'
 // 🔧 CONFIGURACIÓN DE MODO DE SEGURIDAD
 const isDevelopmentMode = process.env.NODE_ENV === 'development'
 const enableRealAuth = process.env.NEXT_PUBLIC_ENABLE_REAL_AUTH === 'true'
-const useAuthSecurity = enableRealAuth || !isDevelopmentMode
+// 🎭 Usar auth demo a menos que explícitamente se active auth real
+const useAuthSecurity = enableRealAuth
 
 // 🏢 USUARIOS DEMO PARA DESARROLLO
 // ✅ SINCRONIZADO CON COMPANY CONTEXT
