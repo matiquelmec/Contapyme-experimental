@@ -1,11 +1,9 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function GET(
@@ -16,7 +14,6 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const companyId = searchParams.get('company_id');
 
-    // Si no hay company_id, obtener el empleado sin filtrar por compañía
     const query = supabase
       .from('employees')
       .select(`
@@ -61,21 +58,25 @@ export async function GET(
       );
     }
 
-    // Restructurar la respuesta para el modal
-    const contract = employee.employment_contracts?.find((c: any) => c.status === 'active') || employee.employment_contracts?.[0] || null;
-    const payrollConfig = employee.payroll_config?.[0] || null;
+    const contract = employee.employment_contracts?.find((c: any) => c.status === 'active') ||
+                    employee.employment_contracts?.[0] || null;
+    const payrollConfig = employee.payroll_config || null;
+    const { employment_contracts, payroll_config, ...employeeData } = employee;
 
     return NextResponse.json({
       success: true,
+      employee: employeeData,
+      contract: contract,
+      payrollConfig: payrollConfig,
       data: {
         ...employee,
         employment_contracts: employee.employment_contracts || [],
-        payroll_config: employee.payroll_config?.[0] || null,
+        payroll_config: employee.payroll_config || null,
       },
     });
 
   } catch (error) {
-    console.error('Error in GET /api/payroll/employees/[id]:', error);
+    console.error('Error in GET:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
       { status: 500 },
@@ -91,29 +92,54 @@ export async function PUT(
     const body = await request.json();
     const employeeId = params.id;
 
-    // Actualizar datos del empleado
+    console.log('🔧 [API-FINAL] Actualizando empleado:', employeeId);
+    console.log('📥 [API-FINAL] Datos recibidos:', body);
+
+    // Filtrar hire_date del body para evitar errores
+    const { hire_date: _, ...bodyWithoutHireDate } = body;
+
+    // =====================================================
+    // 1. ACTUALIZAR TABLA EMPLOYEES (SIN hire_date)
+    // =====================================================
+
+    const employeeUpdateData: any = {
+      updated_at: new Date().toISOString(),
+    };
+
+    // Campos que SÍ existen en employees (NO incluir hire_date)
+    if (bodyWithoutHireDate.first_name !== undefined) employeeUpdateData.first_name = bodyWithoutHireDate.first_name;
+    if (bodyWithoutHireDate.last_name !== undefined) employeeUpdateData.last_name = bodyWithoutHireDate.last_name;
+    if (bodyWithoutHireDate.email !== undefined) employeeUpdateData.email = bodyWithoutHireDate.email;
+    if (bodyWithoutHireDate.phone !== undefined) employeeUpdateData.phone = bodyWithoutHireDate.phone;
+    if (bodyWithoutHireDate.address !== undefined) employeeUpdateData.address = bodyWithoutHireDate.address;
+    if (bodyWithoutHireDate.birth_date !== undefined) employeeUpdateData.birth_date = bodyWithoutHireDate.birth_date;
+    if (bodyWithoutHireDate.status !== undefined) employeeUpdateData.status = bodyWithoutHireDate.status;
+    if (bodyWithoutHireDate.bank_name !== undefined) employeeUpdateData.bank_name = bodyWithoutHireDate.bank_name;
+    if (bodyWithoutHireDate.bank_account_type !== undefined) employeeUpdateData.bank_account_type = bodyWithoutHireDate.bank_account_type;
+    if (bodyWithoutHireDate.bank_account_number !== undefined) employeeUpdateData.bank_account_number = bodyWithoutHireDate.bank_account_number;
+
+    console.log('📝 [API-FINAL] Actualizando employee con:', employeeUpdateData);
+
     const { error: employeeError } = await supabase
       .from('employees')
-      .update({
-        email: body.email,
-        bank_name: body.bank_name,
-        bank_account_type: body.bank_account_type,
-        bank_account_number: body.bank_account_number,
-        updated_at: new Date().toISOString(),
-      })
+      .update(employeeUpdateData)
       .eq('id', employeeId);
 
     if (employeeError) {
-      console.error('Error updating employee:', employeeError);
+      console.error('❌ [API-FINAL] Error updating employee:', employeeError);
       return NextResponse.json(
-        { success: false, error: 'Error al actualizar empleado' },
+        { success: false, error: 'Error al actualizar empleado: ' + employeeError.message },
         { status: 500 },
       );
     }
 
-    // Actualizar contrato si se proporcionan datos contractuales
-    if (body.base_salary !== undefined || body.contract_type) {
-      // Primero buscar si existe un contrato activo
+    // =====================================================
+    // 2. ACTUALIZAR CONTRATO (hire_date -> start_date)
+    // =====================================================
+
+    if (body.base_salary !== undefined || body.contract_type || body.position || body.hire_date) {
+      console.log('💼 [API-FINAL] Actualizando datos contractuales...');
+
       const { data: existingContract } = await supabase
         .from('employment_contracts')
         .select('id')
@@ -122,77 +148,107 @@ export async function PUT(
         .single();
 
       if (existingContract) {
-        // Actualizar contrato existente
+        const contractUpdateData: any = {
+          updated_at: new Date().toISOString(),
+        };
+
+        if (body.base_salary !== undefined) contractUpdateData.base_salary = body.base_salary;
+        if (body.contract_type !== undefined) contractUpdateData.contract_type = body.contract_type;
+        if (body.position !== undefined) contractUpdateData.position = body.position;
+        if (body.hire_date !== undefined && body.hire_date !== '') {
+          contractUpdateData.start_date = body.hire_date; // MAPEO CORRECTO
+        }
+
+        console.log('💼 [API-FINAL] Actualizando contrato con:', contractUpdateData);
+
         const { error: contractError } = await supabase
           .from('employment_contracts')
-          .update({
-            base_salary: body.base_salary,
-            contract_type: body.contract_type,
-            updated_at: new Date().toISOString(),
-          })
+          .update(contractUpdateData)
           .eq('id', existingContract.id);
 
         if (contractError) {
-          console.error('Error updating contract:', contractError);
+          console.error('❌ [API-FINAL] Error updating contract:', contractError);
+        } else {
+          console.log('✅ [API-FINAL] Contrato actualizado exitosamente');
         }
       }
     }
 
-    // Actualizar o crear configuración de nómina
-    if (body.afp_code || body.health_institution_code || body.legal_gratification_type) {
-      // Primero verificar si existe configuración
-      const { data: existingConfig } = await supabase
+    // =====================================================
+    // 3. ACTUALIZAR CONFIGURACIÓN PREVISIONAL
+    // =====================================================
+
+    if (body.afp_code !== undefined || body.health_institution_code !== undefined ||
+        body.family_allowances !== undefined || body.legal_gratification_type !== undefined) {
+
+      console.log('📋 [API-FINAL] Actualizando configuración previsional...');
+
+      const { data: existingConfigs } = await supabase
         .from('payroll_config')
         .select('id')
-        .eq('employee_id', employeeId)
-        .single();
+        .eq('employee_id', employeeId);
+
+      const existingConfig = existingConfigs?.[0];
 
       if (existingConfig) {
-        // Actualizar configuración existente
         const updateData: any = {
           updated_at: new Date().toISOString(),
         };
-        
-        if (body.afp_code) updateData.afp_code = body.afp_code;
-        if (body.health_institution_code) updateData.health_institution_code = body.health_institution_code;
-        if (body.legal_gratification_type) updateData.legal_gratification_type = body.legal_gratification_type;
 
-        const { error: payrollError } = await supabase
+        if (body.afp_code !== undefined) updateData.afp_code = body.afp_code;
+        if (body.health_institution_code !== undefined) updateData.health_institution_code = body.health_institution_code;
+        if (body.family_allowances !== undefined) updateData.family_allowances = body.family_allowances;
+        if (body.legal_gratification_type !== undefined) updateData.legal_gratification_type = body.legal_gratification_type;
+
+        console.log('📝 [API-FINAL] Actualizando config con:', updateData);
+
+        const { error: updateError } = await supabase
           .from('payroll_config')
           .update(updateData)
           .eq('id', existingConfig.id);
 
-        if (payrollError) {
-          console.error('Error updating payroll config:', payrollError);
+        if (updateError) {
+          console.error('❌ [API-FINAL] Error actualizando payroll config:', updateError);
+        } else {
+          console.log('✅ [API-FINAL] Configuración previsional actualizada');
         }
       } else {
-        // Crear nueva configuración
-        const { error: payrollError } = await supabase
-          .from('payroll_config')
-          .insert({
-            employee_id: employeeId,
-            afp_code: body.afp_code || 'HABITAT',
-            health_institution_code: body.health_institution_code || 'FONASA',
-            legal_gratification_type: body.legal_gratification_type || 'none',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          });
+        const insertData = {
+          employee_id: employeeId,
+          afp_code: body.afp_code || 'HABITAT',
+          health_institution_code: body.health_institution_code || 'FONASA',
+          family_allowances: body.family_allowances || 0,
+          legal_gratification_type: body.legal_gratification_type || 'none',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
 
-        if (payrollError) {
-          console.error('Error creating payroll config:', payrollError);
+        console.log('➕ [API-FINAL] Creando nueva configuración con:', insertData);
+
+        const { error: insertError } = await supabase
+          .from('payroll_config')
+          .insert(insertData);
+
+        if (insertError) {
+          console.error('❌ [API-FINAL] Error creando payroll config:', insertError);
+        } else {
+          console.log('✅ [API-FINAL] Nueva configuración previsional creada');
         }
       }
     }
 
+    console.log('🎉 [API-FINAL] EMPLEADO ACTUALIZADO EXITOSAMENTE');
+
     return NextResponse.json({
       success: true,
       message: 'Empleado actualizado exitosamente',
+      timestamp: new Date().toISOString(),
     });
 
   } catch (error) {
-    console.error('Error in PUT /api/payroll/employees/[id]:', error);
+    console.error('💥 [API-FINAL] Error crítico:', error);
     return NextResponse.json(
-      { success: false, error: 'Error interno del servidor' },
+      { success: false, error: 'Error interno del servidor: ' + (error instanceof Error ? error.message : 'Error desconocido') },
       { status: 500 },
     );
   }
@@ -213,7 +269,6 @@ export async function DELETE(
       );
     }
 
-    // En lugar de eliminar físicamente, marcamos como inactivo
     const { data: employee, error } = await supabase
       .from('employees')
       .update({
@@ -233,7 +288,6 @@ export async function DELETE(
       );
     }
 
-    // También marcamos los contratos como terminados
     await supabase
       .from('employment_contracts')
       .update({
@@ -251,7 +305,7 @@ export async function DELETE(
     });
 
   } catch (error) {
-    console.error('Error in DELETE /api/payroll/employees/[id]:', error);
+    console.error('Error in DELETE:', error);
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
       { status: 500 },
