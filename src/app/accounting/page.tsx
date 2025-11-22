@@ -240,7 +240,7 @@ export default function AccountingPage() {
                   </div>
                 </div>
                 <div className="p-6 space-y-3">
-                  <Link href="/accounting/executive-dashboard" className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all text-sm border border-indigo-200">
+                  <Link href="/dashboard-new" className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all text-sm border border-indigo-200">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>

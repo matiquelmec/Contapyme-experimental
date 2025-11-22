@@ -768,12 +768,6 @@ export default function LiquidationsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <PayrollHeader 
-        title="Liquidaciones de Sueldo"
-        subtitle="Gestión y seguimiento de liquidaciones"
-        showBackButton
-      />
-
       {/* Hero Section con métricas destacadas */}
       <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
