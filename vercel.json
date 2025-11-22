@@ -1,15 +1,15 @@
 {
-  "name": "contapyme-app",
-  "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "@next_public_supabase_url",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@next_public_supabase_anon_key",
-    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
-    "SIGNATURE_SECRET_KEY": "@signature_secret_key",
-    "ANTHROPIC_API_KEY": "@anthropic_api_key"
-  },
+  "version": 2,
+  "name": "contapyme-experimental",
+  "framework": "nextjs",
+  "regions": ["iad1"],
   "functions": {
     "app/api/**/*.ts": {
-      "maxDuration": 60
+      "maxDuration": 30,
+      "memory": 1024
     }
+  },
+  "env": {
+    "NODE_ENV": "production"
   }
 }
